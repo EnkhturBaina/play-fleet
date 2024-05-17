@@ -33,7 +33,7 @@
 				}
 			},
 			"userInterfaceStyle": "light",
-			"googleServicesFile": "./google-services.json"
+			"googleServicesFile": ""
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
@@ -43,6 +43,12 @@
 				"expo-location",
 				{
 					"locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+				}
+			],
+			[
+				"expo-local-authentication",
+				{
+					"faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
 				}
 			]
 		]
