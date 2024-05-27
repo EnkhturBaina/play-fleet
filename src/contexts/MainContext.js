@@ -26,6 +26,7 @@ Notifications.setNotificationHandler({
 export const MainStore = (props) => {
 	const navigation = useNavigation();
 
+	const [checkListDone, setCheckListDone] = useState(false);
 	const [userId, setUserId] = useState(""); //*****Нэвтэрсэн хэрэглэгчийн USER_ID
 	const [companyId, setCompanyId] = useState(""); //*****Нэвтэрсэн хэрэглэгчийн COMPANY_ID
 	const [uuid, setUuid] = useState(""); //*****UUID
@@ -259,7 +260,9 @@ export const MainStore = (props) => {
 				password,
 				setPassword,
 				locationErrorCode,
-				setLocationErrorCode
+				setLocationErrorCode,
+				checkListDone,
+				setCheckListDone
 			}}
 		>
 			{props.children}

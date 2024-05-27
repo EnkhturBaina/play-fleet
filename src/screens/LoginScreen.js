@@ -105,13 +105,15 @@ const LoginScreen = (props) => {
 		}
 	};
 	const login = async () => {
-		if (state.email == "") {
-			onToggleSnackBar("И-мэйл хаягаа оруулна уу.");
-		} else if (!regex_email.test(state.email)) {
-			onToggleSnackBar("И-мэйл хаягаа зөв оруулна уу.");
-		} else if (state.password == "") {
-			onToggleSnackBar("Нууц үг оруулна уу.");
-		}
+		console.log("A");
+		state.setIsLoggedIn(true);
+		// if (state.email == "") {
+		// 	onToggleSnackBar("И-мэйл хаягаа оруулна уу.");
+		// } else if (!regex_email.test(state.email)) {
+		// 	onToggleSnackBar("И-мэйл хаягаа зөв оруулна уу.");
+		// } else if (state.password == "") {
+		// 	onToggleSnackBar("Нууц үг оруулна уу.");
+		// }
 		//loc_permission_fix
 		// else if (state.locationStatus == "denied") {
 		//   onToggleSnackBar("Байршлын тохиргоо зөвшөөрөгдөөгүй байна.");
@@ -131,85 +133,82 @@ const LoginScreen = (props) => {
 		//   })();
 		//   setLoadingAction(false);
 		// }
-		else {
-			setLoadingAction(true);
-			// let location = await Location.getCurrentPositionAsync({});
-			// state.setLocation(location);
-			state.setIsLoading(true);
-
-			await axios({
-				method: "post",
-				url: `${SERVER_URL}/employee/mobile/login`,
-				data: {
-					email: state.email?.toLowerCase(),
-					password: state.password,
-					MobileUUID: state.uuid,
-					ExponentPushToken: state.expoPushToken
-				}
-			})
-				.then(async (response) => {
-					// console.log("RES", response.data);
-					if (response.data?.Type == 0) {
-						try {
-							state.setUserData(response.data.Extra?.user);
-							state.setToken(response.data.Extra?.access_token);
-							state.setHeaderUserName(response.data.Extra?.user.FirstName);
-							state.setUserId(response.data.Extra?.user?.id);
-							state.setCompanyId(response.data.Extra?.user?.GMCompanyId);
-							await AsyncStorage.setItem("password", state.password).then(async (value) => {
-								await AsyncStorage.setItem("user_mail", response.data.Extra?.user?.email).then(async (value) => {
-									//*****Login Хийсэн User -н Data -г Local Storage -д хадгалах
-									await AsyncStorage.setItem(
-										"user",
-										JSON.stringify({
-											token: response.data.Extra?.access_token,
-											user: response.data.Extra?.user,
-											userFirstName: response.data.Extra?.user.FirstName
-										})
-									).then(async (value) => {
-										if (state.isUseBiometric) {
-											//*****Biometric ашиглах CHECK хийгдсэн үед Local Storage -д хадгалах
-											await AsyncStorage.setItem("use_bio", "yes").then((value) => {
-												state.confirmBio(state.uuid);
-											});
-										} else {
-											//*****Biometric ашиглах CHECK хийгдээгүй үед Local Storage -д хадгалах
-											await AsyncStorage.setItem("use_bio", "no").then((value) => {
-												state.getUserUUID(
-													response.data.Extra?.user.email,
-													response.data.Extra?.access_token,
-													state.uuid,
-													response.data.Extra?.user?.id
-												);
-											});
-										}
-									});
-								});
-							});
-						} catch (e) {
-							console.log("e====>", e);
-						}
-						state.setLoginErrorMsg("");
-					} else if (response.data?.Type == 1) {
-						state.setLoginErrorMsg(response.data.Msg);
-						state.setIsLoading(false);
-					} else if (response.data?.Type == 2) {
-						state.setLoginErrorMsg(response.data.Msg);
-						state.setIsLoading(false);
-					}
-					setLoadingAction(false);
-				})
-				.catch(function (error) {
-					setLoadingAction(false);
-					state.setIsLoading(false);
-					if (error.code === "ERR_NETWORK") {
-						state.setLoginErrorMsg("Интернэт холболтоо шалгана уу.");
-					} else {
-						state.setLoginErrorMsg("Холболт салсан байна...");
-					}
-					state.logout();
-				});
-		}
+		// else {
+		// setLoadingAction(true);
+		// state.setIsLoading(true);
+		// await axios({
+		// 	method: "post",
+		// 	url: `${SERVER_URL}/employee/mobile/login`,
+		// 	data: {
+		// 		email: state.email?.toLowerCase(),
+		// 		password: state.password,
+		// 		MobileUUID: state.uuid,
+		// 		ExponentPushToken: state.expoPushToken
+		// 	}
+		// })
+		// 	.then(async (response) => {
+		// 		// console.log("RES", response.data);
+		// 		if (response.data?.Type == 0) {
+		// 			try {
+		// 				state.setUserData(response.data.Extra?.user);
+		// 				state.setToken(response.data.Extra?.access_token);
+		// 				state.setHeaderUserName(response.data.Extra?.user.FirstName);
+		// 				state.setUserId(response.data.Extra?.user?.id);
+		// 				state.setCompanyId(response.data.Extra?.user?.GMCompanyId);
+		// 				await AsyncStorage.setItem("password", state.password).then(async (value) => {
+		// 					await AsyncStorage.setItem("user_mail", response.data.Extra?.user?.email).then(async (value) => {
+		// 						//*****Login Хийсэн User -н Data -г Local Storage -д хадгалах
+		// 						await AsyncStorage.setItem(
+		// 							"user",
+		// 							JSON.stringify({
+		// 								token: response.data.Extra?.access_token,
+		// 								user: response.data.Extra?.user,
+		// 								userFirstName: response.data.Extra?.user.FirstName
+		// 							})
+		// 						).then(async (value) => {
+		// 							if (state.isUseBiometric) {
+		// 								//*****Biometric ашиглах CHECK хийгдсэн үед Local Storage -д хадгалах
+		// 								await AsyncStorage.setItem("use_bio", "yes").then((value) => {
+		// 									state.confirmBio(state.uuid);
+		// 								});
+		// 							} else {
+		// 								//*****Biometric ашиглах CHECK хийгдээгүй үед Local Storage -д хадгалах
+		// 								await AsyncStorage.setItem("use_bio", "no").then((value) => {
+		// 									state.getUserUUID(
+		// 										response.data.Extra?.user.email,
+		// 										response.data.Extra?.access_token,
+		// 										state.uuid,
+		// 										response.data.Extra?.user?.id
+		// 									);
+		// 								});
+		// 							}
+		// 						});
+		// 					});
+		// 				});
+		// 			} catch (e) {
+		// 				console.log("e====>", e);
+		// 			}
+		// 			state.setLoginErrorMsg("");
+		// 		} else if (response.data?.Type == 1) {
+		// 			state.setLoginErrorMsg(response.data.Msg);
+		// 			state.setIsLoading(false);
+		// 		} else if (response.data?.Type == 2) {
+		// 			state.setLoginErrorMsg(response.data.Msg);
+		// 			state.setIsLoading(false);
+		// 		}
+		// 		setLoadingAction(false);
+		// 	})
+		// 	.catch(function (error) {
+		// 		setLoadingAction(false);
+		// 		state.setIsLoading(false);
+		// 		if (error.code === "ERR_NETWORK") {
+		// 			state.setLoginErrorMsg("Интернэт холболтоо шалгана уу.");
+		// 		} else {
+		// 			state.setLoginErrorMsg("Холболт салсан байна...");
+		// 		}
+		// 		state.logout();
+		// 	});
+		// }
 	};
 
 	return (
@@ -224,8 +223,7 @@ const LoginScreen = (props) => {
 				<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={30} />
 
 				<View style={styles.loginImageContainer}>
-					{/* <Image style={styles.loginImg} source={talent_logo} /> */}
-					<Image style={styles.loginImg} source={{ uri: "../../assets/icon.png" }} />
+					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} />
 				</View>
 				{state.loginErrorMsg != "" ? (
 					<Text
@@ -407,6 +405,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff"
 	},
 	loginImageContainer: {
+		height: 350,
 		alignItems: "center"
 	},
 	stackSection: {
@@ -416,8 +415,8 @@ const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	loginImg: {
-		width: 250,
-		height: 200,
+		width: 180,
+		height: 150,
 		resizeMode: "contain",
 		marginTop: "30%"
 	},

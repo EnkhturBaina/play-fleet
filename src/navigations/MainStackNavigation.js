@@ -8,15 +8,16 @@ import MainContext from "../contexts/MainContext";
 
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
+import CheckListScreen from "../screens/CheckListScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
 
 const MainStackNavigator = (props) => {
 	const state = useContext(MainContext);
+	console.log("state.isLoggedIn", state.isLoggedIn);
 	return (
 		<Stack.Navigator
-			initialRouteName={state.isLoggedIn ? "HomeScreen" : "LoginTab"}
 			screenOptions={{
 				headerStyle: {
 					shadowColor: "transparent",
@@ -24,26 +25,40 @@ const MainStackNavigator = (props) => {
 				}
 			}}
 		>
-			<Stack.Screen
-				name="LoginTab"
-				component={LoginScreen}
-				options={{
-					title: "",
-					headerShown: false,
-					headerTitleStyle: {},
-					headerLeft: () => <></>
-				}}
-			/>
-			<Stack.Screen
-				name="HomeScreen"
-				component={HomeScreen}
-				options={{
-					headerShown: false,
-					title: "",
-					headerTitleStyle: {},
-					headerLeft: () => <></>
-				}}
-			/>
+			{!state.isLoggedIn ? (
+				<Stack.Screen
+					name="LoginScreen"
+					component={LoginScreen}
+					options={{
+						title: "",
+						headerShown: false,
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+			) : state.isLoggedIn && !state.checkListDone ? (
+				<Stack.Screen
+					name="CheckListScreen"
+					component={CheckListScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+			) : (
+				<Stack.Screen
+					name="HomeScreen"
+					component={HomeScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+			)}
 		</Stack.Navigator>
 	);
 };
