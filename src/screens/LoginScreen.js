@@ -268,13 +268,13 @@ const LoginScreen = (props) => {
         ) : null} */}
 				<View style={styles.stackSection}>
 					<TextInput
-						label="И-мэйл"
+						label="Компани ID"
 						mode="outlined"
 						style={styles.generalInput}
 						dense={true}
 						value={state.email}
 						returnKeyType="done"
-						keyboardType="email-address"
+						keyboardType="decimal-pad"
 						onChangeText={(e) => {
 							state.setEmail(e);
 						}}
@@ -290,74 +290,27 @@ const LoginScreen = (props) => {
 							roundness: MAIN_BORDER_RADIUS
 						}}
 					/>
-					<View
-						style={{
-							width: "100%",
-							marginRight: "auto",
-							marginLeft: "auto",
-							alignItems: "center"
+					<TextInput
+						label="Диспетчер ID"
+						mode="outlined"
+						style={styles.generalInput}
+						dense={true}
+						value={state.password}
+						returnKeyType="done"
+						keyboardType="decimal-pad"
+						onChangeText={state.setPassword}
+						theme={{
+							fonts: {
+								regular: {
+									fontWeight: "bold"
+								}
+							},
+							colors: {
+								primary: MAIN_COLOR
+							},
+							roundness: MAIN_BORDER_RADIUS
 						}}
-					>
-						<TextInput
-							label="Нууц үг"
-							mode="outlined"
-							style={styles.generalInput}
-							dense={true}
-							value={state.password}
-							returnKeyType="done"
-							secureTextEntry={hidePassword}
-							onChangeText={state.setPassword}
-							theme={{
-								fonts: {
-									regular: {
-										fontWeight: "bold"
-									}
-								},
-								colors: {
-									primary: MAIN_COLOR
-								},
-								roundness: MAIN_BORDER_RADIUS
-							}}
-						/>
-						<TouchableOpacity style={styles.imageStyle} onPress={() => hideShowPassword()}>
-							<Icon name={hidePassword ? "eye" : "eye-closed"} type="octicon" />
-						</TouchableOpacity>
-					</View>
-				</View>
-				<View style={styles.stackSection2}>
-					<CheckBox
-						containerStyle={styles.customCheckBox}
-						textStyle={{
-							fontWeight: "normal",
-							marginLeft: 5,
-							fontSize: 12,
-							fontWeight: "bold"
-						}}
-						title={isBiometricSupported ? "FaceID ашиглах" : "И-мэйл сануулах"}
-						iconType="material-community"
-						checkedIcon="checkbox-outline"
-						uncheckedIcon="checkbox-blank-outline"
-						checked={state.isUseBiometric}
-						onPress={checkHandleUseBiometric}
-						checkedColor={MAIN_COLOR}
-						uncheckedColor={MAIN_COLOR}
 					/>
-					<TouchableOpacity
-						onPress={() => resetPassword()}
-						disabled={loadingActionReset}
-						style={{ flexDirection: "row" }}
-					>
-						<Text
-							style={{
-								textDecorationLine: "underline",
-								fontSize: 12,
-								fontWeight: "bold"
-							}}
-						>
-							Нууц үг сэргээх
-						</Text>
-						{loadingActionReset ? <ActivityIndicator style={{ marginLeft: 5 }} color="#000" /> : null}
-					</TouchableOpacity>
 				</View>
 				<View style={styles.stackSection3}>
 					<Button
