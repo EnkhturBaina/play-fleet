@@ -26,6 +26,9 @@ Notifications.setNotificationHandler({
 export const MainStore = (props) => {
 	const navigation = useNavigation();
 
+	const [mainCompanyId, setMainCompanyId] = useState(""); //*****Company ID
+	const [dispId, setDispId] = useState(""); //*****Dispatcher ID
+
 	const [checkListDone, setCheckListDone] = useState(false);
 	const [userId, setUserId] = useState(""); //*****Нэвтэрсэн хэрэглэгчийн USER_ID
 	const [companyId, setCompanyId] = useState(""); //*****Нэвтэрсэн хэрэглэгчийн COMPANY_ID
@@ -64,6 +67,7 @@ export const MainStore = (props) => {
 
 	const checkLocation = () => {
 		//***** LOCATION мэдээлэл авах
+		console.log("RUN checkLocation");
 		(async () => {
 			let { status } = await Location.requestForegroundPermissionsAsync();
 			setLocationStatus(status);
@@ -100,38 +104,24 @@ export const MainStore = (props) => {
 	}, []);
 
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах
-	const checkUserData = async (temp_UUID) => {
+	const checkUserData = async () => {
 		// console.log("check UserData---------------------------------");
 		try {
-			await AsyncStorage.getItem("use_bio").then(async (bio_value) => {
-				// console.log("BIO VALUE ====>", bio_value);
-				if (bio_value == "yes") {
-					// *****Face ID аар нэвтрэх CHECK хийгдсэн үед баталгаажуулаад нэвтрэх
-					setIsUseBiometric(true);
-					setLoginByBiometric(true);
-					confirmBio(temp_UUID);
-				} else {
-					getUserDataLocalStorage(temp_UUID);
-					setIsUseBiometric(false);
-					setLoginByBiometric(false);
-					// setIsLoading(false);
-				}
-			});
+			getUserDataLocalStorage();
+			setIsUseBiometric(false);
+			setLoginByBiometric(false);
 		} catch (error) {
 			// error reading value
-			// console.log("check UserData error======>", e);
+			// console.log("check UserData error======>", error);
 			setLoginErrorMsg("Интернэт холболт шалгана уу? (5)");
 			logout();
 		}
 	};
 
 	//*****Апп ажиллахад утасны local storage -с зөвхөн хэрэглэгчийн мэдээлэл авах
-	const getUserDataLocalStorage = async (uuid_value) => {
+	const getUserDataLocalStorage = async () => {
 		// console.log("get UserDataLocalStorage---------------------------------");
 		try {
-			await AsyncStorage.getItem("user_mail").then(async (user_value) => {
-				setEmail(user_value);
-			});
 			await AsyncStorage.getItem("user").then(async (user_value) => {
 				// console.log("user_value VALUE ====>", user_value);
 				if (user_value != null) {
@@ -262,7 +252,11 @@ export const MainStore = (props) => {
 				locationErrorCode,
 				setLocationErrorCode,
 				checkListDone,
-				setCheckListDone
+				setCheckListDone,
+				mainCompanyId,
+				setMainCompanyId,
+				dispId,
+				setDispId
 			}}
 		>
 			{props.children}

@@ -7,38 +7,28 @@ import {
 	ScrollView,
 	KeyboardAvoidingView,
 	Platform,
-	ActivityIndicator,
-	Linking
+	ActivityIndicator
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { Icon, CheckBox, Button } from "@rneui/themed";
 import MainContext from "../contexts/MainContext";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { TextInput } from "react-native-paper";
-import { MAIN_COLOR, MAIN_BORDER_RADIUS, SERVER_URL } from "../constant";
+import { MAIN_COLOR, MAIN_BORDER_RADIUS, SERVER_URL, MAIN_INPUT_HEIGHT, MAIN_BUTTON_HEIGHT } from "../constant";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 // import { v4 as uuidv4 } from "uuid";
-import * as Location from "expo-location";
-import * as LocalAuthentication from "expo-local-authentication";
 
 const LoginScreen = (props) => {
 	const state = useContext(MainContext);
-	const [isBiometricSupported, setIsBiometricSupported] = useState(false);
-	const [hidePassword, setHidePassword] = useState(true);
 
 	const [visibleSnack, setVisibleSnack] = useState(false);
 	const [snackBarMsg, setSnackBarMsg] = useState("");
 
-	const regex_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-
 	const [loadingAction, setLoadingAction] = useState(false);
-	const [loadingActionReset, setLoadingActionReset] = useState(false);
+
 	useEffect(() => {
 		(async () => {
-			const compatible = await LocalAuthentication.hasHardwareAsync();
-			setIsBiometricSupported(compatible);
-
 			await AsyncStorage.getItem("password").then(async (value) => {
 				state.setPassword(value);
 			});
@@ -54,56 +44,6 @@ const LoginScreen = (props) => {
 	//Snacbkbar хаах
 	const onDismissSnackBar = () => setVisibleSnack(false);
 
-	const checkHandleUseBiometric = () => {
-		state.setIsUseBiometric(!state.isUseBiometric);
-	};
-
-	const hideShowPassword = () => {
-		setHidePassword(!hidePassword);
-	};
-
-	// var tempUUID = uuidv4();
-
-	const resetPassword = async () => {
-		setLoadingActionReset(true);
-		if (state.email == "") {
-			onToggleSnackBar("И-мэйл хаягаа оруулна уу.");
-		} else if (!regex_email.test(state.email)) {
-			onToggleSnackBar("И-мэйл хаягаа зөв оруулна уу.");
-		} else {
-			await axios({
-				method: "post",
-				url: `${SERVER_URL}/send/recovery`,
-				headers: {
-					Authorization: `Bearer ${state.token}`
-				},
-				data: {
-					email: state.email
-				}
-			})
-				.then(async (response) => {
-					// console.log("reset Password =====>", response.data);
-					if (response.data?.Type == 0) {
-						onToggleSnackBar(response.data.Msg);
-						state.setLoginErrorMsg("");
-					} else if (response.data?.Type == 1) {
-						state.setLoginErrorMsg(response.data.Msg);
-					} else if (response.data?.Type == 2) {
-						state.setLoginErrorMsg(response.data.Msg);
-					}
-					setLoadingActionReset(false);
-				})
-				.catch(function (error) {
-					setLoadingActionReset(false);
-					if (!error.status) {
-						// network error
-						state.logout();
-						state.setIsLoading(false);
-						state.setLoginErrorMsg("Холболт салсан байна. reset");
-					}
-				});
-		}
-	};
 	const login = async () => {
 		console.log("A");
 		state.setIsLoggedIn(true);
@@ -237,46 +177,17 @@ const LoginScreen = (props) => {
 						{state.loginErrorMsg}
 					</Text>
 				) : null}
-				{/* loc_permission_fix */}
-				{/* {state.locationStatus == "denied" ? (
-          <Button
-            disabled={loadingAction}
-            containerStyle={{
-              width: "80%",
-              marginTop: 10,
-              marginRight: "auto",
-              marginLeft: "auto",
-            }}
-            buttonStyle={{
-              backgroundColor: MAIN_COLOR,
-              borderRadius: MAIN_BORDER_RADIUS,
-              paddingVertical: 10,
-            }}
-            title="Тохиргоо хийх"
-            titleStyle={{
-              fontSize: 16,
-              fontFamily: FONT_FAMILY_BOLD,
-            }}
-            onPress={() => {
-              if (Platform.OS === "ios") {
-                Linking.openURL("app-settings:");
-              } else {
-                Linking.openSettings();
-              }
-            }}
-          />
-        ) : null} */}
 				<View style={styles.stackSection}>
 					<TextInput
 						label="Компани ID"
 						mode="outlined"
 						style={styles.generalInput}
 						dense={true}
-						value={state.email}
+						value={state.mainCompanyId}
 						returnKeyType="done"
 						keyboardType="decimal-pad"
 						onChangeText={(e) => {
-							state.setEmail(e);
+							state.setMainCompanyId(e);
 						}}
 						theme={{
 							fonts: {
@@ -295,10 +206,10 @@ const LoginScreen = (props) => {
 						mode="outlined"
 						style={styles.generalInput}
 						dense={true}
-						value={state.password}
+						value={state.dispId}
 						returnKeyType="done"
 						keyboardType="decimal-pad"
-						onChangeText={state.setPassword}
+						onChangeText={state.setDispId}
 						theme={{
 							fonts: {
 								regular: {
@@ -317,12 +228,14 @@ const LoginScreen = (props) => {
 						disabled={loadingAction}
 						containerStyle={{
 							width: "100%",
-							marginTop: 10
+							marginTop: 10,
+							height: 50
 						}}
 						buttonStyle={{
 							backgroundColor: MAIN_COLOR,
 							borderRadius: MAIN_BORDER_RADIUS,
-							paddingVertical: 10
+							paddingVertical: 10,
+							height: MAIN_BUTTON_HEIGHT
 						}}
 						title={
 							<>
@@ -378,7 +291,9 @@ const styles = StyleSheet.create({
 		// height: 40,
 		backgroundColor: "#fff",
 		marginTop: 10,
-		padding: 0
+		padding: 0,
+		height: MAIN_INPUT_HEIGHT,
+		fontSize: 18
 	},
 	stackSection2: {
 		flexDirection: "row",
