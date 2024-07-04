@@ -2,8 +2,10 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Icon } from "@rneui/base";
 import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../constant";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreenSideBarSUB = (props) => {
+	const navigation = useNavigation();
 	const MENU_LIST = [
 		{
 			img: require("../../assets/images/Picture10.png"),
@@ -44,7 +46,14 @@ const HomeScreenSideBarSUB = (props) => {
 			</TouchableOpacity>
 			{MENU_LIST.map((el, index) => {
 				return (
-					<TouchableOpacity key={index} style={styles.eachMenuContainer}>
+					<TouchableOpacity
+						key={index}
+						style={styles.eachMenuContainer}
+						onPress={() => {
+							props.setIsOpen(false);
+							navigation.navigate("StatusLsitScreen");
+						}}
+					>
 						<View
 							style={{
 								justifyContent: "center",

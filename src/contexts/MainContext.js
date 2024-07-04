@@ -65,6 +65,32 @@ export const MainStore = (props) => {
 
 	const [locationStatus, setLocationStatus] = useState(""); //*****Location Permission
 
+	const [seconds, setSeconds] = useState(0);
+	const [isActiveTimer, setIsActiveTimer] = useState(false);
+
+	const handleStart = () => {
+		console.log("X");
+		setIsActiveTimer(true);
+	};
+
+	const handlePause = () => {
+		setIsActiveTimer(false);
+	};
+
+	const handleReset = () => {
+		setSeconds(0);
+		setIsActiveTimer(false);
+	};
+
+	const formatTime = (time) => {
+		const hours = Math.floor(time / 3600);
+		const minutes = Math.floor((time % 3600) / 60);
+		const seconds = time % 60;
+		return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
+			.toString()
+			.padStart(2, "0")}`;
+	};
+
 	const checkLocation = () => {
 		//***** LOCATION мэдээлэл авах
 		console.log("RUN checkLocation");
@@ -256,7 +282,15 @@ export const MainStore = (props) => {
 				mainCompanyId,
 				setMainCompanyId,
 				dispId,
-				setDispId
+				setDispId,
+				seconds,
+				setSeconds,
+				handleStart,
+				handleReset,
+				handlePause,
+				formatTime,
+				isActiveTimer,
+				setIsActiveTimer
 			}}
 		>
 			{props.children}

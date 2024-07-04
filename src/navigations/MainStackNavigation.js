@@ -9,13 +9,13 @@ import MainContext from "../contexts/MainContext";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import CheckListScreen from "../screens/CheckListScreen";
+import StatusLsitScreen from "../screens/StatusLsitScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
 
 const MainStackNavigator = (props) => {
 	const state = useContext(MainContext);
-	console.log("state.isLoggedIn", state.isLoggedIn);
 	return (
 		<Stack.Navigator
 			screenOptions={{
@@ -48,16 +48,28 @@ const MainStackNavigator = (props) => {
 					}}
 				/>
 			) : (
-				<Stack.Screen
-					name="HomeScreen"
-					component={HomeScreen}
-					options={{
-						headerShown: false,
-						title: "",
-						headerTitleStyle: {},
-						headerLeft: () => <></>
-					}}
-				/>
+				<>
+					<Stack.Screen
+						name="HomeScreen"
+						component={HomeScreen}
+						options={{
+							headerShown: false,
+							title: "",
+							headerTitleStyle: {},
+							headerLeft: () => <></>
+						}}
+					/>
+					<Stack.Screen
+						name="StatusLsitScreen"
+						component={StatusLsitScreen}
+						options={{
+							headerShown: false,
+							title: "",
+							headerTitleStyle: {},
+							headerLeft: () => <></>
+						}}
+					/>
+				</>
 			)}
 		</Stack.Navigator>
 	);

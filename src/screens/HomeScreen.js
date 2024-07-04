@@ -46,9 +46,6 @@ const HomeScreen = (props) => {
 	const mapRef = useRef();
 	const bottomSheetRef = useRef(null);
 
-	const [seconds, setSeconds] = useState(0);
-	const [isActive, setIsActive] = useState(false);
-
 	const [isFocus, setIsFocus] = useState(false);
 	const [value, setValue] = useState(null);
 	const [isOpen, setIsOpen] = useState(false);
@@ -67,37 +64,15 @@ const HomeScreen = (props) => {
 
 	useEffect(() => {
 		let interval = null;
-		if (isActive) {
+		if (state.isActiveTimer) {
 			interval = setInterval(() => {
-				setSeconds((prevSeconds) => prevSeconds + 1);
+				state.setSeconds((prevSeconds) => prevSeconds + 1);
 			}, 1000);
 		} else {
 			clearInterval(interval);
 		}
 		return () => clearInterval(interval);
-	}, [isActive]);
-
-	const handleStart = () => {
-		setIsActive(true);
-	};
-
-	const handlePause = () => {
-		setIsActive(false);
-	};
-
-	const handleReset = () => {
-		setSeconds(0);
-		setIsActive(false);
-	};
-
-	const formatTime = (time) => {
-		const hours = Math.floor(time / 3600);
-		const minutes = Math.floor((time % 3600) / 60);
-		const seconds = time % 60;
-		return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
-			.toString()
-			.padStart(2, "0")}`;
-	};
+	}, [state.isActiveTimer]);
 
 	const BOTTOM_SHEET_MENU_LIST = [
 		{ id: "1", label: "АЧААЛАГДАХ /СЭЛГЭЭ ХИЙХ/", img: require("../../assets/images/Picture4.png") },
@@ -126,7 +101,7 @@ const HomeScreen = (props) => {
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<HeaderUser />
 			<SideMenu
-				menu={<MainSideBar sideBarStep={sideBarStep} setSideBarStep={setSideBarStep} />}
+				menu={<MainSideBar sideBarStep={sideBarStep} setSideBarStep={setSideBarStep} setIsOpen={setIsOpen} />}
 				isOpen={isOpen}
 				onChange={(isOpen) => setIsOpen(isOpen)}
 			>
@@ -280,7 +255,7 @@ const HomeScreen = (props) => {
 							>
 								<Text style={{ color: "#fff", fontSize: 20 }}>CОНГОГДСОН ТӨЛӨВ</Text>
 							</View>
-							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(seconds)}</Text>
+							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{state.formatTime(state.seconds)}</Text>
 						</View>
 						<View style={styles.eachBottomList}>
 							<Image source={require("../../assets/images/Picture4.png")} style={{ height: 50, width: 50 }} />
@@ -312,7 +287,14 @@ const HomeScreen = (props) => {
 						<ScrollView>
 							{BOTTOM_SHEET_MENU_LIST.map((el, index) => {
 								return (
-									<TouchableOpacity style={styles.eachBottomList} key={index} onPress={() => handleStart()}>
+									<TouchableOpacity
+										style={styles.eachBottomList}
+										key={index}
+										onPress={() => {
+											state.handleReset();
+											state.handleStart();
+										}}
+									>
 										<Image source={el.img} style={{ height: 50, width: 50 }} />
 										<Text
 											style={{
