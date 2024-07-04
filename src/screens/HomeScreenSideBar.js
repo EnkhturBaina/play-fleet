@@ -42,7 +42,6 @@ const HomeScreenSideBar = (props) => {
 			isMore: false
 		}
 	];
-	console.log("1 => ", props);
 	return (
 		<View>
 			{MENU_LIST.map((el, index) => {

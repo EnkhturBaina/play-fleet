@@ -312,7 +312,7 @@ const HomeScreen = (props) => {
 						<ScrollView>
 							{BOTTOM_SHEET_MENU_LIST.map((el, index) => {
 								return (
-									<View style={styles.eachBottomList} key={index}>
+									<TouchableOpacity style={styles.eachBottomList} key={index} onPress={() => handleStart()}>
 										<Image source={el.img} style={{ height: 50, width: 50 }} />
 										<Text
 											style={{
@@ -326,7 +326,7 @@ const HomeScreen = (props) => {
 										>
 											{el.label}
 										</Text>
-									</View>
+									</TouchableOpacity>
 								);
 							})}
 						</ScrollView>
