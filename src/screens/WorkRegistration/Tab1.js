@@ -4,7 +4,7 @@ import React from "react";
 const Tab1 = () => {
 	return (
 		<View>
-			<Text>Tab1</Text>
+			<Text>Рейсийн түүх /20/</Text>
 		</View>
 	);
 };
