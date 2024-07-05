@@ -10,7 +10,7 @@ import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import CheckListScreen from "../screens/CheckListScreen";
 import StatusLsitScreen from "../screens/StatusLsitScreen";
-import WorkRegistrationScreen from "../screens/WorkRegistrationScreen";
+import WorkRegistrationScreen from "../screens/WorkRegistration/WorkRegistrationScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
