@@ -7,28 +7,86 @@ import { Icon } from "@rneui/base";
 import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY } from "../constant";
 import CustomDialog from "../components/CustomDialog";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { NavigationContainer } from "@react-navigation/native";
 
 const Tab = createMaterialTopTabNavigator();
 const WorkRegistrationScreen = (props) => {
 	const navigation = useNavigation();
 
-	const [selectedTab, setSelectedTab] = useState("Рейс");
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
 	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
 
-	const TABS = [
-		{
-			label: "Рейс"
-		},
-		{
-			label: "Гүйцэтгэл"
-		}
-	];
-
-	const TabComp = () => {
-		return <Text>XXXXXXX</Text>;
+	const Tab1 = () => {
+		return (
+			<View>
+				<Text>Tab1</Text>
+			</View>
+		);
 	};
+	const Tab2 = () => {
+		return (
+			<View>
+				<Text>Tab2</Text>
+			</View>
+		);
+	};
+	function MyTabBar({ state, descriptors, navigation, position }) {
+		return (
+			<View style={{ flexDirection: "row", backgroundColor: MAIN_COLOR_GRAY, borderRadius: 5 }}>
+				{state.routes.map((route, index) => {
+					const { options } = descriptors[route.key];
+					const label =
+						options.tabBarLabel !== undefined
+							? options.tabBarLabel
+							: options.title !== undefined
+							? options.title
+							: route.name;
+
+					const isFocused = state.index === index;
+
+					const onPress = () => {
+						const event = navigation.emit({
+							type: "tabPress",
+							target: route.key
+						});
+
+						if (!isFocused && !event.defaultPrevented) {
+							navigation.navigate(route.name);
+						}
+					};
+
+					const onLongPress = () => {
+						navigation.emit({
+							type: "tabLongPress",
+							target: route.key
+						});
+					};
+
+					return (
+						<TouchableOpacity
+							accessibilityRole="button"
+							accessibilityState={isFocused ? { selected: true } : {}}
+							accessibilityLabel={options.tabBarAccessibilityLabel}
+							testID={options.tabBarTestID}
+							onPress={onPress}
+							onLongPress={onLongPress}
+							style={{
+								flex: 1,
+								backgroundColor: isFocused ? "#fff" : MAIN_COLOR_GRAY,
+								textTransform: "none",
+								borderRadius: 5,
+								margin: 5,
+								padding: 10
+							}}
+						>
+							<Text style={{ alignSelf: "center", fontSize: 18 }}>{label}</Text>
+						</TouchableOpacity>
+					);
+				})}
+			</View>
+		);
+	}
 	return (
 		<SafeAreaView
 			style={{
@@ -61,78 +119,14 @@ const WorkRegistrationScreen = (props) => {
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
 				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Бүтээлийн бүртгэл</Text>
 			</TouchableOpacity>
-			<View style={{ flex: 1 }}>
+			<View style={{ flex: 1, paddingHorizontal: 10, marginTop: 10 }}>
 				<Tab.Navigator
-					initialRouteName={"Рейс"}
-					screenOptions={{
-						swipeEnabled: false,
-						tabBarAndroidRipple: {
-							color: "transparent"
-						},
-						tabBarLabelStyle: {
-							width: "100%",
-							textTransform: "none"
-						},
-						tabBarStyle: {
-							backgroundColor: MAIN_COLOR_GRAY
-						},
-						tabBarIndicatorStyle: {
-							height: 0
-						}
-					}}
-					sceneContainerStyle={{
-						backgroundColor: "#fff",
-						marginTop: 10
-					}}
-					style={{
-						backgroundColor: "#fff"
-					}}
+					tabBar={(props) => <MyTabBar {...props} />}
+					screenOptions={{ swipeEnabled: false }}
+					sceneContainerStyle={{ backgroundColor: "#fff", paddingTop: 20 }}
 				>
-					{TABS.map((el, index) => {
-						return (
-							<Tab.Screen
-								key={index}
-								name={el.label}
-								component={TabComp}
-								listeners={{
-									focus: (e) => {},
-									tabPress: (e) => {
-										var tabName = e.target.split("-")?.[0];
-										console.log("tabName", tabName);
-										setSelectedTab(tabName);
-									}
-								}}
-								options={{
-									tabBarContentContainerStyle: {
-										backgroundColor: "blue"
-									},
-									tabBarItemStyle: {
-										backgroundColor: el.label == selectedTab ? "red" : "green",
-										margin: 5
-									},
-									animationEnabled: false,
-									tabBarLabel: ({ focused }) => (
-										<View
-											style={{
-												width: "100%"
-											}}
-										>
-											<Text
-												style={[
-													styles.typeText,
-													{
-														fontSize: el.label == selectedTab ? 18 : 14
-													}
-												]}
-											>
-												{el.label}
-											</Text>
-										</View>
-									)
-								}}
-							/>
-						);
-					})}
+					<Tab.Screen name="Рейс" component={Tab1} />
+					<Tab.Screen name="Гүйцэтгэл" component={Tab2} />
 				</Tab.Navigator>
 			</View>
 			<CustomDialog
