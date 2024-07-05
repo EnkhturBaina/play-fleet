@@ -52,6 +52,7 @@ const HomeScreenSideBarSUB = (props) => {
 						onPress={() => {
 							props.setIsOpen(false);
 							navigation.navigate("StatusLsitScreen");
+							props.setSideBarStep(1);
 						}}
 					>
 						<View

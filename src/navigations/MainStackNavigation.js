@@ -10,6 +10,7 @@ import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import CheckListScreen from "../screens/CheckListScreen";
 import StatusLsitScreen from "../screens/StatusLsitScreen";
+import WorkRegistrationScreen from "../screens/WorkRegistrationScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -62,6 +63,16 @@ const MainStackNavigator = (props) => {
 					<Stack.Screen
 						name="StatusLsitScreen"
 						component={StatusLsitScreen}
+						options={{
+							headerShown: false,
+							title: "",
+							headerTitleStyle: {},
+							headerLeft: () => <></>
+						}}
+					/>
+					<Stack.Screen
+						name="WorkRegistrationScreen"
+						component={WorkRegistrationScreen}
 						options={{
 							headerShown: false,
 							title: "",
