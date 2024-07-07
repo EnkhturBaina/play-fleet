@@ -7,7 +7,7 @@ import { Icon } from "@rneui/base";
 import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY } from "../constant";
 import CustomDialog from "../components/CustomDialog";
 
-const StatusLsitScreen = (props) => {
+const StatusListScreen = (props) => {
 	const navigation = useNavigation();
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
@@ -141,6 +141,6 @@ const StatusLsitScreen = (props) => {
 	);
 };
 
-export default StatusLsitScreen;
+export default StatusListScreen;
 
 const styles = StyleSheet.create({});

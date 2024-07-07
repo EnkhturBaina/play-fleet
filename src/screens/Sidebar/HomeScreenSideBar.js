@@ -1,26 +1,30 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Icon } from "@rneui/base";
-import { MAIN_COLOR_GRAY } from "../constant";
+import { MAIN_COLOR_GRAY } from "../../constant";
 import { useNavigation } from "@react-navigation/native";
 
 const HomeScreenSideBar = (props) => {
 	const navigation = useNavigation();
 	const MENU_LIST = [
 		{
-			img: require("../../assets/images/Picture14.png"),
+			img: require("../../../assets/images/Picture14.png"),
 			label: "Ээлжийн өмнөх үзлэг",
 			nav: "NAV_PATH",
 			isMore: true
 		},
 		{
-			img: require("../../assets/images/Picture15.png"),
+			img: require("../../../assets/images/Picture15.png"),
 			label: "Мото цагийн болон түлшний бүртгэл",
 			nav: "NAV_PATH",
-			isMore: true
+			isMore: true,
+			action: () => {
+				props.setIsOpen(false);
+				navigation.navigate("MotoHoursAndFuelScreen");
+			}
 		},
 		{
-			img: require("../../assets/images/Picture16.png"),
+			img: require("../../../assets/images/Picture16.png"),
 			label: "Төлөв бүртгэл",
 			nav: "NAV_PATH",
 			isMore: true,
@@ -29,7 +33,7 @@ const HomeScreenSideBar = (props) => {
 			}
 		},
 		{
-			img: require("../../assets/images/Picture16.png"),
+			img: require("../../../assets/images/Picture16.png"),
 			label: "Бүтээлийн бүртгэл",
 			nav: "NAV_PATH",
 			isMore: true,
@@ -39,13 +43,13 @@ const HomeScreenSideBar = (props) => {
 			}
 		},
 		{
-			img: require("../../assets/images/Picture17.png"),
+			img: require("../../../assets/images/Picture17.png"),
 			label: "Системийн тохиргоо",
 			nav: "NAV_PATH",
 			isMore: false
 		},
 		{
-			img: require("../../assets/images/Picture18.png"),
+			img: require("../../../assets/images/Picture18.png"),
 			label: "Хэл солих",
 			nav: "NAV_PATH",
 			isMore: false

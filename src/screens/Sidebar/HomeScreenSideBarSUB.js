@@ -1,35 +1,35 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Icon } from "@rneui/base";
-import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../constant";
+import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../../constant";
 import { useNavigation } from "@react-navigation/native";
 
 const HomeScreenSideBarSUB = (props) => {
 	const navigation = useNavigation();
 	const MENU_LIST = [
 		{
-			img: require("../../assets/images/Picture10.png"),
+			img: require("../../../assets/images/Picture10.png"),
 			label: "Бүтээлийн бус ажиллах",
 			nav: "NAV_PATH",
 			isMore: true,
 			borderColor: MAIN_COLOR_GREEN
 		},
 		{
-			img: require("../../assets/images/Picture11.png"),
+			img: require("../../../assets/images/Picture11.png"),
 			label: "Саатал",
 			nav: "NAV_PATH",
 			isMore: true,
 			borderColor: MAIN_COLOR_BLUE
 		},
 		{
-			img: require("../../assets/images/Picture12.png"),
+			img: require("../../../assets/images/Picture12.png"),
 			label: "Сул зогсолт",
 			nav: "NAV_PATH",
 			isMore: true,
 			borderColor: MAIN_COLOR
 		},
 		{
-			img: require("../../assets/images/Picture13.png"),
+			img: require("../../../assets/images/Picture13.png"),
 			label: "Эвдрэл",
 			nav: "NAV_PATH",
 			isMore: true,
@@ -51,7 +51,7 @@ const HomeScreenSideBarSUB = (props) => {
 						style={styles.eachMenuContainer}
 						onPress={() => {
 							props.setIsOpen(false);
-							navigation.navigate("StatusLsitScreen");
+							navigation.navigate("StatusListScreen");
 							props.setSideBarStep(1);
 						}}
 					>

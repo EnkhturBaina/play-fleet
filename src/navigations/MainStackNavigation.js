@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { StyleSheet, TouchableOpacity, Text, Dimensions } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { FONT_FAMILY_BOLD } from "../constant";
 import { Icon } from "@rneui/base";
 
 import MainContext from "../contexts/MainContext";
@@ -9,14 +8,19 @@ import MainContext from "../contexts/MainContext";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import CheckListScreen from "../screens/CheckListScreen";
-import StatusLsitScreen from "../screens/StatusLsitScreen";
+import StatusListScreen from "../screens/StatusListScreen";
 import WorkRegistrationScreen from "../screens/WorkRegistration/WorkRegistrationScreen";
+import CreateReisScreen from "../screens/WorkRegistration/Reis/CreateReisScreen";
+import { useNavigation } from "@react-navigation/native";
+import MotoHoursAndFuelScreen from "../screens/MotoHourAndFuel/MotoHoursAndFuelScreen";
+import CreateMotoHourAndFuelScreen from "../screens/MotoHourAndFuel/CreateMotoHourAndFuelScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
 
 const MainStackNavigator = (props) => {
 	const state = useContext(MainContext);
+	const navigation = useNavigation();
 	return (
 		<Stack.Navigator
 			screenOptions={{
@@ -61,8 +65,8 @@ const MainStackNavigator = (props) => {
 						}}
 					/>
 					<Stack.Screen
-						name="StatusLsitScreen"
-						component={StatusLsitScreen}
+						name="StatusListScreen"
+						component={StatusListScreen}
 						options={{
 							headerShown: false,
 							title: "",
@@ -78,6 +82,58 @@ const MainStackNavigator = (props) => {
 							title: "",
 							headerTitleStyle: {},
 							headerLeft: () => <></>
+						}}
+					/>
+					<Stack.Screen
+						name="CreateReisScreen"
+						component={CreateReisScreen}
+						options={{
+							title: "",
+							headerTitleStyle: {
+								fontWeight: "bold"
+							},
+							headerLeft: () => (
+								<TouchableOpacity
+									style={styles.headerLeftContainer}
+									onPress={() => {
+										navigation.goBack();
+									}}
+								>
+									<Icon name="keyboard-arrow-left" type="material-icons" size={30} />
+									<Text style={styles.headerLeftText}>Рейс бүртгэл</Text>
+								</TouchableOpacity>
+							)
+						}}
+					/>
+					<Stack.Screen
+						name="MotoHoursAndFuelScreen"
+						component={MotoHoursAndFuelScreen}
+						options={{
+							headerShown: false,
+							title: "",
+							headerTitleStyle: {},
+							headerLeft: () => <></>
+						}}
+					/>
+					<Stack.Screen
+						name="CreateMotoHourAndFuelScreen"
+						component={CreateMotoHourAndFuelScreen}
+						options={{
+							title: "",
+							headerTitleStyle: {
+								fontWeight: "bold"
+							},
+							headerLeft: () => (
+								<TouchableOpacity
+									style={styles.headerLeftContainer}
+									onPress={() => {
+										navigation.goBack();
+									}}
+								>
+									<Icon name="keyboard-arrow-left" type="material-icons" size={30} />
+									<Text style={styles.headerLeftText}>Мото цагийн болон түлшний бүртгэл</Text>
+								</TouchableOpacity>
+							)
 						}}
 					/>
 				</>
@@ -97,7 +153,7 @@ const styles = StyleSheet.create({
 	},
 	headerLeftText: {
 		marginLeft: 5,
-		fontFamily: FONT_FAMILY_BOLD,
+		fontWeight: "bold",
 		fontSize: 18
 	}
 });

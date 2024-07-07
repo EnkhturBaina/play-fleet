@@ -67,6 +67,7 @@ const WorkRegistrationScreen = (props) => {
 								margin: 5,
 								padding: 8
 							}}
+							key={index}
 						>
 							<Text style={{ alignSelf: "center", fontSize: 18 }}>{label}</Text>
 						</TouchableOpacity>
@@ -107,7 +108,7 @@ const WorkRegistrationScreen = (props) => {
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
 				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Бүтээлийн бүртгэл</Text>
 			</TouchableOpacity>
-			<View style={{ flex: 1, paddingHorizontal: 10, marginTop: 10 }}>
+			<View style={{ flex: 1, paddingHorizontal: 20, marginTop: 10 }}>
 				<Tab.Navigator
 					tabBar={(props) => <MyTabBar {...props} />}
 					screenOptions={{ swipeEnabled: false }}

@@ -35,7 +35,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import MapView, { Marker, Circle, PROVIDER_GOOGLE } from "react-native-maps";
 import { Dropdown } from "react-native-element-dropdown";
 import SideMenu from "react-native-side-menu-updated";
-import MainSideBar from "./MainSideBar";
+import MainSideBar from "./Sidebar/MainSideBar";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
 const width = Dimensions.get("screen").width;
