@@ -3,6 +3,7 @@ import "react-native-gesture-handler";
 import { MainStore } from "./src/contexts/MainContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MainStackNavigator } from "./src/navigations/MainStackNavigation";
+import "./reanimatedConfig";
 
 export default function App() {
 	return (
