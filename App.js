@@ -4,8 +4,13 @@ import { MainStore } from "./src/contexts/MainContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MainStackNavigator } from "./src/navigations/MainStackNavigation";
 import "./reanimatedConfig";
+import { useEffect } from "react";
+import db, { initDatabase } from "./src/screens/TestRealm/sqllite";
 
 export default function App() {
+	useEffect(() => {
+		// initDatabase(db);
+	}, []);
 	return (
 		<SafeAreaProvider>
 			<NavigationContainer>

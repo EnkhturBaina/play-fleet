@@ -213,7 +213,12 @@ const HomeScreen = (props) => {
 								resizeMode="contain"
 							/>
 						</TouchableOpacity>
-						<TouchableOpacity onPress={() => console.log("X")} style={styles.eachFloatButton}>
+						<TouchableOpacity
+							onPress={() => {
+								props.navigation.navigate("TestRealmScreen");
+							}}
+							style={styles.eachFloatButton}
+						>
 							<Image
 								source={require("../../assets/images/Picture2.png")}
 								style={{

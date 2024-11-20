@@ -14,6 +14,7 @@ import CreateReisScreen from "../screens/WorkRegistration/Reis/CreateReisScreen"
 import { useNavigation } from "@react-navigation/native";
 import MotoHoursAndFuelScreen from "../screens/MotoHourAndFuel/MotoHoursAndFuelScreen";
 import CreateMotoHourAndFuelScreen from "../screens/MotoHourAndFuel/CreateMotoHourAndFuelScreen";
+import TestRealmScreen from "../screens/TestRealmScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -134,6 +135,16 @@ const MainStackNavigator = (props) => {
 									<Text style={styles.headerLeftText}>Мото цагийн болон түлшний бүртгэл</Text>
 								</TouchableOpacity>
 							)
+						}}
+					/>
+					<Stack.Screen
+						name="TestRealmScreen"
+						component={TestRealmScreen}
+						options={{
+							headerShown: false,
+							title: "",
+							headerTitleStyle: {},
+							headerLeft: () => <></>
 						}}
 					/>
 				</>
