@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
-import { fetchData, insertData } from "../helper/db";
+import { deleteData, fetchData, insertData, updateData } from "../helper/db";
 
 const TestSQL = () => {
 	const [offlineData, setOfflineData] = useState([]);
@@ -20,16 +20,26 @@ const TestSQL = () => {
 			</TouchableOpacity>
 			<TouchableOpacity
 				onPress={() => {
-					insertData("Коффее", "zzz", "хаяг№", 23.12, -33.233);
+					insertData("Коффее", "zzz", "хаяг№", 23.12, 33.233);
 				}}
 				style={styles.container}
 			>
 				<Text style={styles.text}>INSERT</Text>
 			</TouchableOpacity>
-			<TouchableOpacity onPress={() => {}} style={styles.container}>
+			<TouchableOpacity
+				onPress={() => {
+					updateData(3);
+				}}
+				style={styles.container}
+			>
 				<Text style={styles.text}>UPDATE</Text>
 			</TouchableOpacity>
-			<TouchableOpacity onPress={() => {}} style={styles.container}>
+			<TouchableOpacity
+				onPress={() => {
+					deleteData(1);
+				}}
+				style={styles.container}
+			>
 				<Text style={styles.text}>DELETE</Text>
 			</TouchableOpacity>
 		</View>

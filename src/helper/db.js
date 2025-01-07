@@ -1,11 +1,11 @@
 import * as SQLite from "expo-sqlite";
+import NetInfo from "@react-native-community/netinfo";
 
 export const db = SQLite.openDatabaseSync("offline_data");
 
-// 1. SQLite хүснэгт үүсгэх
+// 1.DONE SQLite хүснэгт үүсгэх
 export const createTable = async () => {
 	console.log("RUN createTable");
-
 	try {
 		await db.execAsync(`
             CREATE TABLE IF NOT EXISTS places (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, imageUri TEXT NOT NULL, address TEXT NOT NULL, lat REAL NOT NULL, lng REAL NOT NULL);
@@ -15,17 +15,24 @@ export const createTable = async () => {
 	}
 };
 
-// 2. Локал өгөгдлийг хадгалах функц
+// 2.DONE Локал өгөгдлийг хадгалах функц
 export const insertData = async (title, imageUri, address, lat, lng) => {
-	console.log("title", title);
+	try {
+		const result = await db.runAsync("INSERT INTO places (title, imageUri, address, lat, lng) VALUES (?, ?, ?, ?, ?)", [
+			title,
+			imageUri,
+			address,
+			lat,
+			lng
+		]);
 
-	const statement = await db.prepareAsync(
-		"INSERT INTO places (title, imageUri, address, lat, lng) VALUES ($title, $imageUri, $address, $lat, $lng)"
-	);
-	console.log("insertData statement", statement);
+		console.log("result", result);
+	} catch (error) {
+		console.log("error", error);
+	}
 };
 
-// 3. Локал өгөгдлийг авах функц
+// 3.DONE Локал өгөгдлийг авах функц
 export const fetchData = async () => {
 	console.log("RUN fetchData");
 	try {
@@ -37,7 +44,27 @@ export const fetchData = async () => {
 	}
 };
 
-// 4. Локал өгөгдлийг сервер рүү илгээх функц
+// 4.DONE Локал өгөгдлийг устгах функц
+export const deleteData = async (id) => {
+	try {
+		const result = await db.runAsync("DELETE FROM places WHERE id = $value", { $value: id });
+		console.log("delete result", result);
+	} catch (error) {
+		console.log("error", error);
+	}
+};
+
+// 5.DONE Локал өгөгдлийг засах функц
+export const updateData = async (id) => {
+	try {
+		const result = await db.runAsync("UPDATE places SET imageUri = ? WHERE id = ?", ["z1", id]);
+		console.log("update result", result);
+	} catch (error) {
+		console.log("error", error);
+	}
+};
+
+// 6. Локал өгөгдлийг сервер рүү илгээх функц
 export const syncDataToServer = async () => {
 	db.transaction((tx) => {
 		tx.executeSql(
@@ -72,24 +99,14 @@ export const syncDataToServer = async () => {
 	});
 };
 
-// 5. Локал өгөгдлийг устгах функц
-export const deleteData = (id) => {
-	db.transaction((tx) => {
-		tx.executeSql(
-			"DELETE FROM local_data WHERE id = ?;",
-			[id],
-			() => console.log(`Data with id ${id} deleted successfully`),
-			(_, error) => console.error("Error deleting data:", error)
-		);
-	});
-};
-
 // 6. Сүлжээний статусыг хянах функц
 export const monitorNetworkStatus = () => {
 	NetInfo.addEventListener((state) => {
+		console.log("state", state);
+
 		if (state.isConnected) {
 			console.log("Internet is available. Syncing data to server...");
-			syncDataToServer(); // Сүлжээтэй үед датаг сервер рүү илгээх
+			// syncDataToServer(); // Сүлжээтэй үед датаг сервер рүү илгээх
 		} else {
 			console.log("No internet connection. Data will be stored locally.");
 		}
