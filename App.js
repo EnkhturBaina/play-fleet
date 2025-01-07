@@ -5,12 +5,13 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MainStackNavigator } from "./src/navigations/MainStackNavigation";
 import "./reanimatedConfig";
 import { useEffect } from "react";
-import db, { initDatabase } from "./src/screens/TestRealm/sqllite";
+import { createTable } from "./src/helper/db";
 
 export default function App() {
 	useEffect(() => {
-		// initDatabase(db);
+		createTable();
 	}, []);
+
 	return (
 		<SafeAreaProvider>
 			<NavigationContainer>

@@ -45,7 +45,6 @@ const LoginScreen = (props) => {
 	const onDismissSnackBar = () => setVisibleSnack(false);
 
 	const login = async () => {
-		console.log("A");
 		state.setIsLoggedIn(true);
 		// if (state.email == "") {
 		// 	onToggleSnackBar("И-мэйл хаягаа оруулна уу.");

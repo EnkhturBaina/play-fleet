@@ -14,7 +14,7 @@ import CreateReisScreen from "../screens/WorkRegistration/Reis/CreateReisScreen"
 import { useNavigation } from "@react-navigation/native";
 import MotoHoursAndFuelScreen from "../screens/MotoHourAndFuel/MotoHoursAndFuelScreen";
 import CreateMotoHourAndFuelScreen from "../screens/MotoHourAndFuel/CreateMotoHourAndFuelScreen";
-import TestRealmScreen from "../screens/TestRealmScreen";
+import TestSQL from "../screens/TestSQL";
 import * as SplashScreen from "expo-splash-screen";
 
 const Stack = createStackNavigator();
@@ -161,8 +161,8 @@ const MainStackNavigator = (props) => {
 							}}
 						/>
 						<Stack.Screen
-							name="TestRealmScreen"
-							component={TestRealmScreen}
+							name="TestSQL"
+							component={TestSQL}
 							options={{
 								headerShown: false,
 								title: "",

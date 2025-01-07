@@ -70,7 +70,6 @@ export const MainStore = (props) => {
 	const [isActiveTimer, setIsActiveTimer] = useState(false);
 
 	const handleStart = () => {
-		console.log("X");
 		setIsActiveTimer(true);
 	};
 
@@ -94,7 +93,7 @@ export const MainStore = (props) => {
 
 	const checkLocation = () => {
 		//***** LOCATION мэдээлэл авах
-		console.log("RUN checkLocation");
+		// console.log("RUN checkLocation");
 		(async () => {
 			let { status } = await Location.requestForegroundPermissionsAsync();
 			setLocationStatus(status);

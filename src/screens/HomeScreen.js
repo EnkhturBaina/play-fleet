@@ -55,7 +55,7 @@ const HomeScreen = (props) => {
 	const isFocused = useIsFocused();
 
 	useEffect(() => {
-		console.log("STATE", state.location);
+		// console.log("STATE", state.location);
 	}, []);
 
 	const handleSheetChanges = useCallback((index) => {
@@ -203,7 +203,12 @@ const HomeScreen = (props) => {
 						>
 							<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
 						</TouchableOpacity>
-						<TouchableOpacity onPress={() => console.log("X")} style={styles.eachFloatButton}>
+						<TouchableOpacity
+							onPress={() => {
+								console.log("X");
+							}}
+							style={styles.eachFloatButton}
+						>
 							<Image
 								source={require("../../assets/images/route.png")}
 								style={{
@@ -215,7 +220,7 @@ const HomeScreen = (props) => {
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={() => {
-								props.navigation.navigate("TestRealmScreen");
+								props.navigation.navigate("TestSQL");
 							}}
 							style={styles.eachFloatButton}
 						>

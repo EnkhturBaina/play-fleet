@@ -36,7 +36,6 @@ const HomeScreenSideBarSUB = (props) => {
 			borderColor: MAIN_COLOR_RED
 		}
 	];
-	console.log("2 => ", props);
 
 	return (
 		<View>
