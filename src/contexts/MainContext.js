@@ -25,6 +25,7 @@ Notifications.setNotificationHandler({
 
 export const MainStore = (props) => {
 	const navigation = useNavigation();
+	const [appIsReady, setAppIsReady] = useState(false);
 
 	const [mainCompanyId, setMainCompanyId] = useState(""); //*****Company ID
 	const [dispId, setDispId] = useState(""); //*****Dispatcher ID
@@ -103,6 +104,7 @@ export const MainStore = (props) => {
 				//   "Байршлын тохиргоо зөвшөөрөөгүй бол цаг бүртгэх боломжгүйг анхаарна уу."
 				// );
 				setIsLoading(false);
+				setAppIsReady(true);
 				// setIsLoggedIn(false);
 				return;
 			}
@@ -163,6 +165,7 @@ export const MainStore = (props) => {
 				} else {
 					setIsLoggedIn(false);
 					setIsLoading(false);
+					setAppIsReady(true);
 				}
 			});
 		} catch (error) {
@@ -195,6 +198,7 @@ export const MainStore = (props) => {
 									getUserDataLocalStorage(uuid_value);
 								} else {
 									setIsLoading(false);
+									setAppIsReady(true);
 									setGrantAccess(false);
 								}
 						  })()
@@ -305,7 +309,9 @@ export const MainStore = (props) => {
 				isActiveTimer,
 				setIsActiveTimer,
 				removeNonNumeric,
-				addCommas
+				addCommas,
+				appIsReady,
+				setAppIsReady
 			}}
 		>
 			{props.children}
