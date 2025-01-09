@@ -209,7 +209,13 @@ const LoginScreen = (props) => {
 										marginBottom: 20
 									}}
 								>
-									<TextInput style={styles.generalInput} value={state.dispId} editable={false} />
+									<TextInput
+										style={styles.generalInput}
+										value={state.dispId}
+										editable={false}
+										placeholder="_ _ _ _"
+										maxLength={4}
+									/>
 								</View>
 							</>
 						);
