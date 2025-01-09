@@ -3,7 +3,6 @@ import {
 	Text,
 	View,
 	TouchableOpacity,
-	ScrollView,
 	KeyboardAvoidingView,
 	Platform,
 	ActivityIndicator,
@@ -27,7 +26,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import LoginCompanyDialog from "../components/LoginCompanyDialog";
 import { Image } from "expo-image";
-// import { v4 as uuidv4 } from "uuid";
 
 const LoginScreen = (props) => {
 	const state = useContext(MainContext);
@@ -172,63 +170,89 @@ const LoginScreen = (props) => {
 				flexDirection: "column"
 			}}
 		>
-			<ScrollView
-				contentContainerStyle={styles.container}
-				bounces={false}
-				showsVerticalScrollIndicator={false}
-				nestedScrollEnabled
-			>
+			<View style={styles.container} showsVerticalScrollIndicator={false} nestedScrollEnabled>
 				<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={30} />
 
-				<TouchableOpacity
-					style={styles.loginImageContainer}
-					onLongPress={() => {
-						console.log("LONG PRESS");
-						setVisibleDialog(true);
-					}}
-					delayLongPress={500}
-					activeOpacity={1}
-				>
-					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} contentFit="contain" />
-				</TouchableOpacity>
-				{state.loginErrorMsg != "" ? (
-					<Text
-						style={{
-							fontWeight: "bold",
-							color: "red",
-							textAlign: "center",
-							marginHorizontal: 20
-						}}
-					>
-						{state.loginErrorMsg}
-					</Text>
-				) : null}
-				<View
-					style={{
-						width: "80%",
-						flexDirection: "row",
-						justifyContent: "space-evenly",
-						alignItems: "center",
-						alignSelf: "center"
-					}}
-				>
-					<TextInput label="Диспетчер ID" style={styles.generalInput} value={state.dispId} editable={false} />
-					<TouchableOpacity
-						style={{
-							height: 50,
-							width: 50,
-							justifyContent: "center",
-							borderRadius: MAIN_BORDER_RADIUS
-						}}
-						onPress={() => {
-							state.setDispId((prevText) => prevText.slice(0, prevText.length - 1));
-						}}
-					>
-						<Icon name="backspace-outline" type="ionicon" size={30} />
-					</TouchableOpacity>
-				</View>
 				<FlatList
 					nestedScrollEnabled
+					ListHeaderComponent={() => {
+						return (
+							<>
+								<TouchableOpacity
+									style={styles.loginImageContainer}
+									onLongPress={() => {
+										console.log("LONG PRESS");
+										setVisibleDialog(true);
+									}}
+									delayLongPress={500}
+									activeOpacity={1}
+								>
+									<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} contentFit="contain" />
+								</TouchableOpacity>
+								{state.loginErrorMsg != "" ? (
+									<Text
+										style={{
+											fontWeight: "bold",
+											color: "red",
+											textAlign: "center",
+											marginHorizontal: 20
+										}}
+									>
+										{state.loginErrorMsg}
+									</Text>
+								) : null}
+								<View
+									style={{
+										width: "80%",
+										alignItems: "center",
+										alignSelf: "center",
+										marginBottom: 20
+									}}
+								>
+									<TextInput style={styles.generalInput} value={state.dispId} editable={false} />
+								</View>
+							</>
+						);
+					}}
+					ListFooterComponent={() => {
+						return (
+							<View style={styles.stackSection3}>
+								<Button
+									disabled={loadingAction}
+									containerStyle={{
+										width: "100%",
+										marginTop: 10,
+										height: 50
+									}}
+									buttonStyle={{
+										backgroundColor: MAIN_COLOR,
+										borderRadius: MAIN_BORDER_RADIUS,
+										paddingVertical: 10,
+										height: MAIN_BUTTON_HEIGHT
+									}}
+									title={
+										<>
+											<Text
+												style={{
+													fontSize: 16,
+													color: "#fff",
+													fontWeight: "bold"
+												}}
+											>
+												Нэвтрэх
+											</Text>
+											{loadingAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
+										</>
+									}
+									titleStyle={{
+										fontSize: 16,
+										fontWeight: "bold"
+									}}
+									onPress={() => login()}
+								/>
+							</View>
+						);
+					}}
 					bounces={false}
 					columnWrapperStyle={{
 						justifyContent: "space-evenly"
@@ -237,7 +261,7 @@ const LoginScreen = (props) => {
 						marginVertical: 5,
 						width: "100%"
 					}}
-					data={[1, 2, 3, 4, 5, 6, 7, 8, 9, "x", 0, "login"]}
+					data={[1, 2, 3, 4, 5, 6, 7, 8, 9, "x", 0, "backspace"]}
 					renderItem={({ item }) => {
 						if (item == "x") {
 							return (
@@ -246,10 +270,13 @@ const LoginScreen = (props) => {
 								</TouchableOpacity>
 							);
 						}
-						if (item == "login") {
+						if (item == "backspace") {
 							return (
-								<TouchableOpacity style={styles.numbers} onPress={() => login()}>
-									<Icon name="arrow-right" type="feather" size={30} color={MAIN_COLOR} />
+								<TouchableOpacity
+									style={styles.numbers}
+									onPress={() => state.setDispId((prevText) => prevText.slice(0, prevText.length - 1))}
+								>
+									<Icon name="backspace-outline" type="ionicon" size={30} color={MAIN_COLOR} />
 								</TouchableOpacity>
 							);
 						}
@@ -270,41 +297,6 @@ const LoginScreen = (props) => {
 					numColumns={3}
 					keyExtractor={(item, index) => index}
 				/>
-				<View style={styles.stackSection3}>
-					<Button
-						disabled={loadingAction}
-						containerStyle={{
-							width: "100%",
-							marginTop: 10,
-							height: 50
-						}}
-						buttonStyle={{
-							backgroundColor: MAIN_COLOR,
-							borderRadius: MAIN_BORDER_RADIUS,
-							paddingVertical: 10,
-							height: MAIN_BUTTON_HEIGHT
-						}}
-						title={
-							<>
-								<Text
-									style={{
-										fontSize: 16,
-										color: "#fff",
-										fontWeight: "bold"
-									}}
-								>
-									Нэвтрэх
-								</Text>
-								{loadingAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
-							</>
-						}
-						titleStyle={{
-							fontSize: 16,
-							fontWeight: "bold"
-						}}
-						onPress={() => login()}
-					/>
-				</View>
 
 				<LoginCompanyDialog
 					visible={visibleDialog}
@@ -319,7 +311,7 @@ const LoginScreen = (props) => {
 					DeclineBtnText="Хаах"
 					type={dialogType}
 				/>
-			</ScrollView>
+			</View>
 		</KeyboardAvoidingView>
 	);
 };
@@ -328,7 +320,7 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
 	container: {
-		flexGrow: 1,
+		flex: 1,
 		backgroundColor: "#fff",
 		justifyContent: "center"
 	},
@@ -350,14 +342,15 @@ const styles = StyleSheet.create({
 	generalInput: {
 		width: "80%",
 		// height: 40,
-		backgroundColor: "#fff",
 		padding: 0,
 		height: MAIN_INPUT_HEIGHT,
-		fontSize: 18,
+		fontSize: 40,
+		fontWeight: "600",
 		textAlign: "center",
 		borderWidth: 1,
 		borderRadius: MAIN_BORDER_RADIUS,
-		borderColor: MAIN_COLOR
+		borderColor: MAIN_COLOR,
+		letterSpacing: "10"
 	},
 	stackSection2: {
 		flexDirection: "row",
