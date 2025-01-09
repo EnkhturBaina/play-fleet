@@ -16,6 +16,7 @@ import MotoHoursAndFuelScreen from "../screens/MotoHourAndFuel/MotoHoursAndFuelS
 import CreateMotoHourAndFuelScreen from "../screens/MotoHourAndFuel/CreateMotoHourAndFuelScreen";
 import TestSQL from "../screens/TestSQL";
 import * as SplashScreen from "expo-splash-screen";
+import TestRenderUurhai from "../screens/TestRenderUurhai";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -163,6 +164,16 @@ const MainStackNavigator = (props) => {
 						<Stack.Screen
 							name="TestSQL"
 							component={TestSQL}
+							options={{
+								headerShown: false,
+								title: "",
+								headerTitleStyle: {},
+								headerLeft: () => <></>
+							}}
+						/>
+						<Stack.Screen
+							name="TestRenderUurhai"
+							component={TestRenderUurhai}
 							options={{
 								headerShown: false,
 								title: "",

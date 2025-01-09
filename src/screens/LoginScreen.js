@@ -17,6 +17,7 @@ import { TextInput } from "react-native-paper";
 import { MAIN_COLOR, MAIN_BORDER_RADIUS, SERVER_URL, MAIN_INPUT_HEIGHT, MAIN_BUTTON_HEIGHT } from "../constant";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import LoginCompanyDialog from "../components/LoginCompanyDialog";
 // import { v4 as uuidv4 } from "uuid";
 
 const LoginScreen = (props) => {
@@ -26,6 +27,10 @@ const LoginScreen = (props) => {
 	const [snackBarMsg, setSnackBarMsg] = useState("");
 
 	const [loadingAction, setLoadingAction] = useState(false);
+
+	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
+	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
+	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
 
 	useEffect(() => {
 		(async () => {
@@ -161,9 +166,16 @@ const LoginScreen = (props) => {
 			<ScrollView contentContainerStyle={styles.container} bounces={false} showsVerticalScrollIndicator={false}>
 				<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={30} />
 
-				<View style={styles.loginImageContainer}>
+				<TouchableOpacity
+					style={styles.loginImageContainer}
+					onLongPress={() => {
+						console.log("LONG PRESS");
+						setVisibleDialog(true);
+					}}
+					delayLongPress={500}
+				>
 					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} />
-				</View>
+				</TouchableOpacity>
 				{state.loginErrorMsg != "" ? (
 					<Text
 						style={{
@@ -257,6 +269,20 @@ const LoginScreen = (props) => {
 						onPress={() => login()}
 					/>
 				</View>
+
+				<LoginCompanyDialog
+					visible={visibleDialog}
+					confirmFunction={() => {
+						setVisibleDialog(false);
+					}}
+					declineFunction={() => {
+						setVisibleDialog(false);
+					}}
+					text={dialogText}
+					confirmBtnText="Тийм"
+					DeclineBtnText="Үгүй"
+					type={dialogType}
+				/>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);

@@ -220,7 +220,8 @@ const HomeScreen = (props) => {
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={() => {
-								props.navigation.navigate("TestSQL");
+								// props.navigation.navigate("TestSQL");
+								props.navigation.navigate("TestRenderUurhai");
 							}}
 							style={styles.eachFloatButton}
 						>
