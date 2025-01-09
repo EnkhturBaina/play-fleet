@@ -22,6 +22,7 @@ export default function ({ visible, confirmFunction, declineFunction, text, conf
 			isVisible={visible}
 			overlayStyle={{
 				padding: 10,
+				paddingTop: 20,
 				backgroundColor: "#fff",
 				borderRadius: MAIN_BORDER_RADIUS,
 				alignItems: "center",
@@ -72,9 +73,11 @@ export default function ({ visible, confirmFunction, declineFunction, text, conf
 					}
 					if (item == "login") {
 						return (
-							<TouchableOpacity style={styles.numbers} onPress={() => state.setMainCompanyId("")}>
-								<Icon name="arrow-right" type="feather" size={30} color={MAIN_COLOR} />
-							</TouchableOpacity>
+							<TouchableOpacity
+								style={[styles.numbers, { backgroundColor: "#FFF" }]}
+								onPress={() => state.setMainCompanyId("")}
+								disabled
+							></TouchableOpacity>
 						);
 					}
 					return (

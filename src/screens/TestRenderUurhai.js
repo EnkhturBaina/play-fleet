@@ -2,21 +2,21 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import MapView, { Polygon } from "react-native-maps";
 import * as FileSystem from "expo-file-system";
-import { parseString, parseStringPromise } from "react-native-xml2js";
+import { parseString } from "react-native-xml2js";
 import { useNavigation } from "@react-navigation/native";
 
-const KMLRenderer = ({ kmlData }) => {
+const KMLRenderer = () => {
 	const navigation = useNavigation();
-	const [coordinates, setCoordinates] = useState([]);
 	const [fileContent, setFileContent] = useState(null);
+	const [polygons, setPolygons] = useState([]);
 
 	const checkIfFileExists = async () => {
-		const fileUri = FileSystem.documentDirectory + "server_data.txt";
+		const fileUri = FileSystem.documentDirectory + "kml_data.txt";
 
 		// 1. Хэрэв файл хадгалагдсан бол түүнийг унших
 		try {
 			const fileInfo = await FileSystem.getInfoAsync(fileUri);
-			console.log("fileInfo", fileInfo);
+			// console.log("fileInfo", fileInfo);
 
 			if (fileInfo.exists) {
 				const fileData = await FileSystem.readAsStringAsync(fileUri);
@@ -43,21 +43,19 @@ const KMLRenderer = ({ kmlData }) => {
 					return;
 				}
 
-				const kmlCoordinates = result.kml.Document[0].Placemark.map((placemark) => {
-					console.log("CHECK ========>", placemark.Polygon[0].outerBoundaryIs[0].LinearRing[0]);
-
-					const coords = placemark.Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates[0];
-					return coords.split(" ").map((coord) => {
-						const [longitude, latitude] = coord.split(",");
-						return {
-							latitude: parseFloat(latitude),
-							longitude: parseFloat(longitude)
-						};
-					});
+				const placemarks = result.kml.Document[0].Placemark || []; // Placemark элементийг авах
+				const extractedPolygons = placemarks.map((placemark) => {
+					const coordinatesString = placemark.Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates[0];
+					const coordinatesArray = coordinatesString
+						.trim()
+						.split(" ")
+						.map((coordinate) => {
+							const [longitude, latitude] = coordinate.split(",").map(Number);
+							return { latitude, longitude };
+						});
+					return coordinatesArray;
 				});
-				console.log("kmlCoordinates[0]", kmlCoordinates[0]);
-
-				setCoordinates(kmlCoordinates[0]);
+				setPolygons(extractedPolygons);
 			});
 		}
 	}, [fileContent]);
@@ -72,19 +70,23 @@ const KMLRenderer = ({ kmlData }) => {
 			>
 				<Text style={{}}>BACK</Text>
 			</TouchableOpacity>
-			{fileContent ? (
+			{fileContent && polygons?.length > 0 ? (
 				<MapView
 					style={{ flex: 1 }}
 					initialRegion={{ latitude: 47.91887, longitude: 106.9176, latitudeDelta: 0.0121, longitudeDelta: 0.0121 }}
 				>
-					{coordinates.length > 0 && (
-						<Polygon
-							coordinates={coordinates}
-							strokeColor="rgba(0,0,255,0.5)"
-							fillColor="rgba(0,0,255,0.3)"
-							strokeWidth={2}
-						/>
-					)}
+					{polygons?.length > 0 &&
+						polygons?.map((el, index) => {
+							return (
+								<Polygon
+									key={index}
+									coordinates={el}
+									strokeColor="rgba(0,0,255,0.5)"
+									fillColor="rgba(0,0,255,0.3)"
+									strokeWidth={2}
+								/>
+							);
+						})}
 				</MapView>
 			) : (
 				<Text>LOADING fileContent</Text>
@@ -105,7 +107,7 @@ const TestRenderUurhai = () => {
 				);
 				const serverFileContent = await response.text();
 
-				const fileUri = FileSystem.documentDirectory + "server_data.txt";
+				const fileUri = FileSystem.documentDirectory + "kml_data.txt";
 
 				await FileSystem.writeAsStringAsync(fileUri, serverFileContent);
 

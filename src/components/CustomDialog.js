@@ -1,7 +1,8 @@
-import { StyleSheet, Text, Image, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { MAIN_BORDER_RADIUS, MAIN_COLOR } from "../constant";
 import { Dialog, Button } from "@rneui/themed";
+import { Image } from "expo-image";
 
 export default function ({ visible, confirmFunction, declineFunction, text, confirmBtnText, DeclineBtnText, type }) {
 	var imageType = null;
@@ -23,7 +24,7 @@ export default function ({ visible, confirmFunction, declineFunction, text, conf
 				alignItems: "center"
 			}}
 		>
-			<Image source={imageType} style={{ width: 100, height: 100 }} />
+			<Image source={imageType} style={{ width: 100, height: 100 }} contentFit="contain" />
 			<Text
 				style={{
 					fontWeight: "bold",

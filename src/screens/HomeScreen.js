@@ -3,7 +3,6 @@ import {
 	Text,
 	View,
 	Platform,
-	Image,
 	ScrollView,
 	TouchableOpacity,
 	ActivityIndicator,
@@ -37,6 +36,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import SideMenu from "react-native-side-menu-updated";
 import MainSideBar from "./Sidebar/MainSideBar";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { Image } from "expo-image";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -215,7 +215,7 @@ const HomeScreen = (props) => {
 									height: 35,
 									width: 35
 								}}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 						<TouchableOpacity
@@ -231,7 +231,7 @@ const HomeScreen = (props) => {
 									height: 35,
 									width: 35
 								}}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 						<TouchableOpacity onPress={() => setIsOpen(!isOpen)} style={styles.eachFloatButton}>
@@ -241,7 +241,7 @@ const HomeScreen = (props) => {
 									height: 35,
 									width: 35
 								}}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 					</View>

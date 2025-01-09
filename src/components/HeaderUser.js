@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
-import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { MAIN_COLOR } from "../constant";
 import MainContext from "../contexts/MainContext";
 import notif from "../../assets/notif.png";
 import icon from "../../assets/icon.png";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { Image } from "expo-image";
 
 const HeaderUser = (props) => {
 	const navigation = useNavigation();
@@ -18,7 +19,11 @@ const HeaderUser = (props) => {
 				style={styles.headerFirstSection}
 				onPress={() => navigation.navigate("ProfileTab")}
 			>
-				<Image source={state.userData?.Image ? { uri: state.userData?.Image } : icon} style={styles.userImg} />
+				<Image
+					source={state.userData?.Image ? { uri: state.userData?.Image } : icon}
+					style={styles.userImg}
+					contentFit="contain"
+				/>
 				<View style={styles.titleContainer}>
 					<Text style={styles.topText}>Сайн байна уу?</Text>
 					<Text style={styles.userName} numberOfLines={1}>
@@ -38,7 +43,7 @@ const HeaderUser = (props) => {
 						}
 					}}
 				>
-					<Image source={notif} style={{ width: 35, height: 35, resizeMode: "contain" }} />
+					<Image source={notif} style={{ width: 35, height: 35 }} contentFit="contain" />
 				</TouchableOpacity>
 			) : null}
 		</View>

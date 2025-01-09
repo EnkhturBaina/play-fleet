@@ -189,7 +189,7 @@ const LoginScreen = (props) => {
 					delayLongPress={500}
 					activeOpacity={1}
 				>
-					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} />
+					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} contentFit="contain" />
 				</TouchableOpacity>
 				{state.loginErrorMsg != "" ? (
 					<Text
@@ -248,7 +248,7 @@ const LoginScreen = (props) => {
 						}
 						if (item == "login") {
 							return (
-								<TouchableOpacity style={styles.numbers} onPress={() => state.setDispId("")}>
+								<TouchableOpacity style={styles.numbers} onPress={() => login()}>
 									<Icon name="arrow-right" type="feather" size={30} color={MAIN_COLOR} />
 								</TouchableOpacity>
 							);
@@ -345,7 +345,6 @@ const styles = StyleSheet.create({
 	loginImg: {
 		width: 180,
 		height: 150,
-		resizeMode: "contain",
 		marginTop: "30%"
 	},
 	generalInput: {
