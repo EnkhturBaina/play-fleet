@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import MapView, { Polygon } from "react-native-maps";
 import * as FileSystem from "expo-file-system";
-import { parseString, parseStringPromise } from "xml2js";
+import { parseString, parseStringPromise } from "react-native-xml2js";
+import { useNavigation } from "@react-navigation/native";
 
 const KMLRenderer = ({ kmlData }) => {
+	const navigation = useNavigation();
 	const [coordinates, setCoordinates] = useState([]);
 	const [fileContent, setFileContent] = useState(null);
 
 	const checkIfFileExists = async () => {
 		const fileUri = FileSystem.documentDirectory + "server_data.txt";
 
-		// 1. Хэрэв файлын агуулга хадгалагдсан бол түүнийг унших
+		// 1. Хэрэв файл хадгалагдсан бол түүнийг унших
 		try {
 			const fileInfo = await FileSystem.getInfoAsync(fileUri);
 			console.log("fileInfo", fileInfo);
@@ -62,6 +64,14 @@ const KMLRenderer = ({ kmlData }) => {
 
 	return (
 		<>
+			<TouchableOpacity
+				style={{ marginTop: 100, width: 100, height: 50 }}
+				onPress={() => {
+					navigation.goBack();
+				}}
+			>
+				<Text style={{}}>BACK</Text>
+			</TouchableOpacity>
 			{fileContent ? (
 				<MapView
 					style={{ flex: 1 }}
@@ -110,16 +120,5 @@ const TestRenderUurhai = () => {
 	}, []);
 	return <View style={{ flex: 1 }}>{kmlData ? <KMLRenderer kmlData={kmlData} /> : <Text>Loading KML...</Text>}</View>;
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1
-	},
-	errorText: {
-		color: "red",
-		textAlign: "center",
-		marginTop: 20
-	}
-});
 
 export default TestRenderUurhai;

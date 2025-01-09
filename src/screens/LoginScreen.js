@@ -1,5 +1,4 @@
 import {
-	Image,
 	StyleSheet,
 	Text,
 	View,
@@ -7,17 +6,27 @@ import {
 	ScrollView,
 	KeyboardAvoidingView,
 	Platform,
-	ActivityIndicator
+	ActivityIndicator,
+	FlatList,
+	TextInput
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { Icon, CheckBox, Button } from "@rneui/themed";
 import MainContext from "../contexts/MainContext";
 import CustomSnackbar from "../components/CustomSnackbar";
-import { TextInput } from "react-native-paper";
-import { MAIN_COLOR, MAIN_BORDER_RADIUS, SERVER_URL, MAIN_INPUT_HEIGHT, MAIN_BUTTON_HEIGHT } from "../constant";
+import {
+	MAIN_COLOR,
+	MAIN_BORDER_RADIUS,
+	SERVER_URL,
+	MAIN_INPUT_HEIGHT,
+	MAIN_BUTTON_HEIGHT,
+	MAIN_COLOR_GRAY,
+	MAIN_COLOR_RED
+} from "../constant";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import LoginCompanyDialog from "../components/LoginCompanyDialog";
+import { Image } from "expo-image";
 // import { v4 as uuidv4 } from "uuid";
 
 const LoginScreen = (props) => {
@@ -163,7 +172,12 @@ const LoginScreen = (props) => {
 				flexDirection: "column"
 			}}
 		>
-			<ScrollView contentContainerStyle={styles.container} bounces={false} showsVerticalScrollIndicator={false}>
+			<ScrollView
+				contentContainerStyle={styles.container}
+				bounces={false}
+				showsVerticalScrollIndicator={false}
+				nestedScrollEnabled
+			>
 				<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={30} />
 
 				<TouchableOpacity
@@ -173,6 +187,7 @@ const LoginScreen = (props) => {
 						setVisibleDialog(true);
 					}}
 					delayLongPress={500}
+					activeOpacity={1}
 				>
 					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} />
 				</TouchableOpacity>
@@ -188,52 +203,73 @@ const LoginScreen = (props) => {
 						{state.loginErrorMsg}
 					</Text>
 				) : null}
-				<View style={styles.stackSection}>
-					<TextInput
-						label="Компани ID"
-						mode="outlined"
-						style={styles.generalInput}
-						dense={true}
-						value={state.mainCompanyId}
-						returnKeyType="done"
-						keyboardType="decimal-pad"
-						onChangeText={(e) => {
-							state.setMainCompanyId(e);
+				<View
+					style={{
+						width: "80%",
+						flexDirection: "row",
+						justifyContent: "space-evenly",
+						alignItems: "center",
+						alignSelf: "center"
+					}}
+				>
+					<TextInput label="Диспетчер ID" style={styles.generalInput} value={state.dispId} editable={false} />
+					<TouchableOpacity
+						style={{
+							height: 50,
+							width: 50,
+							justifyContent: "center",
+							borderRadius: MAIN_BORDER_RADIUS
 						}}
-						theme={{
-							fonts: {
-								regular: {
-									fontWeight: "bold"
-								}
-							},
-							colors: {
-								primary: MAIN_COLOR
-							},
-							roundness: MAIN_BORDER_RADIUS
+						onPress={() => {
+							state.setDispId((prevText) => prevText.slice(0, prevText.length - 1));
 						}}
-					/>
-					<TextInput
-						label="Диспетчер ID"
-						mode="outlined"
-						style={styles.generalInput}
-						dense={true}
-						value={state.dispId}
-						returnKeyType="done"
-						keyboardType="decimal-pad"
-						onChangeText={state.setDispId}
-						theme={{
-							fonts: {
-								regular: {
-									fontWeight: "bold"
-								}
-							},
-							colors: {
-								primary: MAIN_COLOR
-							},
-							roundness: MAIN_BORDER_RADIUS
-						}}
-					/>
+					>
+						<Icon name="backspace-outline" type="ionicon" size={30} />
+					</TouchableOpacity>
 				</View>
+				<FlatList
+					nestedScrollEnabled
+					bounces={false}
+					columnWrapperStyle={{
+						justifyContent: "space-evenly"
+					}}
+					contentContainerStyle={{
+						marginVertical: 5,
+						width: "100%"
+					}}
+					data={[1, 2, 3, 4, 5, 6, 7, 8, 9, "x", 0, "login"]}
+					renderItem={({ item }) => {
+						if (item == "x") {
+							return (
+								<TouchableOpacity style={styles.numbers} onPress={() => state.setDispId("")}>
+									<Icon name="x" type="feather" size={30} color={MAIN_COLOR_RED} />
+								</TouchableOpacity>
+							);
+						}
+						if (item == "login") {
+							return (
+								<TouchableOpacity style={styles.numbers} onPress={() => state.setDispId("")}>
+									<Icon name="arrow-right" type="feather" size={30} color={MAIN_COLOR} />
+								</TouchableOpacity>
+							);
+						}
+						return (
+							<TouchableOpacity style={styles.numbers} onPress={() => state.setDispId(state.dispId + item)}>
+								<Text
+									style={{
+										color: "#000",
+										fontSize: 24,
+										fontWeight: "500"
+									}}
+								>
+									{item}
+								</Text>
+							</TouchableOpacity>
+						);
+					}}
+					numColumns={3}
+					keyExtractor={(item, index) => index}
+				/>
 				<View style={styles.stackSection3}>
 					<Button
 						disabled={loadingAction}
@@ -279,8 +315,8 @@ const LoginScreen = (props) => {
 						setVisibleDialog(false);
 					}}
 					text={dialogText}
-					confirmBtnText="Тийм"
-					DeclineBtnText="Үгүй"
+					confirmBtnText="Хадгалах"
+					DeclineBtnText="Хаах"
 					type={dialogType}
 				/>
 			</ScrollView>
@@ -293,7 +329,8 @@ export default LoginScreen;
 const styles = StyleSheet.create({
 	container: {
 		flexGrow: 1,
-		backgroundColor: "#fff"
+		backgroundColor: "#fff",
+		justifyContent: "center"
 	},
 	loginImageContainer: {
 		height: 350,
@@ -315,10 +352,13 @@ const styles = StyleSheet.create({
 		width: "80%",
 		// height: 40,
 		backgroundColor: "#fff",
-		marginTop: 10,
 		padding: 0,
 		height: MAIN_INPUT_HEIGHT,
-		fontSize: 18
+		fontSize: 18,
+		textAlign: "center",
+		borderWidth: 1,
+		borderRadius: MAIN_BORDER_RADIUS,
+		borderColor: MAIN_COLOR
 	},
 	stackSection2: {
 		flexDirection: "row",
@@ -333,8 +373,7 @@ const styles = StyleSheet.create({
 		width: "80%",
 		alignItems: "center",
 		marginRight: "auto",
-		marginLeft: "auto",
-		marginTop: 10
+		marginLeft: "auto"
 	},
 	imageStyle: {
 		position: "absolute",
@@ -347,5 +386,15 @@ const styles = StyleSheet.create({
 		margin: 0,
 		marginLeft: 0,
 		alignItems: "center"
+	},
+	numbers: {
+		flexDirection: "column",
+		margin: 4,
+		width: "25%",
+		height: 60,
+		backgroundColor: MAIN_COLOR_GRAY,
+		alignItems: "center",
+		justifyContent: "center",
+		borderRadius: MAIN_BORDER_RADIUS
 	}
 });
