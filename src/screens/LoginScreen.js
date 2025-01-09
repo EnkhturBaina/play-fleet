@@ -172,138 +172,74 @@ const LoginScreen = (props) => {
 		>
 			<View style={styles.container} showsVerticalScrollIndicator={false} nestedScrollEnabled>
 				<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={30} />
-
-				<FlatList
-					nestedScrollEnabled
-					ListHeaderComponent={() => {
-						return (
+				<TouchableOpacity
+					style={styles.loginImageContainer}
+					onLongPress={() => {
+						console.log("LONG PRESS");
+						setVisibleDialog(true);
+					}}
+					delayLongPress={500}
+					activeOpacity={1}
+				>
+					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} contentFit="contain" />
+				</TouchableOpacity>
+				{state.loginErrorMsg != "" ? (
+					<Text
+						style={{
+							fontWeight: "bold",
+							color: "red",
+							textAlign: "center",
+							marginHorizontal: 20
+						}}
+					>
+						{state.loginErrorMsg}
+					</Text>
+				) : null}
+				<TextInput
+					style={styles.generalInput}
+					value={state.dispId}
+					onChangeText={(e) => {
+						state.setDispId(e);
+					}}
+					placeholder="_ _ _ _"
+					maxLength={4}
+					keyboardType="number-pad"
+					returnKeyType="done"
+				/>
+				<View style={styles.stackSection3}>
+					<Button
+						disabled={loadingAction}
+						containerStyle={{
+							width: "100%",
+							marginTop: 10
+						}}
+						buttonStyle={{
+							backgroundColor: MAIN_COLOR,
+							borderRadius: MAIN_BORDER_RADIUS,
+							paddingVertical: 10,
+							height: 50
+						}}
+						title={
 							<>
-								<TouchableOpacity
-									style={styles.loginImageContainer}
-									onLongPress={() => {
-										console.log("LONG PRESS");
-										setVisibleDialog(true);
-									}}
-									delayLongPress={500}
-									activeOpacity={1}
-								>
-									<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} contentFit="contain" />
-								</TouchableOpacity>
-								{state.loginErrorMsg != "" ? (
-									<Text
-										style={{
-											fontWeight: "bold",
-											color: "red",
-											textAlign: "center",
-											marginHorizontal: 20
-										}}
-									>
-										{state.loginErrorMsg}
-									</Text>
-								) : null}
-								<View
-									style={{
-										width: "80%",
-										alignItems: "center",
-										alignSelf: "center",
-										marginBottom: 20
-									}}
-								>
-									<TextInput
-										style={styles.generalInput}
-										value={state.dispId}
-										editable={false}
-										placeholder="_ _ _ _"
-										maxLength={4}
-									/>
-								</View>
-							</>
-						);
-					}}
-					ListFooterComponent={() => {
-						return (
-							<View style={styles.stackSection3}>
-								<Button
-									disabled={loadingAction}
-									containerStyle={{
-										width: "100%",
-										marginTop: 10,
-										height: 50
-									}}
-									buttonStyle={{
-										backgroundColor: MAIN_COLOR,
-										borderRadius: MAIN_BORDER_RADIUS,
-										paddingVertical: 10,
-										height: MAIN_BUTTON_HEIGHT
-									}}
-									title={
-										<>
-											<Text
-												style={{
-													fontSize: 16,
-													color: "#fff",
-													fontWeight: "bold"
-												}}
-											>
-												Нэвтрэх
-											</Text>
-											{loadingAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
-										</>
-									}
-									titleStyle={{
-										fontSize: 16,
-										fontWeight: "bold"
-									}}
-									onPress={() => login()}
-								/>
-							</View>
-						);
-					}}
-					bounces={false}
-					columnWrapperStyle={{
-						justifyContent: "space-evenly"
-					}}
-					contentContainerStyle={{
-						marginVertical: 5,
-						width: "100%"
-					}}
-					data={[1, 2, 3, 4, 5, 6, 7, 8, 9, "x", 0, "backspace"]}
-					renderItem={({ item }) => {
-						if (item == "x") {
-							return (
-								<TouchableOpacity style={styles.numbers} onPress={() => state.setDispId("")}>
-									<Icon name="x" type="feather" size={30} color={MAIN_COLOR_RED} />
-								</TouchableOpacity>
-							);
-						}
-						if (item == "backspace") {
-							return (
-								<TouchableOpacity
-									style={styles.numbers}
-									onPress={() => state.setDispId((prevText) => prevText.slice(0, prevText.length - 1))}
-								>
-									<Icon name="backspace-outline" type="ionicon" size={30} color={MAIN_COLOR} />
-								</TouchableOpacity>
-							);
-						}
-						return (
-							<TouchableOpacity style={styles.numbers} onPress={() => state.setDispId(state.dispId + item)}>
 								<Text
 									style={{
-										color: "#000",
-										fontSize: 24,
-										fontWeight: "500"
+										fontSize: 16,
+										color: "#fff",
+										fontWeight: "bold"
 									}}
 								>
-									{item}
+									Нэвтрэх
 								</Text>
-							</TouchableOpacity>
-						);
-					}}
-					numColumns={3}
-					keyExtractor={(item, index) => index}
-				/>
-
+								{loadingAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
+							</>
+						}
+						titleStyle={{
+							fontSize: 16,
+							fontWeight: "bold"
+						}}
+						onPress={() => login()}
+					/>
+				</View>
 				<LoginCompanyDialog
 					visible={visibleDialog}
 					confirmFunction={() => {
@@ -331,7 +267,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center"
 	},
 	loginImageContainer: {
-		height: 350,
 		alignItems: "center"
 	},
 	stackSection: {
@@ -342,8 +277,7 @@ const styles = StyleSheet.create({
 	},
 	loginImg: {
 		width: 180,
-		height: 150,
-		marginTop: "30%"
+		height: 150
 	},
 	generalInput: {
 		width: "80%",
@@ -356,7 +290,8 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: MAIN_BORDER_RADIUS,
 		borderColor: MAIN_COLOR,
-		letterSpacing: "10"
+		letterSpacing: "10",
+		alignSelf: "center"
 	},
 	stackSection2: {
 		flexDirection: "row",
@@ -384,15 +319,5 @@ const styles = StyleSheet.create({
 		margin: 0,
 		marginLeft: 0,
 		alignItems: "center"
-	},
-	numbers: {
-		flexDirection: "column",
-		margin: 4,
-		width: "25%",
-		height: 60,
-		backgroundColor: MAIN_COLOR_GRAY,
-		alignItems: "center",
-		justifyContent: "center",
-		borderRadius: MAIN_BORDER_RADIUS
 	}
 });

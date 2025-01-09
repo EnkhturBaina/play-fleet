@@ -37,6 +37,7 @@ import SideMenu from "react-native-side-menu-updated";
 import MainSideBar from "./Sidebar/MainSideBar";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
+import HeaderFloatItem from "../components/HomeScreen/HeaderFloatItem";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -46,14 +47,24 @@ const HomeScreen = (props) => {
 	const mapRef = useRef();
 	const bottomSheetRef = useRef(null);
 
-	const [isFocus, setIsFocus] = useState(false);
-	const [value, setValue] = useState(null);
 	const [isOpen, setIsOpen] = useState(false);
 	const [sideBarStep, setSideBarStep] = useState(1);
 
 	//Screen LOAD хийхэд дахин RENDER хийх
 	const isFocused = useIsFocused();
 
+	const animateRef = () => {
+		if (mapRef.current) {
+			state.location
+				? mapRef.current.animateToRegion({
+						latitude: state.location?.coords?.latitude,
+						longitude: state.location?.coords?.longitude,
+						latitudeDelta: 0.0121,
+						longitudeDelta: 0.0121
+				  })
+				: null;
+		}
+	};
 	useEffect(() => {
 		// console.log("STATE", state.location);
 	}, []);
@@ -131,121 +142,7 @@ const HomeScreen = (props) => {
 						}}
 					/>
 				</MapView>
-
-				<View style={styles.floatButtons}>
-					<View
-						style={{
-							backgroundColor: "#fff",
-							padding: 10,
-							alignSelf: "center",
-							width: width - 20,
-							marginHorizontal: 10,
-							borderRadius: MAIN_BORDER_RADIUS
-						}}
-					>
-						<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>МАТЕРИАЛЫН УРСГАЛ</Text>
-						<View style={styles.stack1}>
-							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 18 }}>Ачилт хийлгэх байршил</Text>
-							<Dropdown
-								style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-								placeholderStyle={styles.placeholderStyle}
-								selectedTextStyle={styles.selectedTextStyle}
-								inputSearchStyle={styles.inputSearchStyle}
-								data={WEEKDAYS}
-								maxHeight={300}
-								labelField="label"
-								valueField="value"
-								placeholder={!isFocus ? "XXX" : "..."}
-								value={value}
-								onFocus={() => setIsFocus(true)}
-								onBlur={() => setIsFocus(false)}
-								onChange={(item) => {
-									setValue(item.value);
-									setIsFocus(false);
-								}}
-							/>
-						</View>
-						<View style={styles.stack1}>
-							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 18 }}>Хүргэх байршил</Text>
-							<Dropdown
-								style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-								placeholderStyle={styles.placeholderStyle}
-								selectedTextStyle={styles.selectedTextStyle}
-								inputSearchStyle={styles.inputSearchStyle}
-								data={WEEKDAYS}
-								maxHeight={300}
-								labelField="label"
-								valueField="value"
-								placeholder={!isFocus ? "XXX" : "..."}
-								value={value}
-								onFocus={() => setIsFocus(true)}
-								onBlur={() => setIsFocus(false)}
-								onChange={(item) => {
-									setValue(item.value);
-									setIsFocus(false);
-								}}
-							/>
-						</View>
-					</View>
-					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginTop: 10 }}>
-						<TouchableOpacity
-							onPress={() =>
-								state.location
-									? mapRef.current.animateToRegion({
-											latitude: state.location?.coords?.latitude,
-											longitude: state.location?.coords?.longitude,
-											latitudeDelta: 0.0121,
-											longitudeDelta: 0.0121
-									  })
-									: null
-							}
-							style={styles.eachFloatButton}
-						>
-							<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => {
-								console.log("X");
-							}}
-							style={styles.eachFloatButton}
-						>
-							<Image
-								source={require("../../assets/images/route.png")}
-								style={{
-									height: 35,
-									width: 35
-								}}
-								contentFit="contain"
-							/>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => {
-								// props.navigation.navigate("TestSQL");
-								props.navigation.navigate("TestRenderUurhai");
-							}}
-							style={styles.eachFloatButton}
-						>
-							<Image
-								source={require("../../assets/images/Picture2.png")}
-								style={{
-									height: 35,
-									width: 35
-								}}
-								contentFit="contain"
-							/>
-						</TouchableOpacity>
-						<TouchableOpacity onPress={() => setIsOpen(!isOpen)} style={styles.eachFloatButton}>
-							<Image
-								source={require("../../assets/images/Picture3.png")}
-								style={{
-									height: 35,
-									width: 35
-								}}
-								contentFit="contain"
-							/>
-						</TouchableOpacity>
-					</View>
-				</View>
+				<HeaderFloatItem isOpen={isOpen} setIsOpen={setIsOpen} mapRef={animateRef} />
 				<BottomSheet ref={bottomSheetRef} snapPoints={[130, 500]} onChange={handleSheetChanges}>
 					<BottomSheetView style={styles.contentContainer}>
 						<View
@@ -333,12 +230,6 @@ const HomeScreen = (props) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-	floatButtons: {
-		position: "absolute", //use absolute position to show button on top of the map
-		left: 0,
-		top: 10,
-		alignSelf: "flex-end" //for align to right
-	},
 	btnText: {
 		fontSize: 14,
 		paddingVertical: 10,
@@ -347,41 +238,6 @@ const styles = StyleSheet.create({
 		color: "#fff",
 		width: 120,
 		textAlign: "center"
-	},
-	dropdown: {
-		borderColor: "#aeaeae",
-		borderWidth: 0.5,
-		paddingHorizontal: 8,
-		width: "50%",
-		height: 25
-	},
-	placeholderStyle: {
-		fontSize: 16,
-		fontWeight: "bold"
-	},
-	selectedTextStyle: {
-		fontSize: 16,
-		fontWeight: "bold"
-	},
-	inputSearchStyle: {
-		height: 40,
-		fontSize: 16
-	},
-	stack1: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginTop: 10
-	},
-	eachFloatButton: {
-		height: 50,
-		width: 50,
-		padding: 5,
-		backgroundColor: "#fff",
-		borderRadius: 50,
-		marginRight: 8,
-		alignItems: "center",
-		justifyContent: "center"
 	},
 	contentContainer: {
 		flex: 1,
