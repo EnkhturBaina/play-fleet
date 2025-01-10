@@ -4,6 +4,8 @@ import MapView, { Polygon } from "react-native-maps";
 import * as FileSystem from "expo-file-system";
 import { parseString } from "react-native-xml2js";
 import { useNavigation } from "@react-navigation/native";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js/react-native";
 
 const KMLRenderer = () => {
 	const navigation = useNavigation();
@@ -32,10 +34,14 @@ const KMLRenderer = () => {
 	};
 
 	useEffect(() => {
+		console.log("Y");
+
 		checkIfFileExists();
 	}, []);
 
 	useEffect(() => {
+		console.log("Z");
+
 		if (fileContent !== null) {
 			parseString(fileContent, { trim: true }, (err, result) => {
 				if (err) {
@@ -98,27 +104,60 @@ const KMLRenderer = () => {
 const TestRenderUurhai = () => {
 	const [kmlData, setKmlData] = useState("");
 
+	const loadKML = async () => {
+		try {
+			// URL-с KML файлыг татаж авах
+			const response = await fetch("https://drive.google.com/uc?export=download&id=1PeHfxTDwRLAFWdypOY7nxm1mvruKYsup");
+			const serverFileContent = await response.text();
+
+			const fileUri = FileSystem.documentDirectory + "kml_data.txt";
+
+			await FileSystem.writeAsStringAsync(fileUri, serverFileContent);
+
+			// KML контентыг хадгалах
+			setKmlData(serverFileContent);
+		} catch (error) {
+			console.error("Error loading KML file:", error);
+		}
+	};
+
 	useEffect(() => {
-		const loadKML = async () => {
-			try {
-				// URL-с KML файлыг татаж авах
-				const response = await fetch(
-					"https://drive.google.com/uc?export=download&id=1PeHfxTDwRLAFWdypOY7nxm1mvruKYsup"
-				);
-				const serverFileContent = await response.text();
-
-				const fileUri = FileSystem.documentDirectory + "kml_data.txt";
-
-				await FileSystem.writeAsStringAsync(fileUri, serverFileContent);
-
-				// KML контентыг хадгалах
-				setKmlData(serverFileContent);
-			} catch (error) {
-				console.error("Error loading KML file:", error);
-			}
-		};
+		console.log("X");
 
 		loadKML();
+		window.Pusher = Pusher;
+		const echo = new Echo({
+			broadcaster: "reverb",
+			key: "qqm6lewsdgvdbmnkjuup",
+			wsHost: "pms.talent.mn",
+			wsPort: 8000, // production case: 8000 || 8082
+			wssPort: 443,
+			forceTLS: true, // production case: true
+			encrypted: true,
+			enabledTransports: ["ws", "wss"],
+			debug: true
+		});
+		console.log("echo", echo);
+
+		if (echo) {
+			echo.channel("user.2").listen(".PowerBIUpdated", (event) => {
+				console.log("Power BI Update:", event.message);
+			});
+			return () => {
+				console.log("return");
+				echo.channel("user.2").stopListening(".PowerBIUpdated");
+			};
+		}
+
+		// if (echo) {
+		// 	echo.channel("pms.talent.mn").listen(".PowerBIUpdated", (event) => {
+		// 		console.log("Realtime Event Data:", event);
+		// 	});
+		// }
+
+		return () => {
+			// echo.disconnect();
+		};
 	}, []);
 	return <View style={{ flex: 1 }}>{kmlData ? <KMLRenderer kmlData={kmlData} /> : <Text>Loading KML...</Text>}</View>;
 };
