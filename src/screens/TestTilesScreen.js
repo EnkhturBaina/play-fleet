@@ -11,6 +11,7 @@ var Buffer = require("buffer/").Buffer;
 
 const TestTilesScreen = () => {
 	const [tileUri, setTileUri] = useState(null);
+	const [tilesReady, setTilesReady] = useState(false);
 
 	// Газрын зургийн tile татах функц
 	const downloadTile = async (z, x, y) => {
