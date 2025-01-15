@@ -1,5 +1,4 @@
 import * as SQLite from "expo-sqlite";
-import NetInfo from "@react-native-community/netinfo";
 
 export const db = SQLite.openDatabaseSync("offline_data");
 
@@ -96,19 +95,5 @@ export const syncDataToServer = async () => {
 			},
 			(_, error) => console.error("Error fetching data for sync:", error)
 		);
-	});
-};
-
-// 6. Сүлжээний статусыг хянах функц
-export const monitorNetworkStatus = () => {
-	NetInfo.addEventListener((state) => {
-		console.log("state", state);
-
-		if (state.isConnected) {
-			console.log("Internet is available. Syncing data to server...");
-			// syncDataToServer(); // Сүлжээтэй үед датаг сервер рүү илгээх
-		} else {
-			console.log("No internet connection. Data will be stored locally.");
-		}
 	});
 };
