@@ -13,7 +13,7 @@ const KMLRenderer = () => {
 	const [polygons, setPolygons] = useState([]);
 
 	const checkIfFileExists = async () => {
-		const fileUri = FileSystem.documentDirectory + "kml_data.txt";
+		const fileUri = FileSystem.documentDirectory + "new_kml_data.txt";
 
 		// 1. Хэрэв файл хадгалагдсан бол түүнийг унших
 		try {
@@ -49,9 +49,12 @@ const KMLRenderer = () => {
 					return;
 				}
 
-				const placemarks = result.kml.Document[0].Placemark || []; // Placemark элементийг авах
+				// console.log("results", JSON.stringify(result.kml.Document[0].Folder[0].Placemark));
+				const placemarks = result.kml.Document[0].Folder[0].Placemark || []; // Placemark элементийг авах
+				// console.log("placemarks", JSON.stringify(placemarks));
+
 				const extractedPolygons = placemarks.map((placemark) => {
-					const coordinatesString = placemark.Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates[0];
+					const coordinatesString = placemark.LineString[0].coordinates[0];
 					const coordinatesArray = coordinatesString
 						.trim()
 						.split(" ")
@@ -107,10 +110,11 @@ const TestRenderUurhai = () => {
 	const loadKML = async () => {
 		try {
 			// URL-с KML файлыг татаж авах
-			const response = await fetch("https://drive.google.com/uc?export=download&id=1PeHfxTDwRLAFWdypOY7nxm1mvruKYsup");
+			// const response = await fetch("https://drive.google.com/uc?export=download&id=1PeHfxTDwRLAFWdypOY7nxm1mvruKYsup");
+			const response = await fetch("https://drive.google.com/uc?export=download&id=1LDXA3r1EoszfCgXDrMxAPQuDcdGdAPxC");
 			const serverFileContent = await response.text();
 
-			const fileUri = FileSystem.documentDirectory + "kml_data.txt";
+			const fileUri = FileSystem.documentDirectory + "new_kml_data.txt";
 
 			await FileSystem.writeAsStringAsync(fileUri, serverFileContent);
 
