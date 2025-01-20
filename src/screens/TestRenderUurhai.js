@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import MapView, { Polygon } from "react-native-maps";
+import MapView, { Polygon, Polyline } from "react-native-maps";
 import * as FileSystem from "expo-file-system";
 import { parseString } from "react-native-xml2js";
 import { useNavigation } from "@react-navigation/native";
@@ -10,7 +10,7 @@ import Pusher from "pusher-js/react-native";
 const KMLRenderer = () => {
 	const navigation = useNavigation();
 	const [fileContent, setFileContent] = useState(null);
-	const [polygons, setPolygons] = useState([]);
+	const [polygons, setPolygons] = useState(null);
 
 	const checkIfFileExists = async () => {
 		const fileUri = FileSystem.documentDirectory + "new_kml_data.txt";
@@ -54,6 +54,9 @@ const KMLRenderer = () => {
 				// console.log("placemarks", JSON.stringify(placemarks));
 
 				const extractedPolygons = placemarks.map((placemark) => {
+					const strokeColor = placemark.Style[0].LineStyle[0].color[0]?.substring(2);
+					const strokeWidth = placemark.Style[0].LineStyle[0].width[0];
+
 					const coordinatesString = placemark.LineString[0].coordinates[0];
 					const coordinatesArray = coordinatesString
 						.trim()
@@ -62,7 +65,7 @@ const KMLRenderer = () => {
 							const [longitude, latitude] = coordinate.split(",").map(Number);
 							return { latitude, longitude };
 						});
-					return coordinatesArray;
+					return { coords: coordinatesArray, strokeColor, strokeWidth };
 				});
 				setPolygons(extractedPolygons);
 			});
@@ -77,7 +80,7 @@ const KMLRenderer = () => {
 					navigation.goBack();
 				}}
 			>
-				<Text style={{}}>BACK</Text>
+				<Text style={{}}>BACK {polygons?.length}</Text>
 			</TouchableOpacity>
 			{fileContent && polygons?.length > 0 ? (
 				<MapView
@@ -86,13 +89,16 @@ const KMLRenderer = () => {
 				>
 					{polygons?.length > 0 &&
 						polygons?.map((el, index) => {
+							// console.log("EL", JSON.stringify(el));
+
 							return (
-								<Polygon
+								<Polyline
 									key={index}
-									coordinates={el}
-									strokeColor="rgba(0,0,255,0.5)"
-									fillColor="rgba(0,0,255,0.3)"
-									strokeWidth={2}
+									coordinates={el.coords}
+									// strokeColor={"red"}
+									strokeColor={"#" + el.strokeColor}
+									// fillColor="rgba(0,0,255,0.3)"
+									strokeWidth={el.strokeWidth}
 								/>
 							);
 						})}
