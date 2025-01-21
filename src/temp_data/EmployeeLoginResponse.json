@@ -1,0 +1,56 @@
+{
+	"Msg": "\u0410\u043c\u0436\u0438\u043b\u0442\u0442\u0430\u0439 \u043d\u044d\u0432\u0442\u044d\u0440\u043b\u044d\u044d.",
+	"Type": 0,
+	"Extra": {
+		"access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5ZGY5NzU3Mi1lYjI3LTQ3MGUtYTg2ZS02ZDBjNzRiZmI1ZGUiLCJqdGkiOiI2MTBlYWZjOTA2Yzc4OGZhZWU5ZDA0ZTk2MmQ1MGRhZWU2MWNiMDc3MjIxOWE5YzczZGZiZTk1MTUxOTQ4OWEyYmViODVlYTlhM2FiZDhhNiIsImlhdCI6MTczNzQyMzM5MS4yNTczODksIm5iZiI6MTczNzQyMzM5MS4yNTczOTQsImV4cCI6MTc1MzA2MTc5MC43OTc0NTQsInN1YiI6IjEiLCJzY29wZXMiOlsib3BlcmF0b3IiXX0.YYH8MpPbpMZb3OAHHpJLsCQeWeQufTmO0uqjzoj_eFIvyHUKjxHVEGh6t0rEs_KF-MziWmTvlR2DV7RCtrId-epS6ev9C0xTuKOKuGeLEKtsQWL_5dmqtGmANJX2bNHZ1O9uRFbX7pBJuQZRVQ0m3pKmUYgWmeky8Ct1WahGa2UWxf_ddQW8Pszkg59vmhysGjoR-_Oz2_7CSfUnwAvzis3PrXfJMjgVDvVaOpp5Yjg907VC4ZjfYXmR4O8so5WCOwEidof4_VYIcHh1uM4Pm32hIf5PLbImXJlM8J6m0_zXd7GT85QdNsOP2KNuUcIv368YRjY6mZI03DVL_T4qm48a0baAS4VXCd5kuXanqmp7lUySq5cgUVecxFEWEFwv-GalP3eJvqEQmpvM8V0fooq6sHb6fOpGhMl-NMV6QFMkC_O3vWeDy_zHozqH6ywyiu6dB-uo0jc4KePCQDORJIP4A6OqYHTm7xQLwboLeoJFGlBj1BdZ_062NsrKeThac8k1vLIHynfNfuaVSmARK7rKZ4Nh20hKB0Twf0dn8cT5e2qkA4Ga0Y9T8iib7k3DhdyGDai-gO_E1pMZAQvywiIrtB85XqAH3CpZTY8siYnIsobhADJp6uSgJ3UHqW5kFHacf9C74VkM5NoQjS0DYDS70i3WLe1e__0lt4ySLKI",
+		"employee": {
+			"id": 1,
+			"PMSCompanyId": 1,
+			"PMSRosterId": 1,
+			"Code": "1000",
+			"FirstName": "adsad",
+			"LastName": "asdad",
+			"Profile": null,
+			"Email": "asdsadasdasds@gmail.com",
+			"IsActive": 1,
+			"IsOperator": 1,
+			"CreatedBy": 1,
+			"ModifiedBy": 1,
+			"created_at": "2025-01-15T13:25:42.000000Z",
+			"updated_at": "2025-01-15T13:25:42.000000Z",
+			"deleted_at": null,
+			"FullName": "asdad adsad",
+			"status": "\u0418\u0434\u044d\u0432\u0445\u0438\u0442\u044d\u0439",
+			"company": {
+				"id": 1,
+				"Code": "9TM9-1000-EQ28",
+				"Name": "Game Mine LLC",
+				"Image": null,
+				"email": "info@gamemine.mn",
+				"Mobile": "99112233",
+				"IsMain": 1,
+				"ViewOrder": 1,
+				"CreatedBy": 1,
+				"ModifiedBy": null,
+				"created_at": "2025-01-15T13:22:28.000000Z",
+				"updated_at": "2025-01-15T13:22:28.000000Z",
+				"deleted_at": null
+			},
+			"roster": {
+				"id": 1,
+				"PMSProjectId": 1,
+				"Name": "A",
+				"Description": "A",
+				"IsSystem": 1,
+				"IsActive": 1,
+				"CreatedBy": 1,
+				"ModifiedBy": null,
+				"created_at": "2025-01-15T13:22:29.000000Z",
+				"updated_at": "2025-01-15T13:22:29.000000Z",
+				"deleted_at": null,
+				"status": "\u0418\u0434\u044d\u0432\u0445\u0438\u0442\u044d\u0439"
+			},
+			"equipments": []
+		}
+	}
+}

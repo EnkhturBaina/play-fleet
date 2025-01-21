@@ -22,10 +22,12 @@ import {
 	MAIN_COLOR_GRAY,
 	MAIN_COLOR_RED
 } from "../constant";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import LoginCompanyDialog from "../components/LoginCompanyDialog";
 import { Image } from "expo-image";
+import EmployeeLoginResponse from "../temp_data/EmployeeLoginResponse.json";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchData, saveLoginDataWithClear } from "../helper/db";
 
 const LoginScreen = (props) => {
 	const state = useContext(MainContext);
@@ -33,19 +35,14 @@ const LoginScreen = (props) => {
 	const [visibleSnack, setVisibleSnack] = useState(false);
 	const [snackBarMsg, setSnackBarMsg] = useState("");
 
-	const [loadingAction, setLoadingAction] = useState(false);
+	const [loadingLoginAction, setLoadingLoginAction] = useState(false);
+	const [loginError, setLoginError] = useState(null);
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
 	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
 
-	useEffect(() => {
-		(async () => {
-			await AsyncStorage.getItem("password").then(async (value) => {
-				state.setPassword(value);
-			});
-		})();
-	}, []);
+	useEffect(() => {}, []);
 
 	//Snacbkbar харуулах
 	const onToggleSnackBar = (msg) => {
@@ -57,109 +54,48 @@ const LoginScreen = (props) => {
 	const onDismissSnackBar = () => setVisibleSnack(false);
 
 	const login = async () => {
-		state.setIsLoggedIn(true);
-		// if (state.email == "") {
-		// 	onToggleSnackBar("И-мэйл хаягаа оруулна уу.");
-		// } else if (!regex_email.test(state.email)) {
-		// 	onToggleSnackBar("И-мэйл хаягаа зөв оруулна уу.");
-		// } else if (state.password == "") {
-		// 	onToggleSnackBar("Нууц үг оруулна уу.");
-		// }
-		//loc_permission_fix
-		// else if (state.locationStatus == "denied") {
-		//   onToggleSnackBar("Байршлын тохиргоо зөвшөөрөгдөөгүй байна.");
-		//   (async () => {
-		//     let { status } = await Location.requestForegroundPermissionsAsync();
-		//     state.setLocationStatus(status);
-		//     // console.log("status", status);
-		//     if (status !== "granted") {
-		//       let { status } = await Location.requestForegroundPermissionsAsync();
-		//       state.setLocationStatus(status);
+		setLoadingLoginAction(true);
 
-		//       state.setLoginErrorMsg("Байршлын тохиргоо зөвшөөрөгдөөгүй байна.");
-		//       state.setIsLoading(false);
-		//       state.setIsLoggedIn(false);
-		//       return;
-		//     }
-		//   })();
-		//   setLoadingAction(false);
-		// }
-		// else {
-		// setLoadingAction(true);
-		// state.setIsLoading(true);
-		// await axios({
-		// 	method: "post",
-		// 	url: `${SERVER_URL}/employee/mobile/login`,
-		// 	data: {
-		// 		email: state.email?.toLowerCase(),
-		// 		password: state.password,
-		// 		MobileUUID: state.uuid,
-		// 		ExponentPushToken: state.expoPushToken
-		// 	}
-		// })
-		// 	.then(async (response) => {
-		// 		// console.log("RES", response.data);
-		// 		if (response.data?.Type == 0) {
-		// 			try {
-		// 				state.setUserData(response.data.Extra?.user);
-		// 				state.setToken(response.data.Extra?.access_token);
-		// 				state.setHeaderUserName(response.data.Extra?.user.FirstName);
-		// 				state.setUserId(response.data.Extra?.user?.id);
-		// 				state.setCompanyId(response.data.Extra?.user?.GMCompanyId);
-		// 				await AsyncStorage.setItem("password", state.password).then(async (value) => {
-		// 					await AsyncStorage.setItem("user_mail", response.data.Extra?.user?.email).then(async (value) => {
-		// 						//*****Login Хийсэн User -н Data -г Local Storage -д хадгалах
-		// 						await AsyncStorage.setItem(
-		// 							"user",
-		// 							JSON.stringify({
-		// 								token: response.data.Extra?.access_token,
-		// 								user: response.data.Extra?.user,
-		// 								userFirstName: response.data.Extra?.user.FirstName
-		// 							})
-		// 						).then(async (value) => {
-		// 							if (state.isUseBiometric) {
-		// 								//*****Biometric ашиглах CHECK хийгдсэн үед Local Storage -д хадгалах
-		// 								await AsyncStorage.setItem("use_bio", "yes").then((value) => {
-		// 									state.confirmBio(state.uuid);
-		// 								});
-		// 							} else {
-		// 								//*****Biometric ашиглах CHECK хийгдээгүй үед Local Storage -д хадгалах
-		// 								await AsyncStorage.setItem("use_bio", "no").then((value) => {
-		// 									state.getUserUUID(
-		// 										response.data.Extra?.user.email,
-		// 										response.data.Extra?.access_token,
-		// 										state.uuid,
-		// 										response.data.Extra?.user?.id
-		// 									);
-		// 								});
-		// 							}
-		// 						});
-		// 					});
-		// 				});
-		// 			} catch (e) {
-		// 				console.log("e====>", e);
-		// 			}
-		// 			state.setLoginErrorMsg("");
-		// 		} else if (response.data?.Type == 1) {
-		// 			state.setLoginErrorMsg(response.data.Msg);
-		// 			state.setIsLoading(false);
-		// 		} else if (response.data?.Type == 2) {
-		// 			state.setLoginErrorMsg(response.data.Msg);
-		// 			state.setIsLoading(false);
-		// 		}
-		// 		setLoadingAction(false);
-		// 	})
-		// 	.catch(function (error) {
-		// 		setLoadingAction(false);
-		// 		state.setIsLoading(false);
-		// 		if (error.code === "ERR_NETWORK") {
-		// 			state.setLoginErrorMsg("Интернэт холболтоо шалгана уу.");
-		// 		} else {
-		// 			state.setLoginErrorMsg("Холболт салсан байна...");
-		// 		}
-		// 		state.logout();
-		// 	});
-		// }
+		try {
+			const response = {
+				data: EmployeeLoginResponse,
+				status: 200,
+				statusText: "OK",
+				headers: {},
+				config: {},
+				request: {}
+			};
+			// console.log("response", JSON.stringify(response));
+
+			//Local storage руу access_token хадгалах
+			if (response.data?.Extra?.access_token) {
+				await AsyncStorage.setItem("access_token", response.data?.Extra?.access_token)
+					.then(async (value) => {
+						// Login response -с state үүд салгаж хадгалах
+						state.setEmployeeData(response.data?.Extra?.employee);
+						state.setCompanyData(response.data?.Extra?.employee?.company);
+						state.setRosterData(response.data?.Extra?.employee?.roster);
+						state.setEquipmentsData(response.data?.Extra?.employee?.equipments);
+					})
+					.finally(() => {
+						// login response -г SQLite руу хадгалах
+						saveLoginDataWithClear(response.data?.Extra, true).then((e) => {
+							console.log("insert Login Data error =>", e);
+							setLoginError(e);
+							if (e !== "DONE") {
+							} else if (e === "DONE") {
+								console.log("LOGIN SUCCESS");
+							}
+						});
+					});
+			}
+		} catch (error) {
+			console.error("Error loading local JSON:", error);
+		} finally {
+			setLoadingLoginAction(false);
+			fetchData();
+			// state.setIsLoggedIn(true);
+		}
 	};
 
 	return (
@@ -183,6 +119,11 @@ const LoginScreen = (props) => {
 				>
 					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} contentFit="contain" />
 				</TouchableOpacity>
+				{loginError != null ? (
+					<Text style={{ width: "100%", textAlign: "center", color: "red", fontWeight: "600", marginBottom: 10 }}>
+						{loginError}
+					</Text>
+				) : null}
 				{state.loginErrorMsg != "" ? (
 					<Text
 						style={{
@@ -208,7 +149,7 @@ const LoginScreen = (props) => {
 				/>
 				<View style={styles.stackSection3}>
 					<Button
-						disabled={loadingAction}
+						disabled={loadingLoginAction}
 						containerStyle={{
 							width: "100%",
 							marginTop: 10
@@ -230,7 +171,7 @@ const LoginScreen = (props) => {
 								>
 									Нэвтрэх
 								</Text>
-								{loadingAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
+								{loadingLoginAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
 							</>
 						}
 						titleStyle={{

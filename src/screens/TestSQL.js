@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
-import { deleteData, fetchData, insertData, updateData } from "../helper/db";
+import { deleteData, fetchData, insertLoginData, updateData } from "../helper/db";
 
 const TestSQL = () => {
 	const [offlineData, setOfflineData] = useState([]);
@@ -20,7 +20,7 @@ const TestSQL = () => {
 			</TouchableOpacity>
 			<TouchableOpacity
 				onPress={() => {
-					insertData("Коффее", "zzz", "хаяг№", 23.12, 33.233);
+					insertLoginData("Коффее", "zzz", "хаяг№", 23.12, 33.233);
 				}}
 				style={styles.container}
 			>

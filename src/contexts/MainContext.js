@@ -69,6 +69,11 @@ export const MainStore = (props) => {
 	const [seconds, setSeconds] = useState(0);
 	const [isActiveTimer, setIsActiveTimer] = useState(false);
 
+	const [employeeData, setEmployeeData] = useState(null);
+	const [companyData, setCompanyData] = useState(null);
+	const [rosterData, setRosterData] = useState(null);
+	const [equipmentsData, setEquipmentsData] = useState(null);
+
 	const handleStart = () => {
 		setIsActiveTimer(true);
 	};
@@ -310,7 +315,15 @@ export const MainStore = (props) => {
 				removeNonNumeric,
 				addCommas,
 				appIsReady,
-				setAppIsReady
+				setAppIsReady,
+				employeeData,
+				setEmployeeData,
+				companyData,
+				setCompanyData,
+				rosterData,
+				setRosterData,
+				equipmentsData,
+				setEquipmentsData
 			}}
 		>
 			{props.children}
