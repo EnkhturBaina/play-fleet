@@ -15,7 +15,7 @@ const KMLRenderer = () => {
 	const checkIfFileExists = async () => {
 		const fileUri = FileSystem.documentDirectory + "new_kml_data.txt";
 
-		// 1. Хэрэв файл хадгалагдсан бол түүнийг унших
+		// Файл local -д хадгалагдсан бол унших
 		try {
 			const fileInfo = await FileSystem.getInfoAsync(fileUri);
 			// console.log("fileInfo", fileInfo);
@@ -34,14 +34,10 @@ const KMLRenderer = () => {
 	};
 
 	useEffect(() => {
-		console.log("Y");
-
 		checkIfFileExists();
 	}, []);
 
 	useEffect(() => {
-		console.log("Z");
-
 		if (fileContent !== null) {
 			parseString(fileContent, { trim: true }, (err, result) => {
 				if (err) {
@@ -124,7 +120,6 @@ const TestRenderUurhai = () => {
 
 			await FileSystem.writeAsStringAsync(fileUri, serverFileContent);
 
-			// KML контентыг хадгалах
 			setKmlData(serverFileContent);
 		} catch (error) {
 			console.error("Error loading KML file:", error);
@@ -132,8 +127,6 @@ const TestRenderUurhai = () => {
 	};
 
 	useEffect(() => {
-		console.log("X");
-
 		loadKML();
 		window.Pusher = Pusher;
 		const echo = new Echo({
