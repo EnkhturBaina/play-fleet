@@ -16,6 +16,7 @@ import MainContext from "../../../contexts/MainContext";
 import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR } from "../../../constant";
 import { Button, Icon } from "@rneui/base";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { addCommas, removeNonNumeric } from "../../../helper/functions";
 
 const CreateReisScreen = () => {
 	const headerHeight = useHeaderHeight();
@@ -132,7 +133,7 @@ const CreateReisScreen = () => {
 							label="TruckCount"
 							value={value}
 							onChangeText={(e) => {
-								setValue(state.addCommas(state.removeNonNumeric(e)));
+								setValue(addCommas(removeNonNumeric(e)));
 							}}
 							keyboardType="number-pad"
 						/>

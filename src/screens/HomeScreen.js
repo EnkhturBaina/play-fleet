@@ -38,6 +38,7 @@ import MainSideBar from "./Sidebar/MainSideBar";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
 import HeaderFloatItem from "../components/HomeScreen/HeaderFloatItem";
+import { formatTime } from "../helper/functions";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -163,7 +164,7 @@ const HomeScreen = (props) => {
 							>
 								<Text style={{ color: "#fff", fontSize: 20 }}>CОНГОГДСОН ТӨЛӨВ</Text>
 							</View>
-							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{state.formatTime(state.seconds)}</Text>
+							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(state.seconds)}</Text>
 						</View>
 						<View style={styles.eachBottomList}>
 							<Image source={require("../../assets/images/Picture4.png")} style={{ height: 50, width: 50 }} />

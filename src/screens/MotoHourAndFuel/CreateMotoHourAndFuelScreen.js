@@ -14,6 +14,7 @@ import LoanInput from "../../components/LoanInput";
 import MainContext from "../../contexts/MainContext";
 import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR } from "../../constant";
 import { Button } from "@rneui/base";
+import { addCommas, removeNonNumeric } from "../../helper/functions";
 
 const CreateMotoHourAndFuelScreen = () => {
 	const state = useContext(MainContext);
@@ -48,7 +49,7 @@ const CreateMotoHourAndFuelScreen = () => {
 							label="Progress SMU (h)"
 							value={value}
 							onChangeText={(e) => {
-								setValue(state.addCommas(state.removeNonNumeric(e)));
+								setValue(addCommas(removeNonNumeric(e)));
 							}}
 							keyboardType="number-pad"
 						/>
@@ -56,7 +57,7 @@ const CreateMotoHourAndFuelScreen = () => {
 							label="Finish SMU (h)"
 							value={value}
 							onChangeText={(e) => {
-								setValue(state.addCommas(state.removeNonNumeric(e)));
+								setValue(addCommas(removeNonNumeric(e)));
 							}}
 							keyboardType="number-pad"
 						/>
@@ -64,7 +65,7 @@ const CreateMotoHourAndFuelScreen = () => {
 							label="Fuel (Litre)"
 							value={value}
 							onChangeText={(e) => {
-								setValue(state.addCommas(state.removeNonNumeric(e)));
+								setValue(addCommas(removeNonNumeric(e)));
 							}}
 							keyboardType="number-pad"
 						/>
