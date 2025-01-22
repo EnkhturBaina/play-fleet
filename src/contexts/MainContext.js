@@ -5,6 +5,7 @@ import { SERVER_URL } from "../constant";
 import * as Location from "expo-location";
 import { Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
+import ReferenceResponse from "../temp_data/ReferenceResponse.json";
 
 const MainContext = React.createContext();
 
@@ -74,6 +75,8 @@ export const MainStore = (props) => {
 				timeout: 5000,
 				accuracy: Platform.OS === "android" ? Location.Accuracy.Low : Location.Accuracy.Lowest
 			});
+			console.log("location", location);
+
 			setLocation(location);
 		})();
 	};
@@ -115,6 +118,29 @@ export const MainStore = (props) => {
 		});
 	};
 
+	const getReferences = async () => {
+		try {
+			const response = {
+				data: ReferenceResponse,
+				status: 200,
+				statusText: "OK",
+				headers: {},
+				config: {},
+				request: {}
+			};
+			console.log("response", JSON.stringify(response));
+
+			//Local storage руу access_token хадгалах
+			if (response.data?.Extra) {
+			}
+		} catch (error) {
+			console.error("Error loading local JSON:", error);
+		} finally {
+			setLoadingLoginAction(false);
+			fetchData();
+			// state.setIsLoggedIn(true);
+		}
+	};
 	return (
 		<MainContext.Provider
 			value={{
