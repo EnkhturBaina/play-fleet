@@ -6,6 +6,7 @@ import * as Location from "expo-location";
 import { Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import ReferenceResponse from "../temp_data/ReferenceResponse.json";
+import { createTable } from "../helper/db";
 
 const MainContext = React.createContext();
 
@@ -53,9 +54,29 @@ export const MainStore = (props) => {
 		setIsActiveTimer(false);
 	};
 
+	useEffect(() => {
+		console.log("RUN FIRST");
+		NetInfo.fetch().then((stateConn) => {
+			console.log("Connection type", stateConn);
+			if (!stateConn.isConnected) {
+				setLoginErrorMsg("Интернэт холболт шалгана уу? (3)");
+				logout();
+			}
+		});
+		checkLocation();
+	}, []);
+
+	const createSQLTables = async () => {
+		console.log("create SQL Tables STATE");
+
+		result = await createTable().then((e) => {
+			getReferences();
+		});
+	};
+
 	const checkLocation = () => {
 		//***** LOCATION мэдээлэл авах
-		// console.log("RUN checkLocation");
+		console.log("RUN checkLocation");
 		(async () => {
 			let { status } = await Location.requestForegroundPermissionsAsync();
 			setLocationStatus(status);
@@ -75,27 +96,17 @@ export const MainStore = (props) => {
 				timeout: 5000,
 				accuracy: Platform.OS === "android" ? Location.Accuracy.Low : Location.Accuracy.Lowest
 			});
-			console.log("location", location);
+			// console.log("location", location);
 
 			setLocation(location);
-		})();
-	};
-
-	useEffect(() => {
-		NetInfo.fetch().then((stateConn) => {
-			// console.log("Connection type", stateConn);
-			if (!stateConn.isConnected) {
-				setLoginErrorMsg("Интернэт холболт шалгана уу? (3)");
-				logout();
-			}
+		})().then((e) => {
+			createSQLTables();
 		});
-
-		checkLocation();
-		checkUserData();
-	}, []);
+	};
 
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах
 	const checkUserData = async () => {
+		console.log("RUN checkUserData");
 		setIsLoggedIn(false);
 		setIsLoading(false);
 		setAppIsReady(true);
@@ -119,6 +130,8 @@ export const MainStore = (props) => {
 	};
 
 	const getReferences = async () => {
+		console.log("RUN getReferences");
+
 		try {
 			const response = {
 				data: ReferenceResponse,
@@ -128,16 +141,15 @@ export const MainStore = (props) => {
 				config: {},
 				request: {}
 			};
-			console.log("response", JSON.stringify(response));
+			// console.log("response", JSON.stringify(response.data?.Extra));
 
 			//Local storage руу access_token хадгалах
-			if (response.data?.Extra) {
+			if (response?.status == 200) {
+				checkUserData();
 			}
 		} catch (error) {
 			console.error("Error loading local JSON:", error);
 		} finally {
-			setLoadingLoginAction(false);
-			fetchData();
 			// state.setIsLoggedIn(true);
 		}
 	};

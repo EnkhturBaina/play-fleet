@@ -5,13 +5,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MainStackNavigator } from "./src/navigations/MainStackNavigation";
 import "./reanimatedConfig";
 import { useEffect } from "react";
-import { createTable } from "./src/helper/db";
 import { NetworkProvider } from "./src/contexts/NetworkContext";
 
 export default function App() {
-	useEffect(() => {
-		createTable();
-	}, []);
+	useEffect(() => {}, []);
 
 	return (
 		<SafeAreaProvider>

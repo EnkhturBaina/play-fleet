@@ -30,8 +30,6 @@ const MainStackNavigator = (props) => {
 	SplashScreen.preventAutoHideAsync();
 
 	const onLayoutRootView = useCallback(() => {
-		console.log("run onLayoutRootView", state.appIsReady);
-
 		if (state.appIsReady) {
 			// This tells the splash screen to hide immediately! If we call this after
 			// `setAppIsReady`, then we may see a blank screen while the app is
