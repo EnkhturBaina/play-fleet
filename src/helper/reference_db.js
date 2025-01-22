@@ -146,146 +146,161 @@ export const insertReferencesData = async (data) => {
 		const ref_operators = data.operators;
 		const ref_materials = data.materials;
 
-		// ref_states өгөгдөл оруулах
-		const resultRefStates = await db.runAsync(
-			`INSERT INTO ref_states (
+		if (ref_states) {
+			console.log("ref_states EXIST !");
+
+			// ref_states өгөгдөл оруулах
+			ref_states?.map(async (el) => {
+				const resultRefStates = await db.runAsync(
+					`INSERT INTO ref_states (
           id, PMSCompanyId, PMSProjectId, PMSParentId, PMSGroupId, Activity, ActivityEn,
           ActivityShort, Color, ViewOrder, IsSystem, IsActive, created_at, updated_at,
           deleted_at, status
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-			[
-				ref_states.id,
-				ref_states.PMSCompanyId,
-				ref_states.PMSProjectId,
-				ref_states.PMSParentId,
-				ref_states.PMSGroupId,
-				ref_states.Activity,
-				ref_states.ActivityEn,
-				ref_states.ActivityShort,
-				ref_states.Color,
-				ref_states.ViewOrder,
-				ref_states.IsSystem,
-				ref_states.IsActive,
-				ref_states.created_at,
-				ref_states.updated_at,
-				ref_states.deleted_at,
-				ref_states.status
-			]
-		);
+					[
+						el.id,
+						el.PMSCompanyId,
+						el.PMSProjectId,
+						el.PMSParentId,
+						el.PMSGroupId,
+						el.Activity,
+						el.ActivityEn,
+						el.ActivityShort,
+						el.Color,
+						el.ViewOrder,
+						el.IsSystem,
+						el.IsActive,
+						el.created_at,
+						el.updated_at,
+						el.deleted_at,
+						el.status
+					]
+				);
 
-		// Amжилттай нэмсэн мөрийн тоог шалгах
-		if (resultRefStates.rowsAffected === 0) {
-			throw new Error("ref_states өгөгдлийг оруулж чадсангүй.");
+				// Amжилттай нэмсэн мөрийн тоог шалгах
+				if (resultRefStates.rowsAffected === 0) {
+					throw new Error("ref_states өгөгдлийг оруулж чадсангүй.");
+				}
+
+				insertStateGroupData(el);
+			});
 		}
 
 		// ref_locations өгөгдөл оруулах
 		if (ref_locations) {
-			const resultRefLocations = await db.runAsync(
-				`INSERT INTO ref_locations (
+			console.log("ref_locations EXIST !");
+
+			ref_locations?.map(async (el) => {
+				const resultRefLocations = await db.runAsync(
+					`INSERT INTO ref_locations (
           id, PMSProjectId, PMSLocationTypeId, Name, ReportName, StartElevation, EndElevation,
           BenchHeight, IsEmergency, IsSubGrade, IsCell, Color, Latitude, Longitude, ViewOrder,
           IsSystem, IsActive, created_at, updated_at, deleted_at, status
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-				[
-					ref_locations.id,
-					ref_locations.PMSProjectId,
-					ref_locations.PMSLocationTypeId,
-					ref_locations.Name,
-					ref_locations.ReportName,
-					ref_locations.StartElevation,
-					ref_locations.EndElevation,
-					ref_locations.BenchHeight,
-					ref_locations.IsEmergency,
-					ref_locations.IsSubGrade,
-					ref_locations.IsCell,
-					ref_locations.Color,
-					ref_locations.Latitude,
-					ref_locations.Longitude,
-					ref_locations.ViewOrder,
-					ref_locations.IsSystem,
-					ref_locations.IsActive,
-					ref_locations.created_at,
-					ref_locations.updated_at,
-					ref_locations.deleted_at,
-					ref_locations.status
-				]
-			);
-
-			if (resultRefLocations.rowsAffected === 0) {
-				throw new Error("ref_locations өгөгдлийг оруулж чадсангүй.");
-			}
+					[
+						el.id,
+						el.PMSProjectId,
+						el.PMSLocationTypeId,
+						el.Name,
+						el.ReportName,
+						el.StartElevation,
+						el.EndElevation,
+						el.BenchHeight,
+						el.IsEmergency,
+						el.IsSubGrade,
+						el.IsCell,
+						el.Color,
+						el.Latitude,
+						el.Longitude,
+						el.ViewOrder,
+						el.IsSystem,
+						el.IsActive,
+						el.created_at,
+						el.updated_at,
+						el.deleted_at,
+						el.status
+					]
+				);
+				if (resultRefLocations.rowsAffected === 0) {
+					throw new Error("ref_locations өгөгдлийг оруулж чадсангүй.");
+				}
+				insertLocationTypesData(el);
+			});
 		}
 		// ref_movements өгөгдөл оруулах
 		if (ref_movements) {
-			const resultRefMovements = await db.runAsync(
-				`INSERT INTO ref_movements (
+			ref_movements?.map(async (el) => {
+				const resultRefMovements = await db.runAsync(
+					`INSERT INTO ref_movements (
           id, PMSLocationSrcId, PMSLocationDstId, PMSMaterialUnitId, PMSProjectId, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?);`,
-				[
-					ref_movements.id,
-					ref_movements.PMSLocationSrcId,
-					ref_movements.PMSLocationDstId,
-					ref_movements.PMSMaterialUnitId,
-					ref_movements.PMSProjectId,
-					ref_movements.created_at,
-					ref_movements.updated_at
-				]
-			);
+					[
+						ref_movements.id,
+						ref_movements.PMSLocationSrcId,
+						ref_movements.PMSLocationDstId,
+						ref_movements.PMSMaterialUnitId,
+						ref_movements.PMSProjectId,
+						ref_movements.created_at,
+						ref_movements.updated_at
+					]
+				);
 
-			if (resultRefMovements.rowsAffected === 0) {
-				throw new Error("ref_movements өгөгдлийг оруулж чадсангүй.");
-			}
+				if (resultRefMovements.rowsAffected === 0) {
+					throw new Error("ref_movements өгөгдлийг оруулж чадсангүй.");
+				}
+			});
 		}
 
 		// ref_operators өгөгдөл оруулах
 		if (ref_operators) {
-			const resultRefOperators = await db.runAsync(
-				`INSERT INTO ref_operators (
+			ref_operators?.map(async (el) => {
+				const resultRefOperators = await db.runAsync(
+					`INSERT INTO ref_operators (
           id, PMSCompanyId, PMSRosterId, Code, FirstName, LastName, Profile, Email, IsActive,
           IsOperator, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at, FullName, status
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-				[
-					ref_operators.id,
-					ref_operators.PMSCompanyId,
-					ref_operators.PMSRosterId,
-					ref_operators.Code,
-					ref_operators.FirstName,
-					ref_operators.LastName,
-					ref_operators.Profile,
-					ref_operators.Email,
-					ref_operators.IsActive,
-					ref_operators.IsOperator,
-					ref_operators.CreatedBy,
-					ref_operators.ModifiedBy,
-					ref_operators.created_at,
-					ref_operators.updated_at,
-					ref_operators.deleted_at,
-					ref_operators.FullName,
-					ref_operators.status
-				]
-			);
+					[
+						ref_operators.id,
+						ref_operators.PMSCompanyId,
+						ref_operators.PMSRosterId,
+						ref_operators.Code,
+						ref_operators.FirstName,
+						ref_operators.LastName,
+						ref_operators.Profile,
+						ref_operators.Email,
+						ref_operators.IsActive,
+						ref_operators.IsOperator,
+						ref_operators.CreatedBy,
+						ref_operators.ModifiedBy,
+						ref_operators.created_at,
+						ref_operators.updated_at,
+						ref_operators.deleted_at,
+						ref_operators.FullName,
+						ref_operators.status
+					]
+				);
 
-			if (resultRefOperators.rowsAffected === 0) {
-				throw new Error("ref_operators өгөгдлийг оруулж чадсангүй.");
-			}
+				if (resultRefOperators.rowsAffected === 0) {
+					throw new Error("ref_operators өгөгдлийг оруулж чадсангүй.");
+				}
+			});
 		}
 
 		// ref_materials өгөгдөл оруулах
 		if (ref_materials) {
-			const resultRefMaterials = await db.runAsync(
-				`INSERT INTO ref_materials (
+			ref_materials?.map(async (el) => {
+				const resultRefMaterials = await db.runAsync(
+					`INSERT INTO ref_materials (
           id, PMSProjectId, Name
         ) VALUES (?, ?, ?);`,
-				[ref_materials.id, ref_materials.PMSProjectId, ref_materials.Name]
-			);
+					[ref_materials.id, ref_materials.PMSProjectId, ref_materials.Name]
+				);
 
-			if (resultRefMaterials.rowsAffected === 0) {
-				throw new Error("ref_materials өгөгдлийг оруулж чадсангүй.");
-			}
+				if (resultRefMaterials.rowsAffected === 0) {
+					throw new Error("ref_materials өгөгдлийг оруулж чадсангүй.");
+				}
+			});
 		}
-
-		insertStateGroupData(ref_states);
-		insertLocationTypesData(ref_locations);
 
 		return "DONE";
 	} catch (error) {
@@ -293,63 +308,59 @@ export const insertReferencesData = async (data) => {
 	}
 };
 
-export const insertStateGroupData = async (data) => {
+export const insertStateGroupData = async (eachStateGroupData) => {
 	console.log("RUN INSERT StateGroupData");
 
 	try {
 		if (1) {
 			// ref_state_groups ширээнд өгөгдөл оруулах
-			data?.map(async (el) => {
-				const resultRefStateGroups = await db.runAsync(
-					`INSERT OR REPLACE INTO ref_state_groups (
+			const resultRefStateGroups = await db.runAsync(
+				`INSERT OR REPLACE INTO ref_state_groups (
           id, PMSProjectId, Name, NameEN, Color, ViewOrder, IsSystem,
           WorkingState, IsActive, created_at, updated_at, deleted_at, status
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-					[
-						el?.group?.id,
-						el?.group?.PMSProjectId,
-						el?.group?.Name,
-						el?.group?.NameEN,
-						el?.group?.Color,
-						el?.group?.ViewOrder,
-						el?.group?.IsSystem,
-						el?.group?.WorkingState,
-						el?.group?.IsActive,
-						el?.group?.created_at,
-						el?.group?.updated_at,
-						el?.group?.deleted_at,
-						el?.group?.status
-					]
-				);
+				[
+					eachStateGroupData?.group?.id,
+					eachStateGroupData?.group?.PMSProjectId,
+					eachStateGroupData?.group?.Name,
+					eachStateGroupData?.group?.NameEN,
+					eachStateGroupData?.group?.Color,
+					eachStateGroupData?.group?.ViewOrder,
+					eachStateGroupData?.group?.IsSystem,
+					eachStateGroupData?.group?.WorkingState,
+					eachStateGroupData?.group?.IsActive,
+					eachStateGroupData?.group?.created_at,
+					eachStateGroupData?.group?.updated_at,
+					eachStateGroupData?.group?.deleted_at,
+					eachStateGroupData?.group?.status
+				]
+			);
 
-				if (resultRefStateGroups.rowsAffected === 0) {
-					throw new Error("ref_state_groups өгөгдлийг оруулж чадсангүй.");
-				}
-			});
+			if (resultRefStateGroups.rowsAffected === 0) {
+				throw new Error("ref_state_groups өгөгдлийг оруулж чадсангүй.");
+			}
 		}
 	} catch (error) {
 		console.log("error", error);
 	}
 };
 
-export const insertLocationTypesData = async (data) => {
+export const insertLocationTypesData = async (eachLocationTypeData) => {
 	console.log("RUN INSERT LocationTypesData");
 
 	try {
 		// ref_location_types ширээнд өгөгдөл оруулах
 		if (1) {
-			data?.map(async (el) => {
-				const resultRefLocationTypes = await db.runAsync(
-					`INSERT OR REPLACE INTO ref_location_types (
+			const resultRefLocationTypes = await db.runAsync(
+				`INSERT OR REPLACE INTO ref_location_types (
           id, Name, IsActive
         ) VALUES (?, ?, ?)`,
-					[el?.type?.id, el?.type?.Name, el?.type?.IsActive]
-				);
+				[eachLocationTypeData?.type?.id, eachLocationTypeData?.type?.Name, eachLocationTypeData?.type?.IsActive]
+			);
 
-				if (resultRefLocationTypes.rowsAffected === 0) {
-					throw new Error("ref_location_types өгөгдлийг оруулж чадсангүй.");
-				}
-			});
+			if (resultRefLocationTypes.rowsAffected === 0) {
+				throw new Error("ref_location_types өгөгдлийг оруулж чадсангүй.");
+			}
 		}
 	} catch (error) {
 		console.log("error", error);
@@ -372,16 +383,16 @@ export const clearReferencesTables = async (id) => {
 	}
 };
 
-export const fetchData = async () => {
+export const fetchReferencesData = async () => {
 	console.log("RUN fetchData");
 	try {
-		const allRows = await db.getAllAsync("SELECT * FROM company");
+		const allRows = await db.getAllAsync(`
+			SELECT rl.*, lt.Name AS LocationTypeName
+			FROM ref_locations rl
+			INNER JOIN ref_location_types lt ON rl.PMSLocationTypeId = lt.id`);
 		console.log("allRows", allRows);
 		return allRows;
 	} catch (error) {
 		console.log("error fetchData", error);
 	}
 };
-`SELECT locations.*, location_types.Name AS LocationTypeName
-     FROM locations
-     INNER JOIN location_types ON locations.PMSLocationTypeId = location_types.id`;

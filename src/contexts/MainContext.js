@@ -7,7 +7,7 @@ import { Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import ReferenceResponse from "../temp_data/ReferenceResponse.json";
 import { createTable } from "../helper/db";
-import { createReferenceTables, saveReferencesWithClear } from "../helper/reference_db";
+import { createReferenceTables, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";
 
 const MainContext = React.createContext();
 
@@ -56,6 +56,7 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		console.log("RUN FIRST");
+		fetchReferencesData();
 		checkLocation();
 	}, []);
 
@@ -136,13 +137,13 @@ export const MainStore = (props) => {
 
 			//Local storage руу access_token хадгалах
 			if (response?.status == 200) {
-				saveReferencesWithClear(response.data?.Extra, true).then((e) => {
-					console.log("STATE insert ReferencesData", e);
-					if (e !== "DONE") {
-					} else if (e === "DONE") {
-					} else {
-					}
-				});
+				// saveReferencesWithClear(response.data?.Extra, true).then((e) => {
+				// 	console.log("STATE insert ReferencesData", e);
+				// 	if (e !== "DONE") {
+				// 	} else if (e === "DONE") {
+				// 	} else {
+				// 	}
+				// });
 				checkUserData();
 			}
 		} catch (error) {
