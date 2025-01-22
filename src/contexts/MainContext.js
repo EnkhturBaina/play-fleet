@@ -138,6 +138,10 @@ export const MainStore = (props) => {
 			if (response?.status == 200) {
 				saveReferencesWithClear(response.data?.Extra, true).then((e) => {
 					console.log("STATE insert ReferencesData", e);
+					if (e !== "DONE") {
+					} else if (e === "DONE") {
+					} else {
+					}
 				});
 				checkUserData();
 			}
