@@ -7,6 +7,7 @@ import { Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import ReferenceResponse from "../temp_data/ReferenceResponse.json";
 import { createTable } from "../helper/db";
+import { createReferenceTables, saveReferencesWithClear } from "../helper/reference_db";
 
 const MainContext = React.createContext();
 
@@ -24,7 +25,6 @@ export const MainStore = (props) => {
 	const [token, setToken] = useState(""); //*****Хэрэглэгчийн TOKEN
 	const [userData, setUserData] = useState(""); //*****Хэрэглэгчийн мэдээлэл
 	const [isLoading, setIsLoading] = useState(true); //*****Апп ачааллах эсэх
-	const [loginErrorMsg, setLoginErrorMsg] = useState(""); //*****Login хуудсанд харагдах алдааны MSG
 
 	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
 	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
@@ -56,21 +56,16 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		console.log("RUN FIRST");
-		NetInfo.fetch().then((stateConn) => {
-			console.log("Connection type", stateConn);
-			if (!stateConn.isConnected) {
-				setLoginErrorMsg("Интернэт холболт шалгана уу? (3)");
-				logout();
-			}
-		});
 		checkLocation();
 	}, []);
 
 	const createSQLTables = async () => {
 		console.log("create SQL Tables STATE");
 
-		result = await createTable().then((e) => {
-			getReferences();
+		result = await createTable().then(async (e) => {
+			await createReferenceTables().then(async (e) => {
+				getReferences();
+			});
 		});
 	};
 
@@ -81,10 +76,6 @@ export const MainStore = (props) => {
 			let { status } = await Location.requestForegroundPermissionsAsync();
 			setLocationStatus(status);
 			if (status !== "granted") {
-				//loc_permission_fix
-				// setLoginErrorMsg(
-				//   "Байршлын тохиргоо зөвшөөрөөгүй бол цаг бүртгэх боломжгүйг анхаарна уу."
-				// );
 				setIsLoading(false);
 				setAppIsReady(true);
 				// setIsLoggedIn(false);
@@ -145,6 +136,9 @@ export const MainStore = (props) => {
 
 			//Local storage руу access_token хадгалах
 			if (response?.status == 200) {
+				saveReferencesWithClear(response.data?.Extra, true).then((e) => {
+					console.log("STATE insert ReferencesData", e);
+				});
 				checkUserData();
 			}
 		} catch (error) {
@@ -171,8 +165,6 @@ export const MainStore = (props) => {
 				companyId,
 				setCompanyId,
 				logout,
-				loginErrorMsg,
-				setLoginErrorMsg,
 				location,
 				setLocation,
 				headerUserName,

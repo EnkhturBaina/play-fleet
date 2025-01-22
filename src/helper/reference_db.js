@@ -132,7 +132,7 @@ export const saveReferencesWithClear = async (data, is_clear) => {
 
 		return result;
 	} catch (error) {
-		return "saveLoginDataWithClear: " + error.message;
+		return "saveReferencesWithClear: " + error.message;
 	}
 };
 
@@ -141,12 +141,10 @@ export const insertReferencesData = async (data) => {
 
 	try {
 		const ref_states = data.states;
-		const ref_locations = ref_states.locations;
-		const ref_movements = ref_states.roster;
-		const ref_operators = ref_states.roster;
-		const ref_materials = ref_states.roster;
-		const ref_state_groups = ref_states.group;
-		const ref_location_types = ref_locations.type;
+		const ref_locations = data.locations;
+		const ref_movements = data.movements;
+		const ref_operators = data.operators;
+		const ref_materials = data.materials;
 
 		// ref_states өгөгдөл оруулах
 		const resultRefStates = await db.runAsync(
@@ -286,54 +284,77 @@ export const insertReferencesData = async (data) => {
 			}
 		}
 
-		// ref_state_groups ширээнд өгөгдөл оруулах
-		if (ref_state_groups) {
-			const resultRefStateGroups = await db.runAsync(
-				`INSERT OR REPLACE INTO ref_state_groups (
-          id, PMSProjectId, Name, NameEN, Color, ViewOrder, IsSystem,
-          WorkingState, IsActive, created_at, updated_at, deleted_at, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-				[
-					group.id,
-					group.PMSProjectId,
-					group.Name,
-					group.NameEN,
-					group.Color,
-					group.ViewOrder,
-					group.IsSystem,
-					group.WorkingState,
-					group.IsActive,
-					group.created_at,
-					group.updated_at,
-					group.deleted_at,
-					group.status
-				]
-			);
+		insertStateGroupData(ref_states);
+		insertLocationTypesData(ref_locations);
 
-			if (resultRefStateGroups.rowsAffected === 0) {
-				throw new Error("ref_state_groups өгөгдлийг оруулж чадсангүй.");
-			}
-		}
-
-		// ref_location_types ширээнд өгөгдөл оруулах
-		if (ref_location_types) {
-			const resultRefLocationTypes = await db.runAsync(
-				`INSERT OR REPLACE INTO ref_location_types (
-          id, Name, IsActive
-        ) VALUES (?, ?, ?)`,
-				[ref_states.id, ref_states.Name, ref_states.IsActive]
-			);
-
-			if (resultRefLocationTypes.rowsAffected === 0) {
-				throw new Error("ref_location_types өгөгдлийг оруулж чадсангүй.");
-			}
-		}
 		return "DONE";
 	} catch (error) {
 		return "insertReferencesData" + error.message;
 	}
 };
 
+export const insertStateGroupData = async (data) => {
+	console.log("RUN insertStateGroupData");
+
+	try {
+		if (1) {
+			// ref_state_groups ширээнд өгөгдөл оруулах
+			data?.map(async (el) => {
+				const resultRefStateGroups = await db.runAsync(
+					`INSERT OR REPLACE INTO ref_state_groups (
+          id, PMSProjectId, Name, NameEN, Color, ViewOrder, IsSystem,
+          WorkingState, IsActive, created_at, updated_at, deleted_at, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+					[
+						el?.group?.id,
+						el?.group?.PMSProjectId,
+						el?.group?.Name,
+						el?.group?.NameEN,
+						el?.group?.Color,
+						el?.group?.ViewOrder,
+						el?.group?.IsSystem,
+						el?.group?.WorkingState,
+						el?.group?.IsActive,
+						el?.group?.created_at,
+						el?.group?.updated_at,
+						el?.group?.deleted_at,
+						el?.group?.status
+					]
+				);
+
+				if (resultRefStateGroups.rowsAffected === 0) {
+					throw new Error("ref_state_groups өгөгдлийг оруулж чадсангүй.");
+				}
+			});
+		}
+	} catch (error) {
+		console.log("error", error);
+	}
+};
+
+export const insertLocationTypesData = async (data) => {
+	console.log("RUN insertLocationTypesData", data);
+
+	try {
+		// ref_location_types ширээнд өгөгдөл оруулах
+		if (1) {
+			data?.map(async (el) => {
+				const resultRefLocationTypes = await db.runAsync(
+					`INSERT OR REPLACE INTO ref_location_types (
+          id, Name, IsActive
+        ) VALUES (?, ?, ?)`,
+					[el?.type?.id, el?.type?.Name, el?.type?.IsActive]
+				);
+
+				if (resultRefLocationTypes.rowsAffected === 0) {
+					throw new Error("ref_location_types өгөгдлийг оруулж чадсангүй.");
+				}
+			});
+		}
+	} catch (error) {
+		console.log("error", error);
+	}
+};
 // References TABLE үүдийг цэвэрлэж. Шинэ дата хадгалахад бэлдэх
 export const clearReferencesTables = async (id) => {
 	console.log("RUN clearReferencesTables");

@@ -28,9 +28,11 @@ import { Image } from "expo-image";
 import EmployeeLoginResponse from "../temp_data/EmployeeLoginResponse.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchData, saveLoginDataWithClear } from "../helper/db";
+import { useNetworkStatus } from "../contexts/NetworkContext";
 
 const LoginScreen = (props) => {
 	const state = useContext(MainContext);
+	const { isConnected } = useNetworkStatus();
 
 	const [visibleSnack, setVisibleSnack] = useState(false);
 	const [snackBarMsg, setSnackBarMsg] = useState("");
@@ -42,7 +44,12 @@ const LoginScreen = (props) => {
 	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
 	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
 
-	useEffect(() => {}, []);
+	useEffect(() => {
+		if (!isConnected) {
+			setLoginError("Интернэт холболт шалгана уу?");
+			state.logout();
+		}
+	}, []);
 
 	//Snacbkbar харуулах
 	const onToggleSnackBar = (msg) => {
@@ -122,18 +129,6 @@ const LoginScreen = (props) => {
 				{loginError != null ? (
 					<Text style={{ width: "100%", textAlign: "center", color: "red", fontWeight: "600", marginBottom: 10 }}>
 						{loginError}
-					</Text>
-				) : null}
-				{state.loginErrorMsg != "" ? (
-					<Text
-						style={{
-							fontWeight: "bold",
-							color: "red",
-							textAlign: "center",
-							marginHorizontal: 20
-						}}
-					>
-						{state.loginErrorMsg}
 					</Text>
 				) : null}
 				<TextInput
