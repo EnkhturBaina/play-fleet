@@ -4,7 +4,7 @@ export const db = SQLite.openDatabaseSync("offline_data");
 
 // 1.DONE SQLite хүснэгт үүсгэх
 export const createTable = async () => {
-	console.log("RUN createTable");
+	console.log("RUN CREATE Table");
 	try {
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS employee (
@@ -73,7 +73,7 @@ export const createTable = async () => {
 };
 
 export const saveLoginDataWithClear = async (data, is_clear) => {
-	console.log("run saveLoginDataWithClear");
+	console.log("run SAVE LoginDataWithClear");
 	try {
 		let result;
 
@@ -93,7 +93,7 @@ export const saveLoginDataWithClear = async (data, is_clear) => {
 
 // 2.DONE Локал өгөгдлийг хадгалах функц
 export const insertLoginData = async (data) => {
-	console.log("RUN insertLoginData");
+	console.log("RUN INSERT LoginData");
 
 	try {
 		const employee = data.employee;
@@ -191,7 +191,7 @@ export const insertLoginData = async (data) => {
 
 // Login TABLE үүдийг цэвэрлэж. Шинэ дата хадгалахад бэлдэх
 export const clearLoginTables = async (id) => {
-	console.log("RUN clearLoginTables");
+	console.log("RUN CLEAR oginTables");
 
 	try {
 		await db.runAsync("DELETE FROM employee");

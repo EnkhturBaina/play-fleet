@@ -2,7 +2,7 @@ import { db } from "./db";
 
 // 1.Лавлах TABLE үүд үүсгэх
 export const createReferenceTables = async () => {
-	console.log("RUN createReferenceTables");
+	console.log("RUN CREATE ReferenceTables");
 	try {
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS ref_states (
@@ -118,7 +118,7 @@ export const createReferenceTables = async () => {
 };
 
 export const saveReferencesWithClear = async (data, is_clear) => {
-	console.log("run saveReferencesWithClear");
+	console.log("run SAVE ReferencesWithClear");
 	try {
 		let result;
 
@@ -137,7 +137,7 @@ export const saveReferencesWithClear = async (data, is_clear) => {
 };
 
 export const insertReferencesData = async (data) => {
-	console.log("RUN insertReferencesData");
+	console.log("RUN INSERT ReferencesData");
 
 	try {
 		const ref_states = data.states;
@@ -294,7 +294,7 @@ export const insertReferencesData = async (data) => {
 };
 
 export const insertStateGroupData = async (data) => {
-	console.log("RUN insertStateGroupData");
+	console.log("RUN INSERT StateGroupData");
 
 	try {
 		if (1) {
@@ -333,14 +333,12 @@ export const insertStateGroupData = async (data) => {
 };
 
 export const insertLocationTypesData = async (data) => {
-	console.log("RUN insertLocationTypesData", data);
+	console.log("RUN INSERT LocationTypesData");
 
 	try {
 		// ref_location_types ширээнд өгөгдөл оруулах
 		if (1) {
 			data?.map(async (el) => {
-				console.log("el", el);
-
 				const resultRefLocationTypes = await db.runAsync(
 					`INSERT OR REPLACE INTO ref_location_types (
           id, Name, IsActive
@@ -359,7 +357,7 @@ export const insertLocationTypesData = async (data) => {
 };
 // References TABLE үүдийг цэвэрлэж. Шинэ дата хадгалахад бэлдэх
 export const clearReferencesTables = async (id) => {
-	console.log("RUN clearReferencesTables");
+	console.log("RUN CLEAR ReferencesTables");
 
 	try {
 		await db.runAsync("DELETE FROM ref_states");
