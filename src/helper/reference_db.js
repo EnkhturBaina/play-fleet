@@ -185,7 +185,7 @@ export const insertReferencesData = async (data) => {
           id, PMSProjectId, PMSLocationTypeId, Name, ReportName, StartElevation, EndElevation,
           BenchHeight, IsEmergency, IsSubGrade, IsCell, Color, Latitude, Longitude, ViewOrder,
           IsSystem, IsActive, created_at, updated_at, deleted_at, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 				[
 					ref_locations.id,
 					ref_locations.PMSProjectId,
@@ -339,6 +339,8 @@ export const insertLocationTypesData = async (data) => {
 		// ref_location_types ширээнд өгөгдөл оруулах
 		if (1) {
 			data?.map(async (el) => {
+				console.log("el", el);
+
 				const resultRefLocationTypes = await db.runAsync(
 					`INSERT OR REPLACE INTO ref_location_types (
           id, Name, IsActive
