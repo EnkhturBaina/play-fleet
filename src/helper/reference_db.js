@@ -442,9 +442,9 @@ export const fetchReferencesData = async () => {
 	var data = null;
 	try {
 		const ref_states = await db.getAllAsync(`
-			SELECT rl.*, lt.Name AS StateGroupName
-			FROM ref_states rl
-			INNER JOIN ref_state_groups lt ON rl.PMSGroupId = lt.id`);
+			SELECT ref_states.*, ref_state_groups.Name AS StateGroupName
+			FROM ref_states
+			JOIN ref_state_groups ON ref_states.PMSGroupId = ref_state_groups.id`);
 
 		const ref_locations = await db.getAllAsync(`
 			SELECT rl.*, lt.Name AS LocationTypeName
@@ -469,7 +469,7 @@ export const fetchReferencesData = async () => {
 		const ref_state_groupsMain = await db.getAllAsync(`
 				SELECT *
 				FROM ref_state_groups`);
-		console.log("ref_statesMain", ref_statesMain);
+		console.log("ref_states", ref_states);
 		console.log("ref_state_groupsMain", ref_state_groupsMain);
 
 		// return [ref_states, ref_locations, ref_movements, ref_operators, ref_materials];
