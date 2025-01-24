@@ -6,7 +6,7 @@ export const createReferenceTables = async () => {
 	try {
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS ref_states (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY NOT NULL,
         PMSCompanyId INTEGER,
         PMSProjectId INTEGER,
         PMSParentId INTEGER,
@@ -26,7 +26,7 @@ export const createReferenceTables = async () => {
 		);
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS ref_locations (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY NOT NULL,
         PMSProjectId INTEGER,
         PMSLocationTypeId INTEGER,
         Name TEXT,
@@ -51,7 +51,7 @@ export const createReferenceTables = async () => {
 		);
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS ref_movements (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY NOT NULL,
         PMSLocationSrcId INTEGER,
         PMSLocationDstId INTEGER,
         PMSMaterialUnitId INTEGER,
@@ -62,7 +62,7 @@ export const createReferenceTables = async () => {
 		);
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS ref_operators (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY NOT NULL,
         PMSCompanyId INTEGER,
         PMSRosterId INTEGER,
         Code TEXT,
@@ -83,9 +83,24 @@ export const createReferenceTables = async () => {
 		);
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS ref_materials (
-        id INTEGER PRIMARY KEY,
-        PMSProjectId INTEGER,
-        Name TEXT
+        id INTEGER PRIMARY KEY NOT NULL,
+				PMSProjectId INTEGER,
+				Name TEXT,
+				NameEn TEXT,
+				ReportName TEXT,
+				Density REAL,
+				SwellFactor REAL,
+				FillFactor REAL,
+				IsCalculated INTEGER,
+				Color TEXT,
+				IsTopSoil INTEGER,
+				IsSubGrade INTEGER,
+				IsSystem INTEGER,
+				CreatedBy INTEGER,
+				ModifiedBy INTEGER,
+				created_at TEXT,
+				updated_at TEXT,
+				deleted_at TEXT
       );`
 		);
 		await db.execAsync(
@@ -124,8 +139,12 @@ export const saveReferencesWithClear = async (data, is_clear) => {
 
 		// clearReferencesTables амжилттай дууссаны дараа insert хийх
 		if (is_clear) {
-			await clearReferencesTables();
-			result = await insertReferencesData(data);
+			await clearReferencesTables().then(async (e) => {
+				console.log("e", e);
+				if (e == "DONE_CLEAR_REF") {
+					result = await insertReferencesData(data);
+				}
+			});
 		} else {
 			result = await insertReferencesData(data);
 		}
@@ -151,38 +170,42 @@ export const insertReferencesData = async (data) => {
 
 			// ref_states өгөгдөл оруулах
 			ref_states?.map(async (el) => {
-				const resultRefStates = await db.runAsync(
-					`INSERT INTO ref_states (
-          id, PMSCompanyId, PMSProjectId, PMSParentId, PMSGroupId, Activity, ActivityEn,
-          ActivityShort, Color, ViewOrder, IsSystem, IsActive, created_at, updated_at,
-          deleted_at, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-					[
-						el.id,
-						el.PMSCompanyId,
-						el.PMSProjectId,
-						el.PMSParentId,
-						el.PMSGroupId,
-						el.Activity,
-						el.ActivityEn,
-						el.ActivityShort,
-						el.Color,
-						el.ViewOrder,
-						el.IsSystem,
-						el.IsActive,
-						el.created_at,
-						el.updated_at,
-						el.deleted_at,
-						el.status
-					]
-				);
+				try {
+					const resultRefStates = await db.runAsync(
+						`INSERT OR REPLACE INTO ref_states (
+						id, PMSCompanyId, PMSProjectId, PMSParentId, PMSGroupId, Activity, ActivityEn,
+						ActivityShort, Color, ViewOrder, IsSystem, IsActive, created_at, updated_at,
+						deleted_at, status
+					) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+						[
+							el.id,
+							el.PMSCompanyId,
+							el.PMSProjectId,
+							el.PMSParentId,
+							el.PMSGroupId,
+							el.Activity,
+							el.ActivityEn,
+							el.ActivityShort,
+							el.Color,
+							el.ViewOrder,
+							el.IsSystem,
+							el.IsActive,
+							el.created_at,
+							el.updated_at,
+							el.deleted_at,
+							el.status
+						]
+					);
 
-				// Amжилттай нэмсэн мөрийн тоог шалгах
-				if (resultRefStates.rowsAffected === 0) {
-					throw new Error("ref_states өгөгдлийг оруулж чадсангүй.");
+					// Amжилттай нэмсэн мөрийн тоог шалгах
+					if (resultRefStates.changes === 0) {
+						throw new Error("ref-states өгөгдлийг оруулж чадсангүй.");
+					}
+
+					insertStateGroupData(el);
+				} catch (error) {
+					console.log("error insert ref-states", error);
 				}
-
-				insertStateGroupData(el);
 			});
 		}
 
@@ -190,9 +213,9 @@ export const insertReferencesData = async (data) => {
 		if (ref_locations) {
 			console.log("ref_locations EXIST !");
 
-			ref_locations?.map(async (el) => {
+			ref_locations?.forEach(async (el) => {
 				const resultRefLocations = await db.runAsync(
-					`INSERT INTO ref_locations (
+					`INSERT OR REPLACE INTO ref_locations (
           id, PMSProjectId, PMSLocationTypeId, Name, ReportName, StartElevation, EndElevation,
           BenchHeight, IsEmergency, IsSubGrade, IsCell, Color, Latitude, Longitude, ViewOrder,
           IsSystem, IsActive, created_at, updated_at, deleted_at, status
@@ -221,8 +244,8 @@ export const insertReferencesData = async (data) => {
 						el.status
 					]
 				);
-				if (resultRefLocations.rowsAffected === 0) {
-					throw new Error("ref_locations өгөгдлийг оруулж чадсангүй.");
+				if (resultRefLocations.changes === 0) {
+					throw new Error("ref-locations өгөгдлийг оруулж чадсангүй.");
 				}
 				insertLocationTypesData(el);
 			});
@@ -230,76 +253,105 @@ export const insertReferencesData = async (data) => {
 		// ref_movements өгөгдөл оруулах
 		if (ref_movements) {
 			ref_movements?.map(async (el) => {
+				// console.log("el", el);
+
 				const resultRefMovements = await db.runAsync(
-					`INSERT INTO ref_movements (
+					`INSERT OR REPLACE INTO ref_movements (
           id, PMSLocationSrcId, PMSLocationDstId, PMSMaterialUnitId, PMSProjectId, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?);`,
 					[
-						ref_movements.id,
-						ref_movements.PMSLocationSrcId,
-						ref_movements.PMSLocationDstId,
-						ref_movements.PMSMaterialUnitId,
-						ref_movements.PMSProjectId,
-						ref_movements.created_at,
-						ref_movements.updated_at
+						el.id,
+						el.PMSLocationSrcId,
+						el.PMSLocationDstId,
+						el.PMSMaterialUnitId,
+						el.PMSProjectId,
+						el.created_at,
+						el.updated_at
 					]
 				);
 
-				if (resultRefMovements.rowsAffected === 0) {
-					throw new Error("ref_movements өгөгдлийг оруулж чадсангүй.");
+				if (resultRefMovements.changes === 0) {
+					throw new Error("ref-movements өгөгдлийг оруулж чадсангүй.");
 				}
 			});
 		}
-
 		// ref_operators өгөгдөл оруулах
 		if (ref_operators) {
 			ref_operators?.map(async (el) => {
 				const resultRefOperators = await db.runAsync(
-					`INSERT INTO ref_operators (
+					`INSERT OR REPLACE INTO ref_operators (
           id, PMSCompanyId, PMSRosterId, Code, FirstName, LastName, Profile, Email, IsActive,
           IsOperator, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at, FullName, status
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 					[
-						ref_operators.id,
-						ref_operators.PMSCompanyId,
-						ref_operators.PMSRosterId,
-						ref_operators.Code,
-						ref_operators.FirstName,
-						ref_operators.LastName,
-						ref_operators.Profile,
-						ref_operators.Email,
-						ref_operators.IsActive,
-						ref_operators.IsOperator,
-						ref_operators.CreatedBy,
-						ref_operators.ModifiedBy,
-						ref_operators.created_at,
-						ref_operators.updated_at,
-						ref_operators.deleted_at,
-						ref_operators.FullName,
-						ref_operators.status
+						el.id,
+						el.PMSCompanyId,
+						el.PMSRosterId,
+						el.Code,
+						el.FirstName,
+						el.LastName,
+						el.Profile,
+						el.Email,
+						el.IsActive,
+						el.IsOperator,
+						el.CreatedBy,
+						el.ModifiedBy,
+						el.created_at,
+						el.updated_at,
+						el.deleted_at,
+						el.FullName,
+						el.status
 					]
 				);
 
-				if (resultRefOperators.rowsAffected === 0) {
-					throw new Error("ref_operators өгөгдлийг оруулж чадсангүй.");
+				if (resultRefOperators.changes === 0) {
+					throw new Error("ref-operators өгөгдлийг оруулж чадсангүй.");
 				}
 			});
 		}
-
 		// ref_materials өгөгдөл оруулах
 		if (ref_materials) {
-			ref_materials?.map(async (el) => {
-				const resultRefMaterials = await db.runAsync(
-					`INSERT INTO ref_materials (
-          id, PMSProjectId, Name
-        ) VALUES (?, ?, ?);`,
-					[ref_materials.id, ref_materials.PMSProjectId, ref_materials.Name]
-				);
+			try {
+				ref_materials?.map(async (el) => {
+					try {
+						const resultRefMaterials = await db.runAsync(
+							`INSERT OR REPLACE INTO ref_materials (
+									id, PMSProjectId, Name, NameEn, ReportName, Density, SwellFactor,
+									FillFactor, IsCalculated, Color, IsTopSoil, IsSubGrade, IsSystem,
+									CreatedBy, ModifiedBy, created_at, updated_at, deleted_at
+							) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+							[
+								el.id,
+								el.PMSProjectId,
+								el.Name,
+								el.NameEn,
+								el.ReportName,
+								el.Density,
+								el.SwellFactor,
+								el.FillFactor,
+								el.IsCalculated,
+								el.Color,
+								el.IsTopSoil,
+								el.IsSubGrade,
+								el.IsSystem,
+								el.CreatedBy,
+								el.ModifiedBy,
+								el.created_at,
+								el.updated_at,
+								el.deleted_at
+							]
+						);
 
-				if (resultRefMaterials.rowsAffected === 0) {
-					throw new Error("ref_materials өгөгдлийг оруулж чадсангүй.");
-				}
-			});
+						if (resultRefMaterials.changes === 0) {
+							throw new Error("ref_materials өгөгдлийг оруулж чадсангүй.");
+						}
+					} catch (error) {
+						console.log("error dotor", error);
+					}
+				});
+			} catch (error) {
+				console.log("error", error);
+			}
 		}
 
 		return "DONE";
@@ -309,7 +361,7 @@ export const insertReferencesData = async (data) => {
 };
 
 export const insertStateGroupData = async (eachStateGroupData) => {
-	console.log("RUN INSERT StateGroupData");
+	// console.log("RUN INSERT StateGroupData");
 
 	try {
 		if (1) {
@@ -336,12 +388,12 @@ export const insertStateGroupData = async (eachStateGroupData) => {
 				]
 			);
 
-			if (resultRefStateGroups.rowsAffected === 0) {
+			if (resultRefStateGroups.changes === 0) {
 				throw new Error("ref_state_groups өгөгдлийг оруулж чадсангүй.");
 			}
 		}
 	} catch (error) {
-		console.log("error", error);
+		console.log("error insert-State-Group-Data", error);
 	}
 };
 
@@ -358,7 +410,7 @@ export const insertLocationTypesData = async (eachLocationTypeData) => {
 				[eachLocationTypeData?.type?.id, eachLocationTypeData?.type?.Name, eachLocationTypeData?.type?.IsActive]
 			);
 
-			if (resultRefLocationTypes.rowsAffected === 0) {
+			if (resultRefLocationTypes.changes === 0) {
 				throw new Error("ref_location_types өгөгдлийг оруулж чадсангүй.");
 			}
 		}
@@ -378,6 +430,8 @@ export const clearReferencesTables = async (id) => {
 		await db.runAsync("DELETE FROM ref_materials");
 		await db.runAsync("DELETE FROM ref_state_groups");
 		await db.runAsync("DELETE FROM ref_location_types");
+
+		return "DONE_CLEAR_REF";
 	} catch (error) {
 		console.log("error", error);
 	}
@@ -385,14 +439,51 @@ export const clearReferencesTables = async (id) => {
 
 export const fetchReferencesData = async () => {
 	console.log("RUN fetchData");
+	var data = null;
 	try {
-		const allRows = await db.getAllAsync(`
+		const ref_states = await db.getAllAsync(`
+			SELECT rl.*, lt.Name AS StateGroupName
+			FROM ref_states rl
+			INNER JOIN ref_state_groups lt ON rl.PMSGroupId = lt.id`);
+
+		const ref_locations = await db.getAllAsync(`
 			SELECT rl.*, lt.Name AS LocationTypeName
 			FROM ref_locations rl
 			INNER JOIN ref_location_types lt ON rl.PMSLocationTypeId = lt.id`);
-		// console.log("allRows", allRows);
-		return allRows;
+
+		const ref_movements = await db.getAllAsync(`
+			SELECT *
+			FROM ref_movements`);
+
+		const ref_operators = await db.getAllAsync(`
+			SELECT *
+			FROM ref_operators`);
+
+		const ref_materials = await db.getAllAsync(`
+			SELECT *
+			FROM ref_materials`);
+
+		const ref_statesMain = await db.getAllAsync(`
+			SELECT *
+			FROM ref_states`);
+		const ref_state_groupsMain = await db.getAllAsync(`
+				SELECT *
+				FROM ref_state_groups`);
+		console.log("ref_statesMain", ref_statesMain);
+		console.log("ref_state_groupsMain", ref_state_groupsMain);
+
+		// return [ref_states, ref_locations, ref_movements, ref_operators, ref_materials];
 	} catch (error) {
 		console.log("error fetchData", error);
+	}
+};
+
+export const dropTable = async (tableName) => {
+	try {
+		await db.runAsync(`DROP TABLE IF EXISTS ${tableName};`);
+
+		return `DONE_DROP_${tableName}`;
+	} catch (error) {
+		console.log("error", error);
 	}
 };

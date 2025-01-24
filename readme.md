@@ -17,3 +17,5 @@ npm install expo@49
 npm install expo@latest
 
 npx expo-doctor
+
+##

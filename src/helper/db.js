@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 
-export const db = SQLite.openDatabaseSync("offline_data");
+export const db = SQLite.openDatabaseSync("offline_data2");
 
 // 1.DONE SQLite хүснэгт үүсгэх
 export const createTable = async () => {

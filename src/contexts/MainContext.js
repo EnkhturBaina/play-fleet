@@ -7,16 +7,32 @@ import { Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import ReferenceResponse from "../temp_data/ReferenceResponse.json";
 import { createTable } from "../helper/db";
-import { createReferenceTables, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";
+import { createReferenceTables, dropTable, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";
+import { useNetworkStatus } from "./NetworkContext";
 
 const MainContext = React.createContext();
 
 export const MainStore = (props) => {
+	const { isConnected } = useNetworkStatus();
+
+	/*GENERAL STATEs START*/
 	const [appIsReady, setAppIsReady] = useState(false);
-
-	const [dispId, setDispId] = useState(""); //*****Dispatcher ID
-
 	const [checkListDone, setCheckListDone] = useState(false);
+	const [seconds, setSeconds] = useState(0);
+	const [isActiveTimer, setIsActiveTimer] = useState(false);
+	const [locationStatus, setLocationStatus] = useState(""); //*****Location Permission
+	const [dispId, setDispId] = useState(""); //*****Dispatcher ID
+	const [isLoading, setIsLoading] = useState(true); //*****Апп ачааллах эсэх
+	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
+	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
+	const [headerUserName, setHeaderUserName] = useState(""); //*****Дээр харагдах хэрэглэгчийн нэр
+	/*GENERAL STATEs END*/
+
+	/*LOGIN STATEs START*/
+	const [employeeData, setEmployeeData] = useState(null);
+	const [companyData, setCompanyData] = useState(null);
+	const [rosterData, setRosterData] = useState(null);
+	const [equipmentsData, setEquipmentsData] = useState(null);
 	const [userId, setUserId] = useState(""); //*****Нэвтэрсэн хэрэглэгчийн USER_ID
 	const [companyId, setCompanyId] = useState(""); //*****Нэвтэрсэн хэрэглэгчийн COMPANY_ID
 	const [isLoggedIn, setIsLoggedIn] = useState(false); //*****Нэвтэрсэн эсэх
@@ -24,22 +40,7 @@ export const MainStore = (props) => {
 	const [password, setPassword] = useState("");
 	const [token, setToken] = useState(""); //*****Хэрэглэгчийн TOKEN
 	const [userData, setUserData] = useState(""); //*****Хэрэглэгчийн мэдээлэл
-	const [isLoading, setIsLoading] = useState(true); //*****Апп ачааллах эсэх
-
-	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
-	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
-
-	const [headerUserName, setHeaderUserName] = useState(""); //*****Дээр харагдах хэрэглэгчийн нэр
-
-	const [locationStatus, setLocationStatus] = useState(""); //*****Location Permission
-
-	const [seconds, setSeconds] = useState(0);
-	const [isActiveTimer, setIsActiveTimer] = useState(false);
-
-	const [employeeData, setEmployeeData] = useState(null);
-	const [companyData, setCompanyData] = useState(null);
-	const [rosterData, setRosterData] = useState(null);
-	const [equipmentsData, setEquipmentsData] = useState(null);
+	/*LOGIN STATEs END*/
 
 	const handleStart = () => {
 		setIsActiveTimer(true);
@@ -55,9 +56,8 @@ export const MainStore = (props) => {
 	};
 
 	useEffect(() => {
-		console.log("RUN FIRST");
-
 		checkLocation();
+		// dropTable("ref_materials");
 	}, []);
 
 	const createSQLTables = async () => {
@@ -66,8 +66,14 @@ export const MainStore = (props) => {
 		try {
 			await createTable().then(async (e) => {
 				await createReferenceTables().then(async (e) => {
-					fetchReferencesData();
-					getReferences();
+					if (isConnected) {
+						getReferencesService();
+					} else {
+						fetchReferencesData().then((e) => {
+							// console.log("RESULT FETCH REF=> ", e);
+							checkUserData();
+						});
+					}
 				});
 			});
 		} catch (error) {
@@ -77,7 +83,7 @@ export const MainStore = (props) => {
 
 	const checkLocation = () => {
 		//***** LOCATION мэдээлэл авах
-		console.log("RUN checkLocation");
+		console.log("RUN check-Location");
 		(async () => {
 			try {
 				let { status } = await Location.requestForegroundPermissionsAsync();
@@ -91,7 +97,7 @@ export const MainStore = (props) => {
 
 				try {
 					let location = await Location.getCurrentPositionAsync({
-						accuracy: Location.Accuracy.Balanced
+						// accuracy: Location.Accuracy.Balanced
 					});
 					console.log("location", location);
 					setLocation(location);
@@ -101,10 +107,8 @@ export const MainStore = (props) => {
 			} catch (error) {
 				console.log("check Location error", error);
 			}
-		})().then((e) => {
-			createSQLTables();
-		});
-		// checkUserData();
+		})().then((e) => {});
+		createSQLTables();
 	};
 
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах
@@ -113,6 +117,41 @@ export const MainStore = (props) => {
 		setIsLoggedIn(false);
 		setIsLoading(false);
 		setAppIsReady(true);
+	};
+
+	const getReferencesService = async () => {
+		console.log("RUN get-References-Service");
+
+		try {
+			const response = {
+				data: ReferenceResponse,
+				status: 200,
+				statusText: "OK",
+				headers: {},
+				config: {},
+				request: {}
+			};
+			// console.log("response", JSON.stringify(response.data?.Extra));
+
+			//Local storage руу access_token хадгалах
+			if (response?.status == 200) {
+				await saveReferencesWithClear(response.data?.Extra, true).then((e) => {
+					console.log("STATE get ReferencesData", e);
+					if (e !== "DONE") {
+					} else if (e === "DONE") {
+						fetchReferencesData().then((e) => {
+							console.log("RESULT FETCH REF=> ", e);
+							checkUserData();
+						});
+					} else {
+					}
+				});
+			}
+		} catch (error) {
+			console.error("Error loading local JSON:", error);
+		} finally {
+			// state.setIsLoggedIn(true);
+		}
 	};
 
 	// AsyncStorage.clear();
@@ -130,38 +169,6 @@ export const MainStore = (props) => {
 			setIsLoading(false);
 			setIsLoggedIn(false);
 		});
-	};
-
-	const getReferences = async () => {
-		console.log("RUN getReferences");
-
-		try {
-			const response = {
-				data: ReferenceResponse,
-				status: 200,
-				statusText: "OK",
-				headers: {},
-				config: {},
-				request: {}
-			};
-			// console.log("response", JSON.stringify(response.data?.Extra));
-
-			//Local storage руу access_token хадгалах
-			if (response?.status == 200) {
-				// saveReferencesWithClear(response.data?.Extra, true).then((e) => {
-				// 	console.log("STATE insert ReferencesData", e);
-				// 	if (e !== "DONE") {
-				// 	} else if (e === "DONE") {
-				// 	} else {
-				// 	}
-				// });
-				checkUserData();
-			}
-		} catch (error) {
-			console.error("Error loading local JSON:", error);
-		} finally {
-			// state.setIsLoggedIn(true);
-		}
 	};
 	return (
 		<MainContext.Provider
