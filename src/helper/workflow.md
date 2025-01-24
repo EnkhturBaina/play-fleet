@@ -17,3 +17,5 @@
 2.1. `fetch()` - Өгөгдлийг локал мэдээллийн санд хадгалсан өгөгдлөөс ачаалах.
 
 #
+
+ref_states, ref_state_groups JOIN HIIIJ CHDDGVE
