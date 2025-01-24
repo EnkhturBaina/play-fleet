@@ -390,7 +390,7 @@ export const fetchReferencesData = async () => {
 			SELECT rl.*, lt.Name AS LocationTypeName
 			FROM ref_locations rl
 			INNER JOIN ref_location_types lt ON rl.PMSLocationTypeId = lt.id`);
-		console.log("allRows", allRows);
+		// console.log("allRows", allRows);
 		return allRows;
 	} catch (error) {
 		console.log("error fetchData", error);

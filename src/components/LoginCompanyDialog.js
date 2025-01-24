@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: MAIN_BORDER_RADIUS,
 		borderColor: MAIN_COLOR,
-		letterSpacing: "6",
+		// letterSpacing: "6",
 		alignSelf: "center"
 	}
 });

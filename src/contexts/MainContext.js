@@ -56,44 +56,55 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		console.log("RUN FIRST");
-		fetchReferencesData();
+
 		checkLocation();
 	}, []);
 
 	const createSQLTables = async () => {
 		console.log("create SQL Tables STATE");
 
-		result = await createTable().then(async (e) => {
-			await createReferenceTables().then(async (e) => {
-				getReferences();
+		try {
+			await createTable().then(async (e) => {
+				await createReferenceTables().then(async (e) => {
+					fetchReferencesData();
+					getReferences();
+				});
 			});
-		});
+		} catch (error) {
+			console.log("error create SQL Tables", error);
+		}
 	};
 
 	const checkLocation = () => {
 		//***** LOCATION мэдээлэл авах
 		console.log("RUN checkLocation");
 		(async () => {
-			let { status } = await Location.requestForegroundPermissionsAsync();
-			setLocationStatus(status);
-			if (status !== "granted") {
-				setIsLoading(false);
-				setAppIsReady(true);
-				// setIsLoggedIn(false);
-				return;
+			try {
+				let { status } = await Location.requestForegroundPermissionsAsync();
+				setLocationStatus(status);
+				if (status !== "granted") {
+					setIsLoading(false);
+					setAppIsReady(true);
+					// setIsLoggedIn(false);
+					return;
+				}
+
+				try {
+					let location = await Location.getCurrentPositionAsync({
+						accuracy: Location.Accuracy.Balanced
+					});
+					console.log("location", location);
+					setLocation(location);
+				} catch (error) {
+					console.log("check Location error", error);
+				}
+			} catch (error) {
+				console.log("check Location error", error);
 			}
-
-			let location = await Location.getCurrentPositionAsync({
-				maximumAge: 10000,
-				timeout: 5000,
-				accuracy: Platform.OS === "android" ? Location.Accuracy.Low : Location.Accuracy.Lowest
-			});
-			// console.log("location", location);
-
-			setLocation(location);
 		})().then((e) => {
 			createSQLTables();
 		});
+		// checkUserData();
 	};
 
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах

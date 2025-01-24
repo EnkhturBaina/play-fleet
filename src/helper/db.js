@@ -207,7 +207,7 @@ export const fetchData = async () => {
 	console.log("RUN fetchData");
 	try {
 		const allRows = await db.getAllAsync("SELECT * FROM company");
-		console.log("allRows", allRows);
+		// console.log("allRows", allRows);
 		return allRows;
 	} catch (error) {
 		console.log("error fetchData", error);

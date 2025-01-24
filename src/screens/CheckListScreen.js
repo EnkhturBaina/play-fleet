@@ -114,7 +114,7 @@ const CheckListScreen = () => {
 				paddingBottom: 20
 			}}
 		>
-			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
+			<StatusBar translucent hidden={false} barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<HeaderUser />
 			<ScrollView
 				contentContainerStyle={{

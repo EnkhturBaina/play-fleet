@@ -6,6 +6,7 @@ import { MainStackNavigator } from "./src/navigations/MainStackNavigation";
 import "./reanimatedConfig";
 import { useEffect } from "react";
 import { NetworkProvider } from "./src/contexts/NetworkContext";
+import { SQLiteProvider } from "expo-sqlite";
 
 export default function App() {
 	useEffect(() => {}, []);
@@ -13,11 +14,13 @@ export default function App() {
 	return (
 		<SafeAreaProvider>
 			<NetworkProvider>
+				{/* <SQLiteProvider databaseName="offline_data"> */}
 				<NavigationContainer>
 					<MainStore>
 						<MainStackNavigator />
 					</MainStore>
 				</NavigationContainer>
+				{/* </SQLiteProvider> */}
 			</NetworkProvider>
 		</SafeAreaProvider>
 	);

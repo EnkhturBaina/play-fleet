@@ -87,7 +87,7 @@ const LoginScreen = (props) => {
 					.finally(() => {
 						// login response -г SQLite руу хадгалах
 						saveLoginDataWithClear(response.data?.Extra, true).then((e) => {
-							console.log("insert Login Data error =>", e);
+							console.log("insert Login Data =>", e);
 							setLoginError(e);
 							if (e !== "DONE") {
 							} else if (e === "DONE") {
@@ -101,7 +101,7 @@ const LoginScreen = (props) => {
 		} finally {
 			setLoadingLoginAction(false);
 			fetchData();
-			// state.setIsLoggedIn(true);
+			state.setIsLoggedIn(true);
 		}
 	};
 
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: MAIN_BORDER_RADIUS,
 		borderColor: MAIN_COLOR,
-		letterSpacing: "10",
+		// letterSpacing: "10",
 		alignSelf: "center"
 	},
 	stackSection2: {

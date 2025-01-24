@@ -67,7 +67,7 @@ const HomeScreen = (props) => {
 		}
 	};
 	useEffect(() => {
-		// console.log("STATE", state.location);
+		console.log("STATE", state.location);
 	}, []);
 
 	const handleSheetChanges = useCallback((index) => {
@@ -121,16 +121,12 @@ const HomeScreen = (props) => {
 					// provider={PROVIDER_GOOGLE}
 					ref={mapRef}
 					style={[styles.map, { width: width, height: height }]}
-					initialRegion={
-						state.location
-							? {
-									latitude: state.location?.coords?.latitude,
-									longitude: state.location?.coords?.longitude,
-									latitudeDelta: 0.0121,
-									longitudeDelta: 0.0121
-							  }
-							: position
-					}
+					initialRegion={{
+						latitude: state.location?.coords?.latitude,
+						longitude: state.location?.coords?.longitude,
+						latitudeDelta: 0.0121,
+						longitudeDelta: 0.0121
+					}}
 					scrollEnabled={true}
 				>
 					<Marker
