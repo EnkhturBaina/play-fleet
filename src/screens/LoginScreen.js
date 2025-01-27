@@ -164,7 +164,7 @@ const LoginScreen = (props) => {
 										fontWeight: "bold"
 									}}
 								>
-									Нэвтрэх
+									Нэвтрэх{state.refLocations?.length}
 								</Text>
 								{loadingLoginAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
 							</>

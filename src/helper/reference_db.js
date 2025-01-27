@@ -2,7 +2,7 @@ import { db } from "./db";
 
 // 1.Лавлах TABLE үүд үүсгэх
 export const createReferenceTables = async () => {
-	console.log("RUN CREATE ReferenceTables");
+	console.log("RUN CREATE-ReferenceTables");
 	try {
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS ref_states (
@@ -128,19 +128,18 @@ export const createReferenceTables = async () => {
       );`
 		);
 	} catch (error) {
-		console.log("error createTable", error);
+		console.log("error create-Table", error);
 	}
 };
 
 export const saveReferencesWithClear = async (data, is_clear) => {
-	console.log("run SAVE ReferencesWithClear");
+	console.log("run SAVE-ReferencesWithClear");
 	try {
 		let result;
 
 		// clearReferencesTables амжилттай дууссаны дараа insert хийх
 		if (is_clear) {
 			await clearReferencesTables().then(async (e) => {
-				console.log("e", e);
 				if (e == "DONE_CLEAR_REF") {
 					result = await insertReferencesData(data);
 				}
@@ -156,7 +155,9 @@ export const saveReferencesWithClear = async (data, is_clear) => {
 };
 
 export const insertReferencesData = async (data) => {
-	console.log("RUN INSERT ReferencesData");
+	console.log("RUN INSERT-ReferencesData");
+
+	const insertPromises = []; // Гүйцэтгэсэн бүх insert үйлдлийг хадгалах массив
 
 	try {
 		const ref_states = data.states;
@@ -165,18 +166,16 @@ export const insertReferencesData = async (data) => {
 		const ref_operators = data.operators;
 		const ref_materials = data.materials;
 
+		// ref_states insert хийх
 		if (ref_states) {
-			console.log("ref_states EXIST !");
-
-			// ref_states өгөгдөл оруулах
-			ref_states?.map(async (el) => {
-				try {
-					const resultRefStates = await db.runAsync(
+			ref_states.forEach((el) => {
+				const promise = db
+					.runAsync(
 						`INSERT OR REPLACE INTO ref_states (
-						id, PMSCompanyId, PMSProjectId, PMSParentId, PMSGroupId, Activity, ActivityEn,
-						ActivityShort, Color, ViewOrder, IsSystem, IsActive, created_at, updated_at,
-						deleted_at, status
-					) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+            id, PMSCompanyId, PMSProjectId, PMSParentId, PMSGroupId, Activity, ActivityEn,
+            ActivityShort, Color, ViewOrder, IsSystem, IsActive, created_at, updated_at,
+            deleted_at, status
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 						[
 							el.id,
 							el.PMSCompanyId,
@@ -195,257 +194,279 @@ export const insertReferencesData = async (data) => {
 							el.deleted_at,
 							el.status
 						]
-					);
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref-states өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_states insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
 
-					// Amжилттай нэмсэн мөрийн тоог шалгах
-					if (resultRefStates.changes === 0) {
-						throw new Error("ref-states өгөгдлийг оруулж чадсангүй.");
-					}
-
-					insertStateGroupData(el);
-				} catch (error) {
-					console.log("error insert ref-states", error);
-				}
+				insertPromises.push(promise);
 			});
 		}
-		// ref_locations өгөгдөл оруулах
+
+		// ref_state_groups insert хийх
+		if (ref_states) {
+			ref_states.forEach((el) => {
+				const promise = db
+					.runAsync(
+						`INSERT OR REPLACE INTO ref_state_groups (
+            id, PMSProjectId, Name, NameEN, Color, ViewOrder, IsSystem,
+            WorkingState, IsActive, created_at, updated_at, deleted_at, status
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+						[
+							el?.group?.id,
+							el?.group?.PMSProjectId,
+							el?.group?.Name,
+							el?.group?.NameEN,
+							el?.group?.Color,
+							el?.group?.ViewOrder,
+							el?.group?.IsSystem,
+							el?.group?.WorkingState,
+							el?.group?.IsActive,
+							el?.group?.created_at,
+							el?.group?.updated_at,
+							el?.group?.deleted_at,
+							el?.group?.status
+						]
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref_state_groups өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_state_groups insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
+
+				insertPromises.push(promise);
+			});
+		}
+
+		// ref_locations insert хийх
 		if (ref_locations) {
-			console.log("ref_locations EXIST !");
+			ref_locations.forEach((el) => {
+				const promise = db
+					.runAsync(
+						`INSERT OR REPLACE INTO ref_locations (
+            id, PMSProjectId, PMSLocationTypeId, Name, ReportName, StartElevation, EndElevation,
+            BenchHeight, IsEmergency, IsSubGrade, IsCell, Color, Latitude, Longitude, ViewOrder,
+            IsSystem, IsActive, created_at, updated_at, deleted_at, status
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+						[
+							el.id,
+							el.PMSProjectId,
+							el.PMSLocationTypeId,
+							el.Name,
+							el.ReportName,
+							el.StartElevation,
+							el.EndElevation,
+							el.BenchHeight,
+							el.IsEmergency,
+							el.IsSubGrade,
+							el.IsCell,
+							el.Color,
+							el.Latitude,
+							el.Longitude,
+							el.ViewOrder,
+							el.IsSystem,
+							el.IsActive,
+							el.created_at,
+							el.updated_at,
+							el.deleted_at,
+							el.status
+						]
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref-locations өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_locations insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
 
-			ref_locations?.forEach(async (el) => {
-				const resultRefLocations = await db.runAsync(
-					`INSERT OR REPLACE INTO ref_locations (
-          id, PMSProjectId, PMSLocationTypeId, Name, ReportName, StartElevation, EndElevation,
-          BenchHeight, IsEmergency, IsSubGrade, IsCell, Color, Latitude, Longitude, ViewOrder,
-          IsSystem, IsActive, created_at, updated_at, deleted_at, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-					[
-						el.id,
-						el.PMSProjectId,
-						el.PMSLocationTypeId,
-						el.Name,
-						el.ReportName,
-						el.StartElevation,
-						el.EndElevation,
-						el.BenchHeight,
-						el.IsEmergency,
-						el.IsSubGrade,
-						el.IsCell,
-						el.Color,
-						el.Latitude,
-						el.Longitude,
-						el.ViewOrder,
-						el.IsSystem,
-						el.IsActive,
-						el.created_at,
-						el.updated_at,
-						el.deleted_at,
-						el.status
-					]
-				);
-				if (resultRefLocations.changes === 0) {
-					throw new Error("ref-locations өгөгдлийг оруулж чадсангүй.");
-				}
-				insertLocationTypesData(el);
+				insertPromises.push(promise);
 			});
 		}
-		// ref_movements өгөгдөл оруулах
+
+		// ref_location_types insert хийх
+		if (ref_locations) {
+			ref_locations.forEach((el) => {
+				const promise = db
+					.runAsync(
+						`INSERT OR REPLACE INTO ref_location_types (
+            id, Name, IsActive
+          ) VALUES (?, ?, ?);`,
+						[el?.type?.id, el?.type?.Name, el?.type?.IsActive]
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref_location_types өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_location_types insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
+
+				insertPromises.push(promise);
+			});
+		}
+
+		// ref_movements insert хийх
 		if (ref_movements) {
-			ref_movements?.map(async (el) => {
-				// console.log("el", el);
+			ref_movements.forEach((el) => {
+				const promise = db
+					.runAsync(
+						`INSERT OR REPLACE INTO ref_movements (
+            id, PMSLocationSrcId, PMSLocationDstId, PMSMaterialUnitId, PMSProjectId, created_at, updated_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?);`,
+						[
+							el.id,
+							el.PMSLocationSrcId,
+							el.PMSLocationDstId,
+							el.PMSMaterialUnitId,
+							el.PMSProjectId,
+							el.created_at,
+							el.updated_at
+						]
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref-movements өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_movements insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
 
-				const resultRefMovements = await db.runAsync(
-					`INSERT OR REPLACE INTO ref_movements (
-          id, PMSLocationSrcId, PMSLocationDstId, PMSMaterialUnitId, PMSProjectId, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?);`,
-					[
-						el.id,
-						el.PMSLocationSrcId,
-						el.PMSLocationDstId,
-						el.PMSMaterialUnitId,
-						el.PMSProjectId,
-						el.created_at,
-						el.updated_at
-					]
-				);
-
-				if (resultRefMovements.changes === 0) {
-					throw new Error("ref-movements өгөгдлийг оруулж чадсангүй.");
-				}
+				insertPromises.push(promise);
 			});
 		}
-		// ref_operators өгөгдөл оруулах
+
+		// ref_operators insert хийх
 		if (ref_operators) {
-			ref_operators?.map(async (el) => {
-				const resultRefOperators = await db.runAsync(
-					`INSERT OR REPLACE INTO ref_operators (
-          id, PMSCompanyId, PMSRosterId, Code, FirstName, LastName, Profile, Email, IsActive,
-          IsOperator, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at, FullName, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-					[
-						el.id,
-						el.PMSCompanyId,
-						el.PMSRosterId,
-						el.Code,
-						el.FirstName,
-						el.LastName,
-						el.Profile,
-						el.Email,
-						el.IsActive,
-						el.IsOperator,
-						el.CreatedBy,
-						el.ModifiedBy,
-						el.created_at,
-						el.updated_at,
-						el.deleted_at,
-						el.FullName,
-						el.status
-					]
-				);
+			ref_operators.forEach((el) => {
+				const promise = db
+					.runAsync(
+						`INSERT OR REPLACE INTO ref_operators (
+            id, PMSCompanyId, PMSRosterId, Code, FirstName, LastName, Profile, Email, IsActive,
+            IsOperator, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at, FullName, status
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+						[
+							el.id,
+							el.PMSCompanyId,
+							el.PMSRosterId,
+							el.Code,
+							el.FirstName,
+							el.LastName,
+							el.Profile,
+							el.Email,
+							el.IsActive,
+							el.IsOperator,
+							el.CreatedBy,
+							el.ModifiedBy,
+							el.created_at,
+							el.updated_at,
+							el.deleted_at,
+							el.FullName,
+							el.status
+						]
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref-operators өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_operators insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
 
-				if (resultRefOperators.changes === 0) {
-					throw new Error("ref-operators өгөгдлийг оруулж чадсангүй.");
-				}
+				insertPromises.push(promise);
 			});
 		}
-		// ref_materials өгөгдөл оруулах
+
+		// ref_materials insert хийх
 		if (ref_materials) {
-			try {
-				ref_materials?.map(async (el) => {
-					try {
-						const resultRefMaterials = await db.runAsync(
-							`INSERT OR REPLACE INTO ref_materials (
-									id, PMSProjectId, Name, NameEn, ReportName, Density, SwellFactor,
-									FillFactor, IsCalculated, Color, IsTopSoil, IsSubGrade, IsSystem,
-									CreatedBy, ModifiedBy, created_at, updated_at, deleted_at
-							) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-							[
-								el.id,
-								el.PMSProjectId,
-								el.Name,
-								el.NameEn,
-								el.ReportName,
-								el.Density,
-								el.SwellFactor,
-								el.FillFactor,
-								el.IsCalculated,
-								el.Color,
-								el.IsTopSoil,
-								el.IsSubGrade,
-								el.IsSystem,
-								el.CreatedBy,
-								el.ModifiedBy,
-								el.created_at,
-								el.updated_at,
-								el.deleted_at
-							]
-						);
+			ref_materials.forEach((el) => {
+				const promise = db
+					.runAsync(
+						`INSERT OR REPLACE INTO ref_materials (
+            id, PMSProjectId, Name, NameEn, ReportName, Density, SwellFactor,
+            FillFactor, IsCalculated, Color, IsTopSoil, IsSubGrade, IsSystem,
+            CreatedBy, ModifiedBy, created_at, updated_at, deleted_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+						[
+							el.id,
+							el.PMSProjectId,
+							el.Name,
+							el.NameEn,
+							el.ReportName,
+							el.Density,
+							el.SwellFactor,
+							el.FillFactor,
+							el.IsCalculated,
+							el.Color,
+							el.IsTopSoil,
+							el.IsSubGrade,
+							el.IsSystem,
+							el.CreatedBy,
+							el.ModifiedBy,
+							el.created_at,
+							el.updated_at,
+							el.deleted_at
+						]
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref_materials өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_materials insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
 
-						if (resultRefMaterials.changes === 0) {
-							throw new Error("ref_materials өгөгдлийг оруулж чадсангүй.");
-						}
-					} catch (error) {
-						console.log("error dotor", error);
-					}
-				});
-			} catch (error) {
-				console.log("error", error);
-			}
+				insertPromises.push(promise);
+			});
 		}
 
-		return "DONE";
+		// Бүх insert үйлдлүүд амжилттай дууссан эсэхийг шалгах
+		await Promise.all(insertPromises); // Энд бүх асинхрон үйлдлүүдийг хүлээж дуусгах
+		console.log("All insert operations completed successfully.");
+
+		return "DONE_INSERT"; // Бүх үйлдэл амжилттай бол "DONE_INSERT" буцаана
 	} catch (error) {
-		return "insertReferencesData" + error.message;
+		console.log("Error in insertReferencesData:", error);
+		return "Error in insertReferencesData: " + error.message; // Алдаа гарахад дэлгэцэнд алдааг буцаана
 	}
 };
 
-export const insertStateGroupData = async (eachStateGroupData) => {
-	// console.log("RUN INSERT StateGroupData");
-
-	try {
-		if (1) {
-			// ref_state_groups ширээнд өгөгдөл оруулах
-			try {
-				const resultRefStateGroups = await db.runAsync(
-					`INSERT OR REPLACE INTO ref_state_groups (
-						id, PMSProjectId, Name, NameEN, Color, ViewOrder, IsSystem,
-						WorkingState, IsActive, created_at, updated_at, deleted_at, status
-					) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-					[
-						eachStateGroupData?.group?.id,
-						eachStateGroupData?.group?.PMSProjectId,
-						eachStateGroupData?.group?.Name,
-						eachStateGroupData?.group?.NameEN,
-						eachStateGroupData?.group?.Color,
-						eachStateGroupData?.group?.ViewOrder,
-						eachStateGroupData?.group?.IsSystem,
-						eachStateGroupData?.group?.WorkingState,
-						eachStateGroupData?.group?.IsActive,
-						eachStateGroupData?.group?.created_at,
-						eachStateGroupData?.group?.updated_at,
-						eachStateGroupData?.group?.deleted_at,
-						eachStateGroupData?.group?.status
-					]
-				);
-
-				if (resultRefStateGroups.changes === 0) {
-					throw new Error("ref_state_groups өгөгдлийг оруулж чадсангүй.");
-				}
-			} catch (error) {
-				console.log("ERROR insert-State-Group-Data", error);
-			}
-		}
-	} catch (error) {
-		console.log("error insert-State-Group-Data", error);
-	}
-};
-
-export const insertLocationTypesData = async (eachLocationTypeData) => {
-	console.log("RUN INSERT LocationTypesData");
-
-	try {
-		// ref_location_types ширээнд өгөгдөл оруулах
-		if (1) {
-			try {
-				const resultRefLocationTypes = await db.runAsync(
-					`INSERT OR REPLACE INTO ref_location_types (
-						id, Name, IsActive
-					) VALUES (?, ?, ?)`,
-					[eachLocationTypeData?.type?.id, eachLocationTypeData?.type?.Name, eachLocationTypeData?.type?.IsActive]
-				);
-
-				if (resultRefLocationTypes.changes === 0) {
-					throw new Error("ref_location_types өгөгдлийг оруулж чадсангүй.");
-				}
-			} catch (error) {
-				console.log("error", error);
-			}
-		}
-	} catch (error) {
-		console.log("error", error);
-	}
-};
 // References TABLE үүдийг цэвэрлэж. Шинэ дата хадгалахад бэлдэх
-export const clearReferencesTables = async (id) => {
-	console.log("RUN CLEAR ReferencesTables");
+export const clearReferencesTables = async () => {
+	console.log("RUN CLEAR-ReferencesTables");
+
+	const tablesToClear = [
+		"ref_states",
+		"ref_locations",
+		"ref_movements",
+		"ref_operators",
+		"ref_materials",
+		"ref_state_groups",
+		"ref_location_types"
+	];
 
 	try {
-		await db.runAsync("DELETE FROM ref_states");
-		await db.runAsync("DELETE FROM ref_locations");
-		await db.runAsync("DELETE FROM ref_movements");
-		await db.runAsync("DELETE FROM ref_operators");
-		await db.runAsync("DELETE FROM ref_materials");
-		await db.runAsync("DELETE FROM ref_state_groups");
-		await db.runAsync("DELETE FROM ref_location_types");
+		// Хүснэгтүүдийг устгах
+		for (let table of tablesToClear) {
+			await db.runAsync(`DELETE FROM ${table}`);
+			console.log(`Successfully cleared table: ${table}`);
+		}
 
 		return "DONE_CLEAR_REF";
 	} catch (error) {
-		console.log("error", error);
+		console.error("Error clearing tables:", error);
+		return `Error clearing tables: ${error.message}`;
 	}
 };
 
 export const fetchReferencesData = async () => {
-	console.log("RUN fetchReferencesData");
+	console.log("RUN fetch-References-Data");
 	let data = null;
 	try {
 		// Parallel database queries using Promise.all
@@ -478,7 +499,7 @@ export const fetchReferencesData = async () => {
 			ref_location_types
 		};
 
-		console.log("Fetched data successfully", ref_state_groups);
+		// console.log("Fetched data successfully", ref_location_types);
 		// console.log("Fetched data successfully", ref_location_types);
 		return data; // Return the combined data
 	} catch (error) {

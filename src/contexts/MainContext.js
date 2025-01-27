@@ -67,7 +67,8 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		checkLocation();
-		// dropTable("ref_materials");
+		// dropTable("ref_state_groups");
+		// dropTable("ref_location_types");
 	}, []);
 
 	const createSQLTables = async () => {
@@ -80,7 +81,7 @@ export const MainStore = (props) => {
 						getReferencesService();
 					} else {
 						fetchReferencesData().then((e) => {
-							// console.log("RESULT FETCH REF=> ", e);
+							console.log("RESULT FETCH REF=> ", e);
 							checkUserData();
 						});
 					}
@@ -145,12 +146,21 @@ export const MainStore = (props) => {
 
 			//Local storage руу access_token хадгалах
 			if (response?.status == 200) {
+				//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
 				await saveReferencesWithClear(response.data?.Extra, true).then(async (e) => {
 					console.log("STATE get ReferencesData", e);
-					if (e !== "DONE") {
-					} else if (e === "DONE") {
+					if (e !== "DONE_INSERT") {
+					} else if (e === "DONE_INSERT") {
 						await fetchReferencesData().then((e) => {
-							// console.log("RESULT FETCH REF=> ", e);
+							e.ref_states ? setRefStates(e.ref_states) : [];
+							e.ref_locations ? setRefLocations(e.ref_locations) : [];
+							e.ref_movements ? setRefMovements(e.ref_movements) : [];
+							e.ref_operators ? setRefOperators(e.ref_operators) : [];
+							e.ref_materials ? setRefMaterials(e.ref_materials) : [];
+							e.ref_state_groups ? setRefStateGroups(e.ref_state_groups) : [];
+							e.ref_location_types ? setRefLocationTypes(e.ref_location_types) : [];
+
+							// console.log("RESULT FETCH REF=> ", e.ref_state_groups);
 							checkUserData();
 						});
 					} else {
