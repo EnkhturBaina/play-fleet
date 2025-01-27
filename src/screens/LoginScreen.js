@@ -6,23 +6,13 @@ import {
 	KeyboardAvoidingView,
 	Platform,
 	ActivityIndicator,
-	FlatList,
 	TextInput
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { Icon, CheckBox, Button } from "@rneui/themed";
+import { Button } from "@rneui/themed";
 import MainContext from "../contexts/MainContext";
 import CustomSnackbar from "../components/CustomSnackbar";
-import {
-	MAIN_COLOR,
-	MAIN_BORDER_RADIUS,
-	SERVER_URL,
-	MAIN_INPUT_HEIGHT,
-	MAIN_BUTTON_HEIGHT,
-	MAIN_COLOR_GRAY,
-	MAIN_COLOR_RED
-} from "../constant";
-import axios from "axios";
+import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_INPUT_HEIGHT } from "../constant";
 import LoginCompanyDialog from "../components/LoginCompanyDialog";
 import { Image } from "expo-image";
 import EmployeeLoginResponse from "../temp_data/EmployeeLoginResponse.json";
@@ -229,31 +219,10 @@ const styles = StyleSheet.create({
 		// letterSpacing: "10",
 		alignSelf: "center"
 	},
-	stackSection2: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		marginTop: 10,
-		width: "80%",
-		marginRight: "auto",
-		marginLeft: "auto"
-	},
 	stackSection3: {
 		width: "80%",
 		alignItems: "center",
 		marginRight: "auto",
 		marginLeft: "auto"
-	},
-	imageStyle: {
-		position: "absolute",
-		zIndex: 999,
-		right: "15%",
-		top: "45%"
-	},
-	customCheckBox: {
-		padding: 0,
-		margin: 0,
-		marginLeft: 0,
-		alignItems: "center"
 	}
 });

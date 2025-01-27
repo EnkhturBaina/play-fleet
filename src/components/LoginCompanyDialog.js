@@ -4,15 +4,24 @@ import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_INPUT_HEIGHT } from "../constant";
 import { Dialog, Button } from "@rneui/themed";
 import MainContext from "../contexts/MainContext";
 
-export default function ({ visible, confirmFunction, declineFunction, text, confirmBtnText, DeclineBtnText, type }) {
+export default function ({
+	visible,
+	confirmFunction,
+	declineFunction,
+	text,
+	confirmBtnText = "Confirm", // Default value for confirm button
+	DeclineBtnText = "", // Default value for decline button
+	type = "default" // Default type
+}) {
 	const state = useContext(MainContext);
-	var imageType = null;
-	if (type == "warning") {
+	let imageType = null;
+
+	if (type === "warning") {
 		imageType = require("../../assets/warning.png");
-	} else if (type == "error") {
-		imageType = require("../../assets/checkmark.png");
+	} else if (type === "error") {
+		imageType = require("../../assets/warning.png");
 	} else {
-		imageType = require("../../assets/checkmark.png");
+		imageType = require("../../assets/warning.png");
 	}
 
 	return (
@@ -28,7 +37,6 @@ export default function ({ visible, confirmFunction, declineFunction, text, conf
 			}}
 		>
 			<TextInput
-				// label="Компани ID"
 				style={styles.generalInput}
 				value={state.mainCompanyId}
 				onChangeText={(e) => {
@@ -47,36 +55,39 @@ export default function ({ visible, confirmFunction, declineFunction, text, conf
 						marginTop: 10
 					}}
 				>
-					<View style={{}}>
+					<Button
+						containerStyle={{
+							width: "100%"
+						}}
+						buttonStyle={{
+							backgroundColor: MAIN_COLOR,
+							borderRadius: MAIN_BORDER_RADIUS,
+							paddingVertical: 10,
+							height: 50
+						}}
+						title={confirmBtnText}
+						titleStyle={{
+							fontSize: 16,
+							fontWeight: "bold"
+						}}
+						onPress={() => confirmFunction()}
+					/>
+					{DeclineBtnText ? ( // Only render if DeclineBtnText is not empty
 						<Button
-							containerStyle={{
-								width: "100%"
-							}}
+							containerStyle={styles.dialogDeclineBtn}
 							buttonStyle={{
-								backgroundColor: MAIN_COLOR,
+								backgroundColor: "transparent",
 								borderRadius: MAIN_BORDER_RADIUS,
 								paddingVertical: 10,
 								height: 50
 							}}
-							title={confirmBtnText}
-							titleStyle={{
-								fontSize: 16,
-								fontWeight: "bold"
-							}}
-							onPress={() => confirmFunction()}
-						/>
-					</View>
-					{DeclineBtnText != "" ? (
-						<Dialog.Button
 							title={DeclineBtnText}
-							buttonStyle={{ height: 50 }}
-							onPress={() => declineFunction()}
-							containerStyle={styles.dialogDeclineBtn}
-							radius={MAIN_BORDER_RADIUS}
 							titleStyle={{
 								fontWeight: "bold",
 								color: "#000"
 							}}
+							onPress={() => declineFunction()}
+							radius={MAIN_BORDER_RADIUS}
 						/>
 					) : null}
 				</View>
@@ -84,7 +95,6 @@ export default function ({ visible, confirmFunction, declineFunction, text, conf
 		</Dialog>
 	);
 }
-
 const styles = StyleSheet.create({
 	container: {
 		width: "100%"

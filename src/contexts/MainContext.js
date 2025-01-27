@@ -4,7 +4,6 @@ import axios from "axios";
 import { SERVER_URL } from "../constant";
 import * as Location from "expo-location";
 import { Platform } from "react-native";
-import NetInfo from "@react-native-community/netinfo";
 import ReferenceResponse from "../temp_data/ReferenceResponse.json";
 import { createTable } from "../helper/db";
 import { createReferenceTables, dropTable, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";

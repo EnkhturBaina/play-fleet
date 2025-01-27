@@ -67,7 +67,7 @@ const HomeScreen = (props) => {
 		}
 	};
 	useEffect(() => {
-		console.log("STATE", state.location);
+		console.log("STATE location=>", state.location);
 	}, []);
 
 	const handleSheetChanges = useCallback((index) => {
@@ -227,15 +227,6 @@ const HomeScreen = (props) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-	btnText: {
-		fontSize: 14,
-		paddingVertical: 10,
-		borderRadius: 20,
-		overflow: "hidden",
-		color: "#fff",
-		width: 120,
-		textAlign: "center"
-	},
 	contentContainer: {
 		flex: 1,
 		marginHorizontal: 20

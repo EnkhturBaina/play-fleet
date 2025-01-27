@@ -60,15 +60,21 @@ export default function ({ visible, confirmFunction, declineFunction, text, conf
 						/>
 					</View>
 					{DeclineBtnText != "" ? (
-						<Dialog.Button
-							title={DeclineBtnText}
-							onPress={() => declineFunction()}
+						<Button
 							containerStyle={styles.dialogDeclineBtn}
-							radius={MAIN_BORDER_RADIUS}
+							buttonStyle={{
+								backgroundColor: "transparent",
+								borderRadius: MAIN_BORDER_RADIUS,
+								paddingVertical: 10,
+								height: 50
+							}}
+							title={DeclineBtnText}
 							titleStyle={{
 								fontWeight: "bold",
 								color: "#000"
 							}}
+							onPress={() => declineFunction()}
+							radius={MAIN_BORDER_RADIUS}
 						/>
 					) : null}
 				</View>
