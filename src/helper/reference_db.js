@@ -499,8 +499,6 @@ export const fetchReferencesData = async () => {
 			ref_location_types
 		};
 
-		// console.log("Fetched data successfully", ref_location_types);
-		// console.log("Fetched data successfully", ref_location_types);
 		return data; // Return the combined data
 	} catch (error) {
 		console.error("Error fetching references data", error);
