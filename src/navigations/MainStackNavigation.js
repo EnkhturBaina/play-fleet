@@ -15,9 +15,10 @@ import { useNavigation } from "@react-navigation/native";
 import MotoHoursAndFuelScreen from "../screens/MotoHourAndFuel/MotoHoursAndFuelScreen";
 import CreateMotoHourAndFuelScreen from "../screens/MotoHourAndFuel/CreateMotoHourAndFuelScreen";
 import TestSQL from "../screens/TestSQL";
-import * as SplashScreen from "expo-splash-screen";
+// import * as SplashScreen from "expo-splash-screen";
 import TestRenderUurhai from "../screens/TestRenderUurhai";
 import TestTilesScreen from "../screens/TestTilesScreen";
+import SplashScreen from "../screens/SplashScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -26,26 +27,27 @@ const MainStackNavigator = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 
-	// Keep the splash screen visible while we fetch resources
-	SplashScreen.preventAutoHideAsync();
+	// SplashScreen.preventAutoHideAsync();
 
-	const onLayoutRootView = useCallback(() => {
-		if (state.appIsReady) {
-			// This tells the splash screen to hide immediately! If we call this after
-			// `setAppIsReady`, then we may see a blank screen while the app is
-			// loading its initial state and rendering its first pixels. So instead,
-			// we hide the splash screen once we know the root view has already
-			// performed layout.
-			SplashScreen.hide();
-		}
-	}, [state.appIsReady]);
+	// const onLayoutRootView = useCallback(() => {
+	// 	if (state.appIsReady) {
+	// 		SplashScreen.hide();
+	// 	}
+	// }, [state.appIsReady]);
 
-	if (!state.appIsReady) {
-		return null;
+	// if (!state.appIsReady) {
+	// 	return null;
+	// }
+	if (state.isLoading) {
+		// Апп ачааллах бүрт SplashScreen харуулах
+		return <SplashScreen />;
 	}
 
 	return (
-		<View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+		<View
+			style={{ flex: 1 }}
+			// onLayout={onLayoutRootView}
+		>
 			<Stack.Navigator
 				screenOptions={{
 					headerStyle: {

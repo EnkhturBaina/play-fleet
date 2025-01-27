@@ -22,7 +22,7 @@ export const MainStore = (props) => {
 	const [isActiveTimer, setIsActiveTimer] = useState(false);
 	const [locationStatus, setLocationStatus] = useState(""); //*****Location Permission
 	const [dispId, setDispId] = useState(""); //*****Dispatcher ID
-	const [isLoading, setIsLoading] = useState(true); //*****Апп ачааллах эсэх
+	const [isLoading, setIsLoading] = useState(false); //*****Апп ачааллах эсэх
 	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
 	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
 	const [headerUserName, setHeaderUserName] = useState(""); //*****Дээр харагдах хэрэглэгчийн нэр
@@ -66,6 +66,7 @@ export const MainStore = (props) => {
 	};
 
 	useEffect(() => {
+		setIsLoading(true);
 		checkLocation();
 		// dropTable("ref_state_groups");
 		// dropTable("ref_location_types");
