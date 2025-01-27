@@ -152,18 +152,21 @@ export const MainStore = (props) => {
 					console.log("STATE get ReferencesData", e);
 					if (e !== "DONE_INSERT") {
 					} else if (e === "DONE_INSERT") {
-						await fetchReferencesData().then((e) => {
-							e.ref_states ? setRefStates(e.ref_states) : [];
-							e.ref_locations ? setRefLocations(e.ref_locations) : [];
-							e.ref_movements ? setRefMovements(e.ref_movements) : [];
-							e.ref_operators ? setRefOperators(e.ref_operators) : [];
-							e.ref_materials ? setRefMaterials(e.ref_materials) : [];
-							e.ref_state_groups ? setRefStateGroups(e.ref_state_groups) : [];
-							e.ref_location_types ? setRefLocationTypes(e.ref_location_types) : [];
+						await fetchReferencesData()
+							.then((e) => {
+								e.ref_states ? setRefStates(e.ref_states) : [];
+								e.ref_locations ? setRefLocations(e.ref_locations) : [];
+								e.ref_movements ? setRefMovements(e.ref_movements) : [];
+								e.ref_operators ? setRefOperators(e.ref_operators) : [];
+								e.ref_materials ? setRefMaterials(e.ref_materials) : [];
+								e.ref_state_groups ? setRefStateGroups(e.ref_state_groups) : [];
+								e.ref_location_types ? setRefLocationTypes(e.ref_location_types) : [];
 
-							// console.log("RESULT FETCH REF=> ", e.ref_state_groups);
-							checkUserData();
-						});
+								// console.log("RESULT FETCH REF=> ", e.ref_state_groups);
+							})
+							.then(() => {
+								checkUserData();
+							});
 					} else {
 					}
 				});
