@@ -208,7 +208,6 @@ export const insertReferencesData = async (data) => {
 				}
 			});
 		}
-
 		// ref_locations өгөгдөл оруулах
 		if (ref_locations) {
 			console.log("ref_locations EXIST !");
@@ -366,30 +365,34 @@ export const insertStateGroupData = async (eachStateGroupData) => {
 	try {
 		if (1) {
 			// ref_state_groups ширээнд өгөгдөл оруулах
-			const resultRefStateGroups = await db.runAsync(
-				`INSERT OR REPLACE INTO ref_state_groups (
-          id, PMSProjectId, Name, NameEN, Color, ViewOrder, IsSystem,
-          WorkingState, IsActive, created_at, updated_at, deleted_at, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-				[
-					eachStateGroupData?.group?.id,
-					eachStateGroupData?.group?.PMSProjectId,
-					eachStateGroupData?.group?.Name,
-					eachStateGroupData?.group?.NameEN,
-					eachStateGroupData?.group?.Color,
-					eachStateGroupData?.group?.ViewOrder,
-					eachStateGroupData?.group?.IsSystem,
-					eachStateGroupData?.group?.WorkingState,
-					eachStateGroupData?.group?.IsActive,
-					eachStateGroupData?.group?.created_at,
-					eachStateGroupData?.group?.updated_at,
-					eachStateGroupData?.group?.deleted_at,
-					eachStateGroupData?.group?.status
-				]
-			);
+			try {
+				const resultRefStateGroups = await db.runAsync(
+					`INSERT OR REPLACE INTO ref_state_groups (
+						id, PMSProjectId, Name, NameEN, Color, ViewOrder, IsSystem,
+						WorkingState, IsActive, created_at, updated_at, deleted_at, status
+					) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+					[
+						eachStateGroupData?.group?.id,
+						eachStateGroupData?.group?.PMSProjectId,
+						eachStateGroupData?.group?.Name,
+						eachStateGroupData?.group?.NameEN,
+						eachStateGroupData?.group?.Color,
+						eachStateGroupData?.group?.ViewOrder,
+						eachStateGroupData?.group?.IsSystem,
+						eachStateGroupData?.group?.WorkingState,
+						eachStateGroupData?.group?.IsActive,
+						eachStateGroupData?.group?.created_at,
+						eachStateGroupData?.group?.updated_at,
+						eachStateGroupData?.group?.deleted_at,
+						eachStateGroupData?.group?.status
+					]
+				);
 
-			if (resultRefStateGroups.changes === 0) {
-				throw new Error("ref_state_groups өгөгдлийг оруулж чадсангүй.");
+				if (resultRefStateGroups.changes === 0) {
+					throw new Error("ref_state_groups өгөгдлийг оруулж чадсангүй.");
+				}
+			} catch (error) {
+				console.log("ERROR insert-State-Group-Data", error);
 			}
 		}
 	} catch (error) {
@@ -403,15 +406,19 @@ export const insertLocationTypesData = async (eachLocationTypeData) => {
 	try {
 		// ref_location_types ширээнд өгөгдөл оруулах
 		if (1) {
-			const resultRefLocationTypes = await db.runAsync(
-				`INSERT OR REPLACE INTO ref_location_types (
-          id, Name, IsActive
-        ) VALUES (?, ?, ?)`,
-				[eachLocationTypeData?.type?.id, eachLocationTypeData?.type?.Name, eachLocationTypeData?.type?.IsActive]
-			);
+			try {
+				const resultRefLocationTypes = await db.runAsync(
+					`INSERT OR REPLACE INTO ref_location_types (
+						id, Name, IsActive
+					) VALUES (?, ?, ?)`,
+					[eachLocationTypeData?.type?.id, eachLocationTypeData?.type?.Name, eachLocationTypeData?.type?.IsActive]
+				);
 
-			if (resultRefLocationTypes.changes === 0) {
-				throw new Error("ref_location_types өгөгдлийг оруулж чадсангүй.");
+				if (resultRefLocationTypes.changes === 0) {
+					throw new Error("ref_location_types өгөгдлийг оруулж чадсангүй.");
+				}
+			} catch (error) {
+				console.log("error", error);
 			}
 		}
 	} catch (error) {
@@ -438,43 +445,45 @@ export const clearReferencesTables = async (id) => {
 };
 
 export const fetchReferencesData = async () => {
-	console.log("RUN fetchData");
-	var data = null;
+	console.log("RUN fetchReferencesData");
+	let data = null;
 	try {
-		const ref_states = await db.getAllAsync(`
-			SELECT ref_states.*, ref_state_groups.Name AS StateGroupName
-			FROM ref_states
-			JOIN ref_state_groups ON ref_states.PMSGroupId = ref_state_groups.id`);
+		// Parallel database queries using Promise.all
+		const [
+			ref_states,
+			ref_locations,
+			ref_movements,
+			ref_operators,
+			ref_materials,
+			ref_state_groups,
+			ref_location_types
+		] = await Promise.all([
+			db.getAllAsync(`SELECT * FROM ref_states`),
+			db.getAllAsync(`SELECT * FROM ref_locations`),
+			db.getAllAsync(`SELECT * FROM ref_movements`),
+			db.getAllAsync(`SELECT * FROM ref_operators`),
+			db.getAllAsync(`SELECT * FROM ref_materials`),
+			db.getAllAsync(`SELECT * FROM ref_state_groups`),
+			db.getAllAsync(`SELECT * FROM ref_location_types`)
+		]);
 
-		const ref_locations = await db.getAllAsync(`
-			SELECT rl.*, lt.Name AS LocationTypeName
-			FROM ref_locations rl
-			INNER JOIN ref_location_types lt ON rl.PMSLocationTypeId = lt.id`);
+		// Combine results into a single object
+		data = {
+			ref_states,
+			ref_locations,
+			ref_movements,
+			ref_operators,
+			ref_materials,
+			ref_state_groups,
+			ref_location_types
+		};
 
-		const ref_movements = await db.getAllAsync(`
-			SELECT *
-			FROM ref_movements`);
-
-		const ref_operators = await db.getAllAsync(`
-			SELECT *
-			FROM ref_operators`);
-
-		const ref_materials = await db.getAllAsync(`
-			SELECT *
-			FROM ref_materials`);
-
-		const ref_statesMain = await db.getAllAsync(`
-			SELECT *
-			FROM ref_states`);
-		const ref_state_groupsMain = await db.getAllAsync(`
-				SELECT *
-				FROM ref_state_groups`);
-		console.log("ref_states", ref_states);
-		console.log("ref_state_groupsMain", ref_state_groupsMain);
-
-		// return [ref_states, ref_locations, ref_movements, ref_operators, ref_materials];
+		console.log("Fetched data successfully", ref_state_groups);
+		// console.log("Fetched data successfully", ref_location_types);
+		return data; // Return the combined data
 	} catch (error) {
-		console.log("error fetchData", error);
+		console.error("Error fetching references data", error);
+		throw new Error("Failed to fetch references data. Please try again later.");
 	}
 };
 

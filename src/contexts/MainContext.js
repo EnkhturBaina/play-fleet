@@ -15,7 +15,7 @@ const MainContext = React.createContext();
 export const MainStore = (props) => {
 	const { isConnected } = useNetworkStatus();
 
-	/*GENERAL STATEs START*/
+	/* GENERAL STATEs START */
 	const [appIsReady, setAppIsReady] = useState(false);
 	const [checkListDone, setCheckListDone] = useState(false);
 	const [seconds, setSeconds] = useState(0);
@@ -26,9 +26,9 @@ export const MainStore = (props) => {
 	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
 	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
 	const [headerUserName, setHeaderUserName] = useState(""); //*****Дээр харагдах хэрэглэгчийн нэр
-	/*GENERAL STATEs END*/
+	/* GENERAL STATEs END */
 
-	/*LOGIN STATEs START*/
+	/* LOGIN STATEs START */
 	const [employeeData, setEmployeeData] = useState(null);
 	const [companyData, setCompanyData] = useState(null);
 	const [rosterData, setRosterData] = useState(null);
@@ -40,7 +40,17 @@ export const MainStore = (props) => {
 	const [password, setPassword] = useState("");
 	const [token, setToken] = useState(""); //*****Хэрэглэгчийн TOKEN
 	const [userData, setUserData] = useState(""); //*****Хэрэглэгчийн мэдээлэл
-	/*LOGIN STATEs END*/
+	/* LOGIN STATEs END */
+
+	/* REFERENCE STATEs START */
+	const [refStates, setRefStates] = useState(null);
+	const [refLocations, setRefLocations] = useState(null);
+	const [refMovements, setRefMovements] = useState(null);
+	const [refOperators, setRefOperators] = useState(null);
+	const [refMaterials, setRefMaterials] = useState(null);
+	const [refStateGroups, setRefStateGroups] = useState(null);
+	const [refLocationTypes, setRefLocationTypes] = useState(null);
+	/* REFERENCE STATEs END */
 
 	const handleStart = () => {
 		setIsActiveTimer(true);
@@ -135,12 +145,12 @@ export const MainStore = (props) => {
 
 			//Local storage руу access_token хадгалах
 			if (response?.status == 200) {
-				await saveReferencesWithClear(response.data?.Extra, true).then((e) => {
+				await saveReferencesWithClear(response.data?.Extra, true).then(async (e) => {
 					console.log("STATE get ReferencesData", e);
 					if (e !== "DONE") {
 					} else if (e === "DONE") {
-						fetchReferencesData().then((e) => {
-							console.log("RESULT FETCH REF=> ", e);
+						await fetchReferencesData().then((e) => {
+							// console.log("RESULT FETCH REF=> ", e);
 							checkUserData();
 						});
 					} else {
@@ -219,7 +229,14 @@ export const MainStore = (props) => {
 				rosterData,
 				setRosterData,
 				equipmentsData,
-				setEquipmentsData
+				setEquipmentsData,
+				refStates,
+				refLocations,
+				refMovements,
+				refOperators,
+				refMaterials,
+				refStateGroups,
+				refLocationTypes
 			}}
 		>
 			{props.children}
