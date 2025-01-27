@@ -9,7 +9,7 @@ export default function ({ visible, confirmFunction, declineFunction, text, conf
 	if (type == "warning") {
 		imageType = require("../../assets/warning.png");
 	} else if (type == "error") {
-		imageType = require("../../assets/checkmark.png");
+		imageType = require("../../assets/warning.png");
 	} else {
 		imageType = require("../../assets/checkmark.png");
 	}
