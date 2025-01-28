@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import MapView, { Polygon, Polyline } from "react-native-maps";
+import MapView, { Polyline } from "react-native-maps";
 import * as FileSystem from "expo-file-system";
 import { parseString } from "react-native-xml2js";
 import { useNavigation } from "@react-navigation/native";
@@ -35,7 +35,12 @@ const TestRenderUurhai = () => {
 	const [polygons, setPolygons] = useState(null);
 	const { isConnected } = useNetworkStatus();
 
-	const loadKML = async () => {
+	const loadKML = async (is_clear) => {
+		if (is_clear) {
+			// is_clear = true; Цэвэрлээд шинээр татаж авах
+			setFileContent(null);
+			setLoadingKML(true);
+		}
 		setKmlStatus("File not found from storage. Loading from server");
 		try {
 			// URL-с KML файлыг татаж авах
@@ -74,7 +79,7 @@ const TestRenderUurhai = () => {
 				setFileContent(fileData);
 			} else {
 				if (isConnected) {
-					loadKML();
+					loadKML(false);
 				} else {
 					setKmlStatus("File not found from storage and no internet connection");
 					setLoadingKML(false); //local -с уншаад оффлайн байвал loading-г false болгох
@@ -173,16 +178,26 @@ const TestRenderUurhai = () => {
 
 	return (
 		<View style={{ flex: 1 }}>
-			<TouchableOpacity
-				style={{ marginTop: 100, width: 300, height: 50 }}
-				onPress={() => {
-					navigation.goBack();
-				}}
-			>
-				<Text style={{}}>BACK {kmlStatus}</Text>
-				<Text>{loadingKML ? "Loading: true" : "Loading: false"}</Text>
-				<Text>{fileContent ? "fileContent: true" : "fileContent: false"}</Text>
-			</TouchableOpacity>
+			<View style={{ marginTop: 100, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+				<TouchableOpacity
+					style={{ width: 300, height: 50, backgroundColor: "green", height: 50 }}
+					onPress={() => {
+						navigation.goBack();
+					}}
+				>
+					<Text style={{}}>BACK {kmlStatus}</Text>
+					<Text>{loadingKML ? "Loading: true" : "Loading: false"}</Text>
+					<Text>{fileContent ? "fileContent: true" : "fileContent: false"}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => {
+						loadKML(true);
+					}}
+					style={{ backgroundColor: "red", height: 50 }}
+				>
+					<Text>KML Файл татах {kmlStatus}</Text>
+				</TouchableOpacity>
+			</View>
 			{loadingKML ? (
 				<Text>Building KML</Text>
 			) : !loadingKML && fileContent ? (

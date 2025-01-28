@@ -47,6 +47,7 @@ const HomeScreen = (props) => {
 	const state = useContext(MainContext);
 	const mapRef = useRef();
 	const bottomSheetRef = useRef(null);
+	const [speed, setSpeed] = useState(null);
 
 	const [isOpen, setIsOpen] = useState(false);
 	const [sideBarStep, setSideBarStep] = useState(1);
@@ -68,6 +69,7 @@ const HomeScreen = (props) => {
 	};
 	useEffect(() => {
 		console.log("STATE location=>", state.location);
+		startTracking();
 	}, []);
 
 	const handleSheetChanges = useCallback((index) => {
@@ -96,6 +98,35 @@ const HomeScreen = (props) => {
 	//TIMER CONTROL
 	// <Button title={isActive ? "Pause" : "Start"} onPress={isActive ? handlePause : handleStart} />
 	// <Button title="Reset" onPress={handleReset} />
+
+	const startTracking = async () => {
+		// Байршил ашиглах зөвшөөрөл авах
+		const { status } = await Location.requestForegroundPermissionsAsync();
+		if (status !== "granted") {
+			setErrorMsg("Байршлын зөвшөөрөл олгогдоогүй байна!");
+			return;
+		}
+
+		// Байршлыг бодит цагийн горимд авах
+		await Location.watchPositionAsync(
+			{
+				accuracy: Location.Accuracy.Balanced,
+				timeInterval: 1000, // 1 секунд тутамд шинэчлэнэ
+				distanceInterval: 1 // 1 метр тутамд шинэчлэнэ
+			},
+			(location) => {
+				// console.log("location", location);
+				// Хурдыг м/сек-ээр авах
+				const currentSpeed = location.coords.speed; // м/сек
+				// console.log("currentSpeed", currentSpeed);
+
+				if (currentSpeed !== null) {
+					setSpeed((currentSpeed * 3.6).toFixed(2)); // км/цаг руу хөрвүүлнэ
+				}
+			}
+		);
+	};
+
 	return (
 		<SafeAreaView
 			style={{
@@ -158,7 +189,7 @@ const HomeScreen = (props) => {
 									alignSelf: "flex-start"
 								}}
 							>
-								<Text style={{ color: "#fff", fontSize: 20 }}>CОНГОГДСОН ТӨЛӨВ</Text>
+								<Text style={{ color: "#fff", fontSize: 20 }}>CОНГОГДСОН ТӨЛӨВ {speed} км/ц</Text>
 							</View>
 							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(state.seconds)}</Text>
 						</View>
