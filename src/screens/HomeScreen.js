@@ -95,6 +95,10 @@ const HomeScreen = (props) => {
 		{ id: "4", label: "ХООСОН БУЦАХ", img: require("../../assets/images/Picture8.png") },
 		{ id: "5", label: "АЧИЛТ ХИЙЛГЭХЭЭР ХҮЛЭЭХ", img: require("../../assets/images/Picture9.png") }
 	];
+	const BOTTOM_SHEET_MENU_LIST2 = [
+		{ id: "1", label: "Ажиллаж буй (W2)", img: require("../../assets/images/Picture4.png") },
+		{ id: "2", label: "Зогссон (DC)", img: require("../../assets/images/Picture5.png") }
+	];
 	//TIMER CONTROL
 	// <Button title={isActive ? "Pause" : "Start"} onPress={isActive ? handlePause : handleStart} />
 	// <Button title="Reset" onPress={handleReset} />
@@ -221,7 +225,7 @@ const HomeScreen = (props) => {
 							<Text style={{ color: "#fff", fontSize: 20 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
 						</View>
 						<ScrollView>
-							{BOTTOM_SHEET_MENU_LIST.map((el, index) => {
+							{BOTTOM_SHEET_MENU_LIST2.map((el, index) => {
 								return (
 									<TouchableOpacity
 										style={styles.eachBottomList}

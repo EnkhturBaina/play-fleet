@@ -3,7 +3,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { SERVER_URL } from "../constant";
 import * as Location from "expo-location";
-import { Platform } from "react-native";
 import ReferenceResponse from "../temp_data/ReferenceResponse.json";
 import { createTable } from "../helper/db";
 import { createReferenceTables, dropTable, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";
@@ -147,28 +146,37 @@ export const MainStore = (props) => {
 			//Local storage руу access_token хадгалах
 			if (response?.status == 200) {
 				//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
-				await saveReferencesWithClear(response.data?.Extra, true).then(async (e) => {
-					console.log("STATE get ReferencesData", e);
-					if (e !== "DONE_INSERT") {
-					} else if (e === "DONE_INSERT") {
-						await fetchReferencesData()
-							.then((e) => {
-								e.ref_states ? setRefStates(e.ref_states) : [];
-								e.ref_locations ? setRefLocations(e.ref_locations) : [];
-								e.ref_movements ? setRefMovements(e.ref_movements) : [];
-								e.ref_operators ? setRefOperators(e.ref_operators) : [];
-								e.ref_materials ? setRefMaterials(e.ref_materials) : [];
-								e.ref_state_groups ? setRefStateGroups(e.ref_state_groups) : [];
-								e.ref_location_types ? setRefLocationTypes(e.ref_location_types) : [];
+				try {
+					const result = await saveReferencesWithClear(response.data?.Extra, true);
+					console.log("STATE get ReferencesData", result);
 
-								// console.log("RESULT FETCH REF=> ", e.ref_state_groups);
-							})
-							.then(() => {
-								checkUserData();
+					if (result === "DONE_INSERT") {
+						const data = await fetchReferencesData();
+
+						// Бүх тохиргоог автоматаар хийх функц
+						const updateReferences = (data, setters) => {
+							Object.entries(setters).forEach(([key, setter]) => {
+								data[key] && setter(data[key]);
 							});
-					} else {
+						};
+
+						// Тохиргоог тохируулах
+						updateReferences(data, {
+							ref_states: setRefStates,
+							ref_locations: setRefLocations,
+							ref_movements: setRefMovements,
+							ref_operators: setRefOperators,
+							ref_materials: setRefMaterials,
+							ref_state_groups: setRefStateGroups,
+							ref_location_types: setRefLocationTypes
+						});
+
+						// Хэрэглэгчийн өгөгдлийг шалгах
+						await checkUserData();
 					}
-				});
+				} catch (error) {
+					console.error("Алдаа гарлаа:", error);
+				}
 			}
 		} catch (error) {
 			console.error("Error loading local JSON:", error);
