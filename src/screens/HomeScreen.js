@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 	ActivityIndicator,
 	StatusBar,
-	Linking,
+	Animated,
 	SafeAreaView,
 	Dimensions
 } from "react-native";
@@ -52,6 +52,8 @@ const HomeScreen = (props) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [sideBarStep, setSideBarStep] = useState(1);
 
+	const [selectedId, setSelectedId] = useState(null);
+	const animatedValue = useRef(new Animated.Value(1)).current;
 	//Screen LOAD хийхэд дахин RENDER хийх
 	const isFocused = useIsFocused();
 
@@ -130,7 +132,36 @@ const HomeScreen = (props) => {
 			}
 		);
 	};
+	useEffect(() => {
+		if (state.seconds == 3) {
+			if (1 == 1) {
+				Animated.loop(
+					Animated.sequence([
+						Animated.timing(animatedValue, {
+							toValue: 0.5,
+							duration: 500,
+							useNativeDriver: true
+						}),
+						Animated.timing(animatedValue, {
+							toValue: 1,
+							duration: 500,
+							useNativeDriver: true
+						})
+					])
+				).start();
+			} else {
+				animatedValue.setValue(1); // Эхлэл төлөвт буцаана
+			}
+		}
+		console.log("state.seconds", state.seconds);
+	}, [state.seconds]);
 
+	const handlePress = (id) => {
+		animatedValue.setValue(1);
+		state.handleReset();
+		state.handleStart();
+		//setSelectedId(id === selectedId ? null : id); // Дахин дарахад анивчилтыг зогсооно
+	};
 	return (
 		<SafeAreaView
 			style={{
@@ -225,29 +256,23 @@ const HomeScreen = (props) => {
 							<Text style={{ color: "#fff", fontSize: 20 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
 						</View>
 						<ScrollView>
-							{BOTTOM_SHEET_MENU_LIST2.map((el, index) => {
+							{BOTTOM_SHEET_MENU_LIST.map((el) => {
+								const borderColor =
+									"2" === el.id
+										? animatedValue.interpolate({
+												inputRange: [0.5, 1],
+												outputRange: [MAIN_COLOR, "#fff"]
+										  })
+										: "transparent";
+
 								return (
 									<TouchableOpacity
-										style={styles.eachBottomList}
-										key={index}
-										onPress={() => {
-											state.handleReset();
-											state.handleStart();
-										}}
+										style={[styles.eachBottomList, { borderWidth: 3, borderColor }]}
+										key={el.id}
+										onPress={() => handlePress(el.id)}
 									>
 										<Image source={el.img} style={{ height: 50, width: 50 }} />
-										<Text
-											style={{
-												color: MAIN_COLOR_GREEN,
-												fontSize: 18,
-												flex: 1,
-												marginLeft: 10,
-												textAlign: "center",
-												flexWrap: "wrap"
-											}}
-										>
-											{el.label}
-										</Text>
+										<Text style={styles.menuText}>{el.label}</Text>
 									</TouchableOpacity>
 								);
 							})}
