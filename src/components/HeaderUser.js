@@ -27,7 +27,7 @@ const HeaderUser = (props) => {
 				<View style={styles.titleContainer}>
 					<Text style={styles.topText}>Сайн байна уу?</Text>
 					<Text style={styles.userName} numberOfLines={1}>
-						{state.headerUserName}
+						{state.headerUserName ?? "User"}
 					</Text>
 				</View>
 			</TouchableOpacity>
@@ -68,10 +68,9 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	userImg: {
-		width: 80,
-		height: 80,
+		width: 50,
+		height: 50,
 		borderRadius: 50,
-		// resizeMode: "contain",
 		overflow: "hidden"
 	},
 	titleContainer: {

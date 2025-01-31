@@ -153,7 +153,6 @@ const HomeScreen = (props) => {
 				animatedValue.setValue(1); // Эхлэл төлөвт буцаана
 			}
 		}
-		console.log("state.seconds", state.seconds);
 	}, [state.seconds]);
 
 	const handlePress = (id) => {
@@ -224,7 +223,7 @@ const HomeScreen = (props) => {
 									alignSelf: "flex-start"
 								}}
 							>
-								<Text style={{ color: "#fff", fontSize: 20 }}>CОНГОГДСОН ТӨЛӨВ {speed} км/ц</Text>
+								<Text style={{ color: "#fff", fontSize: 20 }}>CОНГОГДСОН ТӨЛӨВ</Text>
 							</View>
 							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(state.seconds)}</Text>
 						</View>

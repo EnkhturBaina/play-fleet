@@ -82,7 +82,7 @@ const HeaderFloatItem = (props) => {
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() => {
-						console.log("X");
+						navigation.navigate("TestTilesScreen");
 					}}
 					style={styles.eachFloatButton}
 				>

@@ -23,7 +23,7 @@ export const MainStore = (props) => {
 	const [isLoading, setIsLoading] = useState(false); //*****Апп ачааллах эсэх
 	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
 	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
-	const [headerUserName, setHeaderUserName] = useState(""); //*****Дээр харагдах хэрэглэгчийн нэр
+	const [headerUserName, setHeaderUserName] = useState(null); //*****Дээр харагдах хэрэглэгчийн нэр
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
