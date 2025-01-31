@@ -15,6 +15,61 @@ const HeaderFloatItem = (props) => {
 	const [isFocus, setIsFocus] = useState(false);
 	const [value, setValue] = useState(null);
 
+	const VEHICLE_TYPE = {
+		loader: {
+			value: 1,
+			code: "LOADER",
+			name: "Экскаватор",
+			title: "АЧИЛТЫН БЛОК",
+			fields: [
+				{
+					id: 1,
+					name: "Блокын дугаар"
+				},
+				{
+					id: 2,
+					name: "Материал"
+				},
+				{
+					id: 3,
+					name: "Ачилтын тоо"
+				}
+			]
+		},
+		truck: {
+			name: 2,
+			code: "TRUCK",
+			label: "Автосамосвал",
+			title: "МАТЕРИАЛЫН УРСГАЛ",
+			fields: [
+				{
+					id: 1,
+					name: "Экскаватор"
+				},
+				{
+					id: 2,
+					name: "Хүргэх байршил"
+				},
+				{
+					id: 3,
+					name: "Рейсийн тоо"
+				}
+			]
+		},
+		other: {
+			name: 3,
+			code: "OTHER",
+			label: "Туслах тоног төхөөрөмж",
+			title: "ДААЛГАВАР",
+			fields: [
+				{
+					id: 1,
+					name: "Ногдуулсан даалгавар"
+				}
+			]
+		}
+	};
+
 	return (
 		<View style={styles.floatButtons}>
 			<View

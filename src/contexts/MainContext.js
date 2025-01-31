@@ -24,6 +24,7 @@ export const MainStore = (props) => {
 	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
 	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
 	const [headerUserName, setHeaderUserName] = useState(null); //*****Дээр харагдах хэрэглэгчийн нэр
+	const [vehicleType, setVehicleType] = useState("OTHER"); //LOADER, TRUCK, OTHER
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -257,7 +258,9 @@ export const MainStore = (props) => {
 				refOperators,
 				refMaterials,
 				refStateGroups,
-				refLocationTypes
+				refLocationTypes,
+				vehicleType,
+				setVehicleType
 			}}
 		>
 			{props.children}

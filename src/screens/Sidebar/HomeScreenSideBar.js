@@ -8,10 +8,23 @@ const HomeScreenSideBar = (props) => {
 	const navigation = useNavigation();
 	const MENU_LIST = [
 		{
-			img: require("../../../assets/images/Picture14.png"),
-			label: "Ээлжийн өмнөх үзлэг",
+			img: require("../../../assets/images/Picture4.png"),
+			label: "Бүтээлийн бүртгэл",
 			nav: "NAV_PATH",
-			isMore: true
+			isMore: true,
+			action: () => {
+				props.setIsOpen(false);
+				navigation.navigate("WorkRegistrationScreen");
+			}
+		},
+		{
+			img: require("../../../assets/images/Picture14.png"),
+			label: "Төлөв бүртгэл",
+			nav: "NAV_PATH",
+			isMore: true,
+			action: () => {
+				props.setSideBarStep(2);
+			}
 		},
 		{
 			img: require("../../../assets/images/Picture15.png"),
@@ -25,22 +38,9 @@ const HomeScreenSideBar = (props) => {
 		},
 		{
 			img: require("../../../assets/images/Picture16.png"),
-			label: "Төлөв бүртгэл",
+			label: "Ээлжийн өмнөх үзлэг",
 			nav: "NAV_PATH",
-			isMore: true,
-			action: () => {
-				props.setSideBarStep(2);
-			}
-		},
-		{
-			img: require("../../../assets/images/Picture16.png"),
-			label: "Бүтээлийн бүртгэл",
-			nav: "NAV_PATH",
-			isMore: true,
-			action: () => {
-				props.setIsOpen(false);
-				navigation.navigate("WorkRegistrationScreen");
-			}
+			isMore: true
 		},
 		{
 			img: require("../../../assets/images/Picture17.png"),

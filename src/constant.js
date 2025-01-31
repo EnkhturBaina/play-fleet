@@ -10,40 +10,7 @@ export const MAIN_BORDER_RADIUS = 8;
 export const MAIN_INPUT_HEIGHT = 50;
 export const MAIN_BUTTON_HEIGHT = 40;
 
-export const IOS_VERSION = "1.4.8";
-export const ANDROvalue_VERSION = "65";
-
 export const SERVER_URL = "https://api.talent.mn/api";
-export const CUSTOM_INDEX_EMPLOYEE = [
-	"А",
-	"Б",
-	"В",
-	"Г",
-	"Д",
-	"Ё",
-	"Ж",
-	"З",
-	"И",
-	"К",
-	"Л",
-	"М",
-	"Н",
-	"О",
-	"Ө",
-	"П",
-	"Р",
-	"С",
-	"Т",
-	"У",
-	"Ү",
-	"Х",
-	"Ц",
-	"Ч",
-	"Ш",
-	"Э",
-	"Ю",
-	"Я"
-];
 
 export const WEEKDAYS = [
 	{ value: 1, label: "Sunday", mn: "Ням", mnVal: 7 },

@@ -6,36 +6,98 @@ import { useNavigation } from "@react-navigation/native";
 
 const HomeScreenSideBarSUB = (props) => {
 	const navigation = useNavigation();
-	const MENU_LIST = [
-		{
-			img: require("../../../assets/images/Picture10.png"),
-			label: "Бүтээлийн бус ажиллах",
-			nav: "NAV_PATH",
-			isMore: true,
-			borderColor: MAIN_COLOR_GREEN
-		},
-		{
-			img: require("../../../assets/images/Picture11.png"),
-			label: "Саатал",
-			nav: "NAV_PATH",
-			isMore: true,
-			borderColor: MAIN_COLOR_BLUE
-		},
-		{
-			img: require("../../../assets/images/Picture12.png"),
-			label: "Сул зогсолт",
-			nav: "NAV_PATH",
-			isMore: true,
-			borderColor: MAIN_COLOR
-		},
-		{
-			img: require("../../../assets/images/Picture13.png"),
-			label: "Эвдрэл",
-			nav: "NAV_PATH",
-			isMore: true,
-			borderColor: MAIN_COLOR_RED
-		}
-	];
+	const MENU_LIST = {
+		loader: [
+			{
+				img: require("../../../assets/images/Picture10.png"),
+				label: "Бүтээлийн бус ажиллах",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR_GREEN
+			},
+			{
+				img: require("../../../assets/images/Picture11.png"),
+				label: "Саатал",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR_BLUE
+			},
+			{
+				img: require("../../../assets/images/Picture12.png"),
+				label: "Сул зогсолт",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR
+			},
+			{
+				img: require("../../../assets/images/Picture13.png"),
+				label: "Эвдрэл",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR_RED
+			}
+		],
+		truck: [
+			{
+				img: require("../../../assets/images/Picture10.png"),
+				label: "Бүтээлийн бус ажиллах",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR_GREEN
+			},
+			{
+				img: require("../../../assets/images/Picture11.png"),
+				label: "Саатал",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR_BLUE
+			},
+			{
+				img: require("../../../assets/images/Picture12.png"),
+				label: "Сул зогсолт",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR
+			},
+			{
+				img: require("../../../assets/images/Picture13.png"),
+				label: "Эвдрэл",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR_RED
+			}
+		],
+		other: [
+			{
+				img: require("../../../assets/images/Picture10.png"),
+				label: "Бүтээлийн бус ажиллах",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR_GREEN
+			},
+			{
+				img: require("../../../assets/images/Picture11.png"),
+				label: "Саатал",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR_BLUE
+			},
+			{
+				img: require("../../../assets/images/Picture12.png"),
+				label: "Сул зогсолт",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR
+			},
+			{
+				img: require("../../../assets/images/Picture13.png"),
+				label: "Эвдрэл",
+				nav: "NAV_PATH",
+				isMore: true,
+				borderColor: MAIN_COLOR_RED
+			}
+		]
+	};
 
 	return (
 		<View>
@@ -43,7 +105,8 @@ const HomeScreenSideBarSUB = (props) => {
 				<Icon name="chevron-left" type="feather" size={25} color={MAIN_COLOR} />
 				<Text style={{ flex: 1, marginHorizontal: 10, color: MAIN_COLOR, fontSize: 18, fontWeight: "500" }}>Буцах</Text>
 			</TouchableOpacity>
-			{MENU_LIST.map((el, index) => {
+			<Text>END SHINE BUTSETSEER YM HIJ BGA</Text>
+			{/* {MENU_LIST.map((el, index) => {
 				return (
 					<TouchableOpacity
 						key={index}
@@ -70,7 +133,7 @@ const HomeScreenSideBarSUB = (props) => {
 						{el.isMore ? <Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} /> : null}
 					</TouchableOpacity>
 				);
-			})}
+			})} */}
 		</View>
 	);
 };
