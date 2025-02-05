@@ -24,7 +24,16 @@ export const MainStore = (props) => {
 	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
 	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
 	const [headerUserName, setHeaderUserName] = useState(null); //*****Дээр харагдах хэрэглэгчийн нэр
-	const [vehicleType, setVehicleType] = useState("OTHER"); //LOADER, TRUCK, OTHER
+	const [vehicleType, setVehicleType] = useState("TRUCK"); //LOADER, TRUCK, OTHER
+	const [headerSelections, setHeaderSelections] = useState({
+		blockNo: null,
+		material: null,
+		totalLoads: null,
+		exca: null,
+		deliveryLocation: null,
+		totalReis: null,
+		assignedTask: null
+	});
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -260,7 +269,9 @@ export const MainStore = (props) => {
 				refStateGroups,
 				refLocationTypes,
 				vehicleType,
-				setVehicleType
+				setVehicleType,
+				headerSelections,
+				setHeaderSelections
 			}}
 		>
 			{props.children}

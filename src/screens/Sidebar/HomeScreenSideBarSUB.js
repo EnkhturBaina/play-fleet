@@ -1,13 +1,15 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Icon } from "@rneui/base";
 import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../../constant";
 import { useNavigation } from "@react-navigation/native";
+import MainContext from "../../contexts/MainContext";
 
 const HomeScreenSideBarSUB = (props) => {
+	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const MENU_LIST = {
-		loader: [
+		LOADER: [
 			{
 				img: require("../../../assets/images/Picture10.png"),
 				label: "Бүтээлийн бус ажиллах",
@@ -37,7 +39,7 @@ const HomeScreenSideBarSUB = (props) => {
 				borderColor: MAIN_COLOR_RED
 			}
 		],
-		truck: [
+		TRUCK: [
 			{
 				img: require("../../../assets/images/Picture10.png"),
 				label: "Бүтээлийн бус ажиллах",
@@ -67,7 +69,7 @@ const HomeScreenSideBarSUB = (props) => {
 				borderColor: MAIN_COLOR_RED
 			}
 		],
-		other: [
+		OTHER: [
 			{
 				img: require("../../../assets/images/Picture10.png"),
 				label: "Бүтээлийн бус ажиллах",
@@ -105,8 +107,7 @@ const HomeScreenSideBarSUB = (props) => {
 				<Icon name="chevron-left" type="feather" size={25} color={MAIN_COLOR} />
 				<Text style={{ flex: 1, marginHorizontal: 10, color: MAIN_COLOR, fontSize: 18, fontWeight: "500" }}>Буцах</Text>
 			</TouchableOpacity>
-			<Text>END SHINE BUTSETSEER YM HIJ BGA</Text>
-			{/* {MENU_LIST.map((el, index) => {
+			{MENU_LIST[state.vehicleType].map((el, index) => {
 				return (
 					<TouchableOpacity
 						key={index}
@@ -133,7 +134,7 @@ const HomeScreenSideBarSUB = (props) => {
 						{el.isMore ? <Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} /> : null}
 					</TouchableOpacity>
 				);
-			})} */}
+			})}
 		</View>
 	);
 };

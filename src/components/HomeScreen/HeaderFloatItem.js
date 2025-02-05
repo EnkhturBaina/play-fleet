@@ -13,10 +13,9 @@ const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const [isFocus, setIsFocus] = useState(false);
-	const [value, setValue] = useState(null);
 
 	const VEHICLE_TYPE = {
-		loader: {
+		LOADER: {
 			value: 1,
 			code: "LOADER",
 			name: "Экскаватор",
@@ -24,19 +23,22 @@ const HeaderFloatItem = (props) => {
 			fields: [
 				{
 					id: 1,
-					name: "Блокын дугаар"
+					name: "Блокын дугаар",
+					path: "blockNo"
 				},
 				{
 					id: 2,
-					name: "Материал"
+					name: "Материал",
+					path: "material"
 				},
 				{
 					id: 3,
-					name: "Ачилтын тоо"
+					name: "Ачилтын тоо",
+					path: "totalLoads"
 				}
 			]
 		},
-		truck: {
+		TRUCK: {
 			name: 2,
 			code: "TRUCK",
 			label: "Автосамосвал",
@@ -44,19 +46,22 @@ const HeaderFloatItem = (props) => {
 			fields: [
 				{
 					id: 1,
-					name: "Экскаватор"
+					name: "Экскаватор",
+					path: "exca"
 				},
 				{
 					id: 2,
-					name: "Хүргэх байршил"
+					name: "Хүргэх байршил",
+					path: "deliveryLocation"
 				},
 				{
 					id: 3,
-					name: "Рейсийн тоо"
+					name: "Рейсийн тоо",
+					path: "destination"
 				}
 			]
 		},
-		other: {
+		OTHER: {
 			name: 3,
 			code: "OTHER",
 			label: "Туслах тоног төхөөрөмж",
@@ -64,7 +69,8 @@ const HeaderFloatItem = (props) => {
 			fields: [
 				{
 					id: 1,
-					name: "Ногдуулсан даалгавар"
+					name: "Ногдуулсан даалгавар",
+					path: "assignedTask"
 				}
 			]
 		}
@@ -74,57 +80,44 @@ const HeaderFloatItem = (props) => {
 		<View style={styles.floatButtons}>
 			<View
 				style={{
+					flex: 1,
+					flexDirection: "column",
 					backgroundColor: "#fff",
 					padding: 10,
-					alignSelf: "center",
 					width: width - 20,
 					marginHorizontal: 10,
 					borderRadius: MAIN_BORDER_RADIUS
 				}}
 			>
-				<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>МАТЕРИАЛЫН УРСГАЛ</Text>
-				<View style={styles.stack1}>
-					<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 18 }}>Ачилт хийлгэх байршил</Text>
-					<Dropdown
-						style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-						placeholderStyle={styles.placeholderStyle}
-						selectedTextStyle={styles.selectedTextStyle}
-						inputSearchStyle={styles.inputSearchStyle}
-						data={WEEKDAYS}
-						maxHeight={300}
-						labelField="label"
-						valueField="value"
-						placeholder={!isFocus ? "XXX" : "..."}
-						value={value}
-						onFocus={() => setIsFocus(true)}
-						onBlur={() => setIsFocus(false)}
-						onChange={(item) => {
-							setValue(item.value);
-							setIsFocus(false);
-						}}
-					/>
-				</View>
-				<View style={styles.stack1}>
-					<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 18 }}>Хүргэх байршил</Text>
-					<Dropdown
-						style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-						placeholderStyle={styles.placeholderStyle}
-						selectedTextStyle={styles.selectedTextStyle}
-						inputSearchStyle={styles.inputSearchStyle}
-						data={WEEKDAYS}
-						maxHeight={300}
-						labelField="label"
-						valueField="value"
-						placeholder={!isFocus ? "XXX" : "..."}
-						value={value}
-						onFocus={() => setIsFocus(true)}
-						onBlur={() => setIsFocus(false)}
-						onChange={(item) => {
-							setValue(item.value);
-							setIsFocus(false);
-						}}
-					/>
-				</View>
+				<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
+				{VEHICLE_TYPE[state.vehicleType]?.fields.map((el, index) => {
+					return (
+						<View style={styles.stack1} key={index}>
+							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 18 }}>{el.name}</Text>
+							<Dropdown
+								style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+								placeholderStyle={styles.placeholderStyle}
+								selectedTextStyle={styles.selectedTextStyle}
+								inputSearchStyle={styles.inputSearchStyle}
+								data={WEEKDAYS}
+								maxHeight={300}
+								labelField="label"
+								valueField="value"
+								placeholder={!isFocus ? "XXX" : "..."}
+								value={state.headerSelections?.[el.path]}
+								onFocus={() => setIsFocus(true)}
+								onBlur={() => setIsFocus(false)}
+								onChange={(item) => {
+									setIsFocus(false);
+									state.setHeaderSelections((prevState) => ({
+										...prevState,
+										[el.path]: item.value
+									}));
+								}}
+							/>
+						</View>
+					);
+				})}
 			</View>
 			<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginTop: 10 }}>
 				<TouchableOpacity
