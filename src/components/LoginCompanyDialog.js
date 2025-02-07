@@ -1,98 +1,101 @@
-import { StyleSheet, View, TextInput } from "react-native";
+import { StyleSheet, View, Modal, KeyboardAvoidingView, Platform } from "react-native";
 import React, { useContext } from "react";
-import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_INPUT_HEIGHT } from "../constant";
-import { Dialog, Button } from "@rneui/themed";
+import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, MAIN_INPUT_HEIGHT } from "../constant";
+import { Button } from "@rneui/themed";
 import MainContext from "../contexts/MainContext";
+import { TextInput } from "react-native-paper";
 
-export default function ({
-	visible,
-	confirmFunction,
-	declineFunction,
-	text,
-	confirmBtnText = "Confirm", // Default value for confirm button
-	DeclineBtnText = "", // Default value for decline button
-	type = "default" // Default type
-}) {
+export default function (props) {
 	const state = useContext(MainContext);
-	let imageType = null;
-
-	if (type === "warning") {
-		imageType = require("../../assets/warning.png");
-	} else if (type === "error") {
-		imageType = require("../../assets/warning.png");
-	} else {
-		imageType = require("../../assets/checkmark.png");
-	}
 
 	return (
-		<Dialog
-			isVisible={visible}
-			overlayStyle={{
-				padding: 10,
-				paddingTop: 20,
-				backgroundColor: "#fff",
-				borderRadius: MAIN_BORDER_RADIUS,
-				alignItems: "center",
-				width: "90%"
-			}}
+		<Modal
+			animationType="slide"
+			transparent={true}
+			visible={props.visibleDialog}
+			onRequestClose={() => props.setVisibleDialog(false)}
 		>
-			<TextInput
-				style={styles.generalInput}
-				value={state.mainCompanyId}
-				onChangeText={(e) => {
-					state.setMainCompanyId(e);
+			<View
+				style={{
+					...StyleSheet.absoluteFillObject,
+					backgroundColor: "rgba(0, 0, 0, 0.5)"
 				}}
-				placeholder="_ _ _ _ _ _"
-				maxLength={6}
-				keyboardType="number-pad"
-				returnKeyType="done"
 			/>
-			<Dialog.Actions>
+			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
 				<View
 					style={{
-						width: "60%",
-						flexDirection: "column",
-						marginTop: 10
+						width: "90%",
+						paddingVertical: 20,
+						backgroundColor: "#fff",
+						borderRadius: 10,
+						alignSelf: "center",
+						top: 100,
+						alignItems: "center"
 					}}
 				>
-					<Button
-						containerStyle={{
-							width: "100%"
+					<TextInput
+						ref={props.inputRef}
+						label="Компаний код"
+						mode="outlined"
+						style={[styles.generalInput, state.mainCompanyId ? { fontSize: 40 } : null]}
+						dense={true}
+						value={state.mainCompanyId}
+						keyboardType="number-pad"
+						onChangeText={(e) => {
+							state.setMainCompanyId(e);
 						}}
-						buttonStyle={{
-							backgroundColor: MAIN_COLOR,
-							borderRadius: MAIN_BORDER_RADIUS,
-							paddingVertical: 10,
-							height: 50
+						theme={{
+							colors: {
+								primary: MAIN_COLOR
+							},
+							roundness: MAIN_BORDER_RADIUS
 						}}
-						title={confirmBtnText}
-						titleStyle={{
-							fontSize: 16,
-							fontWeight: "bold"
-						}}
-						onPress={() => confirmFunction()}
+						maxLength={4}
 					/>
-					{DeclineBtnText ? ( // Only render if DeclineBtnText is not empty
+					<View
+						style={{
+							width: "60%",
+							flexDirection: "column",
+							marginTop: 10
+						}}
+					>
+						<Button
+							containerStyle={{
+								width: "100%"
+							}}
+							buttonStyle={{
+								backgroundColor: MAIN_COLOR,
+								borderRadius: MAIN_BORDER_RADIUS,
+								paddingVertical: 10,
+								height: MAIN_BUTTON_HEIGHT
+							}}
+							title="Хадгалах"
+							titleStyle={{
+								fontSize: 16,
+								fontWeight: "bold"
+							}}
+							onPress={() => props.setVisibleDialog(false)}
+						/>
 						<Button
 							containerStyle={styles.dialogDeclineBtn}
 							buttonStyle={{
 								backgroundColor: "transparent",
 								borderRadius: MAIN_BORDER_RADIUS,
 								paddingVertical: 10,
-								height: 50
+								height: MAIN_BUTTON_HEIGHT
 							}}
-							title={DeclineBtnText}
+							title="Хаах"
 							titleStyle={{
 								fontWeight: "bold",
 								color: "#000"
 							}}
-							onPress={() => declineFunction()}
+							onPress={() => props.setVisibleDialog(false)}
 							radius={MAIN_BORDER_RADIUS}
 						/>
-					) : null}
+					</View>
 				</View>
-			</Dialog.Actions>
-		</Dialog>
+			</KeyboardAvoidingView>
+		</Modal>
 	);
 }
 const styles = StyleSheet.create({
@@ -108,13 +111,9 @@ const styles = StyleSheet.create({
 		// height: 40,
 		padding: 0,
 		height: MAIN_INPUT_HEIGHT,
-		fontSize: 40,
 		fontWeight: "600",
 		textAlign: "center",
-		borderWidth: 1,
-		borderRadius: MAIN_BORDER_RADIUS,
-		borderColor: MAIN_COLOR,
-		// letterSpacing: "6",
-		alignSelf: "center"
+		alignSelf: "center",
+		backgroundColor: "#fff"
 	}
 });

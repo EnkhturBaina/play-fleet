@@ -15,9 +15,9 @@ const HeaderFloatItem = (props) => {
 	const [isFocus, setIsFocus] = useState(false);
 
 	const VEHICLE_TYPE = {
-		LOADER: {
+		Loader: {
 			value: 1,
-			code: "LOADER",
+			code: "Loader",
 			name: "Экскаватор",
 			title: "АЧИЛТЫН БЛОК",
 			fields: [
@@ -38,9 +38,9 @@ const HeaderFloatItem = (props) => {
 				}
 			]
 		},
-		TRUCK: {
+		Truck: {
 			name: 2,
-			code: "TRUCK",
+			code: "Truck",
 			label: "Автосамосвал",
 			title: "МАТЕРИАЛЫН УРСГАЛ",
 			fields: [
@@ -61,9 +61,9 @@ const HeaderFloatItem = (props) => {
 				}
 			]
 		},
-		OTHER: {
+		Other: {
 			name: 3,
-			code: "OTHER",
+			code: "Other",
 			label: "Туслах тоног төхөөрөмж",
 			title: "ДААЛГАВАР",
 			fields: [

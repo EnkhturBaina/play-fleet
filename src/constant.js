@@ -7,8 +7,8 @@ export const MAIN_COLOR_PURPLE = "#443099";
 export const MAIN_COLOR_BLUE = "#00B0F0";
 
 export const MAIN_BORDER_RADIUS = 8;
-export const MAIN_INPUT_HEIGHT = 50;
-export const MAIN_BUTTON_HEIGHT = 40;
+export const MAIN_INPUT_HEIGHT = 60;
+export const MAIN_BUTTON_HEIGHT = 50;
 
 export const SERVER_URL = "https://api.talent.mn/api";
 

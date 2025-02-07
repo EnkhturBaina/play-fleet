@@ -1,44 +1,16 @@
-import {
-	StyleSheet,
-	Text,
-	View,
-	Platform,
-	ScrollView,
-	TouchableOpacity,
-	ActivityIndicator,
-	StatusBar,
-	Animated,
-	SafeAreaView,
-	Dimensions
-} from "react-native";
-import React, { useContext, useEffect, useState, useRef, useCallback } from "react";
-import { Icon, Button } from "@rneui/base";
-import {
-	MAIN_BORDER_RADIUS,
-	MAIN_COLOR,
-	MAIN_COLOR_BLUE,
-	MAIN_COLOR_GRAY,
-	MAIN_COLOR_GREEN,
-	MAIN_COLOR_RED,
-	SERVER_URL,
-	WEEKDAYS
-} from "../constant";
+import { StyleSheet, Text, View, Platform, StatusBar, SafeAreaView, Dimensions } from "react-native";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import HeaderUser from "../components/HeaderUser";
 import axios from "axios";
 import MainContext from "../contexts/MainContext";
-import CustomDialog from "../components/CustomDialog";
 import * as Location from "expo-location";
 import { useIsFocused } from "@react-navigation/native";
 import Constants from "expo-constants";
-import RBSheet from "react-native-raw-bottom-sheet";
-import MapView, { Marker, Circle, PROVIDER_GOOGLE } from "react-native-maps";
-import { Dropdown } from "react-native-element-dropdown";
+import MapView, { Marker } from "react-native-maps";
 import SideMenu from "react-native-side-menu-updated";
 import MainSideBar from "./Sidebar/MainSideBar";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { Image } from "expo-image";
 import HeaderFloatItem from "../components/HomeScreen/HeaderFloatItem";
-import { formatTime } from "../helper/functions";
+import StatusBottomSheet from "../components/HomeScreen/StatusBottomSheet";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -46,16 +18,20 @@ const height = Dimensions.get("screen").height;
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
 	const mapRef = useRef();
+	const [orientation, setOrientation] = useState("PORTRAIT"); //LANDSCAPE, PORTRAIT
+
 	const bottomSheetRef = useRef(null);
 	const [speed, setSpeed] = useState(null);
 
 	const [isOpen, setIsOpen] = useState(false);
 	const [sideBarStep, setSideBarStep] = useState(1);
 
-	const [selectedId, setSelectedId] = useState(null);
-	const animatedValue = useRef(new Animated.Value(1)).current;
 	//Screen LOAD хийхэд дахин RENDER хийх
 	const isFocused = useIsFocused();
+
+	const detectOrientation = () => {
+		setOrientation(width > height ? "LANDSCAPE" : "PORTRAIT");
+	};
 
 	const animateRef = () => {
 		if (mapRef.current) {
@@ -70,12 +46,9 @@ const HomeScreen = (props) => {
 		}
 	};
 	useEffect(() => {
+		detectOrientation();
 		console.log("STATE location=>", state.location);
 		startTracking();
-	}, []);
-
-	const handleSheetChanges = useCallback((index) => {
-		console.log("handleSheetChanges", index);
 	}, []);
 
 	useEffect(() => {
@@ -90,17 +63,6 @@ const HomeScreen = (props) => {
 		return () => clearInterval(interval);
 	}, [state.isActiveTimer]);
 
-	const BOTTOM_SHEET_MENU_LIST = [
-		{ id: "1", label: "АЧААЛАГДАХ /СЭЛГЭЭ ХИЙХ/", img: require("../../assets/images/Picture4.png") },
-		{ id: "2", label: "АЧААТАЙ ЧИГЛЭЛД ТЭЭВЭРЛЭХ", img: require("../../assets/images/Picture5.png") },
-		{ id: "3", label: "АЧАА БУУЛГАХ /СЭЛГЭЭ ХИЙХ/", img: require("../../assets/images/Picture7.png") },
-		{ id: "4", label: "ХООСОН БУЦАХ", img: require("../../assets/images/Picture8.png") },
-		{ id: "5", label: "АЧИЛТ ХИЙЛГЭХЭЭР ХҮЛЭЭХ", img: require("../../assets/images/Picture9.png") }
-	];
-	const BOTTOM_SHEET_MENU_LIST2 = [
-		{ id: "1", label: "Ажиллаж буй (W2)", img: require("../../assets/images/Picture4.png") },
-		{ id: "2", label: "Зогссон (DC)", img: require("../../assets/images/Picture5.png") }
-	];
 	//TIMER CONTROL
 	// <Button title={isActive ? "Pause" : "Start"} onPress={isActive ? handlePause : handleStart} />
 	// <Button title="Reset" onPress={handleReset} />
@@ -132,35 +94,6 @@ const HomeScreen = (props) => {
 			}
 		);
 	};
-	useEffect(() => {
-		if (state.seconds == 3) {
-			if (1 == 1) {
-				Animated.loop(
-					Animated.sequence([
-						Animated.timing(animatedValue, {
-							toValue: 0.5,
-							duration: 500,
-							useNativeDriver: true
-						}),
-						Animated.timing(animatedValue, {
-							toValue: 1,
-							duration: 500,
-							useNativeDriver: true
-						})
-					])
-				).start();
-			} else {
-				animatedValue.setValue(1); // Эхлэл төлөвт буцаана
-			}
-		}
-	}, [state.seconds]);
-
-	const handlePress = (id) => {
-		animatedValue.setValue(1);
-		state.handleReset();
-		state.handleStart();
-		//setSelectedId(id === selectedId ? null : id); // Дахин дарахад анивчилтыг зогсооно
-	};
 	return (
 		<SafeAreaView
 			style={{
@@ -181,6 +114,7 @@ const HomeScreen = (props) => {
 				menu={<MainSideBar sideBarStep={sideBarStep} setSideBarStep={setSideBarStep} setIsOpen={setIsOpen} />}
 				isOpen={isOpen}
 				onChange={(isOpen) => setIsOpen(isOpen)}
+				openMenuOffset={250}
 			>
 				<MapView
 					// provider={PROVIDER_GOOGLE}
@@ -205,79 +139,17 @@ const HomeScreen = (props) => {
 					/>
 				</MapView>
 				<HeaderFloatItem isOpen={isOpen} setIsOpen={setIsOpen} mapRef={animateRef} />
-				<BottomSheet ref={bottomSheetRef} snapPoints={[130, 500]} onChange={handleSheetChanges}>
-					<BottomSheetView style={styles.contentContainer}>
-						<View
-							style={{
-								flexDirection: "row",
-								alignItems: "center",
-								justifyContent: "space-between"
-							}}
-						>
-							<View
-								style={{
-									backgroundColor: MAIN_COLOR,
-									borderRadius: 50,
-									padding: 5,
-									paddingHorizontal: 10,
-									alignSelf: "flex-start"
-								}}
-							>
-								<Text style={{ color: "#fff", fontSize: 20 }}>CОНГОГДСОН ТӨЛӨВ</Text>
-							</View>
-							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(state.seconds)}</Text>
-						</View>
-						<View style={styles.eachBottomList}>
-							<Image source={require("../../assets/images/Picture4.png")} style={{ height: 50, width: 50 }} />
-							<Text
-								style={{
-									color: "#6287CA",
-									fontSize: 22,
-									flex: 1,
-									marginLeft: 10,
-									textAlign: "center",
-									flexWrap: "wrap"
-								}}
-							>
-								(S5) Бусад техникийн ослоос шалтгаалсан
-							</Text>
-						</View>
-						<View
-							style={{
-								backgroundColor: MAIN_COLOR_GREEN,
-								borderRadius: 50,
-								padding: 5,
-								paddingHorizontal: 10,
-								alignSelf: "flex-start",
-								marginTop: 10
-							}}
-						>
-							<Text style={{ color: "#fff", fontSize: 20 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
-						</View>
-						<ScrollView>
-							{BOTTOM_SHEET_MENU_LIST.map((el) => {
-								const borderColor =
-									"2" === el.id
-										? animatedValue.interpolate({
-												inputRange: [0.5, 1],
-												outputRange: [MAIN_COLOR, "#fff"]
-										  })
-										: "transparent";
-
-								return (
-									<TouchableOpacity
-										style={[styles.eachBottomList, { borderWidth: 3, borderColor }]}
-										key={el.id}
-										onPress={() => handlePress(el.id)}
-									>
-										<Image source={el.img} style={{ height: 50, width: 50 }} />
-										<Text style={styles.menuText}>{el.label}</Text>
-									</TouchableOpacity>
-								);
-							})}
-						</ScrollView>
-					</BottomSheetView>
-				</BottomSheet>
+				<View
+					style={{
+						position: "absolute",
+						bottom: 0,
+						right: 0,
+						width: orientation == "PORTRAIT" ? "100%" : "50%",
+						height: "100%"
+					}}
+				>
+					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
+				</View>
 			</SideMenu>
 		</SafeAreaView>
 	);
@@ -285,18 +157,4 @@ const HomeScreen = (props) => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({
-	contentContainer: {
-		flex: 1,
-		marginHorizontal: 20
-	},
-	eachBottomList: {
-		flexDirection: "row",
-		alignItems: "center",
-		backgroundColor: MAIN_COLOR_GRAY,
-		borderRadius: MAIN_BORDER_RADIUS,
-		marginTop: 10,
-		padding: 5,
-		height: 60
-	}
-});
+const styles = StyleSheet.create({});

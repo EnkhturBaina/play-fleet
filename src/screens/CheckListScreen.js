@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import HeaderUser from "../components/HeaderUser";
 import Constants from "expo-constants";
 import { Button } from "@rneui/base";
-import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../constant";
+import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../constant";
 import MainContext from "../contexts/MainContext";
 
 const CheckListScreen = () => {
@@ -140,12 +140,12 @@ const CheckListScreen = () => {
 							<Text style={{ width: "68%" }}>{el.label}</Text>
 							<Button
 								containerStyle={{
-									width: "28%",
-									marginTop: 10
+									width: "28%"
 								}}
 								buttonStyle={{
 									backgroundColor: el.isChecked ? MAIN_COLOR_GREEN : MAIN_COLOR_RED,
-									paddingVertical: 10
+									paddingVertical: 10,
+									height: MAIN_BUTTON_HEIGHT
 								}}
 								title={el.isChecked ? "ТЭНЦСЭН" : "ТЭНЦЭЭГҮЙ"}
 								titleStyle={{
@@ -175,7 +175,8 @@ const CheckListScreen = () => {
 				buttonStyle={{
 					backgroundColor: MAIN_COLOR,
 					paddingVertical: 10,
-					borderRadius: MAIN_BORDER_RADIUS
+					borderRadius: MAIN_BORDER_RADIUS,
+					height: MAIN_BUTTON_HEIGHT
 				}}
 				title="Болсон"
 				titleStyle={{

@@ -9,7 +9,7 @@ const HomeScreenSideBarSUB = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const MENU_LIST = {
-		LOADER: [
+		Loader: [
 			{
 				img: require("../../../assets/images/Picture10.png"),
 				label: "Бүтээлийн бус ажиллах",
@@ -39,7 +39,7 @@ const HomeScreenSideBarSUB = (props) => {
 				borderColor: MAIN_COLOR_RED
 			}
 		],
-		TRUCK: [
+		Truck: [
 			{
 				img: require("../../../assets/images/Picture10.png"),
 				label: "Бүтээлийн бус ажиллах",
@@ -69,7 +69,7 @@ const HomeScreenSideBarSUB = (props) => {
 				borderColor: MAIN_COLOR_RED
 			}
 		],
-		OTHER: [
+		Other: [
 			{
 				img: require("../../../assets/images/Picture10.png"),
 				label: "Бүтээлийн бус ажиллах",

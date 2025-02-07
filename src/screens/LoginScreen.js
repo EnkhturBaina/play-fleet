@@ -5,24 +5,25 @@ import {
 	TouchableOpacity,
 	KeyboardAvoidingView,
 	Platform,
-	ActivityIndicator,
-	TextInput
+	ActivityIndicator
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Button } from "@rneui/themed";
 import MainContext from "../contexts/MainContext";
 import CustomSnackbar from "../components/CustomSnackbar";
-import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_INPUT_HEIGHT } from "../constant";
-import LoginCompanyDialog from "../components/LoginCompanyDialog";
+import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_INPUT_HEIGHT, MAIN_BUTTON_HEIGHT } from "../constant";
 import { Image } from "expo-image";
 import EmployeeLoginResponse from "../temp_data/EmployeeLoginResponse.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchData, saveLoginDataWithClear } from "../helper/db";
 import { useNetworkStatus } from "../contexts/NetworkContext";
+import { TextInput } from "react-native-paper";
+import LoginCompanyDialog from "../components/LoginCompanyDialog";
 
 const LoginScreen = (props) => {
 	const state = useContext(MainContext);
 	const { isConnected } = useNetworkStatus();
+	const inputRef = useRef(null);
 
 	const [visibleSnack, setVisibleSnack] = useState(false);
 	const [snackBarMsg, setSnackBarMsg] = useState("");
@@ -31,8 +32,6 @@ const LoginScreen = (props) => {
 	const [loginError, setLoginError] = useState(null);
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
-	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
-	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
 
 	useEffect(() => {
 		if (!isConnected) {
@@ -40,6 +39,13 @@ const LoginScreen = (props) => {
 			state.logout();
 		}
 	}, []);
+
+	const openModal = () => {
+		setVisibleDialog(true);
+		setTimeout(() => {
+			inputRef.current?.focus(); // Focus on the TextInput after the modal opens
+		}, 100); // Small delay to ensure the modal renders first
+	};
 
 	//Snacbkbar харуулах
 	const onToggleSnackBar = (msg) => {
@@ -110,6 +116,7 @@ const LoginScreen = (props) => {
 					onLongPress={() => {
 						console.log("LONG PRESS");
 						setVisibleDialog(true);
+						openModal();
 					}}
 					delayLongPress={500}
 					activeOpacity={1}
@@ -122,15 +129,23 @@ const LoginScreen = (props) => {
 					</Text>
 				) : null}
 				<TextInput
-					style={styles.generalInput}
+					label="Операторын код"
+					mode="outlined"
+					style={[styles.generalInput, state.dispId ? { fontSize: 40 } : null]}
+					dense={true}
 					value={state.dispId}
+					returnKeyType="done"
+					keyboardType="number-pad"
 					onChangeText={(e) => {
 						state.setDispId(e);
 					}}
-					placeholder="_ _ _ _"
+					theme={{
+						colors: {
+							primary: MAIN_COLOR
+						},
+						roundness: MAIN_BORDER_RADIUS
+					}}
 					maxLength={4}
-					keyboardType="number-pad"
-					returnKeyType="done"
 				/>
 				<View style={styles.stackSection3}>
 					<Button
@@ -143,7 +158,7 @@ const LoginScreen = (props) => {
 							backgroundColor: MAIN_COLOR,
 							borderRadius: MAIN_BORDER_RADIUS,
 							paddingVertical: 10,
-							height: 50
+							height: MAIN_BUTTON_HEIGHT
 						}}
 						title={
 							<>
@@ -166,19 +181,7 @@ const LoginScreen = (props) => {
 						onPress={() => login()}
 					/>
 				</View>
-				<LoginCompanyDialog
-					visible={visibleDialog}
-					confirmFunction={() => {
-						setVisibleDialog(false);
-					}}
-					declineFunction={() => {
-						setVisibleDialog(false);
-					}}
-					text={dialogText}
-					confirmBtnText="Хадгалах"
-					DeclineBtnText="Хаах"
-					type={dialogType}
-				/>
+				<LoginCompanyDialog setVisibleDialog={setVisibleDialog} visibleDialog={visibleDialog} inputRef={inputRef} />
 			</View>
 		</KeyboardAvoidingView>
 	);
@@ -207,17 +210,11 @@ const styles = StyleSheet.create({
 	},
 	generalInput: {
 		width: "80%",
-		// height: 40,
-		padding: 0,
 		height: MAIN_INPUT_HEIGHT,
-		fontSize: 40,
 		fontWeight: "600",
 		textAlign: "center",
-		borderWidth: 1,
-		borderRadius: MAIN_BORDER_RADIUS,
-		borderColor: MAIN_COLOR,
-		// letterSpacing: "10",
-		alignSelf: "center"
+		alignSelf: "center",
+		backgroundColor: "#fff"
 	},
 	stackSection3: {
 		width: "80%",

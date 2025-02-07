@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
 	},
 	titleContainer: {
 		flexDirection: "column",
-		marginLeft: "5%",
+		marginLeft: 20,
 		flex: 1
 	},
 	topText: {

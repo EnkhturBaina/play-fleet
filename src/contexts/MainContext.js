@@ -20,11 +20,12 @@ export const MainStore = (props) => {
 	const [isActiveTimer, setIsActiveTimer] = useState(false);
 	const [locationStatus, setLocationStatus] = useState(""); //*****Location Permission
 	const [dispId, setDispId] = useState(""); //*****Dispatcher ID
+	const [mainCompanyId, setMainCompanyId] = useState(""); //*****Company ID
 	const [isLoading, setIsLoading] = useState(false); //*****Апп ачааллах эсэх
 	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
 	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
 	const [headerUserName, setHeaderUserName] = useState(null); //*****Дээр харагдах хэрэглэгчийн нэр
-	const [vehicleType, setVehicleType] = useState("TRUCK"); //LOADER, TRUCK, OTHER
+	const [vehicleType, setVehicleType] = useState("Truck"); //Loader, Truck, Other
 	const [headerSelections, setHeaderSelections] = useState({
 		blockNo: null,
 		material: null,
@@ -271,7 +272,9 @@ export const MainStore = (props) => {
 				vehicleType,
 				setVehicleType,
 				headerSelections,
-				setHeaderSelections
+				setHeaderSelections,
+				mainCompanyId,
+				setMainCompanyId
 			}}
 		>
 			{props.children}
