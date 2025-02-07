@@ -4,10 +4,8 @@ import { Icon } from "@rneui/base";
 import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../../constant";
 import { useNavigation } from "@react-navigation/native";
 import MainContext from "../../contexts/MainContext";
-import StatusMenu from "./StatusMenu";
-import ConfigMenu from "./ConfigMenu";
 
-const HomeScreenSideBarSUB = (props) => {
+const StatusMenu = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const MENU_LIST = {
@@ -105,17 +103,39 @@ const HomeScreenSideBarSUB = (props) => {
 
 	return (
 		<View>
-			<TouchableOpacity style={styles.eachMenuContainer} onPress={() => props.setSideBarStep(1)}>
-				<Icon name="chevron-left" type="feather" size={25} color={MAIN_COLOR} />
-				<Text style={{ flex: 1, marginHorizontal: 10, color: MAIN_COLOR, fontSize: 18, fontWeight: "500" }}>Буцах</Text>
-			</TouchableOpacity>
-			{props.menuType === "STATUS" && <StatusMenu {...props} />}
-			{props.menuType === "CONFIG" && <ConfigMenu {...props} />}
+			{MENU_LIST[state.vehicleType].map((el, index) => {
+				return (
+					<TouchableOpacity
+						key={index}
+						style={styles.eachMenuContainer}
+						onPress={() => {
+							props.setIsOpen(false);
+							navigation.navigate("StatusListScreen");
+							props.setSideBarStep(1);
+						}}
+					>
+						<View
+							style={{
+								justifyContent: "center",
+								alignItems: "center",
+								borderRightWidth: 5,
+								borderColor: el.borderColor,
+								paddingRight: 10,
+								height: "100%"
+							}}
+						>
+							<Image source={el.img} style={{ width: 40, height: 40 }} />
+						</View>
+						<Text style={{ flex: 1, marginHorizontal: 10 }}>{el.label}</Text>
+						{el.isMore ? <Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} /> : null}
+					</TouchableOpacity>
+				);
+			})}
 		</View>
 	);
 };
 
-export default HomeScreenSideBarSUB;
+export default StatusMenu;
 
 const styles = StyleSheet.create({
 	eachMenuContainer: {

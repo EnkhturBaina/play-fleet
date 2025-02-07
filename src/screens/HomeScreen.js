@@ -4,7 +4,6 @@ import HeaderUser from "../components/HeaderUser";
 import axios from "axios";
 import MainContext from "../contexts/MainContext";
 import * as Location from "expo-location";
-import { useIsFocused } from "@react-navigation/native";
 import Constants from "expo-constants";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import SideMenu from "react-native-side-menu-updated";
@@ -12,32 +11,30 @@ import MainSideBar from "./Sidebar/MainSideBar";
 import HeaderFloatItem from "../components/HomeScreen/HeaderFloatItem";
 import StatusBottomSheet from "../components/HomeScreen/StatusBottomSheet";
 import { useNetworkStatus } from "../contexts/NetworkContext";
-import { parseString } from "react-native-xml2js";
 import * as FileSystem from "expo-file-system";
-import { convertHexWithAlpha } from "../helper/functions";
+import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
 
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
-	const mapRef = useRef();
 
-	const [kmlData, setKmlData] = useState("");
+	const { isConnected } = useNetworkStatus();
+
+	const mapRef = useRef();
+	const bottomSheetRef = useRef(null);
+
 	const [loadingKML, setLoadingKML] = useState(false);
 	const [kmlStatus, setKmlStatus] = useState(null);
 	const [fileContent, setFileContent] = useState(null);
 	const [polygons, setPolygons] = useState(null);
-	const { isConnected } = useNetworkStatus();
-
-	const bottomSheetRef = useRef(null);
-	const [speed, setSpeed] = useState(null);
 
 	const [isOpen, setIsOpen] = useState(false);
 	const [sideBarStep, setSideBarStep] = useState(1);
+	const [menuType, setMenuType] = useState(null);
 
-	//Screen LOAD хийхэд дахин RENDER хийх
-	const isFocused = useIsFocused();
+	const [speed, setSpeed] = useState(null);
 
 	const animateRef = () => {
 		if (mapRef.current) {
@@ -57,7 +54,7 @@ const HomeScreen = (props) => {
 		// console.log("refLocations", state.refLocations);
 
 		startTracking();
-		checkIfFileExists();
+		checkIfFileExistsAndLoad();
 	}, []);
 
 	useEffect(() => {
@@ -104,105 +101,47 @@ const HomeScreen = (props) => {
 		);
 	};
 
-	const loadKML = async (is_clear) => {
-		if (is_clear) {
-			// is_clear = true; Цэвэрлээд шинээр татаж авах
-			setFileContent(null);
-			setLoadingKML(true);
-		}
-		setKmlStatus("File not found from storage. Loading from server");
-		try {
-			// URL-с KML файлыг татаж авах
-			// const response = await fetch("https://drive.google.com/uc?export=download&id=1PeHfxTDwRLAFWdypOY7nxm1mvruKYsup");
-			const response = await fetch("https://drive.google.com/uc?export=download&id=1LDXA3r1EoszfCgXDrMxAPQuDcdGdAPxC");
-			const serverFileContent = await response.text();
-
-			const fileUri = FileSystem.documentDirectory + "new_kml_data2.txt";
-
-			await FileSystem.writeAsStringAsync(fileUri, serverFileContent);
-
-			setKmlData(serverFileContent);
-			checkIfFileExists();
-		} catch (error) {
-			setLoadingKML(false);
-			setKmlStatus(error);
-			console.error("Error loading KML file:", error);
-		}
-	};
-
-	const checkIfFileExists = async () => {
+	// Файлыг шалгах болон лоад хийх
+	const checkIfFileExistsAndLoad = async () => {
 		setLoadingKML(true);
-		setKmlStatus("Loading from local storage");
 		const fileUri = FileSystem.documentDirectory + "new_kml_data2.txt";
 
-		// Файл local -д хадгалагдсан бол унших
-		try {
-			const fileInfo = await FileSystem.getInfoAsync(fileUri);
-			console.log("fileInfo", fileInfo);
+		const exists = await checkIfFileExists(fileUri);
 
-			if (fileInfo.exists) {
-				setKmlStatus("File found from storage. DONE !");
-				const fileData = await FileSystem.readAsStringAsync(fileUri);
-				// console.log("fileData", fileData);
-
-				setFileContent(fileData);
-			} else {
-				if (isConnected) {
-					loadKML(false);
-				} else {
-					setKmlStatus("File not found from storage and no internet connection");
-					setLoadingKML(false); //local -с уншаад оффлайн байвал loading-г false болгох
+		if (exists) {
+			setKmlStatus("File found from storage. DONE !");
+			const fileData = await FileSystem.readAsStringAsync(fileUri);
+			setFileContent(fileData);
+		} else {
+			if (isConnected) {
+				try {
+					const fileContent = await loadKML(
+						"https://drive.google.com/uc?export=download&id=1LDXA3r1EoszfCgXDrMxAPQuDcdGdAPxC",
+						fileUri
+					);
+					setKmlStatus("File loaded from server. DONE !");
+					setFileContent(fileContent);
+				} catch (error) {
+					setKmlStatus("Error loading KML file");
 				}
-				setFileContent(null);
+			} else {
+				setKmlStatus("File not found from storage and no internet connection");
+				setLoadingKML(false);
 			}
-		} catch (error) {
-			setLoadingKML(false);
-			setKmlStatus(error);
-			console.error("Error reading file:", error);
 		}
 	};
 
 	useEffect(() => {
-		if (kmlData) {
-			setKmlStatus("File loaded from server. DONE !");
-			setLoadingKML(false); //server -с kmlData уншаад бэлэн болоход loading-г false болгох
-		}
-	}, [kmlData]);
-
-	useEffect(() => {
-		console.log("Z");
 		if (fileContent !== null) {
-			try {
-				parseString(fileContent, { trim: true }, (err, result) => {
-					if (err) {
-						console.error("Error parsing KML:", err);
-						return;
-					}
-
-					// console.log("results", JSON.stringify(result.kml.Document[0].Folder[0].Placemark));
-					const placemarks = result.kml.Document[0].Folder[0].Placemark || [];
-					// console.log("placemarks", JSON.stringify(placemarks));
-
-					const extractedPolygons = placemarks.map((placemark) => {
-						const strokeColor = convertHexWithAlpha(placemark?.Style?.[0]?.LineStyle?.[0]?.color?.[0]);
-						const strokeWidth = placemark.Style[0].LineStyle[0].width[0];
-
-						const coordinatesString = placemark.LineString[0].coordinates[0];
-						const coordinatesArray = coordinatesString
-							.trim()
-							.split(" ")
-							.map((coordinate) => {
-								const [longitude, latitude] = coordinate.split(",").map(Number);
-								return { latitude, longitude };
-							});
-						return { coords: coordinatesArray, strokeColor, strokeWidth };
-					});
-					setPolygons(extractedPolygons);
-					setLoadingKML(false); //local -с уншаад файл байвал loading-г false болгох
+			processKML(fileContent)
+				.then((polygons) => {
+					setPolygons(polygons);
+					setLoadingKML(false);
+				})
+				.catch((error) => {
+					setKmlStatus("Error processing KML");
+					setLoadingKML(false);
 				});
-			} catch (error) {
-				console.log("ERR", error);
-			}
 		}
 	}, [fileContent]);
 
@@ -223,7 +162,15 @@ const HomeScreen = (props) => {
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<HeaderUser isOpen={isOpen} setIsOpen={setIsOpen} />
 			<SideMenu
-				menu={<MainSideBar sideBarStep={sideBarStep} setSideBarStep={setSideBarStep} setIsOpen={setIsOpen} />}
+				menu={
+					<MainSideBar
+						sideBarStep={sideBarStep}
+						setSideBarStep={setSideBarStep}
+						setIsOpen={setIsOpen}
+						menuType={menuType}
+						setMenuType={setMenuType}
+					/>
+				}
 				isOpen={isOpen}
 				onChange={(isOpen) => setIsOpen(isOpen)}
 				openMenuOffset={250}

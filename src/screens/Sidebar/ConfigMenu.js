@@ -4,10 +4,8 @@ import { Icon } from "@rneui/base";
 import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../../constant";
 import { useNavigation } from "@react-navigation/native";
 import MainContext from "../../contexts/MainContext";
-import StatusMenu from "./StatusMenu";
-import ConfigMenu from "./ConfigMenu";
 
-const HomeScreenSideBarSUB = (props) => {
+const ConfigMenu = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const MENU_LIST = {
@@ -105,17 +103,13 @@ const HomeScreenSideBarSUB = (props) => {
 
 	return (
 		<View>
-			<TouchableOpacity style={styles.eachMenuContainer} onPress={() => props.setSideBarStep(1)}>
-				<Icon name="chevron-left" type="feather" size={25} color={MAIN_COLOR} />
-				<Text style={{ flex: 1, marginHorizontal: 10, color: MAIN_COLOR, fontSize: 18, fontWeight: "500" }}>Буцах</Text>
-			</TouchableOpacity>
-			{props.menuType === "STATUS" && <StatusMenu {...props} />}
-			{props.menuType === "CONFIG" && <ConfigMenu {...props} />}
+			<Text>ТОхиргоо</Text>
+			{/* https://chatgpt.com/share/67a5cf70-7c60-8013-af37-7e2d50f59fc7 */}
 		</View>
 	);
 };
 
-export default HomeScreenSideBarSUB;
+export default ConfigMenu;
 
 const styles = StyleSheet.create({
 	eachMenuContainer: {

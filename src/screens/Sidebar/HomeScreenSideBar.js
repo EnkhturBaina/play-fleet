@@ -25,6 +25,7 @@ const HomeScreenSideBar = (props) => {
 			nav: "NAV_PATH",
 			isMore: true,
 			action: () => {
+				props.setMenuType("STATUS");
 				props.setSideBarStep(2);
 			}
 		},
@@ -48,7 +49,11 @@ const HomeScreenSideBar = (props) => {
 			img: require("../../../assets/images/Picture17.png"),
 			label: "Системийн тохиргоо",
 			nav: "NAV_PATH",
-			isMore: false
+			isMore: true,
+			action: () => {
+				props.setMenuType("CONFIG");
+				props.setSideBarStep(2);
+			}
 		},
 		// {
 		// 	img: require("../../../assets/images/Picture18.png"),
