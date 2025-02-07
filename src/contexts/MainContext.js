@@ -141,6 +141,10 @@ export const MainStore = (props) => {
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах
 	const checkUserData = async () => {
 		console.log("RUN checkUserData");
+
+		AsyncStorage.getItem("mainCompanyId").then(async (value) => {
+			setMainCompanyId(value);
+		});
 		setIsLoggedIn(false);
 		setIsLoading(false);
 		setAppIsReady(true);
@@ -204,9 +208,6 @@ export const MainStore = (props) => {
 
 	// AsyncStorage.clear();
 	const logout = async (type) => {
-		AsyncStorage.getItem("password").then(async (value) => {
-			setPassword(value);
-		});
 		//***** Profile -с гарах дарсан үед утасны LOCALSTORE -с user, user_bio устгах
 		const keys = [
 			// "local_notif",

@@ -17,7 +17,7 @@ const HeaderUser = (props) => {
 			<TouchableOpacity
 				activeOpacity={0.9}
 				style={styles.headerFirstSection}
-				onPress={() => navigation.navigate("ProfileTab")}
+				onPress={() => props.setIsOpen(!props.isOpen)}
 			>
 				<Image source={require("../../assets/only_icon.png")} style={styles.userImg} contentFit="contain" />
 				<View style={styles.titleContainer}>
@@ -28,17 +28,7 @@ const HeaderUser = (props) => {
 				</View>
 			</TouchableOpacity>
 			{!props.isNotificationScreen ? (
-				<TouchableOpacity
-					onPress={() => {
-						if (route.name == "HomeScreen") {
-							navigation.navigate("NotificationScreenHome");
-						} else if (route.name == "NewsScreen") {
-							navigation.navigate("NotificationScreenNews");
-						} else if (route.name == "ProfileScreen") {
-							navigation.navigate("NotificationScreenProfile");
-						}
-					}}
-				>
+				<TouchableOpacity onPress={() => {}}>
 					<Image source={notif} style={{ width: 35, height: 35 }} contentFit="contain" />
 				</TouchableOpacity>
 			) : null}

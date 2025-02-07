@@ -1,10 +1,12 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Icon } from "@rneui/base";
 import { MAIN_COLOR_GRAY } from "../../constant";
 import { useNavigation } from "@react-navigation/native";
+import MainContext from "../../contexts/MainContext";
 
 const HomeScreenSideBar = (props) => {
+	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const MENU_LIST = [
 		{
@@ -48,11 +50,20 @@ const HomeScreenSideBar = (props) => {
 			nav: "NAV_PATH",
 			isMore: false
 		},
+		// {
+		// 	img: require("../../../assets/images/Picture18.png"),
+		// 	label: "Хэл солих",
+		// 	nav: "NAV_PATH",
+		// 	isMore: false
+		// },
 		{
-			img: require("../../../assets/images/Picture18.png"),
-			label: "Хэл солих",
+			img: require("../../../assets/images/logout.png"),
+			label: "Гарах",
 			nav: "NAV_PATH",
-			isMore: false
+			isMore: false,
+			action: () => {
+				state.logout();
+			}
 		}
 	];
 	return (
