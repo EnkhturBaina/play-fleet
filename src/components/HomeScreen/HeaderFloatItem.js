@@ -98,8 +98,8 @@ const HeaderFloatItem = (props) => {
 					flexDirection: "column",
 					backgroundColor: "#fff",
 					padding: 10,
-					width: width - 20,
-					marginHorizontal: 10,
+					width: width - 10,
+					marginHorizontal: 5,
 					borderRadius: MAIN_BORDER_RADIUS
 				}}
 			>
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
 	floatButtons: {
 		position: "absolute", //use absolute position to show button on top of the map
 		left: 0,
-		top: 10,
+		top: 5,
 		alignSelf: "flex-end" //for align to right
 	},
 	dropdown: {
