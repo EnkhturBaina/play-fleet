@@ -184,8 +184,6 @@ const HomeScreen = (props) => {
 					// console.log("placemarks", JSON.stringify(placemarks));
 
 					const extractedPolygons = placemarks.map((placemark) => {
-						// const strokeColor = placemark.Style[0].LineStyle[0].color[0]?.substring(2);
-						// const strokeColor = placemark?.Style?.[0]?.LineStyle?.[0]?.color?.[0]?.substring(2) || "000";
 						const strokeColor = convertHexWithAlpha(placemark?.Style?.[0]?.LineStyle?.[0]?.color?.[0]);
 						const strokeWidth = placemark.Style[0].LineStyle[0].width[0];
 
