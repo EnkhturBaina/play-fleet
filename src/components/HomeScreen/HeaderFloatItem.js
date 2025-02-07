@@ -92,27 +92,9 @@ const HeaderFloatItem = (props) => {
 
 	return (
 		<View style={styles.floatButtons}>
-			<View
-				style={{
-					flex: 1,
-					flexDirection: "column",
-					backgroundColor: "#fff",
-					padding: 10,
-					width: width - 10,
-					marginHorizontal: 5,
-					borderRadius: MAIN_BORDER_RADIUS
-				}}
-			>
+			<View style={styles.mainContainer}>
 				<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
-				<View
-					style={{
-						flex: 1,
-						flexDirection: "row",
-						flexWrap: "wrap",
-						justifyContent: "space-between",
-						marginTop: 10
-					}}
-				>
+				<View style={styles.itemsContainer}>
 					{VEHICLE_TYPE[state.vehicleType]?.fields.map((el, index) => {
 						return (
 							<View style={[styles.stack1, { width: state.orientation == "PORTRAIT" ? "100%" : "48%" }]} key={index}>
@@ -250,5 +232,21 @@ const styles = StyleSheet.create({
 		marginRight: 8,
 		alignItems: "center",
 		justifyContent: "center"
+	},
+	itemsContainer: {
+		flex: 1,
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "space-between",
+		marginTop: 10
+	},
+	mainContainer: {
+		flex: 1,
+		flexDirection: "column",
+		backgroundColor: "#fff",
+		padding: 10,
+		width: width - 10,
+		marginHorizontal: 5,
+		borderRadius: MAIN_BORDER_RADIUS
 	}
 });
