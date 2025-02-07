@@ -1,12 +1,30 @@
-import { StyleSheet, View, Modal, KeyboardAvoidingView, Platform } from "react-native";
-import React, { useContext } from "react";
-import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, MAIN_INPUT_HEIGHT } from "../constant";
+import React, { useContext, useState } from "react";
+import { Modal, View, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, Text } from "react-native";
 import { Button } from "@rneui/themed";
-import MainContext from "../contexts/MainContext";
 import { TextInput } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import MainContext from "../contexts/MainContext";
+import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_INPUT_HEIGHT } from "../constant";
 
 export default function (props) {
 	const state = useContext(MainContext);
+	const [errorMsg, setErrorMsg] = useState(null);
+
+	const setCompanyIdToLocal = async () => {
+		if (state.mainCompanyId == "") {
+			setErrorMsg("Компаний код оруулна уу.");
+		} else {
+			await AsyncStorage.setItem("mainCompanyId", state.mainCompanyId).then(() => {
+				setErrorMsg(null);
+				props.setVisibleDialog(false);
+			});
+		}
+	};
+
+	// Close modal on clicking outside
+	const handleModalBackgroundPress = () => {
+		props.setVisibleDialog(false);
+	};
 
 	return (
 		<Modal
@@ -15,22 +33,14 @@ export default function (props) {
 			visible={props.visibleDialog}
 			onRequestClose={() => props.setVisibleDialog(false)}
 		>
-			<View
-				style={{
-					...StyleSheet.absoluteFillObject,
-					backgroundColor: "rgba(0, 0, 0, 0.5)"
-				}}
-			/>
+			<TouchableOpacity style={styles.modalBackground} onPress={handleModalBackgroundPress} activeOpacity={1} />
+
 			<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
 				<View
 					style={{
-						width: "90%",
-						paddingVertical: 20,
-						backgroundColor: "#fff",
-						borderRadius: 10,
-						alignSelf: "center",
-						top: 100,
-						alignItems: "center"
+						...styles.modalContainer,
+						width: state.orientation === "PORTRAIT" ? "80%" : "40%",
+						top: "30%" // Adjusted to make the modal appear more centered
 					}}
 				>
 					<TextInput
@@ -41,9 +51,7 @@ export default function (props) {
 						dense={true}
 						value={state.mainCompanyId}
 						keyboardType="number-pad"
-						onChangeText={(e) => {
-							state.setMainCompanyId(e);
-						}}
+						onChangeText={(e) => state.setMainCompanyId(e)}
 						theme={{
 							colors: {
 								primary: MAIN_COLOR
@@ -52,17 +60,11 @@ export default function (props) {
 						}}
 						maxLength={4}
 					/>
-					<View
-						style={{
-							width: "60%",
-							flexDirection: "column",
-							marginTop: 10
-						}}
-					>
+
+					{errorMsg != null ? <Text style={styles.errorTextStyle}>{errorMsg}</Text> : null}
+					<View style={styles.buttonContainer}>
 						<Button
-							containerStyle={{
-								width: "100%"
-							}}
+							containerStyle={styles.fullWidthButton}
 							buttonStyle={{
 								backgroundColor: MAIN_COLOR,
 								borderRadius: MAIN_BORDER_RADIUS,
@@ -70,11 +72,8 @@ export default function (props) {
 								height: MAIN_BUTTON_HEIGHT
 							}}
 							title="Хадгалах"
-							titleStyle={{
-								fontSize: 16,
-								fontWeight: "bold"
-							}}
-							onPress={() => props.setVisibleDialog(false)}
+							titleStyle={{ fontSize: 16, fontWeight: "bold" }}
+							onPress={setCompanyIdToLocal}
 						/>
 						<Button
 							containerStyle={styles.dialogDeclineBtn}
@@ -85,10 +84,7 @@ export default function (props) {
 								height: MAIN_BUTTON_HEIGHT
 							}}
 							title="Хаах"
-							titleStyle={{
-								fontWeight: "bold",
-								color: "#000"
-							}}
+							titleStyle={{ fontWeight: "bold", color: "#000" }}
 							onPress={() => props.setVisibleDialog(false)}
 							radius={MAIN_BORDER_RADIUS}
 						/>
@@ -98,22 +94,46 @@ export default function (props) {
 		</Modal>
 	);
 }
+
 const styles = StyleSheet.create({
-	container: {
+	modalBackground: {
+		...StyleSheet.absoluteFillObject,
+		backgroundColor: "rgba(0, 0, 0, 0.5)" // Semi-transparent background to create the blur effect
+	},
+	modalContainer: {
+		paddingVertical: 20,
+		backgroundColor: "#fff",
+		borderRadius: 10,
+		alignSelf: "center",
+		alignItems: "center"
+	},
+	generalInput: {
+		width: "80%",
+		height: MAIN_INPUT_HEIGHT,
+		padding: 0,
+		fontWeight: "600",
+		textAlign: "center",
+		alignSelf: "center",
+		backgroundColor: "#fff"
+	},
+	buttonContainer: {
+		width: "80%",
+		flexDirection: "column",
+		marginTop: 10
+	},
+	fullWidthButton: {
 		width: "100%"
 	},
 	dialogDeclineBtn: {
 		marginHorizontal: 50,
 		marginVertical: 5
 	},
-	generalInput: {
-		width: "80%",
-		// height: 40,
-		padding: 0,
-		height: MAIN_INPUT_HEIGHT,
-		fontWeight: "600",
+	errorTextStyle: {
+		width: "100%",
 		textAlign: "center",
-		alignSelf: "center",
-		backgroundColor: "#fff"
+		color: "red",
+		fontWeight: "600",
+		marginTop: 10,
+		marginBottom: 5
 	}
 });

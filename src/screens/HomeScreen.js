@@ -18,7 +18,6 @@ const height = Dimensions.get("screen").height;
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
 	const mapRef = useRef();
-	const [orientation, setOrientation] = useState("PORTRAIT"); //LANDSCAPE, PORTRAIT
 
 	const bottomSheetRef = useRef(null);
 	const [speed, setSpeed] = useState(null);
@@ -28,10 +27,6 @@ const HomeScreen = (props) => {
 
 	//Screen LOAD хийхэд дахин RENDER хийх
 	const isFocused = useIsFocused();
-
-	const detectOrientation = () => {
-		setOrientation(width > height ? "LANDSCAPE" : "PORTRAIT");
-	};
 
 	const animateRef = () => {
 		if (mapRef.current) {
@@ -46,7 +41,7 @@ const HomeScreen = (props) => {
 		}
 	};
 	useEffect(() => {
-		detectOrientation();
+		state.detectOrientation();
 		console.log("STATE location=>", state.location);
 		startTracking();
 	}, []);
@@ -144,7 +139,7 @@ const HomeScreen = (props) => {
 						position: "absolute",
 						bottom: 0,
 						right: 0,
-						width: orientation == "PORTRAIT" ? "100%" : "50%",
+						width: state.orientation == "PORTRAIT" ? "100%" : "50%",
 						height: "100%"
 					}}
 				>

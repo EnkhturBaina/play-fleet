@@ -34,6 +34,7 @@ const LoginScreen = (props) => {
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 
 	useEffect(() => {
+		state.detectOrientation();
 		if (!isConnected) {
 			setLoginError("Интернэт холболт шалгана уу?");
 			state.logout();
@@ -57,47 +58,50 @@ const LoginScreen = (props) => {
 	const onDismissSnackBar = () => setVisibleSnack(false);
 
 	const login = async () => {
-		setLoadingLoginAction(true);
+		if (state.dispId == "") {
+			setLoginError("Операторын код оруулна уу.");
+		} else {
+			try {
+				setLoadingLoginAction(true);
+				const response = {
+					data: EmployeeLoginResponse,
+					status: 200,
+					statusText: "OK",
+					headers: {},
+					config: {},
+					request: {}
+				};
+				// console.log("response", JSON.stringify(response));
 
-		try {
-			const response = {
-				data: EmployeeLoginResponse,
-				status: 200,
-				statusText: "OK",
-				headers: {},
-				config: {},
-				request: {}
-			};
-			// console.log("response", JSON.stringify(response));
-
-			//Local storage руу access_token хадгалах
-			if (response.data?.Extra?.access_token) {
-				await AsyncStorage.setItem("access_token", response.data?.Extra?.access_token)
-					.then(async (value) => {
-						// Login response -с state үүд салгаж хадгалах
-						state.setEmployeeData(response.data?.Extra?.employee);
-						state.setCompanyData(response.data?.Extra?.employee?.company);
-						state.setRosterData(response.data?.Extra?.employee?.roster);
-						state.setEquipmentsData(response.data?.Extra?.employee?.equipments);
-					})
-					.finally(() => {
-						// login response -г SQLite руу хадгалах
-						saveLoginDataWithClear(response.data?.Extra, true).then((e) => {
-							console.log("insert Login Data =>", e);
-							setLoginError(e);
-							if (e !== "DONE") {
-							} else if (e === "DONE") {
-								console.log("LOGIN SUCCESS");
-							}
+				//Local storage руу access_token хадгалах
+				if (response.data?.Extra?.access_token) {
+					await AsyncStorage.setItem("access_token", response.data?.Extra?.access_token)
+						.then(async (value) => {
+							// Login response -с state үүд салгаж хадгалах
+							state.setEmployeeData(response.data?.Extra?.employee);
+							state.setCompanyData(response.data?.Extra?.employee?.company);
+							state.setRosterData(response.data?.Extra?.employee?.roster);
+							state.setEquipmentsData(response.data?.Extra?.employee?.equipments);
+						})
+						.finally(() => {
+							// login response -г SQLite руу хадгалах
+							saveLoginDataWithClear(response.data?.Extra, true).then((e) => {
+								console.log("insert Login Data =>", e);
+								setLoginError(e);
+								if (e !== "DONE") {
+								} else if (e === "DONE") {
+									console.log("LOGIN SUCCESS");
+								}
+							});
 						});
-					});
+				}
+			} catch (error) {
+				console.error("Error loading local JSON:", error);
+			} finally {
+				setLoadingLoginAction(false);
+				fetchData();
+				state.setIsLoggedIn(true);
 			}
-		} catch (error) {
-			console.error("Error loading local JSON:", error);
-		} finally {
-			setLoadingLoginAction(false);
-			fetchData();
-			state.setIsLoggedIn(true);
 		}
 	};
 
@@ -123,15 +127,17 @@ const LoginScreen = (props) => {
 				>
 					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} contentFit="contain" />
 				</TouchableOpacity>
-				{loginError != null ? (
-					<Text style={{ width: "100%", textAlign: "center", color: "red", fontWeight: "600", marginBottom: 10 }}>
-						{loginError}
-					</Text>
-				) : null}
+				{loginError != null ? <Text style={styles.loginErrorText}>{loginError}</Text> : null}
 				<TextInput
 					label="Операторын код"
 					mode="outlined"
-					style={[styles.generalInput, state.dispId ? { fontSize: 40 } : null]}
+					style={[
+						styles.generalInput,
+						{
+							width: state.orientation == "PORTRAIT" ? "80%" : "40%",
+							fontSize: state.dispId ? 40 : null
+						}
+					]}
 					dense={true}
 					value={state.dispId}
 					returnKeyType="done"
@@ -147,40 +153,34 @@ const LoginScreen = (props) => {
 					}}
 					maxLength={4}
 				/>
-				<View style={styles.stackSection3}>
-					<Button
-						disabled={loadingLoginAction}
-						containerStyle={{
-							width: "100%",
-							marginTop: 10
-						}}
-						buttonStyle={{
-							backgroundColor: MAIN_COLOR,
-							borderRadius: MAIN_BORDER_RADIUS,
-							paddingVertical: 10,
-							height: MAIN_BUTTON_HEIGHT
-						}}
-						title={
-							<>
-								<Text
-									style={{
-										fontSize: 16,
-										color: "#fff",
-										fontWeight: "bold"
-									}}
-								>
-									Нэвтрэх
-								</Text>
-								{loadingLoginAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
-							</>
-						}
-						titleStyle={{
-							fontSize: 16,
-							fontWeight: "bold"
-						}}
-						onPress={() => login()}
-					/>
-				</View>
+				<Button
+					disabled={loadingLoginAction}
+					containerStyle={{
+						width: state.orientation == "PORTRAIT" ? "80%" : "40%",
+						marginTop: 10,
+						alignSelf: "center"
+					}}
+					buttonStyle={styles.loginBtnStyle}
+					title={
+						<>
+							<Text
+								style={{
+									fontSize: 16,
+									color: "#fff",
+									fontWeight: "bold"
+								}}
+							>
+								Нэвтрэх
+							</Text>
+							{loadingLoginAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
+						</>
+					}
+					titleStyle={{
+						fontSize: 16,
+						fontWeight: "bold"
+					}}
+					onPress={() => login()}
+				/>
 				<LoginCompanyDialog setVisibleDialog={setVisibleDialog} visibleDialog={visibleDialog} inputRef={inputRef} />
 			</View>
 		</KeyboardAvoidingView>
@@ -221,5 +221,18 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		marginRight: "auto",
 		marginLeft: "auto"
+	},
+	loginErrorText: {
+		width: "100%",
+		textAlign: "center",
+		color: "red",
+		fontWeight: "600",
+		marginBottom: 10
+	},
+	loginBtnStyle: {
+		backgroundColor: MAIN_COLOR,
+		borderRadius: MAIN_BORDER_RADIUS,
+		paddingVertical: 10,
+		height: MAIN_BUTTON_HEIGHT
 	}
 });

@@ -7,8 +7,11 @@ import ReferenceResponse from "../temp_data/ReferenceResponse.json";
 import { createTable } from "../helper/db";
 import { createReferenceTables, dropTable, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";
 import { useNetworkStatus } from "./NetworkContext";
+import { Dimensions } from "react-native";
 
 const MainContext = React.createContext();
+const width = Dimensions.get("screen").width;
+const height = Dimensions.get("screen").height;
 
 export const MainStore = (props) => {
 	const { isConnected } = useNetworkStatus();
@@ -35,6 +38,7 @@ export const MainStore = (props) => {
 		totalReis: null,
 		assignedTask: null
 	});
+	const [orientation, setOrientation] = useState("PORTRAIT"); //LANDSCAPE, PORTRAIT
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -212,6 +216,10 @@ export const MainStore = (props) => {
 			setIsLoggedIn(false);
 		});
 	};
+	const detectOrientation = () => {
+		setOrientation(width > height ? "LANDSCAPE" : "PORTRAIT");
+	};
+
 	return (
 		<MainContext.Provider
 			value={{
@@ -274,7 +282,9 @@ export const MainStore = (props) => {
 				headerSelections,
 				setHeaderSelections,
 				mainCompanyId,
-				setMainCompanyId
+				setMainCompanyId,
+				detectOrientation,
+				orientation
 			}}
 		>
 			{props.children}
