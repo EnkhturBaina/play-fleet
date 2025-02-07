@@ -205,8 +205,8 @@ const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	loginImg: {
-		width: 180,
-		height: 150
+		width: 200,
+		height: 100
 	},
 	generalInput: {
 		width: "80%",

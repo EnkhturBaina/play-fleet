@@ -30,6 +30,8 @@ export const MainStore = (props) => {
 	const [headerUserName, setHeaderUserName] = useState(null); //*****Дээр харагдах хэрэглэгчийн нэр
 	const [vehicleType, setVehicleType] = useState("Truck"); //Loader, Truck, Other
 	const [headerSelections, setHeaderSelections] = useState({
+		startPosition: null,
+		endLocation: null,
 		blockNo: null,
 		material: null,
 		totalLoads: null,

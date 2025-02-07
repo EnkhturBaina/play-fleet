@@ -44,3 +44,21 @@ export const calcDistance = (lat1, lon1, lat2, lon2) => {
 
 	return distance; // Зайг км-ээр буцаана
 };
+
+export const convertHexWithAlpha = (kmlColor) => {
+	if (!kmlColor || kmlColor.length !== 8) {
+		console.error("Invalid color format. Expected AABBGGRR (8 characters).");
+		return null;
+	}
+
+	const alphaHex = kmlColor.substring(0, 2); // Alpha
+	const blue = kmlColor.substring(2, 4); // Blue
+	const green = kmlColor.substring(4, 6); // Green
+	const red = kmlColor.substring(6, 8); // Red
+
+	const alphaDecimal = (parseInt(alphaHex, 16) / 255).toFixed(2);
+
+	const color = `rgba(${parseInt(red, 16)}, ${parseInt(green, 16)}, ${parseInt(blue, 16)}, ${alphaDecimal})`;
+
+	return color;
+};

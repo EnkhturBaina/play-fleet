@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, WEEKDAYS } from "../../constant";
 import { Dropdown } from "react-native-element-dropdown";
 import MainContext from "../../contexts/MainContext";
@@ -46,18 +46,28 @@ const HeaderFloatItem = (props) => {
 			fields: [
 				{
 					id: 1,
+					name: "Эхлэх байршил",
+					path: "startPosition"
+				},
+				{
+					id: 2,
+					name: "Блокын дугаар",
+					path: "blockNo"
+				},
+				{
+					id: 3,
+					name: "Хүргэх байршил",
+					path: "endLocation"
+				},
+				{
+					id: 4,
 					name: "Экскаватор",
 					path: "exca"
 				},
 				{
-					id: 2,
-					name: "Хүргэх байршил",
-					path: "deliveryLocation"
-				},
-				{
-					id: 3,
-					name: "Рейсийн тоо",
-					path: "destination"
+					id: 5,
+					name: "Материал",
+					path: "material"
 				}
 			]
 		},
@@ -76,6 +86,10 @@ const HeaderFloatItem = (props) => {
 		}
 	};
 
+	useEffect(() => {
+		state.detectOrientation();
+	}, []);
+
 	return (
 		<View style={styles.floatButtons}>
 			<View
@@ -90,34 +104,51 @@ const HeaderFloatItem = (props) => {
 				}}
 			>
 				<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
-				{VEHICLE_TYPE[state.vehicleType]?.fields.map((el, index) => {
-					return (
-						<View style={styles.stack1} key={index}>
-							<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 18 }}>{el.name}</Text>
-							<Dropdown
-								style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-								placeholderStyle={styles.placeholderStyle}
-								selectedTextStyle={styles.selectedTextStyle}
-								inputSearchStyle={styles.inputSearchStyle}
-								data={WEEKDAYS}
-								maxHeight={300}
-								labelField="label"
-								valueField="value"
-								placeholder={!isFocus ? "XXX" : "..."}
-								value={state.headerSelections?.[el.path]}
-								onFocus={() => setIsFocus(true)}
-								onBlur={() => setIsFocus(false)}
-								onChange={(item) => {
-									setIsFocus(false);
-									state.setHeaderSelections((prevState) => ({
-										...prevState,
-										[el.path]: item.value
-									}));
-								}}
-							/>
-						</View>
-					);
-				})}
+				<View
+					style={{
+						flex: 1,
+						flexDirection: "row",
+						flexWrap: "wrap",
+						justifyContent: "space-between",
+						marginTop: 10
+					}}
+				>
+					{VEHICLE_TYPE[state.vehicleType]?.fields.map((el, index) => {
+						return (
+							<View style={[styles.stack1, { width: state.orientation == "PORTRAIT" ? "100%" : "48%" }]} key={index}>
+								<Text
+									style={{
+										color: MAIN_COLOR_BLUE,
+										fontSize: 18
+									}}
+								>
+									{el.name}
+								</Text>
+								<Dropdown
+									style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+									placeholderStyle={styles.placeholderStyle}
+									selectedTextStyle={styles.selectedTextStyle}
+									inputSearchStyle={styles.inputSearchStyle}
+									data={WEEKDAYS}
+									maxHeight={300}
+									labelField="label"
+									valueField="value"
+									placeholder={!isFocus ? "XXX" : "..."}
+									value={state.headerSelections?.[el.path]}
+									onFocus={() => setIsFocus(true)}
+									onBlur={() => setIsFocus(false)}
+									onChange={(item) => {
+										setIsFocus(false);
+										state.setHeaderSelections((prevState) => ({
+											...prevState,
+											[el.path]: item.value
+										}));
+									}}
+								/>
+							</View>
+						);
+					})}
+				</View>
 			</View>
 			<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginTop: 10 }}>
 				<TouchableOpacity
@@ -188,8 +219,9 @@ const styles = StyleSheet.create({
 		borderColor: "#aeaeae",
 		borderWidth: 0.5,
 		paddingHorizontal: 8,
-		width: "50%",
-		height: 25
+		width: 200,
+		height: 30,
+		borderRadius: MAIN_BORDER_RADIUS
 	},
 	placeholderStyle: {
 		fontSize: 16,
@@ -205,9 +237,9 @@ const styles = StyleSheet.create({
 	},
 	stack1: {
 		flexDirection: "row",
-		alignItems: "center",
 		justifyContent: "space-between",
-		marginTop: 10
+		marginTop: 5,
+		alignSelf: "flex-start"
 	},
 	eachFloatButton: {
 		height: 50,

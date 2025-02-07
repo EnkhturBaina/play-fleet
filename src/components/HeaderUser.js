@@ -19,11 +19,7 @@ const HeaderUser = (props) => {
 				style={styles.headerFirstSection}
 				onPress={() => navigation.navigate("ProfileTab")}
 			>
-				<Image
-					source={state.userData?.Image ? { uri: state.userData?.Image } : icon}
-					style={styles.userImg}
-					contentFit="contain"
-				/>
+				<Image source={require("../../assets/only_icon.png")} style={styles.userImg} contentFit="contain" />
 				<View style={styles.titleContainer}>
 					<Text style={styles.topText}>Сайн байна уу?</Text>
 					<Text style={styles.userName} numberOfLines={1}>
@@ -58,7 +54,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		paddingHorizontal: 20,
-		paddingVertical: 10,
+		paddingTop: 5,
+		paddingBottom: 10,
 		zIndex: 999,
 		backgroundColor: "#fff"
 	},
