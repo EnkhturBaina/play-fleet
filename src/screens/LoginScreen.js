@@ -59,64 +59,65 @@ const LoginScreen = (props) => {
 	const onDismissSnackBar = () => setVisibleSnack(false);
 
 	const login = async () => {
-		if (state.dispId == null) {
-			setLoginError("Операторын код оруулна уу.");
-		} else if (state.mainCompanyId == null) {
-			setLoginError("Компаний код оруулаагүй байна.");
-		} else {
-			setLoadingLoginAction(true);
-			setLoginError(null);
-			console.log("state.mainCompanyId", state.mainCompanyId);
+		state.setIsLoggedIn(true);
+		// if (state.dispId == null) {
+		// 	setLoginError("Операторын код оруулна уу.");
+		// } else if (state.mainCompanyId == null) {
+		// 	setLoginError("Компаний код оруулаагүй байна.");
+		// } else {
+		// 	setLoadingLoginAction(true);
+		// 	setLoginError(null);
+		// 	console.log("state.mainCompanyId", state.mainCompanyId);
 
-			await axios
-				.post(
-					`${SERVER_URL}operator/login`,
-					{
-						PMSCompanyId: state.mainCompanyId,
-						PIN: state.dispId
-					},
-					{
-						headers: {
-							"Content-Type": "application/json"
-						}
-					}
-				)
-				.then(async (response) => {
-					console.log("response", JSON.stringify(response.data));
-					if (response.data.Type == 1) {
-						setLoginError(response.data.Msg);
-					} else {
-						if (response.data?.Extra?.access_token) {
-							//Local storage руу access_token хадгалах
-							await AsyncStorage.setItem("access_token", response.data?.Extra?.access_token)
-								.then(async (value) => {
-									// Login response -с state үүд салгаж хадгалах
-									state.setEmployeeData(response.data?.Extra?.employee);
-									state.setCompanyData(response.data?.Extra?.employee?.company);
-									state.setRosterData(response.data?.Extra?.employee?.roster);
-									state.setEquipmentsData(response.data?.Extra?.employee?.equipments);
-								})
-								.finally(() => {
-									// login response -г SQLite руу хадгалах
-									saveLoginDataWithClear(response.data?.Extra, true).then((e) => {
-										console.log("insert Login Data =>", e);
-										setLoginError(e);
-										if (e !== "DONE") {
-										} else if (e === "DONE") {
-											console.log("LOGIN SUCCESS");
-										}
-									});
-								});
-						}
-					}
-				})
-				.catch(function (error) {
-					console.error("Error loading local JSON:", error);
-				})
-				.finally(() => {
-					setLoadingLoginAction(false);
-				});
-		}
+		// 	await axios
+		// 		.post(
+		// 			`${SERVER_URL}operator/login`,
+		// 			{
+		// 				PMSCompanyId: state.mainCompanyId,
+		// 				PIN: state.dispId
+		// 			},
+		// 			{
+		// 				headers: {
+		// 					"Content-Type": "application/json"
+		// 				}
+		// 			}
+		// 		)
+		// 		.then(async (response) => {
+		// 			console.log("response", JSON.stringify(response.data));
+		// 			if (response.data.Type == 1) {
+		// 				setLoginError(response.data.Msg);
+		// 			} else {
+		// 				if (response.data?.Extra?.access_token) {
+		// 					//Local storage руу access_token хадгалах
+		// 					await AsyncStorage.setItem("access_token", response.data?.Extra?.access_token)
+		// 						.then(async (value) => {
+		// 							// Login response -с state үүд салгаж хадгалах
+		// 							state.setEmployeeData(response.data?.Extra?.employee);
+		// 							state.setCompanyData(response.data?.Extra?.employee?.company);
+		// 							state.setRosterData(response.data?.Extra?.employee?.roster);
+		// 							state.setEquipmentsData(response.data?.Extra?.employee?.equipments);
+		// 						})
+		// 						.finally(() => {
+		// 							// login response -г SQLite руу хадгалах
+		// 							saveLoginDataWithClear(response.data?.Extra, true).then((e) => {
+		// 								console.log("insert Login Data =>", e);
+		// 								setLoginError(e);
+		// 								if (e !== "DONE") {
+		// 								} else if (e === "DONE") {
+		// 									console.log("LOGIN SUCCESS");
+		// 								}
+		// 							});
+		// 						});
+		// 				}
+		// 			}
+		// 		})
+		// 		.catch(function (error) {
+		// 			console.error("Error loading local JSON:", error);
+		// 		})
+		// 		.finally(() => {
+		// 			setLoadingLoginAction(false);
+		// 		});
+		// }
 	};
 
 	return (
