@@ -11,7 +11,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Button } from "@rneui/themed";
 import MainContext from "../contexts/MainContext";
 import CustomSnackbar from "../components/CustomSnackbar";
-import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_INPUT_HEIGHT, MAIN_BUTTON_HEIGHT } from "../constant";
+import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_INPUT_HEIGHT, MAIN_BUTTON_HEIGHT, SERVER_URL } from "../constant";
 import { Image } from "expo-image";
 import EmployeeLoginResponse from "../temp_data/EmployeeLoginResponse.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,6 +19,7 @@ import { fetchData, saveLoginDataWithClear } from "../helper/db";
 import { useNetworkStatus } from "../contexts/NetworkContext";
 import { TextInput } from "react-native-paper";
 import LoginCompanyDialog from "../components/LoginCompanyDialog";
+import axios from "axios";
 
 const LoginScreen = (props) => {
 	const state = useContext(MainContext);
@@ -26,7 +27,7 @@ const LoginScreen = (props) => {
 	const inputRef = useRef(null);
 
 	const [visibleSnack, setVisibleSnack] = useState(false);
-	const [snackBarMsg, setSnackBarMsg] = useState("");
+	const [snackBarMsg, setSnackBarMsg] = useState(null);
 
 	const [loadingLoginAction, setLoadingLoginAction] = useState(false);
 	const [loginError, setLoginError] = useState(null);
@@ -58,50 +59,63 @@ const LoginScreen = (props) => {
 	const onDismissSnackBar = () => setVisibleSnack(false);
 
 	const login = async () => {
-		if (state.dispId == "") {
+		if (state.dispId == null) {
 			setLoginError("Операторын код оруулна уу.");
+		} else if (state.mainCompanyId == null) {
+			setLoginError("Компаний код оруулаагүй байна.");
 		} else {
-			try {
-				setLoadingLoginAction(true);
-				const response = {
-					data: EmployeeLoginResponse,
-					status: 200,
-					statusText: "OK",
-					headers: {},
-					config: {},
-					request: {}
-				};
-				// console.log("response", JSON.stringify(response));
+			setLoadingLoginAction(true);
+			setLoginError(null);
+			console.log("state.mainCompanyId", state.mainCompanyId);
 
-				//Local storage руу access_token хадгалах
-				if (response.data?.Extra?.access_token) {
-					await AsyncStorage.setItem("access_token", response.data?.Extra?.access_token)
-						.then(async (value) => {
-							// Login response -с state үүд салгаж хадгалах
-							state.setEmployeeData(response.data?.Extra?.employee);
-							state.setCompanyData(response.data?.Extra?.employee?.company);
-							state.setRosterData(response.data?.Extra?.employee?.roster);
-							state.setEquipmentsData(response.data?.Extra?.employee?.equipments);
-						})
-						.finally(() => {
-							// login response -г SQLite руу хадгалах
-							saveLoginDataWithClear(response.data?.Extra, true).then((e) => {
-								console.log("insert Login Data =>", e);
-								setLoginError(e);
-								if (e !== "DONE") {
-								} else if (e === "DONE") {
-									console.log("LOGIN SUCCESS");
-								}
-							});
-						});
-				}
-			} catch (error) {
-				console.error("Error loading local JSON:", error);
-			} finally {
-				setLoadingLoginAction(false);
-				fetchData();
-				state.setIsLoggedIn(true);
-			}
+			await axios
+				.post(
+					`${SERVER_URL}operator/login`,
+					{
+						PMSCompanyId: state.mainCompanyId,
+						PIN: state.dispId
+					},
+					{
+						headers: {
+							"Content-Type": "application/json"
+						}
+					}
+				)
+				.then(async (response) => {
+					console.log("response", JSON.stringify(response.data));
+					if (response.data.Type == 1) {
+						setLoginError(response.data.Msg);
+					} else {
+						if (response.data?.Extra?.access_token) {
+							//Local storage руу access_token хадгалах
+							await AsyncStorage.setItem("access_token", response.data?.Extra?.access_token)
+								.then(async (value) => {
+									// Login response -с state үүд салгаж хадгалах
+									state.setEmployeeData(response.data?.Extra?.employee);
+									state.setCompanyData(response.data?.Extra?.employee?.company);
+									state.setRosterData(response.data?.Extra?.employee?.roster);
+									state.setEquipmentsData(response.data?.Extra?.employee?.equipments);
+								})
+								.finally(() => {
+									// login response -г SQLite руу хадгалах
+									saveLoginDataWithClear(response.data?.Extra, true).then((e) => {
+										console.log("insert Login Data =>", e);
+										setLoginError(e);
+										if (e !== "DONE") {
+										} else if (e === "DONE") {
+											console.log("LOGIN SUCCESS");
+										}
+									});
+								});
+						}
+					}
+				})
+				.catch(function (error) {
+					console.error("Error loading local JSON:", error);
+				})
+				.finally(() => {
+					setLoadingLoginAction(false);
+				});
 		}
 	};
 
@@ -172,7 +186,7 @@ const LoginScreen = (props) => {
 							>
 								Нэвтрэх
 							</Text>
-							{loadingLoginAction ? <ActivityIndicator style={{ marginLeft: 5 }} color="#fff" /> : null}
+							{loadingLoginAction ? <ActivityIndicator style={{ marginLeft: 10 }} color="#fff" /> : null}
 						</>
 					}
 					titleStyle={{

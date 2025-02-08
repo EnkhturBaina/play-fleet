@@ -21,9 +21,9 @@ export const MainStore = (props) => {
 	const [checkListDone, setCheckListDone] = useState(false);
 	const [seconds, setSeconds] = useState(0);
 	const [isActiveTimer, setIsActiveTimer] = useState(false);
-	const [locationStatus, setLocationStatus] = useState(""); //*****Location Permission
-	const [dispId, setDispId] = useState(""); //*****Dispatcher ID
-	const [mainCompanyId, setMainCompanyId] = useState(""); //*****Company ID
+	const [locationStatus, setLocationStatus] = useState(null); //*****Location Permission
+	const [dispId, setDispId] = useState(null); //*****Dispatcher ID
+	const [mainCompanyId, setMainCompanyId] = useState(null); //*****Company ID
 	const [isLoading, setIsLoading] = useState(false); //*****Апп ачааллах эсэх
 	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
 	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
@@ -48,13 +48,13 @@ export const MainStore = (props) => {
 	const [companyData, setCompanyData] = useState(null);
 	const [rosterData, setRosterData] = useState(null);
 	const [equipmentsData, setEquipmentsData] = useState(null);
-	const [userId, setUserId] = useState(""); //*****Нэвтэрсэн хэрэглэгчийн USER_ID
-	const [companyId, setCompanyId] = useState(""); //*****Нэвтэрсэн хэрэглэгчийн COMPANY_ID
+	const [userId, setUserId] = useState(null); //*****Нэвтэрсэн хэрэглэгчийн USER_ID
+	const [companyId, setCompanyId] = useState(null); //*****Нэвтэрсэн хэрэглэгчийн COMPANY_ID
 	const [isLoggedIn, setIsLoggedIn] = useState(false); //*****Нэвтэрсэн эсэх
-	const [email, setEmail] = useState(""); //*****Утасны дугаар
-	const [password, setPassword] = useState("");
-	const [token, setToken] = useState(""); //*****Хэрэглэгчийн TOKEN
-	const [userData, setUserData] = useState(""); //*****Хэрэглэгчийн мэдээлэл
+	const [email, setEmail] = useState(null); //*****Утасны дугаар
+	const [password, setPassword] = useState(null);
+	const [token, setToken] = useState(null); //*****Хэрэглэгчийн TOKEN
+	const [userData, setUserData] = useState(null); //*****Хэрэглэгчийн мэдээлэл
 	/* LOGIN STATEs END */
 
 	/* REFERENCE STATEs START */
