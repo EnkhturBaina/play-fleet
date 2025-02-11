@@ -48,6 +48,8 @@ export const MainStore = (props) => {
 	const [companyData, setCompanyData] = useState(null);
 	const [rosterData, setRosterData] = useState(null);
 	const [equipmentsData, setEquipmentsData] = useState(null);
+	const [projectData, setProjectData] = useState(null);
+	const [shiftData, setShiftData] = useState(null);
 	const [userId, setUserId] = useState(null); //*****Нэвтэрсэн хэрэглэгчийн USER_ID
 	const [companyId, setCompanyId] = useState(null); //*****Нэвтэрсэн хэрэглэгчийн COMPANY_ID
 	const [isLoggedIn, setIsLoggedIn] = useState(false); //*****Нэвтэрсэн эсэх
@@ -55,6 +57,7 @@ export const MainStore = (props) => {
 	const [password, setPassword] = useState(null);
 	const [token, setToken] = useState(null); //*****Хэрэглэгчийн TOKEN
 	const [userData, setUserData] = useState(null); //*****Хэрэглэгчийн мэдээлэл
+	const [projectId, setProjectId] = useState(null);
 	/* LOGIN STATEs END */
 
 	/* REFERENCE STATEs START */
@@ -87,27 +90,6 @@ export const MainStore = (props) => {
 		// dropTable("ref_location_types");
 	}, []);
 
-	const createSQLTables = async () => {
-		console.log("create SQL Tables STATE");
-
-		try {
-			await createTable().then(async (e) => {
-				await createReferenceTables().then(async (e) => {
-					if (isConnected) {
-						getReferencesService();
-					} else {
-						fetchReferencesData().then((e) => {
-							console.log("RESULT FETCH REF=> ", e);
-							checkUserData();
-						});
-					}
-				});
-			});
-		} catch (error) {
-			console.log("error create SQL Tables", error);
-		}
-	};
-
 	const checkLocation = () => {
 		//***** LOCATION мэдээлэл авах
 		console.log("RUN check-Location");
@@ -136,6 +118,27 @@ export const MainStore = (props) => {
 			}
 		})().then((e) => {});
 		createSQLTables();
+	};
+
+	const createSQLTables = async () => {
+		console.log("create SQL Tables STATE");
+
+		try {
+			await createTable().then(async (e) => {
+				await createReferenceTables().then(async (e) => {
+					if (isConnected) {
+						getReferencesService();
+					} else {
+						fetchReferencesData().then((e) => {
+							console.log("RESULT FETCH REF=> ", e);
+							checkUserData();
+						});
+					}
+				});
+			});
+		} catch (error) {
+			console.log("error create SQL Tables", error);
+		}
 	};
 
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах
@@ -287,7 +290,13 @@ export const MainStore = (props) => {
 				mainCompanyId,
 				setMainCompanyId,
 				detectOrientation,
-				orientation
+				orientation,
+				projectId,
+				setProjectId,
+				shiftData,
+				setShiftData,
+				projectData,
+				setProjectData
 			}}
 		>
 			{props.children}

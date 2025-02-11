@@ -11,7 +11,9 @@ export default function (props) {
 	const [errorMsg, setErrorMsg] = useState(null);
 
 	const setCompanyIdToLocal = async () => {
-		if (state.mainCompanyId == "") {
+		console.log("X", state.mainCompanyId);
+
+		if (state.mainCompanyId == null || state.mainCompanyId == "") {
 			setErrorMsg("Компаний код оруулна уу.");
 		} else {
 			await AsyncStorage.setItem("mainCompanyId", state.mainCompanyId).then(() => {
@@ -58,7 +60,7 @@ export default function (props) {
 							},
 							roundness: MAIN_BORDER_RADIUS
 						}}
-						maxLength={4}
+						// maxLength={4}
 					/>
 
 					{errorMsg != null ? <Text style={styles.errorTextStyle}>{errorMsg}</Text> : null}

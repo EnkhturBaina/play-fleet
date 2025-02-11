@@ -61,10 +61,48 @@ export const createTable = async () => {
       );`
 		);
 		await db.execAsync(
+			`CREATE TABLE IF NOT EXISTS shift (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				Name TEXT,
+				Description TEXT,
+				ViewOrder INTEGER,
+				IsActive INTEGER,
+				status TEXT
+      );`
+		);
+		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS equipments (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        employeeId INTEGER,
-        FOREIGN KEY(employeeId) REFERENCES employee(id)
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				PMSCompanyId INTEGER,
+				PMSProjectId INTEGER,
+				PMSManufacturerId INTEGER,
+				PMSTypeId INTEGER,
+				PMSModelId INTEGER,
+				Code TEXT,
+				Name TEXT,
+				Capacity TEXT,
+				IsActive INTEGER,
+				TypeName TEXT,
+				status TEXT
+      );`
+		);
+		await db.execAsync(
+			`CREATE TABLE IF NOT EXISTS project (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				Name TEXT,
+				PMSCompanyId INTEGER,
+				Commodity TEXT,
+				ShiftTime TEXT,
+				StartedDate TEXT,
+				CurrentProject INTEGER,
+        CreatedBy INTEGER,
+        ModifiedBy INTEGER,
+				Latitude REAL,
+				Longitude REAL,
+				PMSProgressStateId INTEGER,
+				KMLFile TEXT,
+				Radius INTEGER,
+				status TEXT
       );`
 		);
 	} catch (error) {
@@ -79,8 +117,11 @@ export const saveLoginDataWithClear = async (data, is_clear) => {
 
 		// clearLoginTables амжилттай дууссаны дараа insert хийх
 		if (is_clear) {
-			await clearLoginTables();
-			result = await insertLoginData(data);
+			await clearLoginTables().then(async (e) => {
+				if (e == "DONE_CLEAR_MAIN_TABLES") {
+					result = await insertLoginData();
+				}
+			});
 		} else {
 			result = await insertLoginData(data);
 		}
@@ -99,8 +140,11 @@ export const insertLoginData = async (data) => {
 		const employee = data.employee;
 		const company = employee.company;
 		const roster = employee.roster;
+		const project = data.project;
+		const shift = data.shift;
+		const equipments = employee.equipments;
 
-		// employee ширээнд өгөгдөл оруулах
+		// employee өгөгдөл оруулах
 		const resultEmployee = await db.runAsync(
 			`INSERT INTO employee (id, PMSCompanyId, PMSRosterId, Code, FirstName, LastName, Profile, Email, IsActive, IsOperator, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at, FullName, status)
 		  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
@@ -130,7 +174,7 @@ export const insertLoginData = async (data) => {
 			throw new Error("Employee өгөгдлийг оруулж чадсангүй.");
 		}
 
-		// company ширээнд өгөгдөл оруулах
+		// company өгөгдөл оруулах
 		if (company) {
 			const resultCompany = await db.runAsync(
 				`INSERT INTO company (id, Code, Name, Image, email, Mobile, IsMain, ViewOrder, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at)
@@ -157,7 +201,7 @@ export const insertLoginData = async (data) => {
 			}
 		}
 
-		// roster ширээнд өгөгдөл оруулах
+		// roster өгөгдөл оруулах
 		if (roster) {
 			const resultRoster = await db.runAsync(
 				`INSERT INTO roster (id, PMSProjectId, Name, Description, IsSystem, IsActive, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at, status)
@@ -183,6 +227,76 @@ export const insertLoginData = async (data) => {
 			}
 		}
 
+		// project өгөгдөл оруулах
+		if (project) {
+			const resultProject = await db.runAsync(
+				`INSERT INTO project (id, Name, PMSCompanyId, Commodity, ShiftTime, StartedDate, CurrentProject, CreatedBy, ModifiedBy, Latitude, Longitude, PMSProgressStateId, KMLFile, Radius, status)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+				[
+					project.id,
+					project.Name,
+					project.PMSCompanyId,
+					project.Commodity,
+					project.ShiftTime,
+					project.StartedDate,
+					project.CurrentProject,
+					project.CreatedBy,
+					project.ModifiedBy,
+					project.Latitude,
+					project.Longitude,
+					project.PMSProgressStateId,
+					project.KMLFile,
+					project.Radius,
+					project.status
+				]
+			);
+
+			if (resultProject.rowsAffected === 0) {
+				throw new Error("Project өгөгдлийг оруулж чадсангүй.");
+			}
+		}
+
+		// shift өгөгдөл оруулах
+		if (shift) {
+			const resultShift = await db.runAsync(
+				`INSERT INTO shift (id, Name, Description, ViewOrder, IsActive, status)
+				VALUES (?, ?, ?, ?, ?, ?);`,
+				[shift.id, shift.Name, shift.Description, shift.ViewOrder, shift.IsActive, shift.status]
+			);
+
+			if (resultShift.rowsAffected === 0) {
+				throw new Error("Shift өгөгдлийг оруулж чадсангүй.");
+			}
+		}
+
+		// equipments өгөгдөл оруулах (for...of ашиглаж, async/await-г дэмжинэ)
+		if (equipments) {
+			for (const el of equipments) {
+				const resultEquipments = await db.runAsync(
+					`INSERT INTO equipments (id, PMSCompanyId, PMSProjectId, PMSManufacturerId, PMSTypeId, PMSModelId, Code, Name, Capacity, IsActive, TypeName, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+					[
+						el.id,
+						el.PMSCompanyId,
+						el.PMSProjectId,
+						el.PMSManufacturerId,
+						el.PMSTypeId,
+						el.PMSModelId,
+						el.Code,
+						el.Name,
+						el.Capacity,
+						el.IsActive,
+						el.TypeName,
+						el.status
+					]
+				);
+
+				if (resultEquipments.rowsAffected === 0) {
+					throw new Error("Equipments өгөгдлийг оруулж чадсангүй.");
+				}
+			}
+		}
+
 		return "DONE";
 	} catch (error) {
 		return "insertLoginData" + error.message;
@@ -191,14 +305,21 @@ export const insertLoginData = async (data) => {
 
 // Login TABLE үүдийг цэвэрлэж. Шинэ дата хадгалахад бэлдэх
 export const clearLoginTables = async (id) => {
-	console.log("RUN CLEAR oginTables");
+	console.log("RUN CLEAR LoginTables");
+
+	const tablesToClear = ["employee", "company", "roster", "equipments", "project", "shift"];
 
 	try {
-		await db.runAsync("DELETE FROM employee");
-		await db.runAsync("DELETE FROM company");
-		await db.runAsync("DELETE FROM roster");
+		// Хүснэгтүүдийг устгах
+		for (let table of tablesToClear) {
+			await db.runAsync(`DELETE FROM ${table}`);
+			console.log(`Successfully cleared table: ${table}`);
+		}
+
+		return "DONE_CLEAR_MAIN_TABLES";
 	} catch (error) {
-		console.log("error", error);
+		console.error("Error clearing tables:", error);
+		return `Error clearing tables: ${error.message}`;
 	}
 };
 
