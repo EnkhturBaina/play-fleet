@@ -13,7 +13,6 @@ import MainContext from "../contexts/MainContext";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_INPUT_HEIGHT, MAIN_BUTTON_HEIGHT, SERVER_URL } from "../constant";
 import { Image } from "expo-image";
-import EmployeeLoginResponse from "../temp_data/EmployeeLoginResponse.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchLoginData, saveLoginDataWithClear } from "../helper/db";
 import { useNetworkStatus } from "../contexts/NetworkContext";
@@ -222,12 +221,6 @@ const styles = StyleSheet.create({
 	loginImageContainer: {
 		alignItems: "center"
 	},
-	stackSection: {
-		width: "100%",
-		flexDirection: "column",
-		justifyContent: "space-between",
-		alignItems: "center"
-	},
 	loginImg: {
 		width: 200,
 		height: 100
@@ -239,12 +232,6 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		alignSelf: "center",
 		backgroundColor: "#fff"
-	},
-	stackSection3: {
-		width: "80%",
-		alignItems: "center",
-		marginRight: "auto",
-		marginLeft: "auto"
 	},
 	loginErrorText: {
 		width: "100%",
