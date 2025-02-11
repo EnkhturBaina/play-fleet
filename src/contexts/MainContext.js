@@ -159,6 +159,7 @@ export const MainStore = (props) => {
 			console.log("access_token", accessToken);
 
 			if (accessToken != null) {
+				setToken(accessToken);
 				const responseOfflineLoginData = await fetchLoginData();
 				console.log("Fetched Login Data:", responseOfflineLoginData);
 
@@ -244,6 +245,9 @@ export const MainStore = (props) => {
 		];
 
 		AsyncStorage.multiRemove(keys).then(() => {
+			setSelectedEquipment(null);
+			setInspectionDone(false);
+			setDispId(null);
 			setIsLoading(false);
 			setIsLoggedIn(false);
 		});

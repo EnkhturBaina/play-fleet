@@ -38,7 +38,7 @@ const SelectEquipmentScreen = () => {
 				}}
 			>
 				{state.equipmentsData &&
-					data?.map((el, index) => {
+					state.equipmentsData?.map((el, index) => {
 						var imageType = null;
 						if (el.TypeName == "Truck") {
 							imageType = require("../../assets/status/truck_main.png");

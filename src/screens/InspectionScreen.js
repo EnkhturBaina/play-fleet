@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, StatusBar, Platform, ScrollView } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import HeaderUser from "../components/HeaderUser";
 import Constants from "expo-constants";
 import { Button } from "@rneui/base";
@@ -13,9 +13,12 @@ import {
 } from "../constant";
 import MainContext from "../contexts/MainContext";
 import axios from "axios";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 const InspectionScreen = () => {
 	const state = useContext(MainContext);
+
 	const [inspectionData, setInspectionData] = useState([
 		{
 			key: 1,
@@ -114,17 +117,24 @@ const InspectionScreen = () => {
 		}
 	]);
 
+	// {dayjs(item?.createdAt).format("YYYY/MM/DD") ?? "-"}
 	const getInspections = async () => {
+		console.log("selectedEquipment", state.selectedEquipment?.id);
+		console.log("shiftData", state.shiftData?.id);
+		console.log("rosterData", state.rosterData?.id);
+		console.log("employeeData", state.employeeData?.id);
+		console.log("dayjs", dayjs().format("YYYY-MM-DD"));
+
 		try {
 			await axios
 				.post(
 					`${SERVER_URL}/mobile/inspection/save`,
 					{
-						PMSEquipmentId: "",
-						PMSShiftId: "",
-						PMSRosterId: "",
-						PMSEmployeeId: "",
-						CurrentDate: ""
+						PMSEquipmentId: state.selectedEquipment?.id,
+						PMSShiftId: state.shiftData?.id,
+						PMSRosterId: state.rosterData?.id,
+						PMSEmployeeId: state.employeeData?.id,
+						CurrentDate: dayjs().format("YYYY-MM-DD")
 					},
 					{
 						headers: {
@@ -137,13 +147,18 @@ const InspectionScreen = () => {
 					console.log("get StockData response", JSON.stringify(response.data));
 				})
 				.catch(function (error) {
-					console.log("error get Inspections", error);
+					console.log("error get Inspections", error.response.data);
 				})
 				.finally(() => {});
 		} catch (error) {
 			console.log("CATCH get Inspections", error);
 		}
 	};
+
+	useEffect(() => {
+		getInspections();
+	}, []);
+
 	return (
 		<View
 			style={{

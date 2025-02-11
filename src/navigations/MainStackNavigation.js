@@ -43,7 +43,7 @@ const MainStackNavigator = (props) => {
 		// Апп ачааллах бүрт SplashScreen харуулах
 		return <SplashScreen />;
 	}
-	if (!state.isLoading && !state.isLoggedIn && state.appIsReady && state.selectedEquipment == null) {
+	if (!state.isLoading && !state.isLoggedIn) {
 		// Login хийгээгүй үед
 		return <LoginScreen />;
 	}
