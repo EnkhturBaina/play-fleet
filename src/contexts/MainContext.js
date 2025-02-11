@@ -18,7 +18,7 @@ export const MainStore = (props) => {
 
 	/* GENERAL STATEs START */
 	const [appIsReady, setAppIsReady] = useState(false);
-	const [checkListDone, setCheckListDone] = useState(false);
+	const [inspectionDone, setInspectionDone] = useState(false);
 	const [seconds, setSeconds] = useState(0);
 	const [isActiveTimer, setIsActiveTimer] = useState(false);
 	const [locationStatus, setLocationStatus] = useState(null); //*****Location Permission
@@ -41,6 +41,7 @@ export const MainStore = (props) => {
 		assignedTask: null
 	});
 	const [orientation, setOrientation] = useState("PORTRAIT"); //LANDSCAPE, PORTRAIT
+	const [selectedEquipment, setSelectedEquipment] = useState(null);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -280,8 +281,8 @@ export const MainStore = (props) => {
 				setPassword,
 				locationErrorCode,
 				setLocationErrorCode,
-				checkListDone,
-				setCheckListDone,
+				inspectionDone,
+				setInspectionDone,
 				dispId,
 				setDispId,
 				seconds,
@@ -321,7 +322,9 @@ export const MainStore = (props) => {
 				shiftData,
 				setShiftData,
 				projectData,
-				setProjectData
+				setProjectData,
+				selectedEquipment,
+				setSelectedEquipment
 			}}
 		>
 			{props.children}

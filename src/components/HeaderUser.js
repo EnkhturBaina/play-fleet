@@ -4,13 +4,10 @@ import { MAIN_COLOR } from "../constant";
 import MainContext from "../contexts/MainContext";
 import notif from "../../assets/notif.png";
 import icon from "../../assets/icon.png";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { Image } from "expo-image";
 
 const HeaderUser = (props) => {
-	const navigation = useNavigation();
 	const state = useContext(MainContext);
-	const route = useRoute();
 
 	return (
 		<View style={styles.headerContainer}>

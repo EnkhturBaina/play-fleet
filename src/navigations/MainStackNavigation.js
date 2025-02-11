@@ -7,7 +7,6 @@ import MainContext from "../contexts/MainContext";
 
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
-import CheckListScreen from "../screens/CheckListScreen";
 import StatusListScreen from "../screens/StatusListScreen";
 import WorkRegistrationScreen from "../screens/WorkRegistration/WorkRegistrationScreen";
 import CreateReisScreen from "../screens/WorkRegistration/Reis/CreateReisScreen";
@@ -19,6 +18,8 @@ import TestSQL from "../screens/TestSQL";
 import TestRenderUurhai from "../screens/TestRenderUurhai";
 import TestTilesScreen from "../screens/TestTilesScreen";
 import SplashScreen from "../screens/SplashScreen";
+import SelectEquipmentScreen from "../screens/SelectEquipmentScreen";
+import InspectionScreen from "../screens/InspectionScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -42,6 +43,18 @@ const MainStackNavigator = (props) => {
 		// Апп ачааллах бүрт SplashScreen харуулах
 		return <SplashScreen />;
 	}
+	if (!state.isLoading && !state.isLoggedIn && state.appIsReady && state.selectedEquipment == null) {
+		// Login хийгээгүй үед
+		return <LoginScreen />;
+	}
+	if (!state.isLoading && state.isLoggedIn && state.appIsReady && state.selectedEquipment == null) {
+		// Login хийсэн ч EQUIPMENT сонгоогүй үед
+		return <SelectEquipmentScreen />;
+	}
+	if (!state.isLoading && state.isLoggedIn && state.appIsReady && state.selectedEquipment && !state.inspectionDone) {
+		// Login хийгээд EQUIPMENT сонгоод Inspection
+		return <InspectionScreen />;
+	}
 
 	return (
 		<View
@@ -56,144 +69,118 @@ const MainStackNavigator = (props) => {
 					}
 				}}
 			>
-				{!state.isLoading && !state.isLoggedIn && state.appIsReady ? (
-					<Stack.Screen
-						name="LoginScreen"
-						component={LoginScreen}
-						options={{
-							title: "",
-							headerShown: false,
-							headerTitleStyle: {},
-							headerLeft: () => <></>
-						}}
-					/>
-				) : state.isLoggedIn && !state.checkListDone ? (
-					<Stack.Screen
-						name="CheckListScreen"
-						component={CheckListScreen}
-						options={{
-							headerShown: false,
-							title: "",
-							headerTitleStyle: {},
-							headerLeft: () => <></>
-						}}
-					/>
-				) : (
-					<>
-						<Stack.Screen
-							name="HomeScreen"
-							component={HomeScreen}
-							options={{
-								headerShown: false,
-								title: "",
-								headerTitleStyle: {},
-								headerLeft: () => <></>
-							}}
-						/>
-						<Stack.Screen
-							name="StatusListScreen"
-							component={StatusListScreen}
-							options={{
-								headerShown: false,
-								title: "",
-								headerTitleStyle: {},
-								headerLeft: () => <></>
-							}}
-						/>
-						<Stack.Screen
-							name="WorkRegistrationScreen"
-							component={WorkRegistrationScreen}
-							options={{
-								headerShown: false,
-								title: "",
-								headerTitleStyle: {},
-								headerLeft: () => <></>
-							}}
-						/>
-						<Stack.Screen
-							name="CreateReisScreen"
-							component={CreateReisScreen}
-							options={{
-								title: "",
-								headerTitleStyle: {
-									fontWeight: "bold"
-								},
-								headerLeft: () => (
-									<TouchableOpacity
-										style={styles.headerLeftContainer}
-										onPress={() => {
-											navigation.goBack();
-										}}
-									>
-										<Icon name="keyboard-arrow-left" type="material-icons" size={30} />
-										<Text style={styles.headerLeftText}>Рейс бүртгэл</Text>
-									</TouchableOpacity>
-								)
-							}}
-						/>
-						<Stack.Screen
-							name="MotoHoursAndFuelScreen"
-							component={MotoHoursAndFuelScreen}
-							options={{
-								headerShown: false,
-								title: "",
-								headerTitleStyle: {},
-								headerLeft: () => <></>
-							}}
-						/>
-						<Stack.Screen
-							name="CreateMotoHourAndFuelScreen"
-							component={CreateMotoHourAndFuelScreen}
-							options={{
-								title: "",
-								headerTitleStyle: {
-									fontWeight: "bold"
-								},
-								headerLeft: () => (
-									<TouchableOpacity
-										style={styles.headerLeftContainer}
-										onPress={() => {
-											navigation.goBack();
-										}}
-									>
-										<Icon name="keyboard-arrow-left" type="material-icons" size={30} />
-										<Text style={styles.headerLeftText}>Мото цагийн болон түлшний бүртгэл</Text>
-									</TouchableOpacity>
-								)
-							}}
-						/>
-						<Stack.Screen
-							name="TestSQL"
-							component={TestSQL}
-							options={{
-								headerShown: false,
-								title: "",
-								headerTitleStyle: {},
-								headerLeft: () => <></>
-							}}
-						/>
-						<Stack.Screen
-							name="TestRenderUurhai"
-							component={TestRenderUurhai}
-							options={{
-								headerShown: false,
-								title: "",
-								headerTitleStyle: {},
-								headerLeft: () => <></>
-							}}
-						/>
-						<Stack.Screen
-							name="TestTilesScreen"
-							component={TestTilesScreen}
-							options={{
-								headerShown: false,
-								title: "",
-								headerTitleStyle: {},
-								headerLeft: () => <></>
-							}}
-						/>
-					</>
-				)}
+				<Stack.Screen
+					name="HomeScreen"
+					component={HomeScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="StatusListScreen"
+					component={StatusListScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="WorkRegistrationScreen"
+					component={WorkRegistrationScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="CreateReisScreen"
+					component={CreateReisScreen}
+					options={{
+						title: "",
+						headerTitleStyle: {
+							fontWeight: "bold"
+						},
+						headerLeft: () => (
+							<TouchableOpacity
+								style={styles.headerLeftContainer}
+								onPress={() => {
+									navigation.goBack();
+								}}
+							>
+								<Icon name="keyboard-arrow-left" type="material-icons" size={30} />
+								<Text style={styles.headerLeftText}>Рейс бүртгэл</Text>
+							</TouchableOpacity>
+						)
+					}}
+				/>
+				<Stack.Screen
+					name="MotoHoursAndFuelScreen"
+					component={MotoHoursAndFuelScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="CreateMotoHourAndFuelScreen"
+					component={CreateMotoHourAndFuelScreen}
+					options={{
+						title: "",
+						headerTitleStyle: {
+							fontWeight: "bold"
+						},
+						headerLeft: () => (
+							<TouchableOpacity
+								style={styles.headerLeftContainer}
+								onPress={() => {
+									navigation.goBack();
+								}}
+							>
+								<Icon name="keyboard-arrow-left" type="material-icons" size={30} />
+								<Text style={styles.headerLeftText}>Мото цагийн болон түлшний бүртгэл</Text>
+							</TouchableOpacity>
+						)
+					}}
+				/>
+				<Stack.Screen
+					name="TestSQL"
+					component={TestSQL}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="TestRenderUurhai"
+					component={TestRenderUurhai}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="TestTilesScreen"
+					component={TestTilesScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
 			</Stack.Navigator>
 		</View>
 	);

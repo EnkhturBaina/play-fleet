@@ -3,12 +3,20 @@ import React, { useContext, useState } from "react";
 import HeaderUser from "../components/HeaderUser";
 import Constants from "expo-constants";
 import { Button } from "@rneui/base";
-import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../constant";
+import {
+	MAIN_BORDER_RADIUS,
+	MAIN_BUTTON_HEIGHT,
+	MAIN_COLOR,
+	MAIN_COLOR_GREEN,
+	MAIN_COLOR_RED,
+	SERVER_URL
+} from "../constant";
 import MainContext from "../contexts/MainContext";
+import axios from "axios";
 
-const CheckListScreen = () => {
+const InspectionScreen = () => {
 	const state = useContext(MainContext);
-	const [checkListData, setCheckListData] = useState([
+	const [inspectionData, setInspectionData] = useState([
 		{
 			key: 1,
 			label: "КАБИН - АНХААРУУЛАХ БОЛОН ҮЙЛДЛИЙН ГЭРЛҮҮД",
@@ -105,6 +113,37 @@ const CheckListScreen = () => {
 			isChecked: false
 		}
 	]);
+
+	const getInspections = async () => {
+		try {
+			await axios
+				.post(
+					`${SERVER_URL}/mobile/inspection/save`,
+					{
+						PMSEquipmentId: "",
+						PMSShiftId: "",
+						PMSRosterId: "",
+						PMSEmployeeId: "",
+						CurrentDate: ""
+					},
+					{
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${state.token}`
+						}
+					}
+				)
+				.then(function (response) {
+					console.log("get StockData response", JSON.stringify(response.data));
+				})
+				.catch(function (error) {
+					console.log("error get Inspections", error);
+				})
+				.finally(() => {});
+		} catch (error) {
+			console.log("CATCH get Inspections", error);
+		}
+	};
 	return (
 		<View
 			style={{
@@ -124,7 +163,7 @@ const CheckListScreen = () => {
 				bounces={false}
 				showsVerticalScrollIndicator={false}
 			>
-				{checkListData?.map((el, index) => {
+				{inspectionData?.map((el, index) => {
 					return (
 						<View
 							style={{
@@ -152,13 +191,13 @@ const CheckListScreen = () => {
 									fontSize: 14
 								}}
 								onPress={() => {
-									const newData = [...checkListData];
+									const newData = [...inspectionData];
 
 									const index = newData.findIndex((item) => item.key === el.key);
 
 									if (index !== -1) {
 										newData[index] = { ...newData[index], isChecked: !el.isChecked };
-										setCheckListData(newData);
+										setInspectionData(newData);
 									}
 								}}
 							/>
@@ -183,13 +222,13 @@ const CheckListScreen = () => {
 					fontSize: 14
 				}}
 				onPress={() => {
-					state.setCheckListDone(true);
+					state.setInspectionDone(true);
 				}}
 			/>
 		</View>
 	);
 };
 
-export default CheckListScreen;
+export default InspectionScreen;
 
 const styles = StyleSheet.create({});
