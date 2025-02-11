@@ -43,7 +43,11 @@ const HomeScreenSideBar = (props) => {
 			img: require("../../../assets/images/Picture16.png"),
 			label: "Ээлжийн өмнөх үзлэг",
 			nav: "NAV_PATH",
-			isMore: true
+			isMore: true,
+			action: () => {
+				props.setIsOpen(false);
+				navigation.navigate("InspectionReportScreen");
+			}
 		},
 		{
 			img: require("../../../assets/images/Picture17.png"),

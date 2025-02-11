@@ -16,6 +16,7 @@ import axios from "axios";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 import CustomDialog from "../components/CustomDialog";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const InspectionScreen = () => {
 	const state = useContext(MainContext);
@@ -30,6 +31,7 @@ const InspectionScreen = () => {
 	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
 
 	const getInspections = async () => {
+		setInspectionData(null);
 		setLoadingInspections(true);
 		try {
 			await axios
@@ -120,9 +122,12 @@ const InspectionScreen = () => {
 				.catch(function (error) {
 					console.log("error get Inspections", error.response.data);
 				})
-				.finally(() => {
-					setSavingInspections(false);
-					setVisibleDialog(true);
+				.finally(async () => {
+					console.log("inspectionId BEFORE", mainData?.id);
+					await AsyncStorage.setItem("inspectionId", JSON.stringify(mainData?.id)).then(() => {
+						setSavingInspections(false);
+						setVisibleDialog(true);
+					});
 				});
 		} catch (error) {
 			console.log("CATCH get Inspections", error);

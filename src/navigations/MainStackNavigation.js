@@ -20,6 +20,7 @@ import TestTilesScreen from "../screens/TestTilesScreen";
 import SplashScreen from "../screens/SplashScreen";
 import SelectEquipmentScreen from "../screens/SelectEquipmentScreen";
 import InspectionScreen from "../screens/InspectionScreen";
+import InspectionReportScreen from "../screens/Sidebar/InspectionReportScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -174,6 +175,16 @@ const MainStackNavigator = (props) => {
 				<Stack.Screen
 					name="TestTilesScreen"
 					component={TestTilesScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="InspectionReportScreen"
+					component={InspectionReportScreen}
 					options={{
 						headerShown: false,
 						title: "",

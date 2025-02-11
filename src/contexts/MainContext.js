@@ -241,7 +241,8 @@ export const MainStore = (props) => {
 		//***** Profile -с гарах дарсан үед утасны LOCALSTORE -с user, user_bio устгах
 		const keys = [
 			// "local_notif",
-			"access_token"
+			"access_token",
+			"inspectionId"
 		];
 
 		AsyncStorage.multiRemove(keys).then(() => {
