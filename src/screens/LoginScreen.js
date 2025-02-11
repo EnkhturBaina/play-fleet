@@ -102,16 +102,16 @@ const LoginScreen = (props) => {
 				if (saveResult === "DONE") {
 					console.log("LOGIN SUCCESS");
 
-					const responseFetchLoginData = await fetchLoginData();
-					console.log("Fetched Login Data:", responseFetchLoginData);
+					const responseOfflineLoginData = await fetchLoginData();
+					console.log("Fetched Login Data:", responseOfflineLoginData);
 
 					// Login response -с state үүд салгаж хадгалах
-					state.setEmployeeData(responseFetchLoginData.employee[0]);
-					state.setCompanyData(responseFetchLoginData.company[0]);
-					state.setRosterData(responseFetchLoginData.roster[0]);
-					state.setEquipmentsData(responseFetchLoginData.equipments);
-					state.setProjectData(responseFetchLoginData.project[0]);
-					state.setShiftData(responseFetchLoginData.shift[0]);
+					state.setEmployeeData(responseOfflineLoginData.employee[0]);
+					state.setCompanyData(responseOfflineLoginData.company[0]);
+					state.setRosterData(responseOfflineLoginData.roster[0]);
+					state.setEquipmentsData(responseOfflineLoginData.equipments);
+					state.setProjectData(responseOfflineLoginData.project[0]);
+					state.setShiftData(responseOfflineLoginData.shift[0]);
 
 					// Local storage руу access_token хадгалах
 					await AsyncStorage.setItem("access_token", accessToken);

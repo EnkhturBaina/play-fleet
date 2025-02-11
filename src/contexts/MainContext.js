@@ -158,10 +158,17 @@ export const MainStore = (props) => {
 			console.log("access_token", accessToken);
 
 			if (accessToken != null) {
-				fetchLoginData().then((e) => {
-					console.log("RESULT FETCH LOGIN DATA=> ", e);
-					setIsLoggedIn(true);
-				});
+				const responseOfflineLoginData = await fetchLoginData();
+				console.log("Fetched Login Data:", responseOfflineLoginData);
+
+				// Login response -с state үүд салгаж хадгалах
+				setEmployeeData(responseOfflineLoginData.employee[0]);
+				setCompanyData(responseOfflineLoginData.company[0]);
+				setRosterData(responseOfflineLoginData.roster[0]);
+				setEquipmentsData(responseOfflineLoginData.equipments);
+				setProjectData(responseOfflineLoginData.project[0]);
+				setShiftData(responseOfflineLoginData.shift[0]);
+				setIsLoggedIn(true);
 			}
 		} catch (error) {
 			console.error("Алдаа гарлаа: ", error);
