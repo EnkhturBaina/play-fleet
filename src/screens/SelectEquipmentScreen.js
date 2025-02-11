@@ -24,7 +24,7 @@ const SelectEquipmentScreen = () => {
 				flex: 1,
 				paddingTop: Constants.statusBarHeight,
 				backgroundColor: "#fff",
-				paddingBottom: 50
+				paddingBottom: 20
 			}}
 		>
 			<StatusBar translucent hidden={false} barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
@@ -73,7 +73,7 @@ const SelectEquipmentScreen = () => {
 			<Button
 				disabled={selectedEq == null}
 				containerStyle={{
-					width: state.orientation == "PORTRAIT" ? "80%" : "40%",
+					width: state.orientation == "PORTRAIT" ? "90%" : "50%",
 					marginTop: 10,
 					alignSelf: "center"
 				}}

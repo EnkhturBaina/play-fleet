@@ -50,7 +50,7 @@ const HomeScreen = (props) => {
 	};
 	useEffect(() => {
 		state.detectOrientation();
-		console.log("STATE location=>", state.location);
+		console.log("STATE location=>", state.projectData);
 		// console.log("refLocations", state.refLocations);
 
 		startTracking();
@@ -104,7 +104,7 @@ const HomeScreen = (props) => {
 	// Файлыг шалгах болон лоад хийх
 	const checkIfFileExistsAndLoad = async () => {
 		setLoadingKML(true);
-		const fileUri = FileSystem.documentDirectory + "new_kml_data2.txt";
+		const fileUri = FileSystem.documentDirectory + "project_kml4.txt";
 
 		const exists = await checkIfFileExists(fileUri);
 
@@ -115,10 +115,7 @@ const HomeScreen = (props) => {
 		} else {
 			if (isConnected) {
 				try {
-					const fileContent = await loadKML(
-						"https://drive.google.com/uc?export=download&id=1LDXA3r1EoszfCgXDrMxAPQuDcdGdAPxC",
-						fileUri
-					);
+					const fileContent = await loadKML(state.projectData?.KMLFile, fileUri);
 					setKmlStatus("File loaded from server. DONE !");
 					setFileContent(fileContent);
 				} catch (error) {
@@ -135,6 +132,7 @@ const HomeScreen = (props) => {
 		if (fileContent !== null) {
 			processKML(fileContent)
 				.then((polygons) => {
+					setKmlStatus("File loaded from storage. DONE !");
 					setPolygons(polygons);
 					setLoadingKML(false);
 				})
@@ -197,7 +195,8 @@ const HomeScreen = (props) => {
 							longitudeDelta: 0.0121
 						}}
 					/>
-					{polygons?.length > 0 &&
+					{!loadingKML &&
+						polygons?.length > 0 &&
 						polygons?.map((el, index) => {
 							return (
 								<Polyline
@@ -219,6 +218,9 @@ const HomeScreen = (props) => {
 						height: "100%"
 					}}
 				>
+					<Text>
+						{polygons?.length} - {kmlStatus}
+					</Text>
 					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
 				</View>
 			</SideMenu>
