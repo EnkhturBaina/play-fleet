@@ -15,7 +15,7 @@ import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_INPUT_HEIGHT, MAIN_BUTTON_HEIGHT, 
 import { Image } from "expo-image";
 import EmployeeLoginResponse from "../temp_data/EmployeeLoginResponse.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchData, saveLoginDataWithClear } from "../helper/db";
+import { fetchLoginData, saveLoginDataWithClear } from "../helper/db";
 import { useNetworkStatus } from "../contexts/NetworkContext";
 import { TextInput } from "react-native-paper";
 import LoginCompanyDialog from "../components/LoginCompanyDialog";
@@ -59,66 +59,73 @@ const LoginScreen = (props) => {
 	const onDismissSnackBar = () => setVisibleSnack(false);
 
 	const login = async () => {
-		// state.setIsLoggedIn(true);
-		if (state.dispId == null) {
+		if (!state.dispId) {
 			setLoginError("Операторын код оруулна уу.");
-		} else if (state.mainCompanyId == null) {
+			return;
+		}
+		if (!state.mainCompanyId) {
 			setLoginError("Компаний код оруулаагүй байна.");
-		} else {
-			setLoadingLoginAction(true);
-			setLoginError(null);
+			return;
+		}
+
+		setLoadingLoginAction(true);
+		setLoginError(null);
+
+		try {
 			console.log("state.mainCompanyId", state.mainCompanyId);
 
-			await axios
-				.post(
-					`${SERVER_URL}operator/login`,
-					{
-						PMSCompanyId: state.mainCompanyId,
-						PIN: state.dispId
-					},
-					{
-						headers: {
-							"Content-Type": "application/json"
-						}
+			const response = await axios.post(
+				`${SERVER_URL}operator/login`,
+				{
+					CompanyCode: state.mainCompanyId,
+					PIN: state.dispId
+				},
+				{
+					headers: {
+						"Content-Type": "application/json"
 					}
-				)
-				.then(async (response) => {
-					console.log("response", JSON.stringify(response.data));
-					if (response.data.Type == 1) {
-						setLoginError(response.data.Msg);
-					} else {
-						if (response.data?.Extra?.access_token) {
-							//Local storage руу access_token хадгалах
-							await AsyncStorage.setItem("access_token", response.data?.Extra?.access_token)
-								.then(async (value) => {
-									// Login response -с state үүд салгаж хадгалах
-									state.setEmployeeData(response.data?.Extra?.employee);
-									state.setCompanyData(response.data?.Extra?.employee?.company);
-									state.setRosterData(response.data?.Extra?.employee?.roster);
-									state.setEquipmentsData(response.data?.Extra?.employee?.equipments);
-									state.setProjectData(response.data?.Extra?.project);
-									state.setShiftData(response.data?.Extra?.shift);
-								})
-								.finally(() => {
-									// login response -г SQLite руу хадгалах
-									saveLoginDataWithClear(response.data?.Extra, true).then((e) => {
-										console.log("insert Login Data =>", e);
-										setLoginError(e);
-										if (e !== "DONE") {
-										} else if (e === "DONE") {
-											console.log("LOGIN SUCCESS");
-										}
-									});
-								});
-						}
-					}
-				})
-				.catch(function (error) {
-					console.error("Error loading local JSON:", error);
-				})
-				.finally(() => {
-					setLoadingLoginAction(false);
-				});
+				}
+			);
+
+			console.log("response", JSON.stringify(response.data));
+
+			if (response.data.Type === 1) {
+				setLoginError(response.data.Msg);
+				return;
+			}
+
+			const accessToken = response.data?.Extra?.access_token;
+			if (accessToken) {
+				// login response -г SQLite руу хадгалах
+				const saveResult = await saveLoginDataWithClear(response.data.Extra, true);
+				console.log("insert Login Data =>", saveResult);
+
+				if (saveResult === "DONE") {
+					console.log("LOGIN SUCCESS");
+
+					const responseFetchLoginData = await fetchLoginData();
+					console.log("Fetched Login Data:", responseFetchLoginData);
+
+					// Login response -с state үүд салгаж хадгалах
+					state.setEmployeeData(responseFetchLoginData.employee[0]);
+					state.setCompanyData(responseFetchLoginData.company[0]);
+					state.setRosterData(responseFetchLoginData.roster[0]);
+					state.setEquipmentsData(responseFetchLoginData.equipments);
+					state.setProjectData(responseFetchLoginData.project[0]);
+					state.setShiftData(responseFetchLoginData.shift[0]);
+
+					// Local storage руу access_token хадгалах
+					await AsyncStorage.setItem("access_token", accessToken);
+					state.setIsLoggedIn(true);
+				} else {
+					setLoginError("Өгөгдөл хадгалахад алдаа гарлаа.");
+				}
+			}
+		} catch (error) {
+			console.error("Алдаа гарлаа:", error);
+			setLoginError("Нэвтрэх үед алдаа гарлаа. Дахин оролдоно уу.");
+		} finally {
+			setLoadingLoginAction(false);
 		}
 	};
 

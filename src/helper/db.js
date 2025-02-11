@@ -119,7 +119,7 @@ export const saveLoginDataWithClear = async (data, is_clear) => {
 		if (is_clear) {
 			await clearLoginTables().then(async (e) => {
 				if (e == "DONE_CLEAR_MAIN_TABLES") {
-					result = await insertLoginData();
+					result = await insertLoginData(data);
 				}
 			});
 		} else {
@@ -134,7 +134,7 @@ export const saveLoginDataWithClear = async (data, is_clear) => {
 
 // 2.DONE Локал өгөгдлийг хадгалах функц
 export const insertLoginData = async (data) => {
-	console.log("RUN INSERT LoginData");
+	console.log("RUN INSERT LoginData", JSON.stringify(data));
 
 	try {
 		const employee = data.employee;
@@ -299,7 +299,7 @@ export const insertLoginData = async (data) => {
 
 		return "DONE";
 	} catch (error) {
-		return "insertLoginData" + error.message;
+		return "insertLoginData: " + error.message;
 	}
 };
 
@@ -324,14 +324,34 @@ export const clearLoginTables = async (id) => {
 };
 
 // 3.DONE Локал өгөгдлийг авах функц
-export const fetchData = async () => {
-	console.log("RUN fetchData");
+export const fetchLoginData = async () => {
+	console.log("RUN fetch-Login-Data");
+	let data = null;
 	try {
-		const allRows = await db.getAllAsync("SELECT * FROM company");
-		// console.log("allRows", allRows);
-		return allRows;
+		// Parallel database queries using Promise.all
+		const [employee, company, roster, equipments, project, shift] = await Promise.all([
+			db.getAllAsync(`SELECT * FROM employee`),
+			db.getAllAsync(`SELECT * FROM company`),
+			db.getAllAsync(`SELECT * FROM roster`),
+			db.getAllAsync(`SELECT * FROM equipments`),
+			db.getAllAsync(`SELECT * FROM project`),
+			db.getAllAsync(`SELECT * FROM shift`)
+		]);
+
+		// Combine results into a single object
+		data = {
+			employee,
+			company,
+			roster,
+			equipments,
+			project,
+			shift
+		};
+
+		return data; // Return the combined data
 	} catch (error) {
-		console.log("error fetchData", error);
+		console.error("Error fetching login data", error);
+		throw new Error("Failed to fetch login data. Please try again later.");
 	}
 };
 

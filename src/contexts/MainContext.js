@@ -4,7 +4,7 @@ import axios from "axios";
 import { SERVER_URL } from "../constant";
 import * as Location from "expo-location";
 import ReferenceResponse from "../temp_data/ReferenceResponse.json";
-import { createTable } from "../helper/db";
+import { createTable, fetchLoginData } from "../helper/db";
 import { createReferenceTables, dropTable, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";
 import { useNetworkStatus } from "./NetworkContext";
 import { Dimensions } from "react-native";
@@ -86,7 +86,12 @@ export const MainStore = (props) => {
 	useEffect(() => {
 		setIsLoading(true);
 		checkLocation();
-		// dropTable("ref_state_groups");
+		// dropTable("employee");
+		// dropTable("company");
+		// dropTable("roster");
+		// dropTable("shift");
+		// dropTable("equipments");
+		// dropTable("project");
 		// dropTable("ref_location_types");
 	}, []);
 
@@ -144,13 +149,26 @@ export const MainStore = (props) => {
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах
 	const checkUserData = async () => {
 		console.log("RUN checkUserData");
+		// logout();
+		try {
+			const mainCompanyId = await AsyncStorage.getItem("mainCompanyId");
+			setMainCompanyId(mainCompanyId);
 
-		AsyncStorage.getItem("mainCompanyId").then(async (value) => {
-			setMainCompanyId(value);
-		});
-		setIsLoggedIn(false);
-		setIsLoading(false);
-		setAppIsReady(true);
+			const accessToken = await AsyncStorage.getItem("access_token");
+			console.log("access_token", accessToken);
+
+			if (accessToken != null) {
+				fetchLoginData().then((e) => {
+					console.log("RESULT FETCH LOGIN DATA=> ", e);
+					setIsLoggedIn(true);
+				});
+			}
+		} catch (error) {
+			console.error("Алдаа гарлаа: ", error);
+		} finally {
+			setIsLoading(false);
+			setAppIsReady(true);
+		}
 	};
 
 	const getReferencesService = async () => {
@@ -214,7 +232,7 @@ export const MainStore = (props) => {
 		//***** Profile -с гарах дарсан үед утасны LOCALSTORE -с user, user_bio устгах
 		const keys = [
 			// "local_notif",
-			"user"
+			"access_token"
 		];
 
 		AsyncStorage.multiRemove(keys).then(() => {
