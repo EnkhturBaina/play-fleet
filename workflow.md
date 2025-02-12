@@ -12,11 +12,11 @@
 │ │ ├─ 2.1.1.1 `clearReferencesTables()` - Хуучин өгөгдлүүдийг цэвэрлэх.
 │ │ │ └─ 2.1.1.1.1 `insertReferencesData()` - Шинэ өгөгдөл оруулах.
 │ ├─ 2.1.2 `checkUserData()`
-│ └─ 2.1.3 `fetchReferencesData()` - Өгөгдлүүдийг ачаалах.
+│ └─ 2.1.3 `fetchReferencesData()` - Өгөгдлүүдийг ачаалах.(Хамгийн сүүлд ажиллуулах ❗❗❗)
 
 # Интернэт холболт байхгүй бол (isConnected == false):
 
 ├─3.1. `checkUserData()`
-│ └─ 2.1.3 `fetchReferencesData()` - Өгөгдлийг локал BASE -д хадгалсан өгөгдлөөс ачаалах.
+│ └─ 2.1.3 `fetchReferencesData()` - Өгөгдлийг локал BASE -д хадгалсан өгөгдлөөс ачаалах.(Хамгийн сүүлд ажиллуулах ❗❗❗)
 
 #
