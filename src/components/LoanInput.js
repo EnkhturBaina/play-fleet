@@ -27,14 +27,16 @@ const styles = StyleSheet.create({
 		paddingRight: 10,
 		backgroundColor: "#fff",
 		marginBottom: 5,
-		height: 40,
+		height: 50,
 		borderRadius: 8,
 		fontFamily: FONT_FAMILY_LIGHT,
 		borderWidth: 1,
 		borderColor: MAIN_COLOR_GRAY,
-		color: "#000"
+		color: "#000",
+		fontSize: 18
 	},
 	label: {
+		fontSize: 16,
 		fontWeight: "bold",
 		padding: 5
 	}

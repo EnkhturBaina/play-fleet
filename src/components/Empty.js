@@ -6,7 +6,7 @@ import { Image } from "expo-image";
 const Empty = ({ text }) => {
 	return (
 		<View style={{ flex: 1, alignItems: "center" }}>
-			<Image source={empty} style={{ width: "45%", height: "60%" }} contentFit="contain" />
+			<Image source={empty} style={{ width: 200, height: 350 }} contentFit="contain" />
 			<Text style={styles.emptyText}>{text}</Text>
 		</View>
 	);

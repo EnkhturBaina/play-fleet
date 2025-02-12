@@ -1,19 +1,90 @@
-import { StyleSheet, Text, View, SafeAreaView, StatusBar, Platform, TouchableOpacity, ScrollView } from "react-native";
-import React, { useState } from "react";
+import {
+	StyleSheet,
+	Text,
+	View,
+	SafeAreaView,
+	StatusBar,
+	Platform,
+	TouchableOpacity,
+	FlatList,
+	RefreshControl
+} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
 import HeaderUser from "../../components/HeaderUser";
 import Constants from "expo-constants";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Icon } from "@rneui/base";
-import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY } from "../../constant";
-import CustomDialog from "../../components/CustomDialog";
+import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, SERVER_URL } from "../../constant";
+import Empty from "../../components/Empty";
+import axios from "axios";
+import MainContext from "../../contexts/MainContext";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 const MotoHoursAndFuelScreen = (props) => {
+	const state = useContext(MainContext);
 	const navigation = useNavigation();
 
-	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
-	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
-	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
+	const [refreshing, setRefreshing] = useState(false);
 
+	const [smuData, setSmuData] = useState(null);
+	const [loadingSmuData, setLoadingSmuData] = useState(false);
+
+	const wait = (timeout) => {
+		return new Promise((resolve) => setTimeout(resolve, timeout));
+	};
+
+	const onRefresh = () => {
+		setRefreshing(true);
+		getSmuData();
+		wait(1000).then(() => setRefreshing(false));
+	};
+
+	const getSmuData = async () => {
+		setSmuData(null);
+		setLoadingSmuData(true);
+		try {
+			await axios
+				.post(
+					`${SERVER_URL}/mobile/progress/stop`,
+					{
+						PMSProjectId: state.rosterData?.id,
+						PMSEquipmentId: state.selectedEquipment?.id,
+						PMSProgressStateId: state.shiftData?.id,
+						CurrentDate: dayjs().format("YYYY-MM-DD"),
+						PMSEmployeeId: state.employeeData?.id
+					},
+					{
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${state.token}`
+						}
+					}
+				)
+				.then(function (response) {
+					// console.log("get SmuData response", JSON.stringify(response.data));
+					if (response.data?.Type == 0) {
+						setSmuData(response.data?.Extra);
+					}
+				})
+				.catch(function (error) {
+					console.log("error get SmuData", error.response.data);
+				})
+				.finally(() => {
+					setLoadingSmuData(false);
+				});
+		} catch (error) {
+			console.log("CATCH get SmuData", error);
+		}
+	};
+
+	useEffect(() => {
+		getSmuData();
+	}, []);
+
+	const renderItem = ({ item }) => {
+		return <Text>{item.id}</Text>;
+	};
 	return (
 		<SafeAreaView
 			style={{
@@ -46,7 +117,7 @@ const MotoHoursAndFuelScreen = (props) => {
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
 				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Мото цагийн болон түлшний бүртгэл</Text>
 			</TouchableOpacity>
-			<View style={{ flex: 1, paddingHorizontal: 20, marginTop: 10 }}>
+			<View style={{ paddingHorizontal: 20, marginTop: 10 }}>
 				<Button
 					buttonStyle={{
 						backgroundColor: MAIN_COLOR,
@@ -62,19 +133,20 @@ const MotoHoursAndFuelScreen = (props) => {
 					style={{ alignSelf: "flex-end" }}
 				/>
 			</View>
-			<CustomDialog
-				visible={visibleDialog}
-				confirmFunction={() => {
-					setVisibleDialog(false);
-				}}
-				declineFunction={() => {
-					setVisibleDialog(false);
-				}}
-				text={dialogText}
-				confirmBtnText="Тийм"
-				DeclineBtnText="Үгүй"
-				type={dialogType}
-			/>
+			<View style={{ flex: 1, backgroundColor: "#fff" }}>
+				<FlatList
+					contentContainerStyle={{
+						flexGrow: 1,
+						paddingHorizontal: 10
+					}}
+					showsVerticalScrollIndicator={false}
+					data={smuData}
+					renderItem={renderItem}
+					keyExtractor={(item, index) => index.toString()}
+					ListEmptyComponent={<Empty text="Мэдээлэл олдсонгүй." />}
+					refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={MAIN_COLOR} />}
+				></FlatList>
+			</View>
 		</SafeAreaView>
 	);
 };

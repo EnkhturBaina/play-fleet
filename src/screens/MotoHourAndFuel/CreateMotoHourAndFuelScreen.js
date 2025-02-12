@@ -6,22 +6,35 @@ import {
 	KeyboardAvoidingView,
 	Keyboard,
 	Platform,
-	ScrollView
+	ScrollView,
+	ActivityIndicator
 } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CustomSnackbar from "../../components/CustomSnackbar";
 import LoanInput from "../../components/LoanInput";
 import MainContext from "../../contexts/MainContext";
-import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR } from "../../constant";
+import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, SERVER_URL } from "../../constant";
 import { Button } from "@rneui/base";
 import { addCommas, removeNonNumeric } from "../../helper/functions";
+import axios from "axios";
+import CustomDialog from "../../components/CustomDialog";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 const CreateMotoHourAndFuelScreen = () => {
 	const state = useContext(MainContext);
 	const [visibleSnack, setVisibleSnack] = useState(false);
 	const [snackBarMsg, setSnackBarMsg] = useState("");
-	const [value, setValue] = useState("");
-	const [value2, setValue2] = useState("");
+	const [startSMU, setStartSMU] = useState(null);
+	const [finishSMU, setFinishSMU] = useState(null);
+	const [fuel, setFuel] = useState(null);
+
+	const [savingSMU, setSavingSMU] = useState(false);
+
+	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
+	const [dialogType, setDialogType] = useState(null); //Dialog харуулах төрөл
+	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
+	const [dialogBtnText, setDialogBtnText] = useState(null); //Dialog text
 
 	//Snacbkbar харуулах
 	const onToggleSnackBar = (msg) => {
@@ -31,6 +44,62 @@ const CreateMotoHourAndFuelScreen = () => {
 
 	//Snacbkbar хаах
 	const onDismissSnackBar = () => setVisibleSnack(false);
+
+	useEffect(() => {}, []);
+
+	const saveSMU = async () => {
+		console.log("fuel", fuel);
+
+		if (!startSMU) {
+			onToggleSnackBar("Start SMU (h) оруулна уу.");
+		} else if (!finishSMU) {
+			onToggleSnackBar("Finish SMU (h) оруулна уу.");
+		} else if (!fuel) {
+			onToggleSnackBar("Fuel (Litre) оруулна уу.");
+		} else {
+			try {
+				setSavingSMU(true);
+				await axios
+					.post(
+						`${SERVER_URL}/mobile/truck/fuel/save`,
+						{
+							PMSEquipmentId: state.selectedEquipment?.id,
+							PMSShiftId: state.shiftData?.id,
+							SavedDate: state.rosterData?.id,
+							StartSMU: startSMU,
+							FinishSMU: finishSMU,
+							Fuel: fuel
+						},
+						{
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${state.token}`
+							}
+						}
+					)
+					.then(function (response) {
+						console.log("save SMU response", JSON.stringify(response.data));
+						if (response.data?.Type == 0) {
+							setDialogType("success");
+							setDialogBtnText("Үргэлжлүүлэх");
+						} else {
+							setDialogType("warning");
+							setDialogBtnText("Хаах");
+						}
+						setVisibleDialog(true);
+						setDialogText(response.data?.Msg);
+					})
+					.catch(function (error) {
+						console.log("error save SMU", error.response.data);
+					})
+					.finally(async () => {
+						setSavingSMU(false);
+					});
+			} catch (error) {
+				console.log("CATCH save SMU", error);
+			}
+		}
+	};
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -44,46 +113,77 @@ const CreateMotoHourAndFuelScreen = () => {
 				<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={0} />
 				<View style={{ flex: 1 }}>
 					<ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
-						<LoanInput label="Equipment Name" value={value} disabled />
+						<LoanInput label="Equipment Name" value={state.selectedEquipment?.Name} disabled />
 						<LoanInput
-							label="Progress SMU (h)"
-							value={value}
+							label="Start SMU (h)"
+							value={startSMU}
 							onChangeText={(e) => {
-								setValue(addCommas(removeNonNumeric(e)));
+								setStartSMU(addCommas(removeNonNumeric(e)));
 							}}
 							keyboardType="number-pad"
 						/>
 						<LoanInput
 							label="Finish SMU (h)"
-							value={value}
+							value={finishSMU}
 							onChangeText={(e) => {
-								setValue(addCommas(removeNonNumeric(e)));
+								setFinishSMU(addCommas(removeNonNumeric(e)));
 							}}
 							keyboardType="number-pad"
 						/>
 						<LoanInput
 							label="Fuel (Litre)"
-							value={value}
+							value={fuel}
 							onChangeText={(e) => {
-								setValue(addCommas(removeNonNumeric(e)));
+								setFuel(addCommas(removeNonNumeric(e)));
 							}}
 							keyboardType="number-pad"
 						/>
 						<Button
+							disabled={savingSMU}
 							buttonStyle={{
 								backgroundColor: MAIN_COLOR,
 								borderRadius: MAIN_BORDER_RADIUS,
-								height: MAIN_BUTTON_HEIGHT
+								height: MAIN_BUTTON_HEIGHT,
+								marginTop: 10
 							}}
-							title="Хадгалах"
+							title={
+								<>
+									<Text
+										style={{
+											fontSize: 16,
+											color: "#fff",
+											fontWeight: "bold"
+										}}
+									>
+										Хадгалах
+									</Text>
+									{savingSMU ? <ActivityIndicator style={{ marginLeft: 10 }} color="#fff" /> : null}
+								</>
+							}
 							titleStyle={{
 								fontSize: 16,
 								fontWeight: "bold"
 							}}
-							onPress={() => {}}
+							onPress={() => {
+								saveSMU();
+							}}
 						/>
 					</ScrollView>
 				</View>
+
+				<CustomDialog
+					visible={visibleDialog}
+					confirmFunction={() => {
+						setVisibleDialog(false);
+					}}
+					declineFunction={() => {
+						setVisibleDialog(false);
+					}}
+					text={dialogText}
+					confirmBtnText={dialogBtnText}
+					DeclineBtnText=""
+					type={dialogType}
+				/>
 			</KeyboardAvoidingView>
 		</TouchableWithoutFeedback>
 	);
