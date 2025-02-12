@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { SERVER_URL } from "../constant";
+import { SEND_EQUIPMENT_LOCATION_MINS, SERVER_URL } from "../constant";
 import * as Location from "expo-location";
-import ReferenceResponse from "../temp_data/ReferenceResponse.json";
 import { createTable, fetchLoginData } from "../helper/db";
 import { createReferenceTables, dropTable, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";
 import { useNetworkStatus } from "./NetworkContext";
 import { Dimensions } from "react-native";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 const MainContext = React.createContext();
 const width = Dimensions.get("screen").width;
@@ -42,6 +43,8 @@ export const MainStore = (props) => {
 	});
 	const [orientation, setOrientation] = useState("PORTRAIT"); //LANDSCAPE, PORTRAIT
 	const [selectedEquipment, setSelectedEquipment] = useState(null);
+	const [speed, setSpeed] = useState(null);
+	const [locationWithSpeed, setLocationWithSpeed] = useState(null);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -94,6 +97,12 @@ export const MainStore = (props) => {
 		// dropTable("equipments");
 		// dropTable("project");
 		// dropTable("ref_location_types");
+
+		isLoggedIn && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
+		const interval = setInterval(checkLocationWithSpeed, SEND_EQUIPMENT_LOCATION_MINS * 60 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
+
+		// Component unmount үед interval-ийг устгах
+		return () => clearInterval(interval);
 	}, []);
 
 	const checkLocation = () => {
@@ -104,7 +113,6 @@ export const MainStore = (props) => {
 				let { status } = await Location.requestForegroundPermissionsAsync();
 				setLocationStatus(status);
 				if (status !== "granted") {
-					setIsLoading(false);
 					setAppIsReady(true);
 					// setIsLoggedIn(false);
 					return;
@@ -133,7 +141,7 @@ export const MainStore = (props) => {
 			await createTable().then(async (e) => {
 				await createReferenceTables().then(async (e) => {
 					if (isConnected) {
-						getReferencesService();
+						await checkUserData();
 					} else {
 						fetchReferencesData().then((e) => {
 							console.log("RESULT FETCH REF=> ", e);
@@ -149,7 +157,7 @@ export const MainStore = (props) => {
 
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах
 	const checkUserData = async () => {
-		console.log("RUN checkUserData");
+		console.log("RUN check User Data");
 		// logout();
 		try {
 			const mainCompanyId = await AsyncStorage.getItem("mainCompanyId");
@@ -170,69 +178,149 @@ export const MainStore = (props) => {
 				setEquipmentsData(responseOfflineLoginData.equipments);
 				setProjectData(responseOfflineLoginData.project[0]);
 				setShiftData(responseOfflineLoginData.shift[0]);
-				setIsLoggedIn(true);
+
+				if (responseOfflineLoginData.company[0]?.id) {
+					getReferencesService(responseOfflineLoginData.company[0]?.id, accessToken, true);
+				}
+			} else {
+				setIsLoggedIn(false);
+				setIsLoading(false);
 			}
 		} catch (error) {
 			console.error("Алдаа гарлаа: ", error);
 		} finally {
-			setIsLoading(false);
 			setAppIsReady(true);
 		}
 	};
 
-	const getReferencesService = async () => {
-		console.log("RUN get-References-Service");
-
+	const getReferencesService = async (companyId, accessToken, isRunLocal) => {
+		console.log("RUN get-References-Service", accessToken);
 		try {
-			const response = {
-				data: ReferenceResponse,
-				status: 200,
-				statusText: "OK",
-				headers: {},
-				config: {},
-				request: {}
-			};
-			// console.log("response", JSON.stringify(response.data?.Extra));
-
-			//Local storage руу access_token хадгалах
-			if (response?.status == 200) {
-				//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
-				try {
-					const result = await saveReferencesWithClear(response.data?.Extra, true);
-					console.log("STATE get ReferencesData", result);
-
-					if (result === "DONE_INSERT") {
-						const data = await fetchReferencesData();
-
-						// Бүх тохиргоог автоматаар хийх функц
-						const updateReferences = (data, setters) => {
-							Object.entries(setters).forEach(([key, setter]) => {
-								data[key] && setter(data[key]);
-							});
-						};
-
-						// Тохиргоог тохируулах
-						updateReferences(data, {
-							ref_states: setRefStates,
-							ref_locations: setRefLocations,
-							ref_movements: setRefMovements,
-							ref_operators: setRefOperators,
-							ref_materials: setRefMaterials,
-							ref_state_groups: setRefStateGroups,
-							ref_location_types: setRefLocationTypes
-						});
-
-						// Хэрэглэгчийн өгөгдлийг шалгах
-						await checkUserData();
+			await axios
+				.post(
+					`${SERVER_URL}/mobile/filter/references`,
+					{
+						cid: companyId
+					},
+					{
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${accessToken}`
+						}
 					}
-				} catch (error) {
-					console.error("Алдаа гарлаа:", error);
-				}
-			}
+				)
+				.then(async function (response) {
+					console.log("get references response", JSON.stringify(response.data));
+					if (response.data?.Type == 0) {
+						//Local storage руу access_token хадгалах
+						//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
+						try {
+							const result = await saveReferencesWithClear(response.data?.Extra, true);
+							console.log("STATE get ReferencesData", result);
+
+							if (result === "DONE_INSERT") {
+								const data = await fetchReferencesData();
+
+								// Бүх тохиргоог автоматаар хийх функц
+								const updateReferences = (data, setters) => {
+									Object.entries(setters).forEach(([key, setter]) => {
+										data[key] && setter(data[key]);
+									});
+								};
+
+								// Тохиргоог тохируулах
+								updateReferences(data, {
+									ref_states: setRefStates,
+									ref_locations: setRefLocations,
+									ref_movements: setRefMovements,
+									ref_operators: setRefOperators,
+									ref_materials: setRefMaterials,
+									ref_state_groups: setRefStateGroups,
+									ref_location_types: setRefLocationTypes
+								});
+								console.log("isRunLocal", isRunLocal);
+
+								if (isRunLocal) {
+									setIsLoggedIn(true);
+									setIsLoading(false);
+								}
+							}
+						} catch (error) {
+							console.error("Алдаа гарлаа:", error);
+						}
+					}
+				})
+				.catch(function (error) {
+					console.log("error get references", error.response.data);
+				});
 		} catch (error) {
 			console.error("Error loading local JSON:", error);
 		} finally {
 			// state.setIsLoggedIn(true);
+		}
+	};
+
+	const checkLocationWithSpeed = async () => {
+		const { status } = await Location.requestForegroundPermissionsAsync();
+		if (status !== "granted") {
+			console.log("Permission to access location was denied");
+			return;
+		}
+
+		try {
+			const currentLocation = await Location.getCurrentPositionAsync({
+				accuracy: Location.Accuracy.Balanced
+			});
+
+			console.log("Location response =>", currentLocation);
+
+			const currentSpeed = currentLocation.coords.speed; // м/сек
+			setLocationWithSpeed(currentLocation);
+			setSpeed(currentSpeed !== null ? (currentSpeed * 3.6).toFixed(2) : "0.00"); // км/цаг руу хөрвүүлнэ
+
+			// Байршил болон хурд амжилттай авсны дараа дараагийн функцээ дуудна
+			sendEquipmentLocation(currentLocation, currentSpeed);
+		} catch (error) {
+			console.error("Error getting location:", error);
+		}
+	};
+
+	const sendEquipmentLocation = async (currentLocation, currentSpeed) => {
+		if (currentLocation && currentSpeed) {
+			console.log("sendEquipmentLocation running");
+			try {
+				await axios
+					.post(
+						`${SERVER_URL}/mobile/progress/track/save`,
+						{
+							PMSEquipmentId: selectedEquipment?.id,
+							Latitude: currentLocation?.coords?.latitude,
+							Longitude: currentLocation?.coords?.longitude,
+							Speed: currentSpeed,
+							CurrentDate: dayjs().format("YYYY-MM-DD"),
+							EventTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+							PMSProgressId: 15,
+							PMSSubProgressId: 32
+						},
+						{
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${token}`
+							}
+						}
+					)
+					.then(function (response) {
+						console.log("send EQ Location response", JSON.stringify(response.data));
+						if (response.data?.Type == 0) {
+						} else {
+						}
+					})
+					.catch(function (error) {
+						console.log("error send EQ Location", error);
+					});
+			} catch (error) {
+				console.log("CATCH send EQ Location", error);
+			}
 		}
 	};
 
@@ -329,7 +417,8 @@ export const MainStore = (props) => {
 				projectData,
 				setProjectData,
 				selectedEquipment,
-				setSelectedEquipment
+				setSelectedEquipment,
+				getReferencesService
 			}}
 		>
 			{props.children}

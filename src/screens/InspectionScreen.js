@@ -52,7 +52,7 @@ const InspectionScreen = () => {
 					}
 				)
 				.then(function (response) {
-					// console.log("get StockData response", JSON.stringify(response.data));
+					// console.log("get Inspections response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setMainData(response.data?.Extra);
 						setInspectionData(response.data?.Extra?.inspections);
@@ -70,7 +70,7 @@ const InspectionScreen = () => {
 	};
 
 	useEffect(() => {
-		getInspections();
+		state.token && getInspections();
 	}, []);
 
 	const saveInspections = async () => {
@@ -111,7 +111,7 @@ const InspectionScreen = () => {
 					}
 				)
 				.then(function (response) {
-					console.log("save StockData response", JSON.stringify(response.data));
+					console.log("save Inspections response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setDialogType("success");
 					} else {
@@ -120,7 +120,7 @@ const InspectionScreen = () => {
 					setDialogText(response.data?.Msg);
 				})
 				.catch(function (error) {
-					console.log("error get Inspections", error.response.data);
+					console.log("error save Inspections", error.response.data);
 				})
 				.finally(async () => {
 					console.log("inspectionId BEFORE", mainData?.id);
@@ -130,7 +130,7 @@ const InspectionScreen = () => {
 					});
 				});
 		} catch (error) {
-			console.log("CATCH get Inspections", error);
+			console.log("CATCH save Inspections", error);
 		}
 	};
 

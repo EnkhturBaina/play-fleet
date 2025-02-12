@@ -115,7 +115,10 @@ const LoginScreen = (props) => {
 
 					// Local storage руу access_token хадгалах
 					await AsyncStorage.setItem("access_token", accessToken);
-					state.setIsLoggedIn(true);
+
+					if (responseOfflineLoginData.company[0]?.id) {
+						state.getReferencesService(responseOfflineLoginData.company[0]?.id, accessToken, true);
+					}
 				} else {
 					setLoginError("Өгөгдөл хадгалахад алдаа гарлаа.");
 				}

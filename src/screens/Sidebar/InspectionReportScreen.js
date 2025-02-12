@@ -49,14 +49,14 @@ const InspectionReportScreen = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("get StockData response", JSON.stringify(response.data));
+					console.log("report get Inspections response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setMainData(response.data?.Extra);
 						setInspectionData(response.data?.Extra?.inspections);
 					}
 				})
 				.catch(function (error) {
-					console.log("error get Inspections", error.response.data);
+					console.log("error report get Inspections", error.response.data);
 				})
 				.finally(() => {
 					setLoadingInspections(false);

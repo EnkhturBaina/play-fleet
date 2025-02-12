@@ -21,7 +21,7 @@ import CustomDialog from "../../components/CustomDialog";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 
-const CreateMotoHourAndFuelScreen = () => {
+const CreateMotoHourAndFuelScreen = (props) => {
 	const state = useContext(MainContext);
 	const [visibleSnack, setVisibleSnack] = useState(false);
 	const [snackBarMsg, setSnackBarMsg] = useState("");
@@ -65,10 +65,11 @@ const CreateMotoHourAndFuelScreen = () => {
 						{
 							PMSEquipmentId: state.selectedEquipment?.id,
 							PMSShiftId: state.shiftData?.id,
-							SavedDate: state.rosterData?.id,
+							SavedDate: dayjs().format("YYYY-MM-DD"),
 							StartSMU: startSMU,
 							FinishSMU: finishSMU,
-							Fuel: fuel
+							Fuel: fuel,
+							ProgressSMU: 0 // Дараа нь хасах
 						},
 						{
 							headers: {
@@ -175,6 +176,7 @@ const CreateMotoHourAndFuelScreen = () => {
 					visible={visibleDialog}
 					confirmFunction={() => {
 						setVisibleDialog(false);
+						dialogType == "success" && props.navigation.goBack();
 					}}
 					declineFunction={() => {
 						setVisibleDialog(false);

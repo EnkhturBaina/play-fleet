@@ -41,6 +41,10 @@ const MotoHoursAndFuelScreen = (props) => {
 	};
 
 	const getSmuData = async () => {
+		// console.log("projectData", state.projectData?.id);
+		// console.log("selectedEquipment", state.selectedEquipment?.id);
+		// console.log("employeeData", state.employeeData?.id);
+
 		setSmuData(null);
 		setLoadingSmuData(true);
 		try {
@@ -48,9 +52,9 @@ const MotoHoursAndFuelScreen = (props) => {
 				.post(
 					`${SERVER_URL}/mobile/progress/stop`,
 					{
-						PMSProjectId: state.rosterData?.id,
+						PMSProjectId: state.projectData?.id,
 						PMSEquipmentId: state.selectedEquipment?.id,
-						PMSProgressStateId: state.shiftData?.id,
+						// PMSProgressStateId: state.shiftData?.id,
 						CurrentDate: dayjs().format("YYYY-MM-DD"),
 						PMSEmployeeId: state.employeeData?.id
 					},
@@ -62,7 +66,7 @@ const MotoHoursAndFuelScreen = (props) => {
 					}
 				)
 				.then(function (response) {
-					// console.log("get SmuData response", JSON.stringify(response.data));
+					console.log("get SmuData response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setSmuData(response.data?.Extra);
 					}

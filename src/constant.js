@@ -21,3 +21,5 @@ export const WEEKDAYS = [
 	{ value: 6, label: "Frvalueay", mn: "Баасан", mnVal: 5 },
 	{ value: 7, label: "Saturday", mn: "Бямба", mnVal: 6 }
 ];
+
+export const SEND_EQUIPMENT_LOCATION_MINS = 5;
