@@ -203,7 +203,7 @@ const HomeScreen = (props) => {
 									key={index}
 									coordinates={el.coords}
 									strokeColor={el.strokeColor}
-									strokeWidth={el.strokeWidth}
+									// strokeWidth={el.strokeWidth}
 								/>
 							);
 						})}

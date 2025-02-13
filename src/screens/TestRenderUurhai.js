@@ -219,7 +219,7 @@ const TestRenderUurhai = () => {
 											// strokeColor={"red"}
 											strokeColor={el.strokeColor}
 											// fillColor="rgba(0,0,255,0.3)"
-											strokeWidth={el.strokeWidth}
+											// strokeWidth={el.strokeWidth}
 										/>
 									);
 								})}
