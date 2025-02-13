@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext } from "react";
 import { Icon } from "@rneui/base";
 import { MAIN_COLOR_GRAY } from "../../constant";
@@ -71,7 +71,20 @@ const HomeScreenSideBar = (props) => {
 			nav: "NAV_PATH",
 			isMore: false,
 			action: () => {
-				state.logout();
+				Alert.alert("Системээс гарах уу?", "Та системээс гарахдаа итгэлтэй байна уу?", [
+					{
+						text: "Үгүй",
+						onPress: () => console.log("Cancel Pressed"),
+						style: "cancel"
+					},
+					,
+					{
+						text: "Тмйи",
+						onPress: () => {
+							state.logout();
+						}
+					}
+				]);
 			}
 		}
 	];
