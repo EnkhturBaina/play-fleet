@@ -1,46 +1,46 @@
 {
-	"cli": {
-		"version": ">= 15.0.10",
-		"appVersionSource": "remote"
-	},
-	"build": {
-		"development": {
-			"developmentClient": true,
-			"distribution": "internal",
-			"channel": "development",
-			"autoIncrement": true
-		},
-		"preview": {
-			"android": {
-				"buildType": "apk"
-			},
-			"channel": "preview"
-		},
-		"preview2": {
-			"android": {
-				"gradleCommand": ":app:assembleRelease"
-			},
-			"channel": "preview2"
-		},
-		"preview3": {
-			"developmentClient": true,
-			"channel": "preview3"
-		},
-		"production": {
-			"channel": "production",
-			"autoIncrement": true
-		}
-	},
-	"submit": {
-		"production": {
-			"ios": {
-				"appleId": "khadaan1@gmail.com",
-				"ascAppId": "6741881715",
-				"appleTeamId": "K526X6AJ63"
-			},
-			"android": {
-				"serviceAccountKeyPath": "./fleet_management_service_key.json"
-			}
-		}
-	}
+  "cli": {
+    "version": ">= 15.0.10",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development",
+      "autoIncrement": true
+    },
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      },
+      "channel": "preview"
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "channel": "preview2"
+    },
+    "preview3": {
+      "developmentClient": true,
+      "channel": "preview3"
+    },
+    "production": {
+      "channel": "production",
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "khadaan1@gmail.com",
+        "ascAppId": "6741881715",
+        "appleTeamId": "K526X6AJ63"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./fleet_management_service_key.json"
+      }
+    }
+  }
 }
