@@ -91,7 +91,7 @@ export const MainStore = (props) => {
 	};
 
 	useEffect(() => {
-		logout();
+		// logout();
 		checkForUpdates();
 		// dropTable("employee");
 		// dropTable("company");
@@ -358,7 +358,8 @@ export const MainStore = (props) => {
 		const keys = [
 			// "local_notif",
 			"access_token",
-			"inspectionId"
+			"inspectionId",
+			"selected_eq"
 		];
 
 		AsyncStorage.multiRemove(keys).then(() => {

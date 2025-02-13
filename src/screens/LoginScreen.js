@@ -37,7 +37,7 @@ const LoginScreen = (props) => {
 		state.detectOrientation();
 		if (!isConnected) {
 			setLoginError("Интернэт холболт шалгана уу?");
-			state.logout();
+			// state.logout();
 		}
 	}, []);
 

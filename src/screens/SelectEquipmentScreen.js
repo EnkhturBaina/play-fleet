@@ -3,21 +3,56 @@ import React, { useContext, useEffect, useState } from "react";
 import MainContext from "../contexts/MainContext";
 import Constants from "expo-constants";
 import { Image } from "expo-image";
-import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, MAIN_COLOR_GRAY } from "../constant";
+import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR } from "../constant";
 import { Button } from "@rneui/themed";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SelectEquipmentScreen = () => {
 	const state = useContext(MainContext);
 	const [selectedEq, setSelectedEq] = useState(null);
+	const [savingEq, setSavingEq] = useState(false);
 
 	useEffect(() => {
-		console.log("state", state.equipmentsData);
+		getLocalSelectedEq();
 	}, []);
 
 	const data = [
 		{ id: 1, TypeName: "Truck", Name: "CAT-773-04" },
 		{ id: 2, TypeName: "Loader", Name: "CAT-773-03" }
 	];
+
+	const saveSelectedEqToLocal = async () => {
+		//Local руу сонгогдсон Equipment хадгалах
+		try {
+			setSavingEq(true);
+
+			await AsyncStorage.setItem("selected_eq", JSON.stringify(selectedEq)).then(() => {
+				state.setSelectedEquipment(selectedEq);
+				setSavingEq(false);
+			});
+		} catch (error) {
+			console.log("Saving selected EQ error=> ", error);
+		}
+	};
+	const getLocalSelectedEq = async () => {
+		//Өмнө сонгогдсон Equipment Local -с авах
+		try {
+			setSavingEq(true);
+			const jsonValue = await AsyncStorage.getItem("selected_eq");
+			console.log("jsonValue", jsonValue);
+
+			if (jsonValue != null) {
+				const selectedLocalEq = JSON.parse(jsonValue);
+				state.setSelectedEquipment(selectedLocalEq);
+				setSavingEq(false);
+			} else {
+				setSavingEq(false);
+			}
+		} catch (error) {
+			console.error("Error getting object", error);
+		}
+	};
+
 	return (
 		<View
 			style={{
@@ -62,6 +97,7 @@ const SelectEquipmentScreen = () => {
 								}}
 								onPress={() => {
 									setSelectedEq(el);
+									console.log("el", el);
 								}}
 							>
 								<Image source={imageType} contentFit="contain" style={{ width: 100, height: 100 }} />
@@ -71,22 +107,33 @@ const SelectEquipmentScreen = () => {
 					})}
 			</View>
 			<Button
-				disabled={selectedEq == null}
+				disabled={savingEq || selectedEq == null}
 				containerStyle={{
 					width: state.orientation == "PORTRAIT" ? "90%" : "50%",
 					marginTop: 10,
 					alignSelf: "center"
 				}}
 				buttonStyle={styles.loginBtnStyle}
-				title="Үргэлжлүүлэх"
+				title={
+					<>
+						<Text
+							style={{
+								fontSize: 16,
+								color: "#fff",
+								fontWeight: "bold"
+							}}
+						>
+							Үргэлжлүүлэх
+						</Text>
+						{savingEq ? <ActivityIndicator style={{ marginLeft: 10 }} color="#fff" /> : null}
+					</>
+				}
 				titleStyle={{
 					fontSize: 16,
 					fontWeight: "bold"
 				}}
 				onPress={() => {
-					console.log("selectedEq", selectedEq);
-
-					state.setSelectedEquipment(selectedEq);
+					saveSelectedEqToLocal();
 				}}
 			/>
 		</View>

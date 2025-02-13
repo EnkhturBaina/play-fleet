@@ -32,13 +32,8 @@ const InspectionReportScreen = (props) => {
 		try {
 			await axios
 				.post(
-					`${SERVER_URL}/mobile/inspection/save`,
+					`${SERVER_URL}/mobile/inspection/item`,
 					{
-						PMSEquipmentId: state.selectedEquipment?.id,
-						PMSShiftId: state.shiftData?.id,
-						PMSRosterId: state.rosterData?.id,
-						PMSEmployeeId: state.employeeData?.id,
-						CurrentDate: dayjs().format("YYYY-MM-DD"),
 						id: inspectionId
 					},
 					{
