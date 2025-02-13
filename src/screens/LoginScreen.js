@@ -76,7 +76,8 @@ const LoginScreen = (props) => {
 			const response = await axios.post(
 				`${SERVER_URL}/mobile/operator/login`,
 				{
-					CompanyCode: state.mainCompanyId,
+					// CompanyCode: state.mainCompanyId,
+					CompanyCode: 100012,
 					PIN: state.dispId
 				},
 				{

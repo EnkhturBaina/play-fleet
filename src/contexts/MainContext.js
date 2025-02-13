@@ -169,8 +169,11 @@ export const MainStore = (props) => {
 			if (accessToken != null) {
 				setToken(accessToken);
 				const responseOfflineLoginData = await fetchLoginData();
-				console.log("Fetched Login Data:", responseOfflineLoginData);
+				console.log("Fetched Login Data local:", responseOfflineLoginData);
 
+				if (!responseOfflineLoginData.employee[0]) {
+					logout();
+				}
 				// Login response -с state үүд салгаж хадгалах
 				setEmployeeData(responseOfflineLoginData.employee[0]);
 				setCompanyData(responseOfflineLoginData.company[0]);
@@ -194,69 +197,75 @@ export const MainStore = (props) => {
 	};
 
 	const getReferencesService = async (companyId, accessToken, isRunLocal) => {
-		console.log("RUN get-References-Service", accessToken);
-		try {
-			await axios
-				.post(
-					`${SERVER_URL}/mobile/filter/references`,
-					{
-						cid: companyId
-					},
-					{
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${accessToken}`
-						}
-					}
-				)
-				.then(async function (response) {
-					console.log("get references response", JSON.stringify(response.data));
-					if (response.data?.Type == 0) {
-						//Local storage руу access_token хадгалах
-						//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
-						try {
-							const result = await saveReferencesWithClear(response.data?.Extra, true);
-							console.log("STATE get ReferencesData", result);
-
-							if (result === "DONE_INSERT") {
-								const data = await fetchReferencesData();
-
-								// Бүх тохиргоог автоматаар хийх функц
-								const updateReferences = (data, setters) => {
-									Object.entries(setters).forEach(([key, setter]) => {
-										data[key] && setter(data[key]);
-									});
-								};
-
-								// Тохиргоог тохируулах
-								updateReferences(data, {
-									ref_states: setRefStates,
-									ref_locations: setRefLocations,
-									ref_movements: setRefMovements,
-									ref_operators: setRefOperators,
-									ref_materials: setRefMaterials,
-									ref_state_groups: setRefStateGroups,
-									ref_location_types: setRefLocationTypes
-								});
-								console.log("isRunLocal", isRunLocal);
-
-								if (isRunLocal) {
-									setIsLoggedIn(true);
-									setIsLoading(false);
-								}
+		console.log("RUN get-References-Service", isRunLocal, accessToken);
+		if (accessToken) {
+			try {
+				await axios
+					.post(
+						`${SERVER_URL}/mobile/filter/references`,
+						{
+							cid: companyId
+						},
+						{
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${accessToken}`
 							}
-						} catch (error) {
-							console.error("Алдаа гарлаа:", error);
 						}
-					}
-				})
-				.catch(function (error) {
-					console.log("error get references", error.response.data);
-				});
-		} catch (error) {
-			console.error("Error loading local JSON:", error);
-		} finally {
-			// state.setIsLoggedIn(true);
+					)
+					.then(async function (response) {
+						console.log("get references response", JSON.stringify(response.data));
+						if (response.data?.Type == 0) {
+							//Local storage руу access_token хадгалах
+							//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
+							try {
+								const result = await saveReferencesWithClear(response.data?.Extra, true);
+								console.log("STATE get ReferencesData", result);
+
+								if (result === "DONE_INSERT") {
+									const data = await fetchReferencesData();
+
+									// Бүх тохиргоог автоматаар хийх функц
+									const updateReferences = (data, setters) => {
+										Object.entries(setters).forEach(([key, setter]) => {
+											data[key] && setter(data[key]);
+										});
+									};
+
+									// Тохиргоог тохируулах
+									updateReferences(data, {
+										ref_states: setRefStates,
+										ref_locations: setRefLocations,
+										ref_movements: setRefMovements,
+										ref_operators: setRefOperators,
+										ref_materials: setRefMaterials,
+										ref_state_groups: setRefStateGroups,
+										ref_location_types: setRefLocationTypes
+									});
+									console.log("isRunLocal", isRunLocal);
+
+									if (isRunLocal) {
+										setIsLoggedIn(true);
+										setIsLoading(false);
+									}
+								}
+							} catch (error) {
+								console.error("Алдаа гарлаа:", error);
+							}
+						}
+					})
+					.catch(function (error) {
+						logout();
+						console.log("error get references", error.response.data);
+					});
+			} catch (error) {
+				console.error("Error loading local JSON:", error);
+			} finally {
+				// state.setIsLoggedIn(true);
+			}
+		} else {
+			setIsLoggedIn(false);
+			setIsLoading(false);
 		}
 	};
 

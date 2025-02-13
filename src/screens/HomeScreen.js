@@ -158,7 +158,7 @@ const HomeScreen = (props) => {
 			}}
 		>
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-			<HeaderUser isOpen={isOpen} setIsOpen={setIsOpen} />
+			<HeaderUser isOpen={isOpen} setIsOpen={setIsOpen} isShowNotif={true} />
 			<SideMenu
 				menu={
 					<MainSideBar
@@ -218,9 +218,9 @@ const HomeScreen = (props) => {
 						height: "100%"
 					}}
 				>
-					<Text>
+					{/* <Text>
 						{polygons?.length} - {kmlStatus}
-					</Text>
+					</Text> */}
 					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
 				</View>
 			</SideMenu>

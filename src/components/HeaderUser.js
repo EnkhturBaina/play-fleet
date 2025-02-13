@@ -24,7 +24,7 @@ const HeaderUser = (props) => {
 					</Text>
 				</View>
 			</TouchableOpacity>
-			{!props.isNotificationScreen ? (
+			{props.isShowNotif ? (
 				<TouchableOpacity onPress={() => {}}>
 					<Image source={notif} style={{ width: 35, height: 35 }} contentFit="contain" />
 				</TouchableOpacity>

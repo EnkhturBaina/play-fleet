@@ -115,7 +115,7 @@ const HeaderFloatItem = (props) => {
 									maxHeight={300}
 									labelField="label"
 									valueField="value"
-									placeholder={!isFocus ? "XXX" : "..."}
+									placeholder={!isFocus ? "Сонгох" : "..."}
 									value={state.headerSelections?.[el.path]}
 									onFocus={() => setIsFocus(true)}
 									onBlur={() => setIsFocus(false)}
@@ -141,7 +141,7 @@ const HeaderFloatItem = (props) => {
 				>
 					<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
 				</TouchableOpacity>
-				<TouchableOpacity
+				{/* <TouchableOpacity
 					onPress={() => {
 						navigation.navigate("TestTilesScreen");
 					}}
@@ -172,7 +172,7 @@ const HeaderFloatItem = (props) => {
 						}}
 						contentFit="contain"
 					/>
-				</TouchableOpacity>
+				</TouchableOpacity> */}
 				<TouchableOpacity onPress={() => props.setIsOpen(!props.isOpen)} style={styles.eachFloatButton}>
 					<Image
 						source={require("../../../assets/images/Picture3.png")}
