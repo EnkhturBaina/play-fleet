@@ -3,7 +3,7 @@
 		"name": "Play Fleet",
 		"slug": "PlayFleet",
 		"assetBundlePatterns": ["assets/**/*"],
-		"version": "1.0.3",
+		"version": "1.0.4",
 		"orientation": "default",
 		"icon": "./assets/icon.png",
 		"userInterfaceStyle": "light",
@@ -16,27 +16,27 @@
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "com.gamemine.fleet",
-			"buildNumber": "1.0.3",
+			"buildNumber": "1.0.4",
 			"infoPlist": {
 				"NSLocationWhenInUseUsageDescription": "Play Fleet систем нь таны барйшлын мэдээллийг цаг бүртгэл, компанийн оффисын барйшлыг тодорхойлох зэрэг үйлдэлд ашиглана.",
 				"NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
 				"ITSAppUsesNonExemptEncryption": false
 			},
 			"config": {
-				"googleMapsApiKey": "AIzaSyChB1cQ5QSIhAqSuAhjAWn4qOjqEXo3j_w"
+				"googleMapsApiKey": "AIzaSyDn0I3ngMxtI1ZJJUnpqAasbb7OurMqUKE"
 			}
 		},
 		"android": {
 			"icon": "./assets/icon.png",
 			"package": "com.gamemine.fleet",
-			"versionCode": 3,
+			"versionCode": 4,
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
 			"config": {
 				"googleMaps": {
-					"apiKey": "AIzaSyDn3LHUTSWV7woXQdjTOt5BaBYQUdQCZgo"
+					"apiKey": "AIzaSyD9zeS9o_eX6gX54t9yedncuGS84zcwr20"
 				}
 			},
 			"userInterfaceStyle": "light",
