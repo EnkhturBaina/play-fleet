@@ -71,7 +71,7 @@ const InspectionScreen = () => {
 
 	useEffect(() => {
 		state.token && getInspections();
-	}, []);
+	}, [state.token]);
 
 	const saveInspections = async () => {
 		const checkedList = [];

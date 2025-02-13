@@ -91,6 +91,7 @@ export const MainStore = (props) => {
 	};
 
 	useEffect(() => {
+		logout();
 		checkForUpdates();
 		// dropTable("employee");
 		// dropTable("company");

@@ -96,6 +96,7 @@ const LoginScreen = (props) => {
 
 			const accessToken = response.data?.Extra?.access_token;
 			if (accessToken) {
+				state.setToken(accessToken);
 				// login response -г SQLite руу хадгалах
 				const saveResult = await saveLoginDataWithClear(response.data.Extra, true);
 				console.log("insert Login Data =>", saveResult);
