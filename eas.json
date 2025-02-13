@@ -29,8 +29,7 @@
 		"production": {
 			"channel": "production",
 			"autoIncrement": true,
-			"developmentClient": false,
-			"shallowClone": false
+			"developmentClient": false
 		}
 	},
 	"submit": {
