@@ -123,7 +123,6 @@ const InspectionScreen = () => {
 					console.log("error save Inspections", error.response.data);
 				})
 				.finally(async () => {
-					console.log("inspectionId BEFORE", mainData?.id);
 					await AsyncStorage.setItem("inspectionId", JSON.stringify(mainData?.id)).then(() => {
 						setSavingInspections(false);
 						setVisibleDialog(true);
@@ -144,7 +143,7 @@ const InspectionScreen = () => {
 			}}
 		>
 			<StatusBar translucent hidden={false} barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-			<HeaderUser />
+			<HeaderUser isShowNotif={false} />
 			<ScrollView
 				contentContainerStyle={{
 					flexGrow: 1,

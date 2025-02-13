@@ -104,7 +104,7 @@ const MotoHoursAndFuelScreen = (props) => {
 			}}
 		>
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-			<HeaderUser />
+			<HeaderUser isShowNotif={true} />
 			<TouchableOpacity
 				onPress={() => {
 					props.navigation.goBack();

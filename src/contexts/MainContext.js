@@ -9,6 +9,7 @@ import { useNetworkStatus } from "./NetworkContext";
 import { Dimensions } from "react-native";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
+import * as Updates from "expo-updates";
 
 const MainContext = React.createContext();
 const width = Dimensions.get("screen").width;
@@ -18,6 +19,8 @@ export const MainStore = (props) => {
 	const { isConnected } = useNetworkStatus();
 
 	/* GENERAL STATEs START */
+	const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+	const [updateAvailable, setUpdateAvailable] = useState(false);
 	const [appIsReady, setAppIsReady] = useState(false);
 	const [inspectionDone, setInspectionDone] = useState(false);
 	const [seconds, setSeconds] = useState(0);
@@ -88,8 +91,7 @@ export const MainStore = (props) => {
 	};
 
 	useEffect(() => {
-		setIsLoading(true);
-		checkLocation();
+		checkForUpdates();
 		// dropTable("employee");
 		// dropTable("company");
 		// dropTable("roster");
@@ -104,7 +106,23 @@ export const MainStore = (props) => {
 		// Component unmount үед interval-ийг устгах
 		return () => clearInterval(interval);
 	}, []);
-
+	const checkForUpdates = async () => {
+		setIsCheckingUpdate(true);
+		try {
+			const update = await Updates.checkForUpdateAsync();
+			if (update.isAvailable) {
+				setUpdateAvailable(true);
+				await Updates.fetchUpdateAsync();
+				Updates.reloadAsync(); // This will reload the app to apply the update
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setIsCheckingUpdate(false);
+			setIsLoading(true);
+			checkLocation();
+		}
+	};
 	const checkLocation = () => {
 		//***** LOCATION мэдээлэл авах
 		console.log("RUN check-Location");
@@ -169,8 +187,11 @@ export const MainStore = (props) => {
 			if (accessToken != null) {
 				setToken(accessToken);
 				const responseOfflineLoginData = await fetchLoginData();
-				console.log("Fetched Login Data:", responseOfflineLoginData);
+				console.log("Fetched Login Data local:", responseOfflineLoginData);
 
+				if (!responseOfflineLoginData.employee[0]) {
+					logout();
+				}
 				// Login response -с state үүд салгаж хадгалах
 				setEmployeeData(responseOfflineLoginData.employee[0]);
 				setCompanyData(responseOfflineLoginData.company[0]);
@@ -194,69 +215,75 @@ export const MainStore = (props) => {
 	};
 
 	const getReferencesService = async (companyId, accessToken, isRunLocal) => {
-		console.log("RUN get-References-Service", accessToken);
-		try {
-			await axios
-				.post(
-					`${SERVER_URL}/mobile/filter/references`,
-					{
-						cid: companyId
-					},
-					{
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${accessToken}`
-						}
-					}
-				)
-				.then(async function (response) {
-					console.log("get references response", JSON.stringify(response.data));
-					if (response.data?.Type == 0) {
-						//Local storage руу access_token хадгалах
-						//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
-						try {
-							const result = await saveReferencesWithClear(response.data?.Extra, true);
-							console.log("STATE get ReferencesData", result);
-
-							if (result === "DONE_INSERT") {
-								const data = await fetchReferencesData();
-
-								// Бүх тохиргоог автоматаар хийх функц
-								const updateReferences = (data, setters) => {
-									Object.entries(setters).forEach(([key, setter]) => {
-										data[key] && setter(data[key]);
-									});
-								};
-
-								// Тохиргоог тохируулах
-								updateReferences(data, {
-									ref_states: setRefStates,
-									ref_locations: setRefLocations,
-									ref_movements: setRefMovements,
-									ref_operators: setRefOperators,
-									ref_materials: setRefMaterials,
-									ref_state_groups: setRefStateGroups,
-									ref_location_types: setRefLocationTypes
-								});
-								console.log("isRunLocal", isRunLocal);
-
-								if (isRunLocal) {
-									setIsLoggedIn(true);
-									setIsLoading(false);
-								}
+		console.log("RUN get-References-Service", isRunLocal, accessToken);
+		if (accessToken) {
+			try {
+				await axios
+					.post(
+						`${SERVER_URL}/mobile/filter/references`,
+						{
+							cid: companyId
+						},
+						{
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${accessToken}`
 							}
-						} catch (error) {
-							console.error("Алдаа гарлаа:", error);
 						}
-					}
-				})
-				.catch(function (error) {
-					console.log("error get references", error.response.data);
-				});
-		} catch (error) {
-			console.error("Error loading local JSON:", error);
-		} finally {
-			// state.setIsLoggedIn(true);
+					)
+					.then(async function (response) {
+						console.log("get references response", JSON.stringify(response.data));
+						if (response.data?.Type == 0) {
+							//Local storage руу access_token хадгалах
+							//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
+							try {
+								const result = await saveReferencesWithClear(response.data?.Extra, true);
+								console.log("STATE get ReferencesData", result);
+
+								if (result === "DONE_INSERT") {
+									const data = await fetchReferencesData();
+
+									// Бүх тохиргоог автоматаар хийх функц
+									const updateReferences = (data, setters) => {
+										Object.entries(setters).forEach(([key, setter]) => {
+											data[key] && setter(data[key]);
+										});
+									};
+
+									// Тохиргоог тохируулах
+									updateReferences(data, {
+										ref_states: setRefStates,
+										ref_locations: setRefLocations,
+										ref_movements: setRefMovements,
+										ref_operators: setRefOperators,
+										ref_materials: setRefMaterials,
+										ref_state_groups: setRefStateGroups,
+										ref_location_types: setRefLocationTypes
+									});
+									console.log("isRunLocal", isRunLocal);
+
+									if (isRunLocal) {
+										setIsLoggedIn(true);
+										setIsLoading(false);
+									}
+								}
+							} catch (error) {
+								console.error("Алдаа гарлаа:", error);
+							}
+						}
+					})
+					.catch(function (error) {
+						logout();
+						console.log("error get references", error.response.data);
+					});
+			} catch (error) {
+				console.error("Error loading local JSON:", error);
+			} finally {
+				// state.setIsLoggedIn(true);
+			}
+		} else {
+			setIsLoggedIn(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -418,7 +445,8 @@ export const MainStore = (props) => {
 				setProjectData,
 				selectedEquipment,
 				setSelectedEquipment,
-				getReferencesService
+				getReferencesService,
+				updateAvailable
 			}}
 		>
 			{props.children}

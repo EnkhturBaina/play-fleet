@@ -1,7 +1,7 @@
 {
 	"expo": {
-		"name": "FleetManagement",
-		"slug": "FleetManagement",
+		"name": "Play Fleet",
+		"slug": "playfleet",
 		"assetBundlePatterns": ["assets/**/*"],
 		"version": "1.0.0",
 		"orientation": "all",
@@ -17,6 +17,10 @@
 			"supportsTablet": true,
 			"bundleIdentifier": "com.gamemine.fleet",
 			"buildNumber": "1.0.0",
+			"infoPlist": {
+				"NSLocationWhenInUseUsageDescription": "Play Fleet систем нь таны барйшлын мэдээллийг цаг бүртгэл, компанийн оффисын барйшлыг тодорхойлох зэрэг үйлдэлд ашиглана.",
+				"NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+			},
 			"config": {
 				"googleMapsApiKey": "AIzaSyChB1cQ5QSIhAqSuAhjAWn4qOjqEXo3j_w"
 			}
@@ -35,7 +39,13 @@
 				}
 			},
 			"userInterfaceStyle": "light",
-			"googleServicesFile": ""
+			"googleServicesFile": "",
+			"permissions": [
+				"android.permission.ACCESS_COARSE_LOCATION",
+				"android.permission.ACCESS_FINE_LOCATION",
+				"android.permission.ACCESS_COARSE_LOCATION",
+				"android.permission.ACCESS_FINE_LOCATION"
+			]
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
@@ -66,7 +76,24 @@
 						"customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"]
 					}
 				}
+			],
+			[
+				"expo-updates",
+				{
+					"username": "etr"
+				}
 			]
-		]
+		],
+		"extra": {
+			"eas": {
+				"projectId": "4e8fa169-2cc9-4207-96f7-8824d298111c"
+			}
+		},
+		"runtimeVersion": {
+			"policy": "appVersion"
+		},
+		"updates": {
+			"url": "https://u.expo.dev/4e8fa169-2cc9-4207-96f7-8824d298111c"
+		}
 	}
 }

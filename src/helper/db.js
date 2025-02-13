@@ -134,7 +134,7 @@ export const saveLoginDataWithClear = async (data, is_clear) => {
 
 // 2.DONE Локал өгөгдлийг хадгалах функц
 export const insertLoginData = async (data) => {
-	console.log("RUN INSERT LoginData", JSON.stringify(data));
+	// console.log("RUN INSERT LoginData", JSON.stringify(data));
 
 	try {
 		const employee = data.employee;

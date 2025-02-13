@@ -43,7 +43,7 @@ const SplashScreen = () => {
 			}}
 		>
 			<Image
-				style={{ width: "70%", height: "50%" }}
+				style={{ width: state.orientation === "PORTRAIT" ? 300 : 400, height: 150 }}
 				// source={talent_logo}
 				source={require("../../assets/mainLogo.png")}
 				contentFit="contain"
