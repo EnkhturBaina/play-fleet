@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "551152886039",
+    "project_id": "playfleet-63315",
+    "storage_bucket": "playfleet-63315.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:551152886039:android:4c17e1fe018a8843555752",
+        "android_client_info": {
+          "package_name": "com.gamemine.fleet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmqkVMqvPBPJ5yI4wTmyKXEQuZsmdN5Lo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
