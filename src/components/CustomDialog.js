@@ -4,7 +4,16 @@ import { MAIN_BORDER_RADIUS, MAIN_COLOR } from "../constant";
 import { Dialog, Button } from "@rneui/themed";
 import { Image } from "expo-image";
 
-export default function ({ visible, confirmFunction, declineFunction, text, confirmBtnText, DeclineBtnText, type }) {
+export default function ({
+	visible,
+	confirmFunction,
+	declineFunction,
+	text,
+	confirmBtnText,
+	DeclineBtnText,
+	type,
+	screenOrientation
+}) {
 	var imageType = null;
 	if (type == "warning") {
 		imageType = require("../../assets/warning.png");
@@ -21,7 +30,8 @@ export default function ({ visible, confirmFunction, declineFunction, text, conf
 				padding: 10,
 				backgroundColor: "#fff",
 				borderRadius: MAIN_BORDER_RADIUS,
-				alignItems: "center"
+				alignItems: "center",
+				width: screenOrientation ? (screenOrientation === "PORTRAIT" ? 300 : 400) : 300
 			}}
 		>
 			<Image source={imageType} style={{ width: 100, height: 100 }} contentFit="contain" />

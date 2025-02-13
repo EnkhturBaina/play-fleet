@@ -236,6 +236,7 @@ const InspectionScreen = () => {
 				confirmBtnText="Үргэлжлүүлэх"
 				DeclineBtnText=""
 				type={dialogType}
+				screenOrientation={state.orientation}
 			/>
 		</View>
 	);

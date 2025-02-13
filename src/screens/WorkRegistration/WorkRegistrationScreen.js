@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, SafeAreaView, StatusBar, Platform, TouchableOpacity, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import HeaderUser from "../../components/HeaderUser";
 import Constants from "expo-constants";
 import { useNavigation } from "@react-navigation/native";
@@ -10,10 +10,12 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { NavigationContainer } from "@react-navigation/native";
 import Tab1 from "./Tab1";
 import Tab2 from "./Tab2";
+import MainContext from "../../contexts/MainContext";
 
 const Tab = createMaterialTopTabNavigator();
 const WorkRegistrationScreen = (props) => {
 	const navigation = useNavigation();
+	const state = useContext(MainContext);
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
@@ -130,6 +132,7 @@ const WorkRegistrationScreen = (props) => {
 				confirmBtnText="Тийм"
 				DeclineBtnText="Үгүй"
 				type={dialogType}
+				screenOrientation={state.orientation}
 			/>
 		</SafeAreaView>
 	);

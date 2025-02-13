@@ -1,14 +1,16 @@
 import { StyleSheet, Text, View, SafeAreaView, StatusBar, Platform, TouchableOpacity, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import HeaderUser from "../components/HeaderUser";
 import Constants from "expo-constants";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY } from "../constant";
 import CustomDialog from "../components/CustomDialog";
+import MainContext from "../contexts/MainContext";
 
 const StatusListScreen = (props) => {
 	const navigation = useNavigation();
+	const state = useContext(MainContext);
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
@@ -136,6 +138,7 @@ const StatusListScreen = (props) => {
 				confirmBtnText="Тийм"
 				DeclineBtnText="Үгүй"
 				type={dialogType}
+				screenOrientation={state.orientation}
 			/>
 		</SafeAreaView>
 	);

@@ -185,6 +185,7 @@ const CreateMotoHourAndFuelScreen = (props) => {
 					confirmBtnText={dialogBtnText}
 					DeclineBtnText=""
 					type={dialogType}
+					screenOrientation={state.orientation}
 				/>
 			</KeyboardAvoidingView>
 		</TouchableWithoutFeedback>
