@@ -30,6 +30,27 @@ const InspectionScreen = () => {
 	const [dialogType, setDialogType] = useState(null); //Dialog харуулах төрөл
 	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
 
+	const getLocalInspectionId = async () => {
+		//Өмнө хадгалсан InspectionId LOCAL -с авах
+		try {
+			setSavingInspections(true);
+			const jsonValue = await AsyncStorage.getItem("inspectionId");
+			console.log("LOCAL inspectionId", jsonValue);
+
+			if (jsonValue != null) {
+				const savedLocalInspectionId = JSON.parse(jsonValue);
+				state.setSavedInspectionId(savedLocalInspectionId);
+				state.setInspectionDone(true);
+				setSavingInspections(false);
+			} else {
+				getInspections();
+				setSavingInspections(false);
+			}
+		} catch (error) {
+			console.error("Error getting object", error);
+		}
+	};
+
 	const getInspections = async () => {
 		setInspectionData(null);
 		setLoadingInspections(true);
@@ -70,7 +91,7 @@ const InspectionScreen = () => {
 	};
 
 	useEffect(() => {
-		state.token && getInspections();
+		state.token && getLocalInspectionId();
 	}, [state.token]);
 
 	const saveInspections = async () => {

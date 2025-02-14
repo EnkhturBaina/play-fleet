@@ -48,6 +48,7 @@ export const MainStore = (props) => {
 	const [selectedEquipment, setSelectedEquipment] = useState(null);
 	const [speed, setSpeed] = useState(null);
 	const [locationWithSpeed, setLocationWithSpeed] = useState(null);
+	const [savedInspectionId, setSavedInspectionId] = useState(null);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -359,7 +360,8 @@ export const MainStore = (props) => {
 			// "local_notif",
 			"access_token",
 			"inspectionId",
-			"selected_eq"
+			"selected_eq",
+			"inspectionId"
 		];
 
 		AsyncStorage.multiRemove(keys).then(() => {
@@ -448,7 +450,9 @@ export const MainStore = (props) => {
 				selectedEquipment,
 				setSelectedEquipment,
 				getReferencesService,
-				updateAvailable
+				updateAvailable,
+				savedInspectionId,
+				setSavedInspectionId
 			}}
 		>
 			{props.children}
