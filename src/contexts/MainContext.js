@@ -216,7 +216,7 @@ export const MainStore = (props) => {
 	};
 
 	const getReferencesService = async (companyId, accessToken, isRunLocal) => {
-		console.log("RUN get-References-Service", isRunLocal, accessToken);
+		// console.log("RUN get-References-Service", isRunLocal, accessToken);
 		if (accessToken) {
 			try {
 				await axios
@@ -322,8 +322,8 @@ export const MainStore = (props) => {
 						`${SERVER_URL}/mobile/progress/track/save`,
 						{
 							PMSEquipmentId: selectedEquipment?.id,
-							Latitude: currentLocation?.coords?.latitude || 0,
-							Longitude: currentLocation?.coords?.longitude || 0,
+							Latitude: parseFloat(currentLocation?.coords?.latitude) || 0,
+							Longitude: parseFloat(currentLocation?.coords?.longitude) || 0,
 							Speed: currentSpeed,
 							CurrentDate: dayjs().format("YYYY-MM-DD"),
 							EventTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),

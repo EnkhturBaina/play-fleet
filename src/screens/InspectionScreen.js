@@ -111,7 +111,7 @@ const InspectionScreen = () => {
 					}
 				)
 				.then(function (response) {
-					console.log("save Inspections response", JSON.stringify(response.data));
+					// console.log("save Inspections response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setDialogType("success");
 					} else {

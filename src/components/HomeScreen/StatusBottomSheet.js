@@ -27,6 +27,8 @@ export default function (props) {
 	];
 
 	useEffect(() => {
+		// console.log("state", state.);
+
 		if (state.seconds == 3) {
 			if (1 == 1) {
 				Animated.loop(

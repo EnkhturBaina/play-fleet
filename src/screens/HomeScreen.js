@@ -5,7 +5,7 @@ import axios from "axios";
 import MainContext from "../contexts/MainContext";
 import * as Location from "expo-location";
 import Constants from "expo-constants";
-import MapView, { Marker, Polyline } from "react-native-maps";
+import MapView, { Circle, Marker, Polyline } from "react-native-maps";
 import SideMenu from "react-native-side-menu-updated";
 import MainSideBar from "./Sidebar/MainSideBar";
 import HeaderFloatItem from "../components/HomeScreen/HeaderFloatItem";
@@ -13,6 +13,8 @@ import StatusBottomSheet from "../components/HomeScreen/StatusBottomSheet";
 import { useNetworkStatus } from "../contexts/NetworkContext";
 import * as FileSystem from "expo-file-system";
 import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
+import { Image } from "expo-image";
+import { MAIN_COLOR } from "../constant";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -34,14 +36,16 @@ const HomeScreen = (props) => {
 	const [sideBarStep, setSideBarStep] = useState(1);
 	const [menuType, setMenuType] = useState(null);
 
+	const [equipmentImage, setEquipmentImage] = useState(null);
+
 	const [speed, setSpeed] = useState(null);
 
 	const animateRef = () => {
 		if (mapRef.current) {
 			state.location
 				? mapRef.current.animateToRegion({
-						latitude: state.location?.coords?.latitude || 0,
-						longitude: state.location?.coords?.longitude || 0,
+						latitude: parseFloat(state.location?.coords?.latitude) || 0,
+						longitude: parseFloat(state.location?.coords?.longitude) || 0,
 						latitudeDelta: 0.0121,
 						longitudeDelta: 0.0121
 				  })
@@ -50,7 +54,18 @@ const HomeScreen = (props) => {
 	};
 	useEffect(() => {
 		state.detectOrientation();
-		console.log("STATE location=>", state.projectData);
+		if (state.selectedEquipment) {
+			if (state.selectedEquipment?.TypeName == "Truck") {
+				setEquipmentImage(require("../../assets/status/truck_main.png"));
+			} else if (state.selectedEquipment?.TypeName == "Loader") {
+				setEquipmentImage(require("../../assets/status/loader_main.png"));
+			} else if (state.selectedEquipment?.TypeName == "Other") {
+				setEquipmentImage(require("../../assets/status/other_main.png"));
+			} else {
+				setEquipmentImage(require("../../assets/icon.png"));
+			}
+		}
+		// console.log("STATE refLocations=>", state.refLocations);
 		// console.log("refLocations", state.refLocations);
 
 		startTracking();
@@ -178,8 +193,8 @@ const HomeScreen = (props) => {
 					ref={mapRef}
 					style={[styles.map, { width: width, height: height }]}
 					initialRegion={{
-						latitude: state.location?.coords?.latitude || 0,
-						longitude: state.location?.coords?.longitude || 0,
+						latitude: parseFloat(state.location?.coords?.latitude) || 0,
+						longitude: parseFloat(state.location?.coords?.longitude) || 0,
 						latitudeDelta: 0.0121,
 						longitudeDelta: 0.0121
 					}}
@@ -189,12 +204,49 @@ const HomeScreen = (props) => {
 					<Marker
 						title="Таны одоогийн байршил"
 						coordinate={{
-							latitude: state.location?.coords?.latitude || 0,
-							longitude: state.location?.coords?.longitude || 0,
+							latitude: parseFloat(state.location?.coords?.latitude) || 0,
+							longitude: parseFloat(state.location?.coords?.longitude) || 0,
 							latitudeDelta: 0.0121,
 							longitudeDelta: 0.0121
 						}}
-					/>
+					>
+						<View style={styles.customMarker}>
+							<Image
+								source={equipmentImage}
+								style={{
+									width: 40,
+									height: 40
+								}}
+								contentFit="contain"
+							/>
+						</View>
+					</Marker>
+					{/* <Circle
+						center={{
+							latitude: 47.9018422308,
+							longitude: 106.9192736393
+						}}
+						radius={500}
+						strokeWidth={1}
+						strokeColor={"red"}
+						fillColor={"#4F9CC3"}
+					/> */}
+					{state.refLocations &&
+						state.refLocations?.map((el, index) => {
+							return (
+								<Circle
+									key={index}
+									center={{
+										latitude: parseFloat(el.Latitude),
+										longitude: parseFloat(el.Longitude)
+									}}
+									radius={el.Radius}
+									strokeWidth={2}
+									strokeColor={MAIN_COLOR}
+									fillColor={el.Color + "80"}
+								/>
+							);
+						})}
 					{!loadingKML &&
 						polygons?.length > 0 &&
 						polygons?.map((el, index) => {
@@ -230,4 +282,10 @@ const HomeScreen = (props) => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+	customMarker: {
+		backgroundColor: "#fff",
+		borderRadius: 50,
+		padding: 5
+	}
+});

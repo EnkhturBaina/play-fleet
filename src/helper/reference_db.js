@@ -40,6 +40,7 @@ export const createReferenceTables = async () => {
         Color TEXT,
         Latitude TEXT,
         Longitude TEXT,
+				Radius INTEGER,
         ViewOrder INTEGER,
         IsSystem INTEGER,
         IsActive INTEGER,
@@ -251,9 +252,9 @@ export const insertReferencesData = async (data) => {
 					.runAsync(
 						`INSERT OR REPLACE INTO ref_locations (
             id, PMSProjectId, PMSLocationTypeId, Name, ReportName, StartElevation, EndElevation,
-            BenchHeight, IsEmergency, IsSubGrade, IsCell, Color, Latitude, Longitude, ViewOrder,
+            BenchHeight, IsEmergency, IsSubGrade, IsCell, Color, Latitude, Longitude, Radius, ViewOrder,
             IsSystem, IsActive, created_at, updated_at, deleted_at, status
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 						[
 							el.id,
 							el.PMSProjectId,
@@ -269,6 +270,7 @@ export const insertReferencesData = async (data) => {
 							el.Color,
 							el.Latitude,
 							el.Longitude,
+							el.Radius,
 							el.ViewOrder,
 							el.IsSystem,
 							el.IsActive,
