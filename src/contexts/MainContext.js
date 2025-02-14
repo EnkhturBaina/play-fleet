@@ -322,8 +322,8 @@ export const MainStore = (props) => {
 						`${SERVER_URL}/mobile/progress/track/save`,
 						{
 							PMSEquipmentId: selectedEquipment?.id,
-							Latitude: currentLocation?.coords?.latitude,
-							Longitude: currentLocation?.coords?.longitude,
+							Latitude: currentLocation?.coords?.latitude || 0,
+							Longitude: currentLocation?.coords?.longitude || 0,
 							Speed: currentSpeed,
 							CurrentDate: dayjs().format("YYYY-MM-DD"),
 							EventTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),

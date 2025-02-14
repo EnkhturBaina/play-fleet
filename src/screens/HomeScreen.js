@@ -40,8 +40,8 @@ const HomeScreen = (props) => {
 		if (mapRef.current) {
 			state.location
 				? mapRef.current.animateToRegion({
-						latitude: state.location?.coords?.latitude,
-						longitude: state.location?.coords?.longitude,
+						latitude: state.location?.coords?.latitude || 0,
+						longitude: state.location?.coords?.longitude || 0,
 						latitudeDelta: 0.0121,
 						longitudeDelta: 0.0121
 				  })
@@ -178,8 +178,8 @@ const HomeScreen = (props) => {
 					ref={mapRef}
 					style={[styles.map, { width: width, height: height }]}
 					initialRegion={{
-						latitude: state.location?.coords?.latitude,
-						longitude: state.location?.coords?.longitude,
+						latitude: state.location?.coords?.latitude || 0,
+						longitude: state.location?.coords?.longitude || 0,
 						latitudeDelta: 0.0121,
 						longitudeDelta: 0.0121
 					}}
@@ -189,8 +189,8 @@ const HomeScreen = (props) => {
 					<Marker
 						title="Таны одоогийн байршил"
 						coordinate={{
-							latitude: state.location?.coords?.latitude,
-							longitude: state.location?.coords?.longitude,
+							latitude: state.location?.coords?.latitude || 0,
+							longitude: state.location?.coords?.longitude || 0,
 							latitudeDelta: 0.0121,
 							longitudeDelta: 0.0121
 						}}
