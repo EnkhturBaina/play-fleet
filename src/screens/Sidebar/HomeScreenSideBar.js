@@ -79,7 +79,7 @@ const HomeScreenSideBar = (props) => {
 					},
 					,
 					{
-						text: "Тмйи",
+						text: "Тийм",
 						onPress: () => {
 							state.logout();
 						}
