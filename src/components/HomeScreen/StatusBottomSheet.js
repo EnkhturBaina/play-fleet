@@ -84,7 +84,7 @@ export default function (props) {
 		}
 	}, [stateParentId]);
 
-	const handlePress = (selectedState, selectedStateImage) => {
+	const selectState = (selectedState, selectedStateImage) => {
 		console.log("selectedStateImage", selectedStateImage);
 
 		animatedValue.setValue(1);
@@ -166,7 +166,7 @@ export default function (props) {
 								<TouchableOpacity
 									style={[styles.eachBottomList, { borderWidth: 3, borderColor }]}
 									key={el.id}
-									onPress={() => handlePress(el, matchedImage)}
+									onPress={() => selectState(el, matchedImage)}
 								>
 									<Image
 										source={matchedImage ? matchedImage?.img : require("../../../assets/only_icon.png")}
