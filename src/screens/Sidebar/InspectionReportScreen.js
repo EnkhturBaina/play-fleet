@@ -44,10 +44,10 @@ const InspectionReportScreen = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("report get Inspections response", JSON.stringify(response.data));
+					// console.log("report get Inspections response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setMainData(response.data?.Extra);
-						setInspectionData(response.data?.Extra?.inspections);
+						setInspectionData(response.data?.Extra[0]?.inspections);
 					}
 				})
 				.catch(function (error) {

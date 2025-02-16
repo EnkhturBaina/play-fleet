@@ -45,10 +45,12 @@ export const MainStore = (props) => {
 		assignedTask: null
 	});
 	const [orientation, setOrientation] = useState("PORTRAIT"); //LANDSCAPE, PORTRAIT
-	const [selectedEquipment, setSelectedEquipment] = useState(null);
+	const [selectedEquipment, setSelectedEquipment] = useState(null); //Сонгогдсон Төхөөрөмж
+	const [selectedEquipmentCode, setSelectedEquipmentCode] = useState(null); //Сонгогдсон Төхөөрөмжийн КОД {0 - Truck},{1 - Loader},{? - Other}
 	const [speed, setSpeed] = useState(null);
 	const [locationWithSpeed, setLocationWithSpeed] = useState(null);
 	const [savedInspectionId, setSavedInspectionId] = useState(null);
+	const [selectedState, setSelectedState] = useState(null);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -100,7 +102,7 @@ export const MainStore = (props) => {
 		// dropTable("shift");
 		// dropTable("equipments");
 		// dropTable("project");
-		// dropTable("ref_location_types");
+		// dropTable("ref_states");
 
 		isLoggedIn && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
 		const interval = setInterval(checkLocationWithSpeed, SEND_EQUIPMENT_LOCATION_MINS * 60 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
@@ -452,7 +454,11 @@ export const MainStore = (props) => {
 				getReferencesService,
 				updateAvailable,
 				savedInspectionId,
-				setSavedInspectionId
+				setSavedInspectionId,
+				selectedEquipmentCode,
+				setSelectedEquipmentCode,
+				selectedState,
+				setSelectedState
 			}}
 		>
 			{props.children}

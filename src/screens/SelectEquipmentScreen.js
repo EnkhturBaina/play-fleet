@@ -27,6 +27,7 @@ const SelectEquipmentScreen = () => {
 			setSavingEq(true);
 
 			await AsyncStorage.setItem("selected_eq", JSON.stringify(selectedEq)).then(() => {
+				setSelectedEqCode(selectedEq.TypeName);
 				state.setSelectedEquipment(selectedEq);
 				setSavingEq(false);
 			});
@@ -43,6 +44,7 @@ const SelectEquipmentScreen = () => {
 
 			if (jsonValue != null) {
 				const selectedLocalEq = JSON.parse(jsonValue);
+				setSelectedEqCode(selectedLocalEq.TypeName);
 				state.setSelectedEquipment(selectedLocalEq);
 				setSavingEq(false);
 			} else {
@@ -50,6 +52,16 @@ const SelectEquipmentScreen = () => {
 			}
 		} catch (error) {
 			console.error("Error getting object", error);
+		}
+	};
+
+	const setSelectedEqCode = (data) => {
+		if (data == "Truck") {
+			state.setSelectedEquipmentCode(0);
+		} else if (data == "Loader") {
+			state.setSelectedEquipmentCode(1);
+		} else {
+			state.setSelectedEquipmentCode(999);
 		}
 	};
 

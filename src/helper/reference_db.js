@@ -21,7 +21,8 @@ export const createReferenceTables = async () => {
         created_at TEXT,
         updated_at TEXT,
         deleted_at TEXT,
-        status TEXT
+        status TEXT,
+        Type INTEGER
       );`
 		);
 		await db.execAsync(
@@ -175,8 +176,8 @@ export const insertReferencesData = async (data) => {
 						`INSERT OR REPLACE INTO ref_states (
             id, PMSCompanyId, PMSProjectId, PMSParentId, PMSGroupId, Activity, ActivityEn,
             ActivityShort, Color, ViewOrder, IsSystem, IsActive, created_at, updated_at,
-            deleted_at, status
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+            deleted_at, status, Type
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 						[
 							el.id,
 							el.PMSCompanyId,
@@ -193,7 +194,8 @@ export const insertReferencesData = async (data) => {
 							el.created_at,
 							el.updated_at,
 							el.deleted_at,
-							el.status
+							el.status,
+							el.Type
 						]
 					)
 					.then((result) => {

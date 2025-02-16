@@ -23,3 +23,4 @@ export const WEEKDAYS = [
 ];
 
 export const SEND_EQUIPMENT_LOCATION_MINS = 5;
+export const HOME_STATES_START_CODE = "W1";

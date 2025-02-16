@@ -1,5 +1,5 @@
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import MainContext from "../../contexts/MainContext";
 import { Image } from "expo-image";
@@ -9,25 +9,46 @@ import { formatTime } from "../../helper/functions";
 export default function (props) {
 	const state = useContext(MainContext);
 	const animatedValue = useRef(new Animated.Value(1)).current;
+	const [stateParentId, setStateParentId] = useState(null);
+	const [mainStates, setMainStates] = useState(null);
+	const [selectedStateImage, setSelectedStateImage] = useState(null);
 
 	const handleSheetChanges = useCallback((index) => {
 		console.log("handleSheetChanges", index);
 	}, []);
 
-	const BOTTOM_SHEET_MENU_LIST = [
-		{ id: "1", label: "АЧААЛАГДАХ /СЭЛГЭЭ ХИЙХ/", img: require("../../../assets/images/Picture4.png") },
-		{ id: "2", label: "АЧААТАЙ ЧИГЛЭЛД ТЭЭВЭРЛЭХ", img: require("../../../assets/images/Picture5.png") },
-		{ id: "3", label: "АЧАА БУУЛГАХ /СЭЛГЭЭ ХИЙХ/", img: require("../../../assets/images/Picture7.png") },
-		{ id: "4", label: "ХООСОН БУЦАХ", img: require("../../../assets/images/Picture8.png") },
-		{ id: "5", label: "АЧИЛТ ХИЙЛГЭХЭЭР ХҮЛЭЭХ", img: require("../../../assets/images/Picture9.png") }
-	];
-	const BOTTOM_SHEET_MENU_LIST2 = [
-		{ id: "1", label: "Ажиллаж буй (W2)", img: require("../../../assets/images/Picture4.png") },
-		{ id: "2", label: "Зогссон (DC)", img: require("../../../assets/images/Picture5.png") }
+	const IMAGE_LIST = [
+		{
+			code: "Loading",
+			img: require("../../../assets/images/Picture4.png")
+		},
+		{
+			code: "Hauling",
+			img: require("../../../assets/images/Picture5.png")
+		},
+		{
+			code: "Dumping",
+			img: require("../../../assets/images/Picture7.png")
+		},
+		{
+			code: "Traveling",
+			img: require("../../../assets/images/Picture8.png")
+		},
+		{
+			code: "Queueing",
+			img: require("../../../assets/images/Picture9.png")
+		}
 	];
 
 	useEffect(() => {
-		// console.log("state", state.);
+		// console.log("refStates", state.refStates);
+		// console.log("selectedEquipment", state.selectedEquipment);
+
+		// 1. "W1" ActivityShort-той объектын ID-г авах
+		const w1Item = state.refStates?.find((item) => item.ActivityShort === "W1");
+		if (w1Item) {
+			setStateParentId(w1Item.id);
+		}
 
 		if (state.seconds == 3) {
 			if (1 == 1) {
@@ -51,12 +72,30 @@ export default function (props) {
 		}
 	}, [state.seconds]);
 
-	const handlePress = (id) => {
+	useEffect(() => {
+		if (stateParentId !== null) {
+			// 2. stateParentId-тай таарсан объектуудыг Type == 0 && IsActive == 1 нөхцөлөөр шүүх
+			const filteredData = state.refStates?.filter(
+				(item) => item.PMSParentId === stateParentId && item.Type === state.selectedEquipmentCode && item.IsActive === 1
+			);
+			console.log("filteredData", filteredData);
+
+			setMainStates(filteredData);
+		}
+	}, [stateParentId]);
+
+	const handlePress = (selectedState, selectedStateImage) => {
+		console.log("selectedStateImage", selectedStateImage);
+
 		animatedValue.setValue(1);
 		state.handleReset();
 		state.handleStart();
+		state.setSelectedState(selectedState);
+		setSelectedStateImage(selectedStateImage);
+
 		//setSelectedId(id === selectedId ? null : id); // Дахин дарахад анивчилтыг зогсооно
 	};
+
 	return (
 		<BottomSheet ref={props.bottomSheetRef} snapPoints={[130, 500]} onChange={handleSheetChanges}>
 			<BottomSheetView style={styles.contentContainer}>
@@ -81,7 +120,10 @@ export default function (props) {
 					<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(state.seconds)}</Text>
 				</View>
 				<View style={styles.eachBottomList}>
-					<Image source={require("../../../assets/images/Picture4.png")} style={{ height: 50, width: 50 }} />
+					<Image
+						source={selectedStateImage ? selectedStateImage?.img : require("../../../assets/only_icon.png")}
+						style={{ height: 50, width: 50 }}
+					/>
 					<Text
 						style={{
 							color: "#6287CA",
@@ -92,7 +134,7 @@ export default function (props) {
 							flexWrap: "wrap"
 						}}
 					>
-						(S5) Бусад техникийн ослоос шалтгаалсан
+						{state.selectedState ? state.selectedState?.Activity : "Хоосон"}
 					</Text>
 				</View>
 				<View
@@ -109,26 +151,31 @@ export default function (props) {
 					<Text style={{ color: "#fff", fontSize: 20 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
 				</View>
 				<ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
-					{BOTTOM_SHEET_MENU_LIST.map((el) => {
-						const borderColor =
-							"2" === el.id
-								? animatedValue.interpolate({
-										inputRange: [0.5, 1],
-										outputRange: [MAIN_COLOR, "#fff"]
-								  })
-								: "transparent";
+					{mainStates &&
+						mainStates?.map((el) => {
+							const matchedImage = IMAGE_LIST.find((img) => img.code === el.ActivityShort);
+							const borderColor =
+								34 === el.id
+									? animatedValue.interpolate({
+											inputRange: [0.5, 1],
+											outputRange: [MAIN_COLOR, "#fff"]
+									  })
+									: "transparent";
 
-						return (
-							<TouchableOpacity
-								style={[styles.eachBottomList, { borderWidth: 3, borderColor }]}
-								key={el.id}
-								onPress={() => handlePress(el.id)}
-							>
-								<Image source={el.img} style={{ height: 50, width: 50 }} />
-								<Text style={styles.menuText}>{el.label}</Text>
-							</TouchableOpacity>
-						);
-					})}
+							return (
+								<TouchableOpacity
+									style={[styles.eachBottomList, { borderWidth: 3, borderColor }]}
+									key={el.id}
+									onPress={() => handlePress(el, matchedImage)}
+								>
+									<Image
+										source={matchedImage ? matchedImage?.img : require("../../../assets/only_icon.png")}
+										style={{ height: 50, width: 50, marginRight: 5 }}
+									/>
+									<Text style={{}}>{el.Activity}</Text>
+								</TouchableOpacity>
+							);
+						})}
 				</ScrollView>
 			</BottomSheetView>
 		</BottomSheet>
