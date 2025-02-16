@@ -41,9 +41,6 @@ export default function (props) {
 	];
 
 	useEffect(() => {
-		// console.log("refStates", state.refStates);
-		// console.log("selectedEquipment", state.selectedEquipment);
-
 		// 1. "W1" ActivityShort-той объектын ID-г авах
 		const w1Item = state.refStates?.find((item) => item.ActivityShort === "W1");
 		if (w1Item) {
@@ -74,7 +71,6 @@ export default function (props) {
 
 	useEffect(() => {
 		if (stateParentId !== null) {
-			// 2. stateParentId-тай таарсан объектуудыг Type == 0 && IsActive == 1 нөхцөлөөр шүүх
 			const filteredData = state.refStates?.filter(
 				(item) => item.PMSParentId === stateParentId && item.Type === state.selectedEquipmentCode && item.IsActive === 1
 			);
@@ -131,7 +127,7 @@ export default function (props) {
 							flexWrap: "wrap"
 						}}
 					>
-						{state.selectedState ? state.selectedState?.Activity : "Хоосон"}
+						{state.selectedState ? state.selectedState?.Activity : "Төлөв сонгогдоогүй"}
 					</Text>
 				</View>
 				<View

@@ -236,7 +236,7 @@ export const MainStore = (props) => {
 						}
 					)
 					.then(async function (response) {
-						console.log("get references response", JSON.stringify(response.data));
+						// console.log("get references response", JSON.stringify(response.data));
 						if (response.data?.Type == 0) {
 							//Local storage руу access_token хадгалах
 							//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
