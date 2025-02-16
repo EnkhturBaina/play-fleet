@@ -71,8 +71,6 @@ const LoginScreen = (props) => {
 		setLoginError(null);
 
 		try {
-			console.log("state.mainCompanyId", state.mainCompanyId);
-
 			const response = await axios.post(
 				`${SERVER_URL}/mobile/operator/login`,
 				{
@@ -87,7 +85,7 @@ const LoginScreen = (props) => {
 				}
 			);
 
-			console.log("response", JSON.stringify(response.data));
+			// console.log("response", JSON.stringify(response.data));
 
 			if (response.data.Type === 1) {
 				setLoginError(response.data.Msg);
@@ -99,7 +97,7 @@ const LoginScreen = (props) => {
 				state.setToken(accessToken);
 				// login response -г SQLite руу хадгалах
 				const saveResult = await saveLoginDataWithClear(response.data.Extra, true);
-				console.log("insert Login Data =>", saveResult);
+				// console.log("insert Login Data =>", saveResult);
 
 				if (saveResult === "DONE") {
 					console.log("LOGIN SUCCESS");
@@ -146,7 +144,6 @@ const LoginScreen = (props) => {
 				<TouchableOpacity
 					style={styles.loginImageContainer}
 					onLongPress={() => {
-						console.log("LONG PRESS");
 						setVisibleDialog(true);
 						openModal();
 					}}

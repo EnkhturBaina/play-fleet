@@ -65,7 +65,7 @@ const HomeScreen = (props) => {
 				setEquipmentImage(require("../../assets/icon.png"));
 			}
 		}
-		console.log("STATE refStates=>", JSON.stringify(state.refStates));
+		// console.log("STATE refStates=>", JSON.stringify(state.refStates));
 		// console.log("refLocations", state.refLocations);
 
 		startTracking();

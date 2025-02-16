@@ -65,8 +65,6 @@ const InspectionReportScreen = (props) => {
 		const fetchInspectionId = async () => {
 			try {
 				const inspectionId = await AsyncStorage.getItem("inspectionId");
-				console.log("inspectionId AFTER", inspectionId);
-
 				if (inspectionId) {
 					getInspections(inspectionId);
 				}

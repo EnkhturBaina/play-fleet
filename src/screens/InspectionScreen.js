@@ -35,7 +35,7 @@ const InspectionScreen = () => {
 		try {
 			setSavingInspections(true);
 			const jsonValue = await AsyncStorage.getItem("inspectionId");
-			console.log("LOCAL inspectionId", jsonValue);
+			// console.log("LOCAL inspectionId", jsonValue);
 
 			if (jsonValue != null) {
 				const savedLocalInspectionId = JSON.parse(jsonValue);
@@ -105,9 +105,6 @@ const InspectionScreen = () => {
 				uncheckedList.push(item.id);
 			}
 		});
-
-		console.log("checkedList", JSON.stringify(checkedList));
-		console.log("uncheckedList", JSON.stringify(uncheckedList));
 
 		setSavingInspections(true);
 		try {

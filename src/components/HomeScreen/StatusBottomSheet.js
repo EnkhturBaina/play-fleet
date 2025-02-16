@@ -78,15 +78,12 @@ export default function (props) {
 			const filteredData = state.refStates?.filter(
 				(item) => item.PMSParentId === stateParentId && item.Type === state.selectedEquipmentCode && item.IsActive === 1
 			);
-			console.log("filteredData", filteredData);
 
 			setMainStates(filteredData);
 		}
 	}, [stateParentId]);
 
 	const selectState = (selectedState, selectedStateImage) => {
-		console.log("selectedStateImage", selectedStateImage);
-
 		animatedValue.setValue(1);
 		state.handleReset();
 		state.handleStart();

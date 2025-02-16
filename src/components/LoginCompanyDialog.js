@@ -11,8 +11,6 @@ export default function (props) {
 	const [errorMsg, setErrorMsg] = useState(null);
 
 	const setCompanyIdToLocal = async () => {
-		console.log("X", state.mainCompanyId);
-
 		if (state.mainCompanyId == null || state.mainCompanyId == "") {
 			setErrorMsg("Компаний код оруулна уу.");
 		} else {

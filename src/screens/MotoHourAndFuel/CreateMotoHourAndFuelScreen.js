@@ -48,8 +48,6 @@ const CreateMotoHourAndFuelScreen = (props) => {
 	useEffect(() => {}, []);
 
 	const saveSMU = async () => {
-		console.log("fuel", fuel);
-
 		if (!startSMU) {
 			onToggleSnackBar("Start SMU (h) оруулна уу.");
 		} else if (!finishSMU) {
@@ -79,7 +77,7 @@ const CreateMotoHourAndFuelScreen = (props) => {
 						}
 					)
 					.then(function (response) {
-						console.log("save SMU response", JSON.stringify(response.data));
+						// console.log("save SMU response", JSON.stringify(response.data));
 						if (response.data?.Type == 0) {
 							setDialogType("success");
 							setDialogBtnText("Үргэлжлүүлэх");
