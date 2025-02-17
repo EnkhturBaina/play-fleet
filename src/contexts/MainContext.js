@@ -95,6 +95,7 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		// logout();
+		dropTable("ref_locations");
 		checkForUpdates();
 		// dropTable("employee");
 		// dropTable("company");
@@ -102,7 +103,6 @@ export const MainStore = (props) => {
 		// dropTable("shift");
 		// dropTable("equipments");
 		// dropTable("project");
-		// dropTable("ref_states");
 
 		isLoggedIn && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
 		const interval = setInterval(checkLocationWithSpeed, SEND_EQUIPMENT_LOCATION_MINS * 60 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
