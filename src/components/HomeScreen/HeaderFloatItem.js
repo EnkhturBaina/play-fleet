@@ -179,7 +179,6 @@ const HeaderFloatItem = (props) => {
 									style={[styles.dropdown, focusStates[el.path] && { borderColor: "blue" }]}
 									placeholderStyle={[styles.placeholderStyle, { color: isEmpty ? "#b3b3b3" : "#000" }]}
 									selectedTextStyle={styles.selectedTextStyle}
-									inputSearchStyle={styles.inputSearchStyle}
 									data={fieldData}
 									maxHeight={300}
 									labelField="Name"
@@ -275,7 +274,7 @@ const styles = StyleSheet.create({
 		borderWidth: 0.5,
 		paddingHorizontal: 8,
 		width: 200,
-		height: 40,
+		height: 35,
 		borderRadius: MAIN_BORDER_RADIUS
 	},
 	placeholderStyle: {
@@ -284,11 +283,8 @@ const styles = StyleSheet.create({
 	},
 	selectedTextStyle: {
 		fontSize: 16,
-		fontWeight: "bold"
-	},
-	inputSearchStyle: {
-		height: 40,
-		fontSize: 16
+		fontWeight: "bold",
+		lineHeight: 16
 	},
 	stack1: {
 		flexDirection: "row",
@@ -296,7 +292,7 @@ const styles = StyleSheet.create({
 		marginTop: 5,
 		alignSelf: "flex-start",
 		alignItems: "center",
-		height: 40
+		height: 35
 	},
 	eachFloatButton: {
 		height: 50,
