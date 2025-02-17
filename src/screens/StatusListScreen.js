@@ -1,68 +1,33 @@
 import { StyleSheet, Text, View, SafeAreaView, StatusBar, Platform, TouchableOpacity, ScrollView } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import HeaderUser from "../components/HeaderUser";
 import Constants from "expo-constants";
-import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
-import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY } from "../constant";
+import { MAIN_COLOR_BLUE, MAIN_COLOR_GRAY } from "../constant";
 import CustomDialog from "../components/CustomDialog";
 import MainContext from "../contexts/MainContext";
 
 const StatusListScreen = (props) => {
-	const navigation = useNavigation();
 	const state = useContext(MainContext);
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
-	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
+	const [dialogType, setDialogType] = useState("warning"); //Dialog харуулах төрөл
 	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
+	const [statusList, setStatusList] = useState(null);
+	const [selectedState, setSelectedState] = useState(null);
 
-	const MENU_LIST = [
-		{
-			label: "(S1) Машины илүүдэл"
-		},
-		{
-			label: "(S2) Хурал, уулзалт"
-		},
-		{
-			label: "(S3) Оператор хангалтгүй"
-		},
-		{
-			label: "(S4) Ачих техник байхгүй"
-		},
-		{
-			label: "(S5) Бусад техникийн ослоос шалтгаалсан"
-		},
-		{
-			label: "(S6) Цаг агаарын байдал"
-		},
-		{
-			label: "(S1) Машины илүүдэл"
-		},
-		{
-			label: "(S1) Машины илүүдэл"
-		},
-		{
-			label: "(S1) Машины илүүдэл"
-		},
-		{
-			label: "(S1) Машины илүүдэл"
-		},
-		{
-			label: "(S1) Машины илүүдэл"
-		},
-		{
-			label: "(S1) Машины илүүдэл"
-		},
-		{
-			label: "(S1) Машины илүүдэл"
-		},
-		{
-			label: "(S1) Машины илүүдэл"
-		},
-		{
-			label: "(S1) Машины илүүдэл"
+	useEffect(() => {
+		if (props.route?.params?.codeIds) {
+			const filteredData = state.refStates?.filter(
+				(item) => item.Type === state.selectedEquipmentCode && props.route?.params?.codeIds.includes(item.PMSGroupId)
+			);
+			// console.log("filteredData", filteredData);
+			if (filteredData) {
+				setStatusList(filteredData);
+			}
 		}
-	];
+	}, []);
+
 	return (
 		<SafeAreaView
 			style={{
@@ -83,13 +48,7 @@ const StatusListScreen = (props) => {
 				onPress={() => {
 					props.navigation.goBack();
 				}}
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					backgroundColor: "#2C2E45",
-					height: 50,
-					paddingHorizontal: 10
-				}}
+				style={styles.backContainer}
 				activeOpacity={0.8}
 			>
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
@@ -99,27 +58,22 @@ const StatusListScreen = (props) => {
 				<ScrollView
 					contentContainerStyle={{
 						flexGrow: 1,
-						marginHorizontal: 20,
 						backgroundColor: "#fff"
 					}}
 					bounces={false}
 					showsVerticalScrollIndicator={false}
 				>
-					{MENU_LIST?.map((el, index) => {
+					{statusList?.map((el, index) => {
 						return (
 							<TouchableOpacity
-								style={{
-									flexDirection: "row",
-									justifyContent: "space-between",
-									alignItems: "center",
-									padding: 15,
-									borderBottomWidth: 1,
-									borderBottomColor: "#ebebeb"
-								}}
+								style={styles.eachStatus}
 								key={index}
-								onPress={() => setVisibleDialog(true)}
+								onPress={() => {
+									setSelectedState(el);
+									setVisibleDialog(true);
+								}}
 							>
-								<Text style={{ width: "68%", color: MAIN_COLOR_BLUE }}>{el.label}</Text>
+								<Text style={{ width: "68%", color: MAIN_COLOR_BLUE }}>{el.Activity}</Text>
 								<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
 							</TouchableOpacity>
 						);
@@ -129,7 +83,9 @@ const StatusListScreen = (props) => {
 			<CustomDialog
 				visible={visibleDialog}
 				confirmFunction={() => {
+					state.setSelectedState(selectedState);
 					setVisibleDialog(false);
+					props.navigation.goBack();
 				}}
 				declineFunction={() => {
 					setVisibleDialog(false);
@@ -146,4 +102,21 @@ const StatusListScreen = (props) => {
 
 export default StatusListScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+	eachStatus: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		padding: 15,
+		borderBottomWidth: 1,
+		borderBottomColor: "#ebebeb",
+		paddingHorizontal: 20
+	},
+	backContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		backgroundColor: "#2C2E45",
+		height: 50,
+		paddingHorizontal: 10
+	}
+});

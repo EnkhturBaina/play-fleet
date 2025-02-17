@@ -15,28 +15,36 @@ const StatusMenu = (props) => {
 				label: "Бүтээлийн бус ажиллах",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_GREEN
+				borderColor: MAIN_COLOR_GREEN,
+				codeList: ["Performance Loss"],
+				codeIds: [2]
 			},
 			{
 				img: require("../../../assets/images/Picture11.png"),
 				label: "Саатал",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_BLUE
+				borderColor: MAIN_COLOR_BLUE,
+				codeList: ["Delay"],
+				codeIds: [3]
 			},
 			{
 				img: require("../../../assets/images/Picture12.png"),
 				label: "Сул зогсолт",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR
+				borderColor: MAIN_COLOR,
+				codeList: ["Standby"],
+				codeIds: [4]
 			},
 			{
 				img: require("../../../assets/images/Picture13.png"),
 				label: "Эвдрэл",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_RED
+				borderColor: MAIN_COLOR_RED,
+				codeList: ["Planned Maintenance", "Unplanned Maintenance"],
+				codeIds: [5, 6]
 			}
 		],
 		Truck: [
@@ -45,28 +53,36 @@ const StatusMenu = (props) => {
 				label: "Бүтээлийн бус ажиллах",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_GREEN
+				borderColor: MAIN_COLOR_GREEN,
+				codeList: ["Performance Loss"],
+				codeIds: [2]
 			},
 			{
 				img: require("../../../assets/images/Picture11.png"),
 				label: "Саатал",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_BLUE
+				borderColor: MAIN_COLOR_BLUE,
+				codeList: ["Delay"],
+				codeIds: [3]
 			},
 			{
 				img: require("../../../assets/images/Picture12.png"),
 				label: "Сул зогсолт",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR
+				borderColor: MAIN_COLOR,
+				codeList: ["Standby"],
+				codeIds: [4]
 			},
 			{
 				img: require("../../../assets/images/Picture13.png"),
 				label: "Эвдрэл",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_RED
+				borderColor: MAIN_COLOR_RED,
+				codeList: ["Planned Maintenance", "Unplanned Maintenance"],
+				codeIds: [5, 6]
 			}
 		],
 		Other: [
@@ -75,28 +91,36 @@ const StatusMenu = (props) => {
 				label: "Бүтээлийн бус ажиллах",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_GREEN
+				borderColor: MAIN_COLOR_GREEN,
+				codeList: ["Performance Loss"],
+				codeIds: [2]
 			},
 			{
 				img: require("../../../assets/images/Picture11.png"),
 				label: "Саатал",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_BLUE
+				borderColor: MAIN_COLOR_BLUE,
+				codeList: ["Delay"],
+				codeIds: [3]
 			},
 			{
 				img: require("../../../assets/images/Picture12.png"),
 				label: "Сул зогсолт",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR
+				borderColor: MAIN_COLOR,
+				codeList: ["Standby"],
+				codeIds: [4]
 			},
 			{
 				img: require("../../../assets/images/Picture13.png"),
 				label: "Эвдрэл",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_RED
+				borderColor: MAIN_COLOR_RED,
+				codeList: ["Planned Maintenance", "Unplanned Maintenance"],
+				codeIds: [5, 6]
 			}
 		]
 	};
@@ -110,7 +134,9 @@ const StatusMenu = (props) => {
 						style={styles.eachMenuContainer}
 						onPress={() => {
 							props.setIsOpen(false);
-							navigation.navigate("StatusListScreen");
+							navigation.navigate("StatusListScreen", {
+								codeIds: el.codeIds
+							});
 							props.setSideBarStep(1);
 						}}
 					>
