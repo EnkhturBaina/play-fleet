@@ -13,6 +13,9 @@ const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const [isFocus, setIsFocus] = useState(false);
+	const [visibleLines, setVisibleLines] = useState(null);
+	const startLines = 3;
+	const totalLines = 5;
 
 	const VEHICLE_TYPE = {
 		Loader: {
@@ -89,13 +92,40 @@ const HeaderFloatItem = (props) => {
 	useEffect(() => {
 		state.detectOrientation();
 	}, []);
+	useEffect(() => {
+		if (state.orientation == "PORTRAIT") {
+			setVisibleLines(startLines);
+		} else {
+			setVisibleLines(totalLines);
+		}
+	}, [state.orientation]);
 
 	return (
 		<View style={styles.floatButtons}>
 			<View style={styles.mainContainer}>
-				<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
+				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+					<Text style={{ color: MAIN_COLOR, fontSize: 18, height: 15 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
+					{state.orientation == "PORTRAIT" ? (
+						<TouchableOpacity
+							onPress={() => {
+								if (visibleLines == totalLines) {
+									setVisibleLines(startLines);
+								} else {
+									setVisibleLines(totalLines);
+								}
+							}}
+						>
+							<Icon
+								name={`${totalLines == visibleLines ? "contract" : "expand"}`}
+								type="ionicon"
+								size={30}
+								color={MAIN_COLOR}
+							/>
+						</TouchableOpacity>
+					) : null}
+				</View>
 				<View style={styles.itemsContainer}>
-					{VEHICLE_TYPE[state.vehicleType]?.fields.map((el, index) => {
+					{VEHICLE_TYPE[state.vehicleType]?.fields.slice(0, visibleLines).map((el, index) => {
 						return (
 							<View style={[styles.stack1, { width: state.orientation == "PORTRAIT" ? "100%" : "48%" }]} key={index}>
 								<Text
@@ -221,7 +251,9 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		marginTop: 5,
-		alignSelf: "flex-start"
+		alignSelf: "flex-start",
+		alignItems: "center",
+		height: 30
 	},
 	eachFloatButton: {
 		height: 50,
