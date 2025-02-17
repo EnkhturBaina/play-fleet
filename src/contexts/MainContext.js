@@ -212,7 +212,7 @@ export const MainStore = (props) => {
 				setIsLoading(false);
 			}
 		} catch (error) {
-			console.error("Алдаа гарлаа: ", error);
+			console.error("Алдаа гарлаа checkUserData: ", error);
 		} finally {
 			setAppIsReady(true);
 		}
@@ -272,7 +272,7 @@ export const MainStore = (props) => {
 									}
 								}
 							} catch (error) {
-								console.error("Алдаа гарлаа:", error);
+								console.error("Алдаа гарлаа getReferencesService:", error);
 							}
 						}
 					})

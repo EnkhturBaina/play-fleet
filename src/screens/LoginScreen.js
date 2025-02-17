@@ -124,7 +124,7 @@ const LoginScreen = (props) => {
 				}
 			}
 		} catch (error) {
-			console.error("Алдаа гарлаа:", error);
+			console.error("Алдаа гарлаа login:", error);
 			setLoginError("Нэвтрэх үед алдаа гарлаа. Дахин оролдоно уу.");
 		} finally {
 			setLoadingLoginAction(false);
