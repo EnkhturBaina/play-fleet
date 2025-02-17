@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, WEEKDAYS } from "../../constant";
+import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, WEEKDAYS } from "../../constant";
 import { Dropdown } from "react-native-element-dropdown";
 import MainContext from "../../contexts/MainContext";
 import { useNavigation } from "@react-navigation/native";
@@ -13,6 +13,7 @@ const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const [isFocus, setIsFocus] = useState(false);
+	const [focusStates, setFocusStates] = useState({});
 	const [visibleLines, setVisibleLines] = useState(null);
 	const startLines = 3;
 	const totalLines = 5;
@@ -27,17 +28,20 @@ const HeaderFloatItem = (props) => {
 				{
 					id: 1,
 					name: "Блокын дугаар",
-					path: "blockNo"
+					path: "blockNo",
+					dataPath: "refShots"
 				},
 				{
 					id: 2,
 					name: "Материал",
-					path: "material"
+					path: "material",
+					dataPath: "refMaterials"
 				},
 				{
 					id: 3,
 					name: "Ачилтын тоо",
-					path: "totalLoads"
+					path: "totalLoads",
+					dataPath: "shot"
 				}
 			]
 		},
@@ -50,27 +54,32 @@ const HeaderFloatItem = (props) => {
 				{
 					id: 1,
 					name: "Эхлэх байршил",
-					path: "startPosition"
+					path: "startPosition",
+					dataPath: "refLocations"
 				},
 				{
 					id: 2,
 					name: "Блокын дугаар",
-					path: "blockNo"
+					path: "blockNo",
+					dataPath: "refShots"
 				},
 				{
 					id: 3,
 					name: "Хүргэх байршил",
-					path: "endLocation"
+					path: "endLocation",
+					dataPath: "refLocations"
 				},
 				{
 					id: 4,
 					name: "Экскаватор",
-					path: "exca"
+					path: "exca",
+					dataPath: "refShots"
 				},
 				{
 					id: 5,
 					name: "Материал",
-					path: "material"
+					path: "material",
+					dataPath: "refMaterials"
 				}
 			]
 		},
@@ -88,6 +97,15 @@ const HeaderFloatItem = (props) => {
 			]
 		}
 	};
+	const refData = {
+		refStates: state.refStates,
+		refLocations: state.refLocations,
+		refMovements: state.refMovements,
+		refOperators: state.refOperators,
+		refMaterials: state.refMaterials,
+		refStateGroups: state.refStateGroups,
+		refLocationTypes: state.refLocationTypes
+	};
 
 	useEffect(() => {
 		state.detectOrientation();
@@ -99,6 +117,21 @@ const HeaderFloatItem = (props) => {
 			setVisibleLines(totalLines);
 		}
 	}, [state.orientation]);
+
+	// Хэрэглэгч focus хийсэн үед isFocus-г зөвшөөрөх, эсвэл түдгэлзүүлэх
+	const handleFocus = (path) => {
+		setFocusStates((prevState) => ({
+			...prevState,
+			[path]: true // focus-ийг идэвхжүүлнэ
+		}));
+	};
+
+	const handleBlur = (path) => {
+		setFocusStates((prevState) => ({
+			...prevState,
+			[path]: false // focus-ийг салгана
+		}));
+	};
 
 	return (
 		<View style={styles.floatButtons}>
@@ -126,6 +159,11 @@ const HeaderFloatItem = (props) => {
 				</View>
 				<View style={styles.itemsContainer}>
 					{VEHICLE_TYPE[state.vehicleType]?.fields.slice(0, visibleLines).map((el, index) => {
+						const fieldData = refData[el.dataPath] || [];
+
+						// Хэрэв fieldData хоосон бол "Сонголт байхгүй" гэж харуулах
+						const isEmpty = fieldData.length === 0;
+
 						return (
 							<View style={[styles.stack1, { width: state.orientation == "PORTRAIT" ? "100%" : "48%" }]} key={index}>
 								<Text
@@ -137,25 +175,30 @@ const HeaderFloatItem = (props) => {
 									{el.name}
 								</Text>
 								<Dropdown
-									style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-									placeholderStyle={styles.placeholderStyle}
+									key={index}
+									style={[styles.dropdown, focusStates[el.path] && { borderColor: "blue" }]}
+									placeholderStyle={[styles.placeholderStyle, { color: isEmpty ? "#b3b3b3" : "#000" }]}
 									selectedTextStyle={styles.selectedTextStyle}
 									inputSearchStyle={styles.inputSearchStyle}
-									data={WEEKDAYS}
+									data={fieldData}
 									maxHeight={300}
-									labelField="label"
-									valueField="value"
-									placeholder={!isFocus ? "Сонгох" : "..."}
+									labelField="Name"
+									valueField="id"
+									placeholder={isEmpty ? "Сонголт байхгүй" : !focusStates[el.path] ? "Сонгох" : "..."}
 									value={state.headerSelections?.[el.path]}
-									onFocus={() => setIsFocus(true)}
-									onBlur={() => setIsFocus(false)}
+									onFocus={() => handleFocus(el.path)} // focus болох үед handleFocus
+									onBlur={() => handleBlur(el.path)} // blur болох үед handleBlur
 									onChange={(item) => {
-										setIsFocus(false);
+										setFocusStates((prevState) => ({
+											...prevState,
+											[el.path]: false // select хийснээр focus-ийг салгана
+										}));
 										state.setHeaderSelections((prevState) => ({
 											...prevState,
-											[el.path]: item.value
+											[el.path]: item.id
 										}));
 									}}
+									disable={isEmpty}
 								/>
 							</View>
 						);
@@ -232,7 +275,7 @@ const styles = StyleSheet.create({
 		borderWidth: 0.5,
 		paddingHorizontal: 8,
 		width: 200,
-		height: 30,
+		height: 40,
 		borderRadius: MAIN_BORDER_RADIUS
 	},
 	placeholderStyle: {
@@ -253,7 +296,7 @@ const styles = StyleSheet.create({
 		marginTop: 5,
 		alignSelf: "flex-start",
 		alignItems: "center",
-		height: 30
+		height: 40
 	},
 	eachFloatButton: {
 		height: 50,
