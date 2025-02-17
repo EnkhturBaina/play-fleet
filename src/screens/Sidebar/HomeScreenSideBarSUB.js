@@ -17,28 +17,32 @@ const HomeScreenSideBarSUB = (props) => {
 				label: "Бүтээлийн бус ажиллах",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_GREEN
+				borderColor: MAIN_COLOR_GREEN,
+				code: "Delay"
 			},
 			{
 				img: require("../../../assets/images/Picture11.png"),
 				label: "Саатал",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_BLUE
+				borderColor: MAIN_COLOR_BLUE,
+				code: "Delay"
 			},
 			{
 				img: require("../../../assets/images/Picture12.png"),
 				label: "Сул зогсолт",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR
+				borderColor: MAIN_COLOR,
+				code: "Standby"
 			},
 			{
 				img: require("../../../assets/images/Picture13.png"),
 				label: "Эвдрэл",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_RED
+				borderColor: MAIN_COLOR_RED,
+				code: "Delay"
 			}
 		],
 		Truck: [
@@ -47,28 +51,32 @@ const HomeScreenSideBarSUB = (props) => {
 				label: "Бүтээлийн бус ажиллах",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_GREEN
+				borderColor: MAIN_COLOR_GREEN,
+				code: "Delay"
 			},
 			{
 				img: require("../../../assets/images/Picture11.png"),
 				label: "Саатал",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_BLUE
+				borderColor: MAIN_COLOR_BLUE,
+				code: "Delay"
 			},
 			{
 				img: require("../../../assets/images/Picture12.png"),
 				label: "Сул зогсолт",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR
+				borderColor: MAIN_COLOR,
+				code: "Standby"
 			},
 			{
 				img: require("../../../assets/images/Picture13.png"),
 				label: "Эвдрэл",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_RED
+				borderColor: MAIN_COLOR_RED,
+				code: "Delay"
 			}
 		],
 		Other: [
@@ -77,28 +85,32 @@ const HomeScreenSideBarSUB = (props) => {
 				label: "Бүтээлийн бус ажиллах",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_GREEN
+				borderColor: MAIN_COLOR_GREEN,
+				code: "Delay"
 			},
 			{
 				img: require("../../../assets/images/Picture11.png"),
 				label: "Саатал",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_BLUE
+				borderColor: MAIN_COLOR_BLUE,
+				code: "Delay"
 			},
 			{
 				img: require("../../../assets/images/Picture12.png"),
 				label: "Сул зогсолт",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR
+				borderColor: MAIN_COLOR,
+				code: "Standby"
 			},
 			{
 				img: require("../../../assets/images/Picture13.png"),
 				label: "Эвдрэл",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_RED
+				borderColor: MAIN_COLOR_RED,
+				code: "Delay"
 			}
 		]
 	};
