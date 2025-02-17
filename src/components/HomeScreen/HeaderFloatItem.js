@@ -1,9 +1,8 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, WEEKDAYS } from "../../constant";
+import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE } from "../../constant";
 import { Dropdown } from "react-native-element-dropdown";
 import MainContext from "../../contexts/MainContext";
-import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 import { Image } from "expo-image";
 
@@ -11,8 +10,6 @@ const width = Dimensions.get("screen").width;
 
 const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
-	const navigation = useNavigation();
-	const [isFocus, setIsFocus] = useState(false);
 	const [focusStates, setFocusStates] = useState({});
 	const [visibleLines, setVisibleLines] = useState(null);
 	const startLines = 3;

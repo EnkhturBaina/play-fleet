@@ -127,10 +127,17 @@ const InspectionReportScreen = (props) => {
 										paddingVertical: 10,
 										height: MAIN_BUTTON_HEIGHT
 									}}
+									disabledStyle={{
+										backgroundColor: el.Checked ? MAIN_COLOR_GREEN : MAIN_COLOR_RED,
+										paddingVertical: 10,
+										height: MAIN_BUTTON_HEIGHT
+									}}
 									title={el.Checked ? "ТЭНЦСЭН" : "ТЭНЦЭЭГҮЙ"}
 									titleStyle={{
 										fontSize: 14
 									}}
+									disabled
+									disabledTitleStyle={{ color: "#fff" }}
 									// onPress={() => {
 									// 	const newData = [...inspectionData];
 
