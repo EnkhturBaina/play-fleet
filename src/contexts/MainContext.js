@@ -113,11 +113,13 @@ export const MainStore = (props) => {
 	const checkForUpdates = async () => {
 		setIsCheckingUpdate(true);
 		try {
-			const update = await Updates.checkForUpdateAsync();
-			if (update.isAvailable) {
-				setUpdateAvailable(true);
-				await Updates.fetchUpdateAsync();
-				Updates.reloadAsync(); // This will reload the app to apply the update
+			if (!__DEV__) {
+				const update = await Updates.checkForUpdateAsync();
+				if (update.isAvailable) {
+					setUpdateAvailable(true);
+					await Updates.fetchUpdateAsync();
+					Updates.reloadAsync(); // This will reload the app to apply the update
+				}
 			}
 		} catch (error) {
 			console.error(error);
