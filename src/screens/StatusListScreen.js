@@ -71,6 +71,8 @@ const StatusListScreen = (props) => {
 								onPress={() => {
 									setSelectedState(el);
 									setVisibleDialog(true);
+									state.handleReset();
+									state.handleStart();
 								}}
 							>
 								<Text style={{ width: "68%", color: MAIN_COLOR_BLUE }}>{el.Activity}</Text>
