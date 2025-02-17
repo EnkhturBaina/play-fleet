@@ -97,7 +97,7 @@ export const MainStore = (props) => {
 		// logout();
 		// dropTable("ref_locations");
 
-		// dropTable("employee");
+		// dropTable("ref_states");
 		// dropTable("company");
 		// dropTable("roster");
 		// dropTable("shift");

@@ -207,6 +207,7 @@ const HeaderFloatItem = (props) => {
 						props.mapRef();
 					}}
 					style={styles.eachFloatButton}
+					activeOpacity={0.8}
 				>
 					<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
 				</TouchableOpacity>
@@ -242,7 +243,11 @@ const HeaderFloatItem = (props) => {
 						contentFit="contain"
 					/>
 				</TouchableOpacity> */}
-				<TouchableOpacity onPress={() => props.setIsOpen(!props.isOpen)} style={styles.eachFloatButton}>
+				<TouchableOpacity
+					onPress={() => props.setIsOpen(!props.isOpen)}
+					style={styles.eachFloatButton}
+					activeOpacity={0.8}
+				>
 					<Image
 						source={require("../../../assets/images/Picture3.png")}
 						style={{
@@ -312,7 +317,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: "column",
 		backgroundColor: "#fff",
-		padding: 10,
+		paddingHorizontal: 10,
+		paddingVertical: 5,
 		width: width - 10,
 		marginHorizontal: 5,
 		borderRadius: MAIN_BORDER_RADIUS
