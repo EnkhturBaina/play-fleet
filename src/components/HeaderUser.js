@@ -14,7 +14,11 @@ const HeaderUser = (props) => {
 			<TouchableOpacity
 				activeOpacity={0.9}
 				style={styles.headerFirstSection}
-				onPress={() => props.setIsOpen(!props.isOpen)}
+				onPress={() => {
+					if (props.isBack) {
+						props.setIsOpen(!props.isOpen);
+					}
+				}}
 			>
 				<Image source={require("../../assets/only_icon.png")} style={styles.userImg} contentFit="contain" />
 				<View style={styles.titleContainer}>

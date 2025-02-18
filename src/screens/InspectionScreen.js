@@ -161,7 +161,7 @@ const InspectionScreen = () => {
 			}}
 		>
 			<StatusBar translucent hidden={false} barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-			<HeaderUser isShowNotif={false} />
+			<HeaderUser isShowNotif={false} isBack={false} />
 			<ScrollView
 				contentContainerStyle={{
 					flexGrow: 1,

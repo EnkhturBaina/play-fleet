@@ -1,20 +1,19 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Platform } from "react-native";
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { MAIN_COLOR } from "../constant";
 
-const BottomSheet = ({
+const YearPicker = ({
 	bodyText, //sheet -н text
-	dragDown, //sheet -г доош чирж хаах
-	backClick, //sheet -н гадна дарж хаах
 	displayName, //Дамжуулсан Object -н харуулах field
 	handle,
-	action, // parent Fn
-	lookUpType
+	action // parent Fn
 }) => {
 	const sheetRef = useRef(); //Bottomsheet
 	const [heightBottomSheet, setHeightBottomSheet] = useState(0);
 	useEffect(() => {
+		console.log("bodyText", bodyText);
+
 		if (bodyText && bodyText?.length == 1) {
 			setHeightBottomSheet(Platform.OS == "ios" ? 90 : 80);
 		} else if (bodyText && bodyText?.length == 2) {
@@ -44,8 +43,9 @@ const BottomSheet = ({
 			<RBSheet
 				ref={sheetRef}
 				height={heightBottomSheet}
-				closeOnDragDown={dragDown} //sheet -г доош чирж хаах
-				closeOnPressMask={backClick} //sheet -н гадна дарж хаах
+				closeOnDragDown //sheet -г доош чирж хаах
+				closeOnPressBack //sheet -н гадна дарж хаах
+				draggable
 				customStyles={{
 					container: {
 						backgroundColor: "#fff",
@@ -89,7 +89,7 @@ const BottomSheet = ({
 	);
 };
 
-export default BottomSheet;
+export default YearPicker;
 
 const styles = StyleSheet.create({
 	bottomSheetContainer: {
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
 		paddingBottom: Platform.OS == "ios" ? 30 : 25
 	},
 	bottomSheetBodyLookup: {
-		fontWeight: "bold",
+		fontWeight: "600",
 		fontSize: 18,
 		padding: 10,
 		color: MAIN_COLOR

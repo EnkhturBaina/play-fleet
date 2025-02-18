@@ -20,10 +20,17 @@ import axios from "axios";
 import MainContext from "../../contexts/MainContext";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
+import { generateLast3Years } from "../../helper/functions";
+import YearPicker from "../../components/YearPicker";
 
 const MotoHoursAndFuelScreen = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
+	const [last3Years, setLast3Years] = useState(generateLast3Years()); //*****Сүүлийн 3 жил-Сар (Хүсэлтэд ашиглах)
+	const [selectedDate, setSelectedDate] = useState(generateLast3Years()[0]);
+	const [data, setData] = useState(""); //*****BottomSheet рүү дамжуулах Дата
+	const [uselessParam, setUselessParam] = useState(false); //*****BottomSheet -г дуудаж байгааг мэдэх гэж ашиглаж байгамоо
+	const [displayName, setDisplayName] = useState(""); //*****LOOKUP -д харагдах утга (display value)
 
 	const [refreshing, setRefreshing] = useState(false);
 
@@ -89,6 +96,12 @@ const MotoHoursAndFuelScreen = (props) => {
 	const renderItem = ({ item }) => {
 		return <Text>{item.id}</Text>;
 	};
+
+	const setLookupData = (data, display) => {
+		setData(data); //*****Lookup -д харагдах дата
+		setDisplayName(display); //*****Lookup -д харагдах датаны текст талбар
+		setUselessParam(!uselessParam);
+	};
 	return (
 		<SafeAreaView
 			style={{
@@ -104,30 +117,30 @@ const MotoHoursAndFuelScreen = (props) => {
 			}}
 		>
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-			<HeaderUser isShowNotif={true} />
+			<HeaderUser isShowNotif={true} isBack={false} />
 			<TouchableOpacity
 				onPress={() => {
 					props.navigation.goBack();
 				}}
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					backgroundColor: "#2C2E45",
-					height: 50,
-					paddingHorizontal: 10
-				}}
+				style={styles.backViewContainer}
 				activeOpacity={0.8}
 			>
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
 				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Мото цагийн болон түлшний бүртгэл</Text>
 			</TouchableOpacity>
-			<View style={{ paddingHorizontal: 20, marginTop: 10 }}>
-				<Button
-					buttonStyle={{
-						backgroundColor: MAIN_COLOR,
-						borderRadius: MAIN_BORDER_RADIUS,
-						height: MAIN_BUTTON_HEIGHT
+
+			<View style={styles.headerActions}>
+				<TouchableOpacity
+					style={styles.yearMonthPicker}
+					onPress={() => {
+						setLookupData(last3Years, "name");
 					}}
+				>
+					<Text style={{ fontWeight: "600", fontSize: 16 }}>{selectedDate.name}</Text>
+					<Icon name="keyboard-arrow-down" type="material-icons" size={30} />
+				</TouchableOpacity>
+				<Button
+					buttonStyle={styles.addBtnStyle}
 					title="Бүртгэл нэмэх"
 					titleStyle={{
 						fontSize: 16,
@@ -137,7 +150,14 @@ const MotoHoursAndFuelScreen = (props) => {
 					style={{ alignSelf: "flex-end" }}
 				/>
 			</View>
-			<View style={{ flex: 1, backgroundColor: "#fff" }}>
+
+			<View
+				style={{
+					flex: 1,
+					backgroundColor: "#fff"
+					// backgroundColor: "red"
+				}}
+			>
 				<FlatList
 					contentContainerStyle={{
 						flexGrow: 1,
@@ -151,10 +171,45 @@ const MotoHoursAndFuelScreen = (props) => {
 					refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={MAIN_COLOR} />}
 				></FlatList>
 			</View>
+			<YearPicker bodyText={data} displayName={displayName} handle={uselessParam} action={(e) => setSelectedDate(e)} />
 		</SafeAreaView>
 	);
 };
 
 export default MotoHoursAndFuelScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+	headerActions: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		marginHorizontal: 20,
+		alignItems: "center",
+		paddingBottom: 5,
+		marginTop: 10
+	},
+	yearMonthPicker: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		borderColor: MAIN_COLOR,
+		borderWidth: 1,
+		borderRadius: MAIN_BORDER_RADIUS,
+		alignItems: "center",
+		paddingVertical: 5,
+		paddingLeft: 10,
+		paddingRight: 5,
+		alignSelf: "flex-start",
+		height: MAIN_BUTTON_HEIGHT
+	},
+	backViewContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		backgroundColor: "#2C2E45",
+		height: 50,
+		paddingHorizontal: 10
+	},
+	addBtnStyle: {
+		backgroundColor: MAIN_COLOR,
+		borderRadius: MAIN_BORDER_RADIUS,
+		height: MAIN_BUTTON_HEIGHT
+	}
+});

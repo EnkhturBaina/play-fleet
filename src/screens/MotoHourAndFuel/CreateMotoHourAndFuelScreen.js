@@ -49,11 +49,11 @@ const CreateMotoHourAndFuelScreen = (props) => {
 
 	const saveSMU = async () => {
 		if (!startSMU) {
-			onToggleSnackBar("Start SMU (h) оруулна уу.");
+			onToggleSnackBar("Эхэлсэн мото.цаг оруулна уу.");
 		} else if (!finishSMU) {
-			onToggleSnackBar("Finish SMU (h) оруулна уу.");
+			onToggleSnackBar("Дууссан мото.цаг оруулна уу.");
 		} else if (!fuel) {
-			onToggleSnackBar("Fuel (Litre) оруулна уу.");
+			onToggleSnackBar("Түлш (литр) оруулна уу.");
 		} else {
 			try {
 				setSavingSMU(true);
@@ -112,9 +112,9 @@ const CreateMotoHourAndFuelScreen = (props) => {
 				<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={0} />
 				<View style={{ flex: 1 }}>
 					<ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
-						<LoanInput label="Equipment Name" value={state.selectedEquipment?.Name} disabled />
+						<LoanInput label="Төхөөрөмж" value={state.selectedEquipment?.Name} disabled />
 						<LoanInput
-							label="Start SMU (h)"
+							label="Эхэлсэн мото.цаг"
 							value={startSMU}
 							onChangeText={(e) => {
 								setStartSMU(addCommas(removeNonNumeric(e)));
@@ -122,7 +122,7 @@ const CreateMotoHourAndFuelScreen = (props) => {
 							keyboardType="number-pad"
 						/>
 						<LoanInput
-							label="Finish SMU (h)"
+							label="Дууссан мото.цаг"
 							value={finishSMU}
 							onChangeText={(e) => {
 								setFinishSMU(addCommas(removeNonNumeric(e)));
@@ -130,7 +130,7 @@ const CreateMotoHourAndFuelScreen = (props) => {
 							keyboardType="number-pad"
 						/>
 						<LoanInput
-							label="Fuel (Litre)"
+							label="Түлш (литр)"
 							value={fuel}
 							onChangeText={(e) => {
 								setFuel(addCommas(removeNonNumeric(e)));

@@ -86,7 +86,7 @@ const InspectionReportScreen = (props) => {
 			}}
 		>
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-			<HeaderUser isShowNotif={true} />
+			<HeaderUser isShowNotif={true} isBack={false} />
 			<TouchableOpacity
 				onPress={() => {
 					props.navigation.goBack();

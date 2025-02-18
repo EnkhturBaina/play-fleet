@@ -186,7 +186,7 @@ const HomeScreen = (props) => {
 			}}
 		>
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-			<HeaderUser isOpen={isOpen} setIsOpen={setIsOpen} isShowNotif={true} />
+			<HeaderUser isBack={true} isOpen={isOpen} setIsOpen={setIsOpen} isShowNotif={true} />
 			<SideMenu
 				menu={
 					<MainSideBar

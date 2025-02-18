@@ -76,3 +76,32 @@ export const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
 	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	return R * c; // Зайг метрээр буцаана
 };
+
+export const generateLast3Years = () => {
+	//*****Сүүлийн 3 жилийн Он-Сар
+	var current_date = new Date();
+	var max = new Date().getFullYear();
+	var min = max - 2; //*****Одоогоос өмнөх 2 жил
+	var date = `${min}-${current_date.getMonth()}`; //*****Одоогоос өмнөх 2 жилийн энэ өдөр
+	var yearsWithMonths = []; //*****Жил-Сар түр хадгалах
+	var month = 0;
+
+	const end_date = new Date(date.replace(" ", " ,1 "));
+	const start_date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+	while (end_date <= start_date) {
+		month = start_date.getMonth() + 1;
+		if (month.toString()?.length === 1) {
+			month = `0${month}`;
+		} else {
+			month = month;
+		}
+		yearsWithMonths.push({
+			id: start_date.getFullYear() + "-" + month,
+			name: start_date.getFullYear() + " - " + month + " сар"
+		});
+		start_date.setMonth(start_date.getMonth() - 1);
+	}
+
+	return yearsWithMonths;
+};

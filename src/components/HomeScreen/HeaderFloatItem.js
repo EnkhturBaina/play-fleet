@@ -146,7 +146,7 @@ const HeaderFloatItem = (props) => {
 							}}
 						>
 							<Icon
-								name={`${totalLines == visibleLines ? "contract" : "expand"}`}
+								name={`${totalLines == visibleLines ? "chevron-up" : "chevron-down"}`}
 								type="ionicon"
 								size={30}
 								color={MAIN_COLOR}
