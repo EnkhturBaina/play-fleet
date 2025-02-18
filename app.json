@@ -18,7 +18,7 @@
 			"bundleIdentifier": "com.gamemine.fleet",
 			"buildNumber": "1.0.6",
 			"infoPlist": {
-				"NSLocationWhenInUseUsageDescription": "Play Fleet систем нь таны барйшлын мэдээллийг цаг бүртгэл, компанийн оффисын барйшлыг тодорхойлох зэрэг үйлдэлд ашиглана.",
+				"NSLocationWhenInUseUsageDescription": "Play Fleet систем нь таны байршлын мэдээллийг төхөөрөмжийн байршил тодорхойлох үйлдэлд ашиглана.",
 				"NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
 				"ITSAppUsesNonExemptEncryption": false
 			},

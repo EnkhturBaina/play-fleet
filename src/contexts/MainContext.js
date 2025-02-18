@@ -95,9 +95,9 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		// logout();
-		// dropTable("ref_locations");
+		dropTable("ref_locations");
 
-		// dropTable("ref_states");
+		dropTable("ref_states");
 		// dropTable("company");
 		// dropTable("roster");
 		// dropTable("shift");
