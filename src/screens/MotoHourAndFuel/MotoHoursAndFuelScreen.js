@@ -66,7 +66,7 @@ const MotoHoursAndFuelScreen = (props) => {
 					}
 				)
 				.then(function (response) {
-					// console.log("get SmuData response", JSON.stringify(response.data));
+					console.log("get SmuData response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setSmuData(response.data?.Extra);
 					}

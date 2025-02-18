@@ -66,23 +66,23 @@ const HomeScreen = (props) => {
 			}
 		}
 		// console.log("STATE refStates=>", JSON.stringify(state.refStates));
-		console.log("refLocations", state.refLocations);
-		console.log("refLocationTypes", state.refLocationTypes);
+		// console.log("refLocations", state.refLocations);
+		// console.log("refLocationTypes", state.refLocationTypes);
 
-		const interval = setInterval(() => {
-			state.checkIfInsideCircle(300).then((isInside) => {
-				console.log("isInside", isInside);
+		// const interval = setInterval(() => {
+		// 	state.checkIfInsideCircle(300).then((isInside) => {
+		// 		console.log("isInside", isInside);
 
-				if (isInside) {
-					console.log("✅ Та радиус дотор байна!");
-				} else {
-					console.log("❌ Та радиусын гадна байна!");
-				}
-			});
-		}, 5 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
+		// 		if (isInside) {
+		// 			console.log("✅ Та радиус дотор байна!");
+		// 		} else {
+		// 			console.log("❌ Та радиусын гадна байна!");
+		// 		}
+		// 	});
+		// }, 5 * 1000);
 
-		// Component unmount үед interval-ийг устгах
-		return () => clearInterval(interval);
+		// // Component unmount үед interval-ийг устгах
+		// return () => clearInterval(interval);
 	}, []);
 
 	useEffect(() => {
