@@ -10,6 +10,7 @@ import { Dimensions } from "react-native";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 import * as Updates from "expo-updates";
+import { getDistanceFromLatLonInMeters } from "../helper/functions";
 
 const MainContext = React.createContext();
 const width = Dimensions.get("screen").width;
@@ -106,7 +107,10 @@ export const MainStore = (props) => {
 		checkForUpdates();
 
 		isLoggedIn && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
-		const interval = setInterval(checkLocationWithSpeed, SEND_EQUIPMENT_LOCATION_MINS * 60 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
+
+		const interval = setInterval(() => {
+			checkLocationWithSpeed();
+		}, SEND_EQUIPMENT_LOCATION_MINS * 60 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
 
 		// Component unmount үед interval-ийг устгах
 		return () => clearInterval(interval);
@@ -379,6 +383,30 @@ export const MainStore = (props) => {
 		setOrientation(width > height ? "LANDSCAPE" : "PORTRAIT");
 	};
 
+	const checkIfInsideCircle = async (radius) => {
+		console.log("radius", radius);
+
+		// Байршлын permission авах
+		let { status } = await Location.requestForegroundPermissionsAsync();
+		if (status !== "granted") {
+			console.log("Permission not granted");
+			return false;
+		}
+
+		// Байршлаа авах
+		let location = await Location.getCurrentPositionAsync({});
+		const myLat = location.coords.latitude;
+		const myLon = location.coords.longitude;
+
+		// Төв ба өөрийн байршлын хоорондох зайг тооцоолох
+		const distance = getDistanceFromLatLonInMeters(myLat, myLon, 47.91248048, 106.933822);
+
+		console.log("Distance:", distance, "meters");
+
+		// Зайг шалгах
+		return distance <= radius;
+	};
+
 	return (
 		<MainContext.Provider
 			value={{
@@ -459,7 +487,8 @@ export const MainStore = (props) => {
 				selectedEquipmentCode,
 				setSelectedEquipmentCode,
 				selectedState,
-				setSelectedState
+				setSelectedState,
+				checkIfInsideCircle
 			}}
 		>
 			{props.children}

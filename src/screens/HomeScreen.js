@@ -46,8 +46,8 @@ const HomeScreen = (props) => {
 				? mapRef.current.animateToRegion({
 						latitude: parseFloat(state.location?.coords?.latitude) || 0,
 						longitude: parseFloat(state.location?.coords?.longitude) || 0,
-						latitudeDelta: 0.0121,
-						longitudeDelta: 0.0121
+						latitudeDelta: 0.05,
+						longitudeDelta: 0.05
 				  })
 				: null;
 		}
@@ -66,10 +66,23 @@ const HomeScreen = (props) => {
 			}
 		}
 		// console.log("STATE refStates=>", JSON.stringify(state.refStates));
-		// console.log("refLocations", state.refLocations);
+		console.log("refLocations", state.refLocations);
+		console.log("refLocationTypes", state.refLocationTypes);
 
-		startTracking();
-		checkIfFileExistsAndLoad();
+		const interval = setInterval(() => {
+			state.checkIfInsideCircle(300).then((isInside) => {
+				console.log("isInside", isInside);
+
+				if (isInside) {
+					console.log("✅ Та радиус дотор байна!");
+				} else {
+					console.log("❌ Та радиусын гадна байна!");
+				}
+			});
+		}, 5 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
+
+		// Component unmount үед interval-ийг устгах
+		return () => clearInterval(interval);
 	}, []);
 
 	useEffect(() => {
@@ -195,8 +208,8 @@ const HomeScreen = (props) => {
 					initialRegion={{
 						latitude: parseFloat(state.location?.coords?.latitude) || 0,
 						longitude: parseFloat(state.location?.coords?.longitude) || 0,
-						latitudeDelta: 0.0121,
-						longitudeDelta: 0.0121
+						latitudeDelta: 0.05,
+						longitudeDelta: 0.05
 					}}
 					scrollEnabled={true}
 					mapType="satellite"
@@ -205,17 +218,15 @@ const HomeScreen = (props) => {
 						title="Таны одоогийн байршил"
 						coordinate={{
 							latitude: parseFloat(state.location?.coords?.latitude) || 0,
-							longitude: parseFloat(state.location?.coords?.longitude) || 0,
-							latitudeDelta: 0.0121,
-							longitudeDelta: 0.0121
+							longitude: parseFloat(state.location?.coords?.longitude) || 0
 						}}
 					>
 						<View style={styles.customMarker}>
 							<Image
 								source={equipmentImage}
 								style={{
-									width: 40,
-									height: 40
+									width: 30,
+									height: 30
 								}}
 								contentFit="contain"
 							/>
@@ -231,20 +242,46 @@ const HomeScreen = (props) => {
 						strokeColor={"red"}
 						fillColor={"#4F9CC3"}
 					/> */}
+					{/* TEST CIRCLE */}
+					<Circle
+						center={{
+							latitude: parseFloat(47.91248048),
+							longitude: parseFloat(106.933822)
+						}}
+						radius={300}
+						strokeWidth={2}
+						strokeColor={MAIN_COLOR}
+						fillColor={MAIN_COLOR + "80"}
+					/>
 					{state.refLocations &&
 						state.refLocations?.map((el, index) => {
 							return (
-								<Circle
-									key={index}
-									center={{
-										latitude: parseFloat(el.Latitude),
-										longitude: parseFloat(el.Longitude)
-									}}
-									radius={el.Radius}
-									strokeWidth={2}
-									strokeColor={MAIN_COLOR}
-									fillColor={el.Color + "80"}
-								/>
+								<View key={index}>
+									<Circle
+										center={{
+											latitude: parseFloat(el.Latitude),
+											longitude: parseFloat(el.Longitude)
+										}}
+										radius={el.Radius}
+										strokeWidth={2}
+										strokeColor={MAIN_COLOR}
+										fillColor={el.Color + "80"}
+									/>
+									<Marker
+										coordinate={{
+											latitude: parseFloat(el.Latitude),
+											longitude: parseFloat(el.Longitude)
+										}}
+										anchor={{ x: 0.5, y: 0.5 }}
+									>
+										<View style={styles.radiusLabel}>
+											<Text style={{ fontWeight: "600" }}>
+												{state.refLocationTypes?.filter((item) => item.id === el.PMSLocationTypeId)[0]?.Name}
+											</Text>
+											<Text style={{ fontWeight: "600" }}>{el.Name}</Text>
+										</View>
+									</Marker>
+								</View>
 							);
 						})}
 					{!loadingKML &&
@@ -287,5 +324,14 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 		borderRadius: 50,
 		padding: 5
+	},
+	radiusLabel: {
+		backgroundColor: "white",
+		padding: 5,
+		borderRadius: 5,
+		borderWidth: 1,
+		borderColor: "black",
+		flexDirection: "column",
+		alignItems: "center"
 	}
 });
