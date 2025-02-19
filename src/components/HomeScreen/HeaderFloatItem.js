@@ -1,10 +1,11 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, TEXT_COLOR_GRAY } from "../../constant";
+import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, SERVER_URL, TEXT_COLOR_GRAY } from "../../constant";
 import { Dropdown } from "react-native-element-dropdown";
 import MainContext from "../../contexts/MainContext";
 import { Icon } from "@rneui/base";
 import { Image } from "expo-image";
+import axios from "axios";
 
 const width = Dimensions.get("screen").width;
 
@@ -12,6 +13,8 @@ const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
 	const [focusStates, setFocusStates] = useState({});
 	const [visibleLines, setVisibleLines] = useState(null);
+	const [assignedData, setAssignedData] = useState(null);
+
 	const startLines = 3;
 	const totalLines = 5;
 
@@ -116,6 +119,7 @@ const HeaderFloatItem = (props) => {
 	};
 
 	useEffect(() => {
+		getDefaultAssignedTask();
 		state.detectOrientation();
 	}, []);
 	useEffect(() => {
@@ -139,6 +143,45 @@ const HeaderFloatItem = (props) => {
 			...prevState,
 			[path]: false // focus-ийг салгана
 		}));
+	};
+
+	const getDefaultAssignedTask = async () => {
+		setAssignedData(null);
+		try {
+			await axios
+				.post(
+					`${SERVER_URL}/mobile/task/assigned`,
+					{
+						cid: state.companyData?.id,
+						PMSEquipmentId: state.selectedEquipment?.id
+					},
+					{
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${state.token}`
+						}
+					}
+				)
+				.then(function (response) {
+					console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
+					if (response.data?.Type == 0) {
+						setAssignedData(response.data?.Extra);
+						state.setHeaderSelections((prev) => ({
+							...prev,
+							startPosition: response.data?.Extra?.PMSSrcId,
+							blockNo: response.data?.Extra?.PMSBlastShotId,
+							endLocation: response.data?.Extra?.PMSDstId,
+							exca: response.data?.Extra?.PMSLoaderId,
+							material: response.data?.Extra?.PMSMaterialId
+						}));
+					}
+				})
+				.catch(function (error) {
+					console.log("error get DefaultAssignedTask", error.response.data);
+				});
+		} catch (error) {
+			console.log("CATCH get DefaultAssignedTask", error);
+		}
 	};
 
 	return (
