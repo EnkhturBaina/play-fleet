@@ -119,6 +119,7 @@ export const MainStore = (props) => {
 		return () => clearInterval(interval);
 	}, []);
 	const checkForUpdates = async () => {
+		setIsLoading(true);
 		setIsCheckingUpdate(true);
 		try {
 			const update = await Updates.checkForUpdateAsync();
@@ -131,7 +132,6 @@ export const MainStore = (props) => {
 			console.error(error);
 		} finally {
 			setIsCheckingUpdate(false);
-			setIsLoading(true);
 			checkLocation();
 		}
 	};
