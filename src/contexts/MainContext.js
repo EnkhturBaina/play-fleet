@@ -107,8 +107,14 @@ export const MainStore = (props) => {
 		// dropTable("shift");
 		// dropTable("equipments");
 		// dropTable("project");
-		checkForUpdates();
 
+		if (isConnected) {
+			//Интернэт холболттой бол Update шалгах
+			checkForUpdates();
+		} else {
+			//Интернэтгүй бол шууд location шалгаад local шалгах
+			checkLocation();
+		}
 		isLoggedIn && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
 
 		const interval = setInterval(() => {
