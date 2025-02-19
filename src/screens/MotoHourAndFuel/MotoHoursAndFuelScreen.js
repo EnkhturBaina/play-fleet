@@ -92,7 +92,7 @@ const MotoHoursAndFuelScreen = (props) => {
 
 	useEffect(() => {
 		getSmuData();
-	}, [isFocused]);
+	}, [isFocused, selectedDate]);
 
 	const renderItem = ({ item }) => {
 		return (
