@@ -26,19 +26,22 @@ const HeaderFloatItem = (props) => {
 					id: 1,
 					name: "Блокын дугаар",
 					path: "blockNo",
-					dataPath: "refShots"
+					dataPath: "refShots",
+					valuePath: "ShotName"
 				},
 				{
 					id: 2,
 					name: "Материал",
 					path: "material",
-					dataPath: "refMaterials"
+					dataPath: "refMaterials",
+					valuePath: "Name"
 				},
 				{
 					id: 3,
 					name: "Ачилтын тоо",
 					path: "totalLoads",
-					dataPath: "shot"
+					dataPath: "shot",
+					valuePath: "Name"
 				}
 			]
 		},
@@ -52,31 +55,36 @@ const HeaderFloatItem = (props) => {
 					id: 1,
 					name: "Эхлэх байршил",
 					path: "startPosition",
-					dataPath: "refLocations"
+					dataPath: "refLocations",
+					valuePath: "Name"
 				},
 				{
 					id: 2,
 					name: "Блокын дугаар",
 					path: "blockNo",
-					dataPath: "refShots"
+					dataPath: "refShots",
+					valuePath: "ShotName"
 				},
 				{
 					id: 3,
 					name: "Хүргэх байршил",
 					path: "endLocation",
-					dataPath: "refLocations"
+					dataPath: "refLocations",
+					valuePath: "Name"
 				},
 				{
 					id: 4,
 					name: "Экскаватор",
 					path: "exca",
-					dataPath: "refShots"
+					dataPath: "refLoaders",
+					valuePath: "Name"
 				},
 				{
 					id: 5,
 					name: "Материал",
 					path: "material",
-					dataPath: "refMaterials"
+					dataPath: "refMaterials",
+					valuePath: "Name"
 				}
 			]
 		},
@@ -89,7 +97,8 @@ const HeaderFloatItem = (props) => {
 				{
 					id: 1,
 					name: "Ногдуулсан даалгавар",
-					path: "assignedTask"
+					path: "assignedTask",
+					valuePath: "Name"
 				}
 			]
 		}
@@ -101,7 +110,9 @@ const HeaderFloatItem = (props) => {
 		refOperators: state.refOperators,
 		refMaterials: state.refMaterials,
 		refStateGroups: state.refStateGroups,
-		refLocationTypes: state.refLocationTypes
+		refLocationTypes: state.refLocationTypes,
+		refLoaders: state.refLoaders,
+		refShots: state.refShots
 	};
 
 	useEffect(() => {
@@ -178,7 +189,7 @@ const HeaderFloatItem = (props) => {
 									selectedTextStyle={styles.selectedTextStyle}
 									data={fieldData}
 									maxHeight={300}
-									labelField="Name"
+									labelField={el.valuePath}
 									valueField="id"
 									placeholder={isEmpty ? "Сонголт байхгүй" : !focusStates[el.path] ? "Сонгох" : "..."}
 									value={state.headerSelections?.[el.path]}
