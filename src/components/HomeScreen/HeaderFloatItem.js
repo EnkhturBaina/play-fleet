@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE } from "../../constant";
+import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, TEXT_COLOR_GRAY } from "../../constant";
 import { Dropdown } from "react-native-element-dropdown";
 import MainContext from "../../contexts/MainContext";
 import { Icon } from "@rneui/base";
@@ -174,7 +174,7 @@ const HeaderFloatItem = (props) => {
 								<Dropdown
 									key={index}
 									style={[styles.dropdown, focusStates[el.path] && { borderColor: "blue" }]}
-									placeholderStyle={[styles.placeholderStyle, { color: isEmpty ? "#b3b3b3" : "#000" }]}
+									placeholderStyle={[styles.placeholderStyle, { color: isEmpty ? TEXT_COLOR_GRAY : "#000" }]}
 									selectedTextStyle={styles.selectedTextStyle}
 									data={fieldData}
 									maxHeight={300}

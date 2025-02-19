@@ -5,6 +5,7 @@ export const MAIN_COLOR_GREEN = "#78BB07";
 export const MAIN_COLOR_RED = "#FF6100";
 export const MAIN_COLOR_PURPLE = "#443099";
 export const MAIN_COLOR_BLUE = "#00B0F0";
+export const TEXT_COLOR_GRAY = "#b3b3b3";
 
 export const MAIN_BORDER_RADIUS = 8;
 export const MAIN_INPUT_HEIGHT = 60;

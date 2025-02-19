@@ -7,25 +7,25 @@ import {
 	Platform,
 	TouchableOpacity,
 	FlatList,
-	RefreshControl
+	RefreshControl,
+	ActivityIndicator
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import HeaderUser from "../../components/HeaderUser";
 import Constants from "expo-constants";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Button, Icon } from "@rneui/base";
-import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, SERVER_URL } from "../../constant";
+import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, SERVER_URL, TEXT_COLOR_GRAY } from "../../constant";
 import Empty from "../../components/Empty";
 import axios from "axios";
 import MainContext from "../../contexts/MainContext";
-import "dayjs/locale/es";
-import dayjs from "dayjs";
 import { generateLast3Years } from "../../helper/functions";
 import YearPicker from "../../components/YearPicker";
 
 const MotoHoursAndFuelScreen = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
+	const isFocused = useIsFocused();
 	const [last3Years, setLast3Years] = useState(generateLast3Years()); //*****Сүүлийн 3 жил-Сар (Хүсэлтэд ашиглах)
 	const [selectedDate, setSelectedDate] = useState(generateLast3Years()[0]);
 	const [data, setData] = useState(""); //*****BottomSheet рүү дамжуулах Дата
@@ -48,7 +48,8 @@ const MotoHoursAndFuelScreen = (props) => {
 	};
 
 	const getSmuData = async () => {
-		// console.log("projectData", state.projectData?.id);
+		console.log("selectedDate", selectedDate);
+		const newDate = new Date(selectedDate.id);
 		// console.log("selectedEquipment", state.selectedEquipment?.id);
 		// console.log("employeeData", state.employeeData?.id);
 
@@ -57,13 +58,13 @@ const MotoHoursAndFuelScreen = (props) => {
 		try {
 			await axios
 				.post(
-					`${SERVER_URL}/mobile/progress/stop`,
+					`${SERVER_URL}/mobile/truck/fuel/list`,
 					{
-						PMSProjectId: state.projectData?.id,
+						cid: state.companyData?.id,
 						PMSEquipmentId: state.selectedEquipment?.id,
-						// PMSProgressStateId: state.shiftData?.id,
-						CurrentDate: dayjs().format("YYYY-MM-DD"),
-						PMSEmployeeId: state.employeeData?.id
+						StartRange: selectedDate.id + "-01",
+						EndRange: selectedDate.id + "-" + new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).getDate(),
+						FilterDate: "-1"
 					},
 					{
 						headers: {
@@ -91,10 +92,37 @@ const MotoHoursAndFuelScreen = (props) => {
 
 	useEffect(() => {
 		getSmuData();
-	}, []);
+	}, [isFocused]);
 
 	const renderItem = ({ item }) => {
-		return <Text>{item.id}</Text>;
+		return (
+			<View
+				style={{
+					borderWidth: 1,
+					borderRadius: MAIN_BORDER_RADIUS,
+					borderColor: TEXT_COLOR_GRAY,
+					padding: 10,
+					marginBottom: 10
+				}}
+			>
+				<Text style={styles.itemDate}>{item.SavedDate}</Text>
+				<View style={styles.itemRow}>
+					<Text style={styles.itemLabel}>Хуримтлагдсан мото цаг</Text>
+					<Text style={styles.dividerVertical}>|</Text>
+					<Text style={styles.itemValue}>{item.StartSMU} цаг</Text>
+				</View>
+				<View style={styles.itemRow}>
+					<Text style={styles.itemLabel}>Тухайн ээлжийн мото цаг</Text>
+					<Text style={styles.dividerVertical}>|</Text>
+					<Text style={styles.itemValue}>{item.FinishSMU} цаг</Text>
+				</View>
+				<View style={styles.itemRow}>
+					<Text style={styles.itemLabel}>Авсан түлш</Text>
+					<Text style={styles.dividerVertical}>|</Text>
+					<Text style={styles.itemValue}>{item.Fuel} литр</Text>
+				</View>
+			</View>
+		);
 	};
 
 	const setLookupData = (data, display) => {
@@ -158,18 +186,27 @@ const MotoHoursAndFuelScreen = (props) => {
 					// backgroundColor: "red"
 				}}
 			>
-				<FlatList
-					contentContainerStyle={{
-						flexGrow: 1,
-						paddingHorizontal: 10
-					}}
-					showsVerticalScrollIndicator={false}
-					data={smuData}
-					renderItem={renderItem}
-					keyExtractor={(item, index) => index.toString()}
-					ListEmptyComponent={<Empty text="Мэдээлэл олдсонгүй." />}
-					refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={MAIN_COLOR} />}
-				></FlatList>
+				{loadingSmuData ? (
+					<ActivityIndicator color={MAIN_COLOR} style={{ flex: 1 }} size={"large"} />
+				) : (
+					<FlatList
+						contentContainerStyle={{
+							flexGrow: 1,
+							paddingHorizontal: 20
+						}}
+						showsVerticalScrollIndicator={false}
+						data={smuData}
+						renderItem={renderItem}
+						keyExtractor={(item, index) => index.toString()}
+						ListEmptyComponent={<Empty text="Мэдээлэл олдсонгүй." />}
+						refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={MAIN_COLOR} />}
+						ListHeaderComponent={
+							<View style={{ paddingVertical: 10, paddingHorizontal: 5 }}>
+								<Text style={{ fontWeight: "600" }}>Мото цагийн болон түлшний түүх /{smuData?.length ?? 0}/</Text>
+							</View>
+						}
+					/>
+				)}
 			</View>
 			<YearPicker bodyText={data} displayName={displayName} handle={uselessParam} action={(e) => setSelectedDate(e)} />
 		</SafeAreaView>
@@ -211,5 +248,25 @@ const styles = StyleSheet.create({
 		backgroundColor: MAIN_COLOR,
 		borderRadius: MAIN_BORDER_RADIUS,
 		height: MAIN_BUTTON_HEIGHT
+	},
+	itemRow: {
+		flexDirection: "row",
+		alignItems: "center"
+	},
+	itemLabel: {
+		width: 200,
+		fontSize: 16
+	},
+	dividerVertical: {
+		fontWeight: "600",
+		marginHorizontal: 5,
+		fontSize: 16
+	},
+	itemDate: {
+		fontWeight: "600",
+		fontSize: 16
+	},
+	itemValue: {
+		fontSize: 16
 	}
 });
