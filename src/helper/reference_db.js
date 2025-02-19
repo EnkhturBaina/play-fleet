@@ -129,6 +129,31 @@ export const createReferenceTables = async () => {
         IsActive INTEGER
       );`
 		);
+		await db.execAsync(
+			`CREATE TABLE IF NOT EXISTS ref_loaders (
+        id INTEGER PRIMARY KEY NOT NULL,
+        Code TEXT,
+        Name TEXT,
+        PMSTypeId INTEGER,
+        TypeName TEXT,
+        status TEXT
+      );`
+		);
+		await db.execAsync(
+			`CREATE TABLE IF NOT EXISTS ref_loader_types (   
+        id INTEGER PRIMARY KEY NOT NULL,
+        Name TEXT,
+        status TEXT
+      );`
+		);
+		await db.execAsync(
+			`CREATE TABLE IF NOT EXISTS ref_shots (   
+        id INTEGER PRIMARY KEY NOT NULL,
+        ShotName TEXT,
+        SavedDate TEXT,
+        PMSGeneralStateId INTEGER
+      );`
+		);
 	} catch (error) {
 		console.log("error create-Table", error);
 	}
@@ -167,6 +192,8 @@ export const insertReferencesData = async (data) => {
 		const ref_movements = data.movements;
 		const ref_operators = data.operators;
 		const ref_materials = data.materials;
+		const ref_loaders = data.loaders;
+		const ref_shots = data.shots;
 
 		// ref_states insert хийх
 		if (ref_states) {
@@ -283,7 +310,7 @@ export const insertReferencesData = async (data) => {
 						]
 					)
 					.then((result) => {
-						if (result.changes === 0) throw new Error("ref-locations өгөгдлийг оруулж чадсангүй.");
+						if (result.changes === 0) throw new Error("ref_locations өгөгдлийг оруулж чадсангүй.");
 					})
 					.catch((error) => {
 						console.log("Error in ref_locations insert", error);
@@ -335,7 +362,7 @@ export const insertReferencesData = async (data) => {
 						]
 					)
 					.then((result) => {
-						if (result.changes === 0) throw new Error("ref-movements өгөгдлийг оруулж чадсангүй.");
+						if (result.changes === 0) throw new Error("ref_movements өгөгдлийг оруулж чадсангүй.");
 					})
 					.catch((error) => {
 						console.log("Error in ref_movements insert", error);
@@ -430,6 +457,72 @@ export const insertReferencesData = async (data) => {
 			});
 		}
 
+		// ref_loaders insert хийх
+		if (ref_loaders) {
+			ref_loaders.forEach((el) => {
+				const promise = db
+					.runAsync(
+						`INSERT OR REPLACE INTO ref_loaders (
+            id, Code, Name, PMSTypeId, TypeName, status
+          ) VALUES (?, ?, ?, ?, ?, ?);`,
+						[el.id, el.Code, el.Name, el.PMSTypeId, el.TypeName, el.status]
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref_loaders өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_loaders insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
+
+				insertPromises.push(promise);
+			});
+		}
+
+		// ref_loader_types insert хийх
+		if (ref_loaders) {
+			ref_loaders.forEach((el) => {
+				const promise = db
+					.runAsync(
+						`INSERT OR REPLACE INTO ref_loader_types (
+            id, Name, status
+          ) VALUES (?, ?, ?);`,
+						[el?.type?.id, el?.type?.Name, el?.type?.status]
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref_loader_types өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_loader_types insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
+
+				insertPromises.push(promise);
+			});
+		}
+
+		// ref_shots insert хийх
+		if (ref_shots) {
+			ref_shots.forEach((el) => {
+				const promise = db
+					.runAsync(
+						`INSERT OR REPLACE INTO ref_shots (
+            id, ShotName, SavedDate, PMSGeneralStateId
+          ) VALUES (?, ?, ?, ?);`,
+						[el.id, el.ShotName, el.SavedDate, el.PMSGeneralStateId]
+					)
+					.then((result) => {
+						if (result.changes === 0) throw new Error("ref_shots өгөгдлийг оруулж чадсангүй.");
+					})
+					.catch((error) => {
+						console.log("Error in ref_shots insert", error);
+						throw error; // Алдааг throw хийж, бүх insert үйлдлийг үргэлжлүүлэхгүй
+					});
+
+				insertPromises.push(promise);
+			});
+		}
+
 		// Бүх insert үйлдлүүд амжилттай дууссан эсэхийг шалгах
 		await Promise.all(insertPromises); // Энд бүх асинхрон үйлдлүүдийг хүлээж дуусгах
 		console.log("All insert operations completed successfully.");
@@ -452,7 +545,10 @@ export const clearReferencesTables = async () => {
 		"ref_operators",
 		"ref_materials",
 		"ref_state_groups",
-		"ref_location_types"
+		"ref_location_types",
+		"ref_loaders",
+		"ref_loader_types",
+		"ref_shots"
 	];
 
 	try {
@@ -481,7 +577,10 @@ export const fetchReferencesData = async () => {
 			ref_operators,
 			ref_materials,
 			ref_state_groups,
-			ref_location_types
+			ref_location_types,
+			ref_loaders,
+			ref_loader_types,
+			ref_shots
 		] = await Promise.all([
 			db.getAllAsync(`SELECT * FROM ref_states`),
 			db.getAllAsync(`SELECT * FROM ref_locations`),
@@ -489,7 +588,10 @@ export const fetchReferencesData = async () => {
 			db.getAllAsync(`SELECT * FROM ref_operators`),
 			db.getAllAsync(`SELECT * FROM ref_materials`),
 			db.getAllAsync(`SELECT * FROM ref_state_groups`),
-			db.getAllAsync(`SELECT * FROM ref_location_types`)
+			db.getAllAsync(`SELECT * FROM ref_location_types`),
+			db.getAllAsync(`SELECT * FROM ref_loaders`),
+			db.getAllAsync(`SELECT * FROM ref_loader_types`),
+			db.getAllAsync(`SELECT * FROM ref_shots`)
 		]);
 
 		// Combine results into a single object
@@ -500,7 +602,10 @@ export const fetchReferencesData = async () => {
 			ref_operators,
 			ref_materials,
 			ref_state_groups,
-			ref_location_types
+			ref_location_types,
+			ref_loaders,
+			ref_loader_types,
+			ref_shots
 		};
 
 		return data; // Return the combined data

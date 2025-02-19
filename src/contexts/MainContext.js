@@ -79,6 +79,9 @@ export const MainStore = (props) => {
 	const [refMaterials, setRefMaterials] = useState(null);
 	const [refStateGroups, setRefStateGroups] = useState(null);
 	const [refLocationTypes, setRefLocationTypes] = useState(null);
+	const [refLoaders, setRefLoaders] = useState(null);
+	const [refLoaderTypes, setRefLoaderTypes] = useState(null);
+	const [refShots, setRefShots] = useState(null);
 	/* REFERENCE STATEs END */
 
 	const handleStart = () => {
@@ -267,7 +270,10 @@ export const MainStore = (props) => {
 										ref_operators: setRefOperators,
 										ref_materials: setRefMaterials,
 										ref_state_groups: setRefStateGroups,
-										ref_location_types: setRefLocationTypes
+										ref_location_types: setRefLocationTypes,
+										ref_loaders: setRefLoaders,
+										ref_loader_types: setRefLoaderTypes,
+										ref_shots: setRefShots
 									});
 									console.log("isRunLocal", isRunLocal);
 
@@ -488,7 +494,10 @@ export const MainStore = (props) => {
 				setSelectedEquipmentCode,
 				selectedState,
 				setSelectedState,
-				checkIfInsideCircle
+				checkIfInsideCircle,
+				refLoaders,
+				refLoaderTypes,
+				refShots
 			}}
 		>
 			{props.children}
