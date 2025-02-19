@@ -9,16 +9,16 @@ const HomeScreenSideBar = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const MENU_LIST = [
-		// {
-		// 	img: require("../../../assets/images/Picture4.png"),
-		// 	label: "Бүтээлийн бүртгэл",
-		// 	nav: "NAV_PATH",
-		// 	isMore: true,
-		// 	action: () => {
-		// 		props.setIsOpen(false);
-		// 		navigation.navigate("WorkRegistrationScreen");
-		// 	}
-		// },
+		{
+			img: require("../../../assets/images/Picture4.png"),
+			label: "Бүтээлийн бүртгэл",
+			nav: "NAV_PATH",
+			isMore: true,
+			action: () => {
+				props.setIsOpen(false);
+				navigation.navigate("WorkRegistrationScreen");
+			}
+		},
 		{
 			img: require("../../../assets/images/Picture14.png"),
 			label: "Төлөв бүртгэл",
