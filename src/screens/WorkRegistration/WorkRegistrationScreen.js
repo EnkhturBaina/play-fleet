@@ -110,15 +110,16 @@ const WorkRegistrationScreen = (props) => {
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
 				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Бүтээлийн бүртгэл</Text>
 			</TouchableOpacity>
-			<View style={{ flex: 1, paddingHorizontal: 20, marginTop: 10 }}>
-				<Tab.Navigator
+			<View style={{ flex: 1, marginHorizontal: 20, marginTop: 10 }}>
+				{/* <Tab.Navigator
 					tabBar={(props) => <MyTabBar {...props} />}
 					screenOptions={{ swipeEnabled: false }}
 					sceneContainerStyle={{ backgroundColor: "#fff", paddingTop: 20 }}
 				>
 					<Tab.Screen name="Рейс" component={Tab1} />
 					<Tab.Screen name="Гүйцэтгэл" component={Tab2} />
-				</Tab.Navigator>
+				</Tab.Navigator> */}
+				<Tab1 />
 			</View>
 			<CustomDialog
 				visible={visibleDialog}

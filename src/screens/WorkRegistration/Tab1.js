@@ -147,7 +147,7 @@ const Tab1 = (props) => {
 					<Text style={{ fontWeight: "600", fontSize: 16 }}>{selectedDate.name}</Text>
 					<Icon name="keyboard-arrow-down" type="material-icons" size={30} />
 				</TouchableOpacity>
-				<Button
+				{/* <Button
 					buttonStyle={styles.addBtnStyle}
 					title="Бүртгэл нэмэх"
 					titleStyle={{
@@ -155,7 +155,7 @@ const Tab1 = (props) => {
 						fontWeight: "bold"
 					}}
 					onPress={() => navigation.navigate("CreateReisScreen")}
-				/>
+				/> */}
 			</View>
 			<View
 				style={{
