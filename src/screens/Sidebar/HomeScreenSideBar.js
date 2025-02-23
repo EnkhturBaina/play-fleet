@@ -15,7 +15,7 @@ const HomeScreenSideBar = (props) => {
 			nav: "NAV_PATH",
 			isMore: true,
 			action: () => {
-				props.setIsOpen(false);
+				// props.setIsOpen(false);
 				navigation.navigate("WorkRegistrationScreen");
 			}
 		},
@@ -35,7 +35,7 @@ const HomeScreenSideBar = (props) => {
 			nav: "NAV_PATH",
 			isMore: true,
 			action: () => {
-				props.setIsOpen(false);
+				// props.setIsOpen(false);
 				navigation.navigate("MotoHoursAndFuelScreen");
 			}
 		},
@@ -45,7 +45,7 @@ const HomeScreenSideBar = (props) => {
 			nav: "NAV_PATH",
 			isMore: true,
 			action: () => {
-				props.setIsOpen(false);
+				// props.setIsOpen(false);
 				navigation.navigate("InspectionReportScreen");
 			}
 		},

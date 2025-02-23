@@ -32,7 +32,7 @@ const SelectEquipmentScreen = () => {
 				setSavingEq(false);
 			});
 		} catch (error) {
-			console.log("Saving selected EQ error=> ", error);
+			console.log("error Saving selected EQ => ", error);
 		}
 	};
 	const getLocalSelectedEq = async () => {

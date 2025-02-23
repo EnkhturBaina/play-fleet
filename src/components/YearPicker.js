@@ -12,8 +12,6 @@ const YearPicker = ({
 	const sheetRef = useRef(); //Bottomsheet
 	const [heightBottomSheet, setHeightBottomSheet] = useState(0);
 	useEffect(() => {
-		console.log("bodyText", bodyText);
-
 		if (bodyText && bodyText?.length == 1) {
 			setHeightBottomSheet(Platform.OS == "ios" ? 90 : 80);
 		} else if (bodyText && bodyText?.length == 2) {

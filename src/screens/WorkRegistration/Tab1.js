@@ -45,7 +45,6 @@ const Tab1 = (props) => {
 	};
 
 	const getCycleList = async () => {
-		console.log("selectedDate", selectedDate);
 		const newDate = new Date(selectedDate.id);
 		// console.log("selectedEquipment", state.selectedEquipment?.id);
 		// console.log("employeeData", state.employeeData?.id);
@@ -70,7 +69,7 @@ const Tab1 = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("get CycleList response", JSON.stringify(response.data));
+					// console.log("get CycleList response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setCycleData(response.data?.Extra);
 					}

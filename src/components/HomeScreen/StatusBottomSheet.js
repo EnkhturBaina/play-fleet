@@ -79,6 +79,14 @@ export default function (props) {
 		}
 	}, [stateParentId]);
 
+	useEffect(() => {
+		const filteredDefaultState = state.refStates?.filter(
+			(item) => item.id === state.projectData?.PMSProgressStateId && item.IsActive === 1
+		);
+
+		state.setSelectedState(filteredDefaultState[0]);
+	}, []);
+
 	const selectState = (selectedState, selectedStateImage) => {
 		animatedValue.setValue(1);
 		state.handleReset();
@@ -90,7 +98,7 @@ export default function (props) {
 	};
 
 	return (
-		<BottomSheet ref={props.bottomSheetRef} snapPoints={[130, 500]} onChange={handleSheetChanges}>
+		<BottomSheet ref={props.bottomSheetRef} snapPoints={[135, 500]} onChange={handleSheetChanges}>
 			<BottomSheetView style={styles.contentContainer}>
 				<View
 					style={{

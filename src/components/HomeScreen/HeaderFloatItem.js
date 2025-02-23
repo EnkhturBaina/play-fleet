@@ -163,7 +163,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
+					// console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						state.setHeaderSelections((prev) => ({
@@ -188,7 +188,7 @@ const HeaderFloatItem = (props) => {
 		<View style={styles.floatButtons}>
 			<View style={styles.mainContainer}>
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-					<Text style={{ color: MAIN_COLOR, fontSize: 18, height: 15 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
+					<Text style={{ color: MAIN_COLOR, fontSize: 18, height: 20 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
 					{state.orientation == "PORTRAIT" ? (
 						<TouchableOpacity
 							onPress={() => {

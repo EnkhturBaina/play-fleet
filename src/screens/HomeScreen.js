@@ -65,7 +65,6 @@ const HomeScreen = (props) => {
 				setEquipmentImage(require("../../assets/icon.png"));
 			}
 		}
-		// console.log("STATE refStates=>", JSON.stringify(state.refStates));
 		// console.log("refLocations", state.refLocations);
 		// console.log("refLocationTypes", state.refLocationTypes);
 
@@ -231,6 +230,9 @@ const HomeScreen = (props) => {
 								contentFit="contain"
 							/>
 						</View>
+						<View style={styles.radiusLabel}>
+							<Text style={{ fontWeight: "600", fontSize: 12 }}>{state.selectedEquipment?.Name}</Text>
+						</View>
 					</Marker>
 					{/* <Circle
 						center={{
@@ -253,37 +255,45 @@ const HomeScreen = (props) => {
 						strokeColor={MAIN_COLOR}
 						fillColor={MAIN_COLOR + "80"}
 					/>
-					{state.refLocations &&
-						state.refLocations?.map((el, index) => {
-							return (
-								<View key={index}>
-									<Circle
-										center={{
-											latitude: parseFloat(el.Latitude),
-											longitude: parseFloat(el.Longitude)
-										}}
-										radius={el.Radius}
-										strokeWidth={2}
-										strokeColor={MAIN_COLOR}
-										fillColor={el.Color + "80"}
-									/>
-									<Marker
-										coordinate={{
-											latitude: parseFloat(el.Latitude),
-											longitude: parseFloat(el.Longitude)
-										}}
-										anchor={{ x: 0.5, y: 0.5 }}
-									>
-										<View style={styles.radiusLabel}>
-											<Text style={{ fontWeight: "600" }}>
-												{state.refLocationTypes?.filter((item) => item.id === el.PMSLocationTypeId)[0]?.Name}
-											</Text>
-											<Text style={{ fontWeight: "600" }}>{el.Name}</Text>
-										</View>
-									</Marker>
-								</View>
-							);
-						})}
+					{state.refLocations?.map((el, index) => {
+						const location = state.refLocationTypes?.find((item) => item.id === el.PMSLocationTypeId);
+
+						// Optimize location image lookup with a dictionary
+						const locationImages = {
+							DMP: require("../../assets/locations/DMP.png"),
+							MILL: require("../../assets/locations/MILL.png"),
+							STK: require("../../assets/locations/STK.png"),
+							PIT: require("../../assets/locations/PIT.png")
+						};
+
+						const locationImg = locationImages[location?.Name] || null;
+						const latitude = parseFloat(el.Latitude);
+						const longitude = parseFloat(el.Longitude);
+
+						return (
+							<View key={index}>
+								<Circle
+									center={{ latitude, longitude }}
+									radius={el.Radius}
+									strokeWidth={2}
+									strokeColor={MAIN_COLOR}
+									fillColor={`${el.Color}80`}
+								/>
+								<Marker coordinate={{ latitude, longitude }} anchor={{ x: 0.5, y: 0.5 }}>
+									<View style={styles.customMarker}>
+										{locationImg && (
+											<Image source={locationImg} style={{ width: 30, height: 30 }} contentFit="contain" />
+										)}
+									</View>
+									<View style={styles.radiusLabel}>
+										<Text style={{ fontWeight: "600" }}>{location?.Name}</Text>
+										<Text style={{ fontWeight: "600" }}>{el.Name}</Text>
+									</View>
+								</Marker>
+							</View>
+						);
+					})}
+
 					{!loadingKML &&
 						polygons?.length > 0 &&
 						polygons?.map((el, index) => {
@@ -323,11 +333,14 @@ const styles = StyleSheet.create({
 	customMarker: {
 		backgroundColor: "#fff",
 		borderRadius: 50,
-		padding: 5
+		padding: 5,
+		width: 40,
+		height: 40,
+		alignSelf: "center"
 	},
 	radiusLabel: {
 		backgroundColor: "white",
-		padding: 5,
+		padding: 2,
 		borderRadius: 5,
 		borderWidth: 1,
 		borderColor: "black",

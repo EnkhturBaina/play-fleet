@@ -250,7 +250,7 @@ export const MainStore = (props) => {
 						}
 					)
 					.then(async function (response) {
-						console.log("get references response", JSON.stringify(response.data));
+						// console.log("get references response", JSON.stringify(response.data));
 						if (response.data?.Type == 0) {
 							//Local storage руу access_token хадгалах
 							//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
@@ -334,6 +334,8 @@ export const MainStore = (props) => {
 	};
 
 	const sendEquipmentLocation = async (currentLocation, currentSpeed) => {
+		console.log("TOKEN", token);
+
 		if (currentLocation && currentSpeed) {
 			console.log("sendEquipmentLocation running");
 			try {
@@ -374,6 +376,10 @@ export const MainStore = (props) => {
 
 	// AsyncStorage.clear();
 	const logout = async (type) => {
+		handleReset();
+		setSelectedState(null);
+		setSelectedEquipmentCode(null);
+		setSelectedEquipment(null);
 		//***** Profile -с гарах дарсан үед утасны LOCALSTORE -с user, user_bio устгах
 		const keys = [
 			// "local_notif",

@@ -133,7 +133,7 @@ const StatusMenu = (props) => {
 						key={index}
 						style={styles.eachMenuContainer}
 						onPress={() => {
-							props.setIsOpen(false);
+							// props.setIsOpen(false);
 							navigation.navigate("StatusListScreen", {
 								codeIds: el.codeIds
 							});

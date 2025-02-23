@@ -48,10 +48,7 @@ const MotoHoursAndFuelScreen = (props) => {
 	};
 
 	const getSmuData = async () => {
-		console.log("selectedDate", selectedDate);
 		const newDate = new Date(selectedDate.id);
-		// console.log("selectedEquipment", state.selectedEquipment?.id);
-		// console.log("employeeData", state.employeeData?.id);
 
 		setSmuData(null);
 		setLoadingSmuData(true);
@@ -74,7 +71,7 @@ const MotoHoursAndFuelScreen = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("get SmuData response", JSON.stringify(response.data));
+					// console.log("get SmuData response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setSmuData(response.data?.Extra);
 					}
