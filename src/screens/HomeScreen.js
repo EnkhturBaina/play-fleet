@@ -69,9 +69,10 @@ const HomeScreen = (props) => {
 				setEquipmentImage(require("../../assets/icon.png"));
 			}
 		}
-		// console.log("refLocations", state.refLocations);
+		// console.log("selectedEquipmentCode", state.selectedEquipmentCode);
 		// console.log("refLocationTypes", state.refLocationTypes);
-
+		startTracking();
+		checkIfFileExistsAndLoad();
 		// const interval = setInterval(() => {
 		// 	state.checkIfInsideCircle(300).then((isInside) => {
 		// 		console.log("isInside", isInside);
@@ -217,27 +218,39 @@ const HomeScreen = (props) => {
 					scrollEnabled={true}
 					mapType="satellite"
 				>
-					<Marker
-						title="Таны одоогийн байршил"
-						coordinate={{
-							latitude: parseFloat(state.location?.coords?.latitude) || 0,
-							longitude: parseFloat(state.location?.coords?.longitude) || 0
-						}}
-					>
-						<View style={styles.customMarker}>
-							<Image
-								source={equipmentImage}
-								style={{
-									width: 30,
-									height: 30
-								}}
-								contentFit="contain"
-							/>
-						</View>
-						<View style={styles.radiusLabel}>
-							<Text style={{ fontWeight: "600", fontSize: 12 }}>{state.selectedEquipment?.Name}</Text>
-						</View>
-					</Marker>
+					<View>
+						<Circle
+							center={{
+								latitude: parseFloat(state.location?.coords?.latitude) || 0,
+								longitude: parseFloat(state.location?.coords?.longitude) || 0
+							}}
+							radius={state.selectedEquipmentCode == 1 ? 400 : 200}
+							strokeWidth={2}
+							strokeColor={MAIN_COLOR}
+							fillColor={`${MAIN_COLOR}80`}
+						/>
+						<Marker
+							title="Таны одоогийн байршил"
+							coordinate={{
+								latitude: parseFloat(state.location?.coords?.latitude) || 0,
+								longitude: parseFloat(state.location?.coords?.longitude) || 0
+							}}
+						>
+							<View style={styles.customMarker}>
+								<Image
+									source={equipmentImage}
+									style={{
+										width: 30,
+										height: 30
+									}}
+									contentFit="contain"
+								/>
+							</View>
+							<View style={styles.radiusLabel}>
+								<Text style={styles.radiusText}>{state.selectedEquipment?.Name}</Text>
+							</View>
+						</Marker>
+					</View>
 					{/* <Circle
 						center={{
 							latitude: 47.9018422308,
@@ -249,7 +262,7 @@ const HomeScreen = (props) => {
 						fillColor={"#4F9CC3"}
 					/> */}
 					{/* TEST CIRCLE */}
-					<Circle
+					{/* <Circle
 						center={{
 							latitude: parseFloat(47.91248048),
 							longitude: parseFloat(106.933822)
@@ -258,7 +271,7 @@ const HomeScreen = (props) => {
 						strokeWidth={2}
 						strokeColor={MAIN_COLOR}
 						fillColor={MAIN_COLOR + "80"}
-					/>
+					/> */}
 					{state.refLocations?.map((el, index) => {
 						const location = state.refLocationTypes?.find((item) => item.id === el.PMSLocationTypeId);
 
@@ -290,8 +303,8 @@ const HomeScreen = (props) => {
 										)}
 									</View>
 									<View style={styles.radiusLabel}>
-										<Text style={{ fontWeight: "600" }}>{location?.Name}</Text>
-										<Text style={{ fontWeight: "600" }}>{el.Name}</Text>
+										{/* <Text style={styles.radiusText}>{location?.Name}</Text> */}
+										<Text style={styles.radiusText}>{el.Name}</Text>
 									</View>
 								</Marker>
 							</View>
@@ -326,7 +339,7 @@ const HomeScreen = (props) => {
 						height: "100%"
 					}}
 				>
-					{/* <Text>
+					{/* <Text style={{ backgroundColor: "red" }}>
 						{polygons?.length} - {kmlStatus}
 					</Text> */}
 					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
@@ -364,12 +377,15 @@ const styles = StyleSheet.create({
 		alignSelf: "center"
 	},
 	radiusLabel: {
-		backgroundColor: "white",
 		padding: 2,
-		borderRadius: 5,
-		borderWidth: 1,
-		borderColor: "black",
 		flexDirection: "column",
 		alignItems: "center"
+	},
+	radiusText: {
+		color: "#fff",
+		fontWeight: "600",
+		textShadowColor: "black",
+		textShadowOffset: { width: 2, height: 2 },
+		textShadowRadius: 3
 	}
 });

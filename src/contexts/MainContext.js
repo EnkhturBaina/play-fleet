@@ -99,9 +99,9 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		// logout();
-		dropTable("ref_locations");
+		// dropTable("ref_locations");
 
-		dropTable("ref_states");
+		// dropTable("ref_states");
 		// dropTable("company");
 		// dropTable("roster");
 		// dropTable("shift");
@@ -119,7 +119,7 @@ export const MainStore = (props) => {
 
 		const interval = setInterval(() => {
 			checkLocationWithSpeed();
-		}, SEND_EQUIPMENT_LOCATION_MINS * 60 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
+		}, SEND_EQUIPMENT_LOCATION_MINS * 6 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
 
 		// Component unmount үед interval-ийг устгах
 		return () => clearInterval(interval);

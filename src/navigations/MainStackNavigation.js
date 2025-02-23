@@ -206,7 +206,7 @@ const MainStackNavigator = (props) => {
 							<TouchableOpacity
 								style={styles.headerLeftContainer}
 								onPress={() => {
-									// navigation.goBack();
+									state.logout();
 								}}
 							>
 								{/* <Icon name="keyboard-arrow-left" type="material-icons" size={30} /> */}
