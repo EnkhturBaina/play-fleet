@@ -36,17 +36,23 @@
 
    # Сервис ?
 
-4. Assigned => PMSProgressStateId
-5. Login => Project => PMSProgressStateId (SOngogdson tolow -d tohriuulah)
+-------TASK 25/02/23
 
-eelj duusgah
+# SEND EQ LOCATION service SyncTime
 
-1. progress/stop -r eeljee duusgana
-2. Moto tsagiin burtgel oruulna
-3.
+# Equipment Location
 
-STATE songoh
+#
 
-1. Uhrah vyd Dialog gargah
+1.  Assigned => PMSProgressStateId
+2.  Login => Project => PMSProgressStateId (SOngogdson tolow -d tohriuulah)
 
-SEND EQ LOCATION service SyncTime
+# Eelj duusgah
+
+1.  progress/stop (test gej damjuulah => eelj duusah tsag shalgaxgv)
+
+# STATE songoh
+
+1.  Uhrah vyd Dialog gargah
+2.  Algasah vyd?
+3.  Daraallin daguu vyd?
