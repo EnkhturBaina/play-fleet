@@ -265,9 +265,9 @@ const HeaderFloatItem = (props) => {
 				>
 					<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
 				</TouchableOpacity>
-				{/* <TouchableOpacity
+				<TouchableOpacity
 					onPress={() => {
-						navigation.navigate("TestTilesScreen");
+						props.setVisibleDialog();
 					}}
 					style={styles.eachFloatButton}
 				>
@@ -280,7 +280,7 @@ const HeaderFloatItem = (props) => {
 						contentFit="contain"
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity
+				{/*<TouchableOpacity
 					onPress={() => {
 						// props.navigation.navigate("TestSQL");
 						navigation.navigate("TestRenderUurhai");

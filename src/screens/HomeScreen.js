@@ -15,6 +15,7 @@ import * as FileSystem from "expo-file-system";
 import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
 import { Image } from "expo-image";
 import { MAIN_COLOR } from "../constant";
+import CustomDialog from "../components/CustomDialog";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -39,6 +40,9 @@ const HomeScreen = (props) => {
 	const [equipmentImage, setEquipmentImage] = useState(null);
 
 	const [speed, setSpeed] = useState(null);
+
+	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
+	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
 
 	const animateRef = () => {
 		if (mapRef.current) {
@@ -307,7 +311,12 @@ const HomeScreen = (props) => {
 							);
 						})}
 				</MapView>
-				<HeaderFloatItem isOpen={isOpen} setIsOpen={setIsOpen} mapRef={animateRef} />
+				<HeaderFloatItem
+					isOpen={isOpen}
+					setIsOpen={setIsOpen}
+					mapRef={animateRef}
+					setVisibleDialog={() => setVisibleDialog(true)}
+				/>
 				<View
 					style={{
 						position: "absolute",
@@ -323,6 +332,22 @@ const HomeScreen = (props) => {
 					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
 				</View>
 			</SideMenu>
+
+			<CustomDialog
+				visible={visibleDialog}
+				confirmFunction={() => {
+					props.navigation.navigate("CreateMotoHourAndFuelScreenHOME");
+					setVisibleDialog(false);
+				}}
+				declineFunction={() => {
+					setVisibleDialog(false);
+				}}
+				text={dialogText}
+				confirmBtnText="Дуусгах"
+				DeclineBtnText="Үгүй"
+				type={"warning"}
+				screenOrientation={state.orientation}
+			/>
 		</SafeAreaView>
 	);
 };

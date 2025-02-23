@@ -21,6 +21,7 @@ import SplashScreen from "../screens/SplashScreen";
 import SelectEquipmentScreen from "../screens/SelectEquipmentScreen";
 import InspectionScreen from "../screens/InspectionScreen";
 import InspectionReportScreen from "../screens/Sidebar/InspectionReportScreen";
+import CreateMotoHourAndFuelScreenHOME from "../screens/MotoHourAndFuel/CreateMotoHourAndFuelScreenHOME";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -190,6 +191,28 @@ const MainStackNavigator = (props) => {
 						title: "",
 						headerTitleStyle: {},
 						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="CreateMotoHourAndFuelScreenHOME"
+					component={CreateMotoHourAndFuelScreenHOME}
+					options={{
+						title: "",
+						headerTitleStyle: {
+							fontWeight: "bold"
+						},
+						gestureEnabled: false,
+						headerLeft: () => (
+							<TouchableOpacity
+								style={styles.headerLeftContainer}
+								onPress={() => {
+									// navigation.goBack();
+								}}
+							>
+								{/* <Icon name="keyboard-arrow-left" type="material-icons" size={30} /> */}
+								<Text style={styles.headerLeftText}>Мото цагийн болон түлшний бүртгэл</Text>
+							</TouchableOpacity>
+						)
 					}}
 				/>
 			</Stack.Navigator>
