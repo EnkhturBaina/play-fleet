@@ -26,5 +26,7 @@ export const WEEKDAYS = [
 export const SEND_EQUIPMENT_LOCATION_MINS = 5;
 export const HOME_STATES_START_CODE = "W1";
 
-export const ECHO_GET_STATES = "";
-export const ECHO_GET_NOTIFICATIONS = "";
+export const ECHO_EVENT_PROGRESS = ".PMSEquipmentStateChanged";
+export const ECHO_EVENT_NOTIFICATION = ".PMSNotificationSent";
+export const ECHO_REVERB_KEY = "qqm6lnpmsapiright";
+export const ECHO_REVERB_HOST = "pms.talent.mn";

@@ -14,11 +14,14 @@ import { useNetworkStatus } from "../contexts/NetworkContext";
 import * as FileSystem from "expo-file-system";
 import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
 import { Image } from "expo-image";
-import { MAIN_COLOR } from "../constant";
+import { ECHO_EVENT_PROGRESS, ECHO_REVERB_HOST, ECHO_REVERB_KEY, MAIN_COLOR, SERVER_URL } from "../constant";
 import CustomDialog from "../components/CustomDialog";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js/react-native";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
+const isEnd = 0;
 
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
@@ -42,7 +45,9 @@ const HomeScreen = (props) => {
 	const [speed, setSpeed] = useState(null);
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
-	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
+	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
+	const [dialogConfirmText, setDialogConfirmText] = useState(null); //Dialog confirm button text
+	const [dialogDeclineText, setDialogDeclineText] = useState(""); //Dialog decline button text
 
 	const animateRef = () => {
 		if (mapRef.current) {
@@ -87,6 +92,60 @@ const HomeScreen = (props) => {
 
 		// // Component unmount үед interval-ийг устгах
 		// return () => clearInterval(interval);
+		// console.log("employeeData", state.employeeData);
+
+		window.Pusher = Pusher;
+		// Pusher.logToConsole = true;
+		const echo = new Echo({
+			broadcaster: "reverb",
+			key: ECHO_REVERB_KEY,
+			wsHost: ECHO_REVERB_HOST,
+			wsPort: 8000, // production case: 8000 || 8082
+			wssPort: 443,
+			forceTLS: true, // production case: true
+			encrypted: true,
+			authEndpoint: `https://pms.talent.mn/api/broadcasting/auth`,
+			auth: {
+				headers: {
+					Authorization: `Bearer ${state.token}`
+				}
+			},
+			enabledTransports: ["ws", "wss"],
+			debug: false
+		});
+		// console.log("echo", echo);
+
+		if (echo) {
+			echo.private(`user.${state.employeeData?.id}`).listen(ECHO_EVENT_PROGRESS, (event) => {
+				console.log("ECHO_EVENT_PROGRESS:", JSON.stringify(event));
+
+				if (event) {
+					state.setHeaderSelections((prev) => ({
+						...prev,
+						startPosition: event.extra?.PMSLocationId,
+						blockNo: event.extra?.PMSBlastShotId,
+						endLocation: event.extra?.PMSDestinationId,
+						exca: event.extra?.PMSLoaderId,
+						material: event.extra?.PMSMaterialUnitId
+					}));
+
+					setDialogText(event.message);
+					setDialogConfirmText("Ок");
+					setDialogDeclineText("");
+					setVisibleDialog(true);
+				}
+				state.setEchoStateData(event);
+				// console.log("ECHO_EVENT_PROGRESS:", event.message);
+			});
+			return () => {
+				console.log("return");
+				echo.private(`user.${state.employeeData?.id}`).stopListening(ECHO_EVENT_PROGRESS);
+			};
+		}
+
+		return () => {
+			// echo.disconnect();
+		};
 	}, []);
 
 	useEffect(() => {
@@ -328,7 +387,12 @@ const HomeScreen = (props) => {
 					isOpen={isOpen}
 					setIsOpen={setIsOpen}
 					mapRef={animateRef}
-					setVisibleDialog={() => setVisibleDialog(true)}
+					setVisibleDialog={() => {
+						setDialogText("Та ээлжээ дуусгах уу?");
+						setDialogConfirmText("Дуусгах");
+						setDialogDeclineText("Үгүй");
+						setVisibleDialog(true);
+					}}
 				/>
 				<View
 					style={{
@@ -349,15 +413,15 @@ const HomeScreen = (props) => {
 			<CustomDialog
 				visible={visibleDialog}
 				confirmFunction={() => {
-					props.navigation.navigate("CreateMotoHourAndFuelScreenHOME");
+					isEnd && props.navigation.navigate("CreateMotoHourAndFuelScreenHOME");
 					setVisibleDialog(false);
 				}}
 				declineFunction={() => {
 					setVisibleDialog(false);
 				}}
 				text={dialogText}
-				confirmBtnText="Дуусгах"
-				DeclineBtnText="Үгүй"
+				confirmBtnText={dialogConfirmText}
+				DeclineBtnText={dialogDeclineText}
 				type={"warning"}
 				screenOrientation={state.orientation}
 			/>

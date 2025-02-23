@@ -52,6 +52,7 @@ export const MainStore = (props) => {
 	const [locationWithSpeed, setLocationWithSpeed] = useState(null);
 	const [savedInspectionId, setSavedInspectionId] = useState(null);
 	const [selectedState, setSelectedState] = useState(null);
+	const [echoStateData, setEchoStateData] = useState(null); // echo -р ирсэн дата хадгалах
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -319,8 +320,8 @@ export const MainStore = (props) => {
 			const currentLocation = await Location.getCurrentPositionAsync({
 				accuracy: Location.Accuracy.Balanced
 			});
-
-			console.log("Location response =>", currentLocation);
+			setLocation(currentLocation);
+			// console.log("Location response =>", currentLocation);
 
 			const currentSpeed = currentLocation.coords.speed; // м/сек
 			setLocationWithSpeed(currentLocation);
@@ -337,7 +338,7 @@ export const MainStore = (props) => {
 		console.log("TOKEN", token);
 
 		if (currentLocation && currentSpeed) {
-			console.log("sendEquipmentLocation running");
+			// console.log("RUN send EquipmentLocation");
 			try {
 				await axios
 					.post(
@@ -360,7 +361,8 @@ export const MainStore = (props) => {
 						}
 					)
 					.then(function (response) {
-						console.log("send EQ Location response", JSON.stringify(response.data));
+						// console.log("send EQ Location response", JSON.stringify(response.data));
+						console.log("send EQ Location response", JSON.stringify(response.data.Msg));
 						if (response.data?.Type == 0) {
 						} else {
 						}
@@ -509,7 +511,9 @@ export const MainStore = (props) => {
 				checkIfInsideCircle,
 				refLoaders,
 				refLoaderTypes,
-				refShots
+				refShots,
+				echoStateData,
+				setEchoStateData
 			}}
 		>
 			{props.children}
