@@ -74,7 +74,7 @@ const HomeScreen = (props) => {
 				setEquipmentImage(require("../../assets/icon.png"));
 			}
 		}
-		// console.log("selectedEquipmentCode", state.selectedEquipmentCode);
+		console.log("selectedState", state.selectedState);
 		// console.log("refLocationTypes", state.refLocationTypes);
 		startTracking();
 		checkIfFileExistsAndLoad();
@@ -120,6 +120,11 @@ const HomeScreen = (props) => {
 				console.log("ECHO_EVENT_PROGRESS:", JSON.stringify(event));
 
 				if (event) {
+					// Сонгогдсон төлөв солих START
+					const filteredDefaultState = state.refStates?.filter((item) => item.id === event.extra?.PMSProgressStateId);
+					state.setSelectedState(filteredDefaultState[0]);
+					// Сонгогдсон төлөв солих END
+
 					state.setHeaderSelections((prev) => ({
 						...prev,
 						startPosition: event.extra?.PMSLocationId,
@@ -284,9 +289,9 @@ const HomeScreen = (props) => {
 								longitude: parseFloat(state.location?.coords?.longitude) || 0
 							}}
 							radius={state.selectedEquipmentCode == 1 ? 400 : 200}
-							strokeWidth={2}
-							strokeColor={MAIN_COLOR}
-							fillColor={`${MAIN_COLOR}80`}
+							strokeWidth={1}
+							strokeColor="#fff"
+							fillColor={`${state.selectedState?.Color}80`}
 						/>
 						<Marker
 							title="Таны одоогийн байршил"
@@ -351,8 +356,8 @@ const HomeScreen = (props) => {
 								<Circle
 									center={{ latitude, longitude }}
 									radius={el.Radius}
-									strokeWidth={2}
-									strokeColor={MAIN_COLOR}
+									strokeWidth={1}
+									strokeColor="#fff"
 									fillColor={`${el.Color}80`}
 								/>
 								<Marker coordinate={{ latitude, longitude }} anchor={{ x: 0.5, y: 0.5 }}>
@@ -433,11 +438,6 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
 	customMarker: {
-		backgroundColor: "#fff",
-		borderRadius: 50,
-		padding: 5,
-		width: 40,
-		height: 40,
 		alignSelf: "center"
 	},
 	radiusLabel: {
