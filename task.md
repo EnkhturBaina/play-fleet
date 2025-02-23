@@ -33,4 +33,20 @@
 2. Төлөвийг дарааллын дагуу анивчуулах
    # Хэдэн минутын дараа анивчуулах REFERENCE маягийн дата байх эсэх?
 3. Бүтээлийн бүртгэл
+
    # Сервис ?
+
+4. Assigned => PMSProgressStateId
+5. Login => Project => PMSProgressStateId (SOngogdson tolow -d tohriuulah)
+
+eelj duusgah
+
+1. progress/stop -r eeljee duusgana
+2. Moto tsagiin burtgel oruulna
+3.
+
+STATE songoh
+
+1. Uhrah vyd Dialog gargah
+
+SEND EQ LOCATION service SyncTime

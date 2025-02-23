@@ -116,15 +116,16 @@ export const MainStore = (props) => {
 			//Интернэтгүй бол шууд location шалгаад local шалгах
 			checkLocation();
 		}
-		isLoggedIn && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
+		isLoggedIn && inspectionDone && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
 
 		const interval = setInterval(() => {
 			checkLocationWithSpeed();
-		}, SEND_EQUIPMENT_LOCATION_MINS * 6 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
+		}, SEND_EQUIPMENT_LOCATION_MINS * 60 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
 
 		// Component unmount үед interval-ийг устгах
 		return () => clearInterval(interval);
 	}, []);
+
 	const checkForUpdates = async () => {
 		setIsLoading(true);
 		setIsCheckingUpdate(true);
@@ -195,7 +196,6 @@ export const MainStore = (props) => {
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах
 	const checkUserData = async () => {
 		console.log("RUN check User Data");
-		// logout();
 		try {
 			const mainCompanyId = await AsyncStorage.getItem("mainCompanyId");
 			setMainCompanyId(mainCompanyId);
@@ -325,10 +325,16 @@ export const MainStore = (props) => {
 
 			const currentSpeed = currentLocation.coords.speed; // м/сек
 			setLocationWithSpeed(currentLocation);
-			setSpeed(currentSpeed !== null ? (currentSpeed * 3.6).toFixed(2) : "0.00"); // км/цаг руу хөрвүүлнэ
+			if (currentSpeed !== null) {
+				if (currentSpeed < 0) {
+					setSpeed(0); // км/цаг руу хөрвүүлнэ
+				} else {
+					setSpeed((currentSpeed * 3.6).toFixed(2));
+				}
 
-			// Байршил болон хурд амжилттай авсны дараа дараагийн функцээ дуудна
-			sendEquipmentLocation(currentLocation, currentSpeed);
+				// Байршил болон хурд амжилттай авсны дараа дараагийн функцээ дуудна
+				sendEquipmentLocation(currentLocation, currentSpeed);
+			}
 		} catch (error) {
 			console.error("Error getting location:", error);
 		}
@@ -336,8 +342,10 @@ export const MainStore = (props) => {
 
 	const sendEquipmentLocation = async (currentLocation, currentSpeed) => {
 		console.log("TOKEN", token);
-
-		if (currentLocation && currentSpeed) {
+		if (!token) {
+			console.log("TOKEN NOT FOUND...");
+		}
+		if (currentLocation && currentSpeed && token) {
 			// console.log("RUN send EquipmentLocation");
 			try {
 				await axios
@@ -513,7 +521,8 @@ export const MainStore = (props) => {
 				refLoaderTypes,
 				refShots,
 				echoStateData,
-				setEchoStateData
+				setEchoStateData,
+				speed
 			}}
 		>
 			{props.children}

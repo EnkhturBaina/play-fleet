@@ -1,9 +1,7 @@
 import { StyleSheet, Text, View, Platform, StatusBar, SafeAreaView, Dimensions } from "react-native";
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState, useRef, useCallback } from "react";
 import HeaderUser from "../components/HeaderUser";
-import axios from "axios";
 import MainContext from "../contexts/MainContext";
-import * as Location from "expo-location";
 import Constants from "expo-constants";
 import MapView, { Circle, Marker, Polyline } from "react-native-maps";
 import SideMenu from "react-native-side-menu-updated";
@@ -14,10 +12,8 @@ import { useNetworkStatus } from "../contexts/NetworkContext";
 import * as FileSystem from "expo-file-system";
 import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
 import { Image } from "expo-image";
-import { ECHO_EVENT_PROGRESS, ECHO_REVERB_HOST, ECHO_REVERB_KEY, MAIN_COLOR, SERVER_URL } from "../constant";
 import CustomDialog from "../components/CustomDialog";
-import Echo from "laravel-echo";
-import Pusher from "pusher-js/react-native";
+import useCustomEffect from "../helper/useCustomEffect";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -42,115 +38,35 @@ const HomeScreen = (props) => {
 
 	const [equipmentImage, setEquipmentImage] = useState(null);
 
-	const [speed, setSpeed] = useState(null);
-
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
 	const [dialogConfirmText, setDialogConfirmText] = useState(null); //Dialog confirm button text
 	const [dialogDeclineText, setDialogDeclineText] = useState(""); //Dialog decline button text
 
-	const animateRef = () => {
-		if (mapRef.current) {
-			state.location
-				? mapRef.current.animateToRegion({
-						latitude: parseFloat(state.location?.coords?.latitude) || 0,
-						longitude: parseFloat(state.location?.coords?.longitude) || 0,
-						latitudeDelta: 0.05,
-						longitudeDelta: 0.05
-				  })
-				: null;
-		}
-	};
-	useEffect(() => {
-		state.detectOrientation();
-		if (state.selectedEquipment) {
-			if (state.selectedEquipment?.TypeName == "Truck") {
-				setEquipmentImage(require("../../assets/status/truck_main.png"));
-			} else if (state.selectedEquipment?.TypeName == "Loader") {
-				setEquipmentImage(require("../../assets/status/loader_main.png"));
-			} else if (state.selectedEquipment?.TypeName == "Other") {
-				setEquipmentImage(require("../../assets/status/other_main.png"));
-			} else {
-				setEquipmentImage(require("../../assets/icon.png"));
-			}
-		}
-		// console.log("selectedState", state.selectedState);
-		// console.log("refLocationTypes", state.refLocationTypes);
-		startTracking();
-		checkIfFileExistsAndLoad();
-		// const interval = setInterval(() => {
-		// 	state.checkIfInsideCircle(300).then((isInside) => {
-		// 		console.log("isInside", isInside);
-
-		// 		if (isInside) {
-		// 			console.log("✅ Та радиус дотор байна!");
-		// 		} else {
-		// 			console.log("❌ Та радиусын гадна байна!");
-		// 		}
-		// 	});
-		// }, 5 * 1000);
-
-		// // Component unmount үед interval-ийг устгах
-		// return () => clearInterval(interval);
-		// console.log("employeeData", state.employeeData);
-
-		window.Pusher = Pusher;
-		// Pusher.logToConsole = true;
-		const echo = new Echo({
-			broadcaster: "reverb",
-			key: ECHO_REVERB_KEY,
-			wsHost: ECHO_REVERB_HOST,
-			wsPort: 8000, // production case: 8000 || 8082
-			wssPort: 443,
-			forceTLS: true, // production case: true
-			encrypted: true,
-			authEndpoint: `https://pms.talent.mn/api/broadcasting/auth`,
-			auth: {
-				headers: {
-					Authorization: `Bearer ${state.token}`
-				}
-			},
-			enabledTransports: ["ws", "wss"],
-			debug: false
-		});
-		// console.log("echo", echo);
-
-		if (echo) {
-			echo.private(`user.${state.employeeData?.id}`).listen(ECHO_EVENT_PROGRESS, (event) => {
-				console.log("ECHO_EVENT_PROGRESS:", JSON.stringify(event));
-
-				if (event) {
-					// Сонгогдсон төлөв солих START
-					const filteredDefaultState = state.refStates?.filter((item) => item.id === event.extra?.PMSProgressStateId);
-					state.setSelectedState(filteredDefaultState[0]);
-					// Сонгогдсон төлөв солих END
-
-					state.setHeaderSelections((prev) => ({
-						...prev,
-						startPosition: event.extra?.PMSLocationId,
-						blockNo: event.extra?.PMSBlastShotId,
-						endLocation: event.extra?.PMSDestinationId,
-						exca: event.extra?.PMSLoaderId,
-						material: event.extra?.PMSMaterialUnitId
-					}));
-
-					setDialogText(event.message);
-					setDialogConfirmText("Ок");
-					setDialogDeclineText("");
-					setVisibleDialog(true);
-				}
-				state.setEchoStateData(event);
-				// console.log("ECHO_EVENT_PROGRESS:", event.message);
+	const animateRef = useCallback(() => {
+		if (mapRef.current && state.location) {
+			mapRef.current.animateToRegion({
+				latitude: parseFloat(state.location?.coords?.latitude) || 0,
+				longitude: parseFloat(state.location?.coords?.longitude) || 0,
+				latitudeDelta: 0.05,
+				longitudeDelta: 0.05
 			});
-			return () => {
-				console.log("return");
-				echo.private(`user.${state.employeeData?.id}`).stopListening(ECHO_EVENT_PROGRESS);
-			};
 		}
+	}, [state.location]);
 
-		return () => {
-			// echo.disconnect();
-		};
+	useCustomEffect(
+		state,
+		setEquipmentImage,
+		setDialogText,
+		setDialogConfirmText,
+		setDialogDeclineText,
+		setVisibleDialog
+	);
+
+	useEffect(() => {
+		// Байршил шалгах
+		checkIfFileExistsAndLoad();
+		console.log("token", state.token);
 	}, []);
 
 	useEffect(() => {
@@ -164,38 +80,6 @@ const HomeScreen = (props) => {
 		}
 		return () => clearInterval(interval);
 	}, [state.isActiveTimer]);
-
-	//TIMER CONTROL
-	// <Button title={isActive ? "Pause" : "Start"} onPress={isActive ? handlePause : handleStart} />
-	// <Button title="Reset" onPress={handleReset} />
-
-	const startTracking = async () => {
-		// Байршил ашиглах зөвшөөрөл авах
-		const { status } = await Location.requestForegroundPermissionsAsync();
-		if (status !== "granted") {
-			setErrorMsg("Байршлын зөвшөөрөл олгогдоогүй байна!");
-			return;
-		}
-
-		// Байршлыг бодит цагийн горимд авах
-		await Location.watchPositionAsync(
-			{
-				accuracy: Location.Accuracy.Balanced,
-				timeInterval: 1000, // 1 секунд тутамд шинэчлэнэ
-				distanceInterval: 1 // 1 метр тутамд шинэчлэнэ
-			},
-			(location) => {
-				// console.log("location", location);
-				// Хурдыг м/сек-ээр авах
-				const currentSpeed = location.coords.speed; // м/сек
-				// console.log("currentSpeed", currentSpeed);
-
-				if (currentSpeed !== null) {
-					setSpeed((currentSpeed * 3.6).toFixed(2)); // км/цаг руу хөрвүүлнэ
-				}
-			}
-		);
-	};
 
 	// Файлыг шалгах болон лоад хийх
 	const checkIfFileExistsAndLoad = async () => {
@@ -408,9 +292,7 @@ const HomeScreen = (props) => {
 						height: "100%"
 					}}
 				>
-					{/* <Text style={{ backgroundColor: "red" }}>
-						{polygons?.length} - {kmlStatus}
-					</Text> */}
+					<Text style={{ backgroundColor: "red" }}>speed:{state.speed}</Text>
 					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
 				</View>
 			</SideMenu>
