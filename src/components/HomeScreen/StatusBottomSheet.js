@@ -98,7 +98,7 @@ export default function (props) {
 	};
 
 	return (
-		<BottomSheet ref={props.bottomSheetRef} snapPoints={[135, 500]} onChange={handleSheetChanges}>
+		<BottomSheet ref={props.bottomSheetRef} snapPoints={[130, 500]} onChange={handleSheetChanges}>
 			<BottomSheetView style={styles.contentContainer}>
 				<View
 					style={{

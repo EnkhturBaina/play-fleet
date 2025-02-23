@@ -74,7 +74,7 @@ const HomeScreen = (props) => {
 				setEquipmentImage(require("../../assets/icon.png"));
 			}
 		}
-		console.log("selectedState", state.selectedState);
+		// console.log("selectedState", state.selectedState);
 		// console.log("refLocationTypes", state.refLocationTypes);
 		startTracking();
 		checkIfFileExistsAndLoad();
