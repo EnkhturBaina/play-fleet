@@ -102,6 +102,7 @@ export const createTable = async () => {
 				PMSProgressStateId INTEGER,
 				KMLFile TEXT,
 				Radius INTEGER,
+				SyncTime INTEGER,
 				status TEXT
       );`
 		);
@@ -230,8 +231,8 @@ export const insertLoginData = async (data) => {
 		// project өгөгдөл оруулах
 		if (project) {
 			const resultProject = await db.runAsync(
-				`INSERT INTO project (id, Name, PMSCompanyId, Commodity, ShiftTime, StartedDate, CurrentProject, CreatedBy, ModifiedBy, Latitude, Longitude, PMSProgressStateId, KMLFile, Radius, status)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+				`INSERT INTO project (id, Name, PMSCompanyId, Commodity, ShiftTime, StartedDate, CurrentProject, CreatedBy, ModifiedBy, Latitude, Longitude, PMSProgressStateId, KMLFile, Radius, SyncTime, status)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 				[
 					project.id,
 					project.Name,
@@ -247,6 +248,7 @@ export const insertLoginData = async (data) => {
 					project.PMSProgressStateId,
 					project.KMLFile,
 					project.Radius,
+					project.SyncTime,
 					project.status
 				]
 			);

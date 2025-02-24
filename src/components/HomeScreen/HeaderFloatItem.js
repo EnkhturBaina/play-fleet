@@ -170,7 +170,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
+					// console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						state.setHeaderSelections((prev) => ({

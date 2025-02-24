@@ -133,9 +133,12 @@ export const MainStore = (props) => {
 		}
 		isLoggedIn && inspectionDone && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
 
-		const interval = setInterval(() => {
-			checkLocationWithSpeed();
-		}, SEND_EQUIPMENT_LOCATION_MINS * 60 * 1000); // 5 минут тутамд хүсэлт явуулна (5*60*1000 = 300,000 мс)
+		const interval = setInterval(
+			() => {
+				checkLocationWithSpeed();
+			},
+			projectData?.SyncTime ? projectData?.SyncTime * 1000 : 5 * 60 * 1000
+		); // Login response -н Project дотор SyncTime -д тохируулсан хугацаагааны давтамжаар Location илгээх
 
 		// Component unmount үед interval-ийг устгах
 		return () => clearInterval(interval);
