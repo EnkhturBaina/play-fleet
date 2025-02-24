@@ -53,6 +53,21 @@ export const MainStore = (props) => {
 	const [savedInspectionId, setSavedInspectionId] = useState(null);
 	const [selectedState, setSelectedState] = useState(null);
 	const [echoStateData, setEchoStateData] = useState(null); // echo -р ирсэн дата хадгалах
+	const [locationSource, setLocationSource] = useState({
+		SRC: { latitude: 47.92, longitude: 106.917, radius: 500 }, // Гол SRC төв
+		DST: { latitude: 47.914, longitude: 106.925, radius: 500 }, // Гол DST төв
+
+		SRC_SUB: {
+			STK: { latitude: 47.921, longitude: 106.918, radius: 200 },
+			PIT: { latitude: 47.919, longitude: 106.916, radius: 300 }
+		},
+
+		DST_SUB: {
+			DMP: { latitude: 47.915, longitude: 106.926, radius: 250 },
+			STK: { latitude: 47.913, longitude: 106.924, radius: 200 },
+			MILL: { latitude: 47.912, longitude: 106.923, radius: 150 }
+		}
+	});
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -435,6 +450,31 @@ export const MainStore = (props) => {
 		return distance <= radius;
 	};
 
+	const checkLocationStatus = (currentLocation, prevStatus) => {
+		const { latitude, longitude } = currentLocation;
+
+		const distanceToSRC = haversine(latitude, longitude, locationSource.SRC.latitude, locationSource.SRC.longitude);
+		const distanceToDST = haversine(latitude, longitude, locationSource.DST.latitude, locationSource.DST.longitude);
+
+		// ✅ SRC шалгах
+		if (distanceToSRC <= locationSource.SRC.radius * 0.8) {
+			return "SRC_IN";
+		} else if (distanceToSRC > locationSource.SRC.radius * 0.8 && distanceToSRC <= locationSource.SRC.radius) {
+			return "MINOR";
+		} else if (distanceToSRC > locationSource.SRC.radius && prevStatus === "SRC_IN") {
+			return "SRC_OUT";
+		}
+
+		// ✅ DST шалгах
+		if (distanceToDST <= locationSource.DST.radius * 0.8) {
+			return "DST_IN";
+		} else if (distanceToDST > locationSource.DST.radius && prevStatus === "DST_IN") {
+			return "DST_OUT";
+		}
+
+		return prevStatus; // Хэрэв өөрчлөлтгүй бол өмнөх төлөвийг хадгална
+	};
+
 	return (
 		<MainContext.Provider
 			value={{
@@ -522,7 +562,10 @@ export const MainStore = (props) => {
 				refShots,
 				echoStateData,
 				setEchoStateData,
-				speed
+				speed,
+				checkLocationStatus,
+				locationSource,
+				setLocationSource
 			}}
 		>
 			{props.children}

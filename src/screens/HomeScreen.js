@@ -14,6 +14,7 @@ import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
 import { Image } from "expo-image";
 import CustomDialog from "../components/CustomDialog";
 import useCustomEffect from "../helper/useCustomEffect";
+import { transformLocations } from "../helper/functions";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -66,7 +67,15 @@ const HomeScreen = (props) => {
 	useEffect(() => {
 		// Байршил шалгах
 		checkIfFileExistsAndLoad();
-		console.log("token", state.token);
+		// console.log("refLocations", state.refLocations);
+		// console.log("refLocationTypes", state.refLocationTypes);
+		// console.log("refStates", state.refStates);
+
+		const locationSource = transformLocations(state.refLocations, state.refLocationTypes);
+		// console.log("locationSource", JSON.stringify(locationSource));
+		if (locationSource) {
+			state.setLocationSource(locationSource);
+		}
 	}, []);
 
 	useEffect(() => {
@@ -199,16 +208,16 @@ const HomeScreen = (props) => {
 							</View>
 						</Marker>
 					</View>
-					{/* <Circle
+					<Circle
 						center={{
-							latitude: 47.9018422308,
-							longitude: 106.9192736393
+							latitude: 47.912620040145065,
+							longitude: 106.93352509456994
 						}}
 						radius={500}
 						strokeWidth={1}
 						strokeColor={"red"}
-						fillColor={"#4F9CC3"}
-					/> */}
+						fillColor={"#4F9CC380"}
+					/>
 					{/* TEST CIRCLE */}
 					{/* <Circle
 						center={{
@@ -230,6 +239,9 @@ const HomeScreen = (props) => {
 							STK: require("../../assets/locations/STK.png"),
 							PIT: require("../../assets/locations/PIT.png")
 						};
+
+						// STK, PIT => SRC
+						// DMP, STK, MILL => DST
 
 						const locationImg = locationImages[location?.Name] || null;
 						const latitude = parseFloat(el.Latitude);
@@ -292,7 +304,7 @@ const HomeScreen = (props) => {
 						height: "100%"
 					}}
 				>
-					<Text style={{ backgroundColor: "red" }}>speed:{state.speed}</Text>
+					{/* <Text style={{ backgroundColor: "red" }}>speed:{state.speed}</Text> */}
 					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
 				</View>
 			</SideMenu>
