@@ -107,57 +107,30 @@ export default function (props) {
 			MAIN_STATE_CODES.includes(selectedState?.ActivityShort)
 		) {
 			// 1. Хэрэв 30 секунд дотор сонгогдсон бол анхааруулга
-			if (state.seconds < 30) {
+			if (state.seconds < 3) {
 				setDialogText(
 					"Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?"
 				);
 				setOnConfirm(() => () => proceedWithStateChange(selectedState, selectedStateImage));
 				setVisibleDialog(true);
 
-				// Alert.alert(
-				// 	"Анхаар!",
-				// 	"Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?",
-				// 	[
-				// 		{ text: "Үгүй", style: "cancel" },
-				// 		{
-				// 			text: "Тийм",
-				// 			onPress: () => {
-				// 				proceedWithStateChange(selectedState, selectedStateImage);
-				// 			}
-				// 		}
-				// 	]
-				// );
 				return;
 			}
 			// 2. Өмнөх төлөвийг сонгоход анхааруулга өгөх
 			if (selectedState.ViewOrder < state.selectedState.ViewOrder) {
-				Alert.alert("Анхаар!", "Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?", [
-					{ text: "Үгүй", style: "cancel" },
-					{
-						text: "Тийм",
-						onPress: () => {
-							proceedWithStateChange(selectedState, selectedStateImage);
-						}
-					}
-				]);
+				setDialogText("Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?");
+				setOnConfirm(() => () => proceedWithStateChange(selectedState, selectedStateImage));
+				setVisibleDialog(true);
 				return;
 			}
 
 			// 3. Алхам алгасах үед анхааруулга өгөх
 			if (selectedState.ViewOrder > state.selectedState.ViewOrder + 1) {
-				Alert.alert(
-					"Анхаар!",
-					"Алхам алгасаж байгаа тул таны одоогийн рейсийн бүртгэл дутуу хадгалагдах боломжтой. Итгэлтэй байна уу?",
-					[
-						{ text: "Үгүй", style: "cancel" },
-						{
-							text: "Тийм",
-							onPress: () => {
-								proceedWithStateChange(selectedState, selectedStateImage);
-							}
-						}
-					]
+				setDialogText(
+					"Алхам алгасаж байгаа тул таны одоогийн рейсийн бүртгэл дутуу хадгалагдах боломжтой. Итгэлтэй байна уу?"
 				);
+				setOnConfirm(() => () => proceedWithStateChange(selectedState, selectedStateImage));
+				setVisibleDialog(true);
 				return;
 			}
 

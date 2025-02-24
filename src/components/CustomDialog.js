@@ -37,9 +37,10 @@ export default function ({
 			<Image source={imageType} style={{ width: 100, height: 100 }} contentFit="contain" />
 			<Text
 				style={{
-					fontWeight: "bold",
+					fontWeight: "600",
 					textAlign: "center",
-					marginVertical: 10
+					marginVertical: 10,
+					fontSize: 16
 				}}
 			>
 				{text}
@@ -97,13 +98,7 @@ const styles = StyleSheet.create({
 	container: {
 		width: "100%"
 	},
-	dialogBtn: {
-		marginBottom: 10,
-		marginHorizontal: 50,
-		backgroundColor: MAIN_COLOR
-	},
 	dialogDeclineBtn: {
-		marginHorizontal: 50,
-		marginVertical: 5
+		marginHorizontal: 50
 	}
 });
