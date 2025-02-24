@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, SERVER_URL, TEXT_COLOR_GRAY } from "../../constant";
 import { Dropdown } from "react-native-element-dropdown";
@@ -16,7 +16,7 @@ const HeaderFloatItem = (props) => {
 	const [assignedData, setAssignedData] = useState(null);
 
 	const startLines = 3;
-	const totalLines = 5;
+	const totalLines = 6;
 
 	const VEHICLE_TYPE = {
 		Loader: {
@@ -86,6 +86,13 @@ const HeaderFloatItem = (props) => {
 					id: 5,
 					name: "Материал",
 					path: "material",
+					dataPath: "refMaterials",
+					valuePath: "Name"
+				},
+				{
+					id: 6,
+					name: "Рейсийн тоо",
+					path: "reis",
 					dataPath: "refMaterials",
 					valuePath: "Name"
 				}
@@ -233,31 +240,34 @@ const HeaderFloatItem = (props) => {
 								>
 									{el.name}
 								</Text>
-								<Dropdown
-									key={index}
-									style={[styles.dropdown, focusStates[el.path] && { borderColor: "blue" }]}
-									placeholderStyle={[styles.placeholderStyle, { color: isEmpty ? TEXT_COLOR_GRAY : "#000" }]}
-									selectedTextStyle={styles.selectedTextStyle}
-									data={fieldData}
-									maxHeight={300}
-									labelField={el.valuePath}
-									valueField="id"
-									placeholder={isEmpty ? "Сонголт байхгүй" : !focusStates[el.path] ? "Сонгох" : "..."}
-									value={state.headerSelections?.[el.path]}
-									onFocus={() => handleFocus(el.path)} // focus болох үед handleFocus
-									onBlur={() => handleBlur(el.path)} // blur болох үед handleBlur
-									onChange={(item) => {
-										setFocusStates((prevState) => ({
-											...prevState,
-											[el.path]: false // select хийснээр focus-ийг салгана
-										}));
-										state.setHeaderSelections((prevState) => ({
-											...prevState,
-											[el.path]: item.id
-										}));
-									}}
-									disable={isEmpty}
-								/>
+								{el.path == "reis" ? <TextInput style={styles.inputStyle} value={"0"} editable={false} /> : null}
+								{el.path != "reis" ? (
+									<Dropdown
+										key={index}
+										style={[styles.dropdown, focusStates[el.path] && { borderColor: "blue" }]}
+										placeholderStyle={[styles.placeholderStyle, { color: isEmpty ? TEXT_COLOR_GRAY : "#000" }]}
+										selectedTextStyle={styles.selectedTextStyle}
+										data={fieldData}
+										maxHeight={300}
+										labelField={el.valuePath}
+										valueField="id"
+										placeholder={isEmpty ? "Сонголт байхгүй" : !focusStates[el.path] ? "Сонгох" : "..."}
+										value={state.headerSelections?.[el.path]}
+										onFocus={() => handleFocus(el.path)} // focus болох үед handleFocus
+										onBlur={() => handleBlur(el.path)} // blur болох үед handleBlur
+										onChange={(item) => {
+											setFocusStates((prevState) => ({
+												...prevState,
+												[el.path]: false // select хийснээр focus-ийг салгана
+											}));
+											state.setHeaderSelections((prevState) => ({
+												...prevState,
+												[el.path]: item.id
+											}));
+										}}
+										disable={isEmpty}
+									/>
+								) : null}
 							</View>
 						);
 					})}
@@ -384,5 +394,14 @@ const styles = StyleSheet.create({
 		width: width - 10,
 		marginHorizontal: 5,
 		borderRadius: MAIN_BORDER_RADIUS
+	},
+	inputStyle: {
+		borderColor: "#aeaeae",
+		borderWidth: 0.5,
+		paddingHorizontal: 8,
+		width: 200,
+		height: 35,
+		borderRadius: MAIN_BORDER_RADIUS,
+		fontWeight: "600"
 	}
 });
