@@ -67,7 +67,8 @@ const HomeScreen = (props) => {
 	useEffect(() => {
 		// Байршил шалгах
 		checkIfFileExistsAndLoad();
-		// console.log("refLocations", state.refLocations);
+		console.log("projectData", state.projectData);
+
 		// console.log("refLocationTypes", state.refLocationTypes);
 		// console.log("refStates", state.refStates);
 

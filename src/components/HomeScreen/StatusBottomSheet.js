@@ -108,6 +108,13 @@ export default function (props) {
 			MAIN_STATE_CODES.includes(state.selectedState?.ActivityShort) &&
 			MAIN_STATE_CODES.includes(selectedState?.ActivityShort)
 		) {
+			if (state.seconds == 0) {
+				// 0. Operator төлөв тохируулсан үед ямар ч төлөврүү шууд орох
+				// Энэ тохиолдол нь seconds == 0 Байх учир
+				proceedWithStateChange(selectedState, selectedStateImage);
+				return;
+			}
+
 			// 1. Хэрэв 30 секунд дотор сонгогдсон бол анхааруулга
 			if (state.seconds < 3) {
 				setDialogText(

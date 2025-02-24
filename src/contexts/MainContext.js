@@ -137,7 +137,7 @@ export const MainStore = (props) => {
 			() => {
 				checkLocationWithSpeed();
 			},
-			projectData?.SyncTime ? projectData?.SyncTime * 1000 : 5 * 60 * 1000
+			projectData?.SyncTime != null ? projectData?.SyncTime * 1000 : 5 * 60 * 1000
 		); // Login response -н Project дотор SyncTime -д тохируулсан хугацаагааны давтамжаар Location илгээх
 
 		// Component unmount үед interval-ийг устгах
@@ -328,6 +328,8 @@ export const MainStore = (props) => {
 	};
 
 	const checkLocationWithSpeed = async () => {
+		console.log("RUN check Location With Speed", projectData?.SyncTime);
+
 		const { status } = await Location.requestForegroundPermissionsAsync();
 		if (status !== "granted") {
 			console.log("Permission to access location was denied");
