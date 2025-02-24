@@ -5,6 +5,7 @@ import MainContext from "../../contexts/MainContext";
 import { Image } from "expo-image";
 import { MAIN_BORDER_RADIUS, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR } from "../../constant";
 import { formatTime } from "../../helper/functions";
+import CustomDialog from "../CustomDialog";
 
 export default function (props) {
 	const state = useContext(MainContext);
@@ -12,6 +13,10 @@ export default function (props) {
 	const [stateParentId, setStateParentId] = useState(null);
 	const [mainStates, setMainStates] = useState(null);
 	const [selectedStateImage, setSelectedStateImage] = useState(null);
+
+	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
+	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
+	const [onConfirm, setOnConfirm] = useState(null); // Дialog-ийн баталгаажуулалтын үйлдэл
 
 	const ENABLE_NEXT_STATUS = 3; // SECOND
 
@@ -97,30 +102,31 @@ export default function (props) {
 	const selectState = (selectedState, selectedStateImage) => {
 		// Үндсэн W1 -н State -үүд мөн эсэх
 
-		// setDialogText("Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?");
-		// setDialogConfirmText("Тийм");
-		// setDialogDeclineText("Үгүй");
-		// setVisibleDialog(true);
-
 		if (
 			MAIN_STATE_CODES.includes(state.selectedState?.ActivityShort) &&
 			MAIN_STATE_CODES.includes(selectedState?.ActivityShort)
 		) {
 			// 1. Хэрэв 30 секунд дотор сонгогдсон бол анхааруулга
 			if (state.seconds < 30) {
-				Alert.alert(
-					"Анхаар!",
-					"Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?",
-					[
-						{ text: "Үгүй", style: "cancel" },
-						{
-							text: "Тийм",
-							onPress: () => {
-								proceedWithStateChange(selectedState, selectedStateImage);
-							}
-						}
-					]
+				setDialogText(
+					"Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?"
 				);
+				setOnConfirm(() => () => proceedWithStateChange(selectedState, selectedStateImage));
+				setVisibleDialog(true);
+
+				// Alert.alert(
+				// 	"Анхаар!",
+				// 	"Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?",
+				// 	[
+				// 		{ text: "Үгүй", style: "cancel" },
+				// 		{
+				// 			text: "Тийм",
+				// 			onPress: () => {
+				// 				proceedWithStateChange(selectedState, selectedStateImage);
+				// 			}
+				// 		}
+				// 	]
+				// );
 				return;
 			}
 			// 2. Өмнөх төлөвийг сонгоход анхааруулга өгөх
@@ -225,6 +231,22 @@ export default function (props) {
 						})}
 				</ScrollView>
 			</BottomSheetView>
+
+			<CustomDialog
+				visible={visibleDialog}
+				confirmFunction={() => {
+					onConfirm();
+					setVisibleDialog(false);
+				}}
+				declineFunction={() => {
+					setVisibleDialog(false);
+				}}
+				text={dialogText}
+				confirmBtnText="Тийм"
+				DeclineBtnText="Үгүй"
+				type={"warning"}
+				screenOrientation={state.orientation}
+			/>
 		</BottomSheet>
 	);
 }
