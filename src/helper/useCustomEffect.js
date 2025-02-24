@@ -3,14 +3,7 @@ import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import { ECHO_EVENT_PROGRESS, ECHO_REVERB_HOST, ECHO_REVERB_KEY } from "../constant";
 
-const useCustomEffect = (
-	state,
-	setEquipmentImage,
-	setDialogText,
-	setDialogConfirmText,
-	setDialogDeclineText,
-	setVisibleDialog
-) => {
+const useCustomEffect = (state, setEquipmentImage, setDialogText, setDialogConfirmText, setVisibleDialog) => {
 	useEffect(() => {
 		state.detectOrientation();
 
@@ -63,7 +56,6 @@ const useCustomEffect = (
 					// Харилцах цонх гаргах
 					setDialogText(event.message);
 					setDialogConfirmText("Ок");
-					setDialogDeclineText("");
 					setVisibleDialog(true);
 				}
 
@@ -80,7 +72,7 @@ const useCustomEffect = (
 		return () => {
 			// echo.disconnect(); // Хэрэгтэй бол идэвхжүүлж болно
 		};
-	}, [state, setEquipmentImage, setDialogText, setDialogConfirmText, setDialogDeclineText, setVisibleDialog]);
+	}, [state, setEquipmentImage, setDialogText, setDialogConfirmText, setVisibleDialog]);
 };
 
 export default useCustomEffect;

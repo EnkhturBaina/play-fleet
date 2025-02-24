@@ -18,7 +18,6 @@ import { transformLocations } from "../helper/functions";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
-const isEnd = 0;
 
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
@@ -42,7 +41,6 @@ const HomeScreen = (props) => {
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
 	const [dialogConfirmText, setDialogConfirmText] = useState(null); //Dialog confirm button text
-	const [dialogDeclineText, setDialogDeclineText] = useState(""); //Dialog decline button text
 
 	const animateRef = useCallback(() => {
 		if (mapRef.current && state.location) {
@@ -55,19 +53,11 @@ const HomeScreen = (props) => {
 		}
 	}, [state.location]);
 
-	useCustomEffect(
-		state,
-		setEquipmentImage,
-		setDialogText,
-		setDialogConfirmText,
-		setDialogDeclineText,
-		setVisibleDialog
-	);
+	useCustomEffect(state, setEquipmentImage, setDialogText, setDialogConfirmText, setVisibleDialog);
 
 	useEffect(() => {
 		// Байршил шалгах
 		checkIfFileExistsAndLoad();
-		console.log("projectData", state.projectData);
 
 		// console.log("refLocationTypes", state.refLocationTypes);
 		// console.log("refStates", state.refStates);
@@ -285,17 +275,7 @@ const HomeScreen = (props) => {
 							);
 						})}
 				</MapView>
-				<HeaderFloatItem
-					isOpen={isOpen}
-					setIsOpen={setIsOpen}
-					mapRef={animateRef}
-					setVisibleDialog={() => {
-						setDialogText("Та ээлжээ дуусгах уу?");
-						setDialogConfirmText("Дуусгах");
-						setDialogDeclineText("Үгүй");
-						setVisibleDialog(true);
-					}}
-				/>
+				<HeaderFloatItem isOpen={isOpen} setIsOpen={setIsOpen} mapRef={animateRef} />
 				<View
 					style={{
 						position: "absolute",
@@ -306,28 +286,19 @@ const HomeScreen = (props) => {
 					}}
 				>
 					{/* <Text style={{ backgroundColor: "red" }}>speed:{state.speed}</Text> */}
-					<StatusBottomSheet
-						bottomSheetRef={bottomSheetRef}
-						setDialogDeclineText={setDialogDeclineText}
-						setDialogConfirmText={setDialogConfirmText}
-						setDialogText={setDialogText}
-						setVisibleDialog={setVisibleDialog}
-					/>
+					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
 				</View>
 			</SideMenu>
 
 			<CustomDialog
 				visible={visibleDialog}
 				confirmFunction={() => {
-					isEnd && props.navigation.navigate("CreateMotoHourAndFuelScreenHOME");
 					setVisibleDialog(false);
 				}}
-				declineFunction={() => {
-					setVisibleDialog(false);
-				}}
+				declineFunction={() => {}}
 				text={dialogText}
 				confirmBtnText={dialogConfirmText}
-				DeclineBtnText={dialogDeclineText}
+				DeclineBtnText=""
 				type={"warning"}
 				screenOrientation={state.orientation}
 			/>

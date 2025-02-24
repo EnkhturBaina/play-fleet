@@ -85,7 +85,7 @@ const LoginScreen = (props) => {
 				}
 			);
 
-			// console.log("response", JSON.stringify(response.data));
+			console.log("response", JSON.stringify(response.data));
 
 			if (response.data.Type === 1) {
 				setLoginError(response.data.Msg);

@@ -47,7 +47,9 @@ const CreateMotoHourAndFuelScreenHOME = (props) => {
 	//Snacbkbar хаах
 	const onDismissSnackBar = () => setVisibleSnack(false);
 
-	useEffect(() => {}, []);
+	useEffect(() => {
+		onToggleSnackBar("Таны ээлж дууслаа. Та Мото цагийн болон түлшний бүртгэл ээ оруулна уу.");
+	}, []);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -120,7 +122,13 @@ const CreateMotoHourAndFuelScreenHOME = (props) => {
 					backgroundColor: "#fff"
 				}}
 			>
-				<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={0} />
+				<CustomSnackbar
+					visible={visibleSnack}
+					dismiss={onDismissSnackBar}
+					text={snackBarMsg}
+					topPos={0}
+					duration={3000}
+				/>
 				<View style={{ flex: 1 }}>
 					<ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
 						<LoanInput label="Төхөөрөмж" value={state.selectedEquipment?.Name} disabled />
@@ -185,7 +193,7 @@ const CreateMotoHourAndFuelScreenHOME = (props) => {
 					visible={visibleDialog}
 					confirmFunction={() => {
 						setVisibleDialog(false);
-						dialogType == "success" && props.navigation.goBack();
+						dialogType == "success" && state.logout();
 					}}
 					declineFunction={() => {
 						setVisibleDialog(false);

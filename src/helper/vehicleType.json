@@ -1,0 +1,95 @@
+{
+	"Loader": {
+		"value": 1,
+		"code": "Loader",
+		"name": "Экскаватор",
+		"title": "АЧИЛТЫН БЛОК",
+		"fields": [
+			{
+				"id": 1,
+				"name": "Блокын дугаар",
+				"path": "blockNo",
+				"dataPath": "refShots",
+				"valuePath": "ShotName"
+			},
+			{
+				"id": 2,
+				"name": "Материал",
+				"path": "material",
+				"dataPath": "refMaterials",
+				"valuePath": "Name"
+			},
+			{
+				"id": 3,
+				"name": "Ачилтын тоо",
+				"path": "totalLoads",
+				"dataPath": "shot",
+				"valuePath": "Name"
+			}
+		]
+	},
+	"Truck": {
+		"name": 2,
+		"code": "Truck",
+		"label": "Автосамосвал",
+		"title": "МАТЕРИАЛЫН УРСГАЛ",
+		"fields": [
+			{
+				"id": 1,
+				"name": "Эхлэх байршил",
+				"path": "startPosition",
+				"dataPath": "refLocations",
+				"valuePath": "Name"
+			},
+			{
+				"id": 2,
+				"name": "Блокын дугаар",
+				"path": "blockNo",
+				"dataPath": "refShots",
+				"valuePath": "ShotName"
+			},
+			{
+				"id": 3,
+				"name": "Хүргэх байршил",
+				"path": "endLocation",
+				"dataPath": "refLocations",
+				"valuePath": "Name"
+			},
+			{
+				"id": 4,
+				"name": "Экскаватор",
+				"path": "exca",
+				"dataPath": "refLoaders",
+				"valuePath": "Name"
+			},
+			{
+				"id": 5,
+				"name": "Материал",
+				"path": "material",
+				"dataPath": "refMaterials",
+				"valuePath": "Name"
+			},
+			{
+				"id": 6,
+				"name": "Рейсийн тоо",
+				"path": "reis",
+				"dataPath": "refMaterials",
+				"valuePath": "Name"
+			}
+		]
+	},
+	"Other": {
+		"name": 3,
+		"code": "Other",
+		"label": "Туслах тоног төхөөрөмж",
+		"title": "ДААЛГАВАР",
+		"fields": [
+			{
+				"id": 1,
+				"name": "Ногдуулсан даалгавар",
+				"path": "assignedTask",
+				"valuePath": "Name"
+			}
+		]
+	}
+}

@@ -1,118 +1,34 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, SERVER_URL, TEXT_COLOR_GRAY } from "../../constant";
 import { Dropdown } from "react-native-element-dropdown";
 import MainContext from "../../contexts/MainContext";
 import { Icon } from "@rneui/base";
 import { Image } from "expo-image";
 import axios from "axios";
+import VEHICLE_TYPE from "../../helper/vehicleType.json";
+import CustomDialog from "../CustomDialog";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
+import { useNavigation } from "@react-navigation/native";
 
 const width = Dimensions.get("screen").width;
 
 const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
+	const navigation = useNavigation();
+	const intervalRef = useRef(null);
+
 	const [focusStates, setFocusStates] = useState({});
 	const [visibleLines, setVisibleLines] = useState(null);
 	const [assignedData, setAssignedData] = useState(null);
 
+	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
+	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
+
 	const startLines = 3;
 	const totalLines = 6;
 
-	const VEHICLE_TYPE = {
-		Loader: {
-			value: 1,
-			code: "Loader",
-			name: "Экскаватор",
-			title: "АЧИЛТЫН БЛОК",
-			fields: [
-				{
-					id: 1,
-					name: "Блокын дугаар",
-					path: "blockNo",
-					dataPath: "refShots",
-					valuePath: "ShotName"
-				},
-				{
-					id: 2,
-					name: "Материал",
-					path: "material",
-					dataPath: "refMaterials",
-					valuePath: "Name"
-				},
-				{
-					id: 3,
-					name: "Ачилтын тоо",
-					path: "totalLoads",
-					dataPath: "shot",
-					valuePath: "Name"
-				}
-			]
-		},
-		Truck: {
-			name: 2,
-			code: "Truck",
-			label: "Автосамосвал",
-			title: "МАТЕРИАЛЫН УРСГАЛ",
-			fields: [
-				{
-					id: 1,
-					name: "Эхлэх байршил",
-					path: "startPosition",
-					dataPath: "refLocations",
-					valuePath: "Name"
-				},
-				{
-					id: 2,
-					name: "Блокын дугаар",
-					path: "blockNo",
-					dataPath: "refShots",
-					valuePath: "ShotName"
-				},
-				{
-					id: 3,
-					name: "Хүргэх байршил",
-					path: "endLocation",
-					dataPath: "refLocations",
-					valuePath: "Name"
-				},
-				{
-					id: 4,
-					name: "Экскаватор",
-					path: "exca",
-					dataPath: "refLoaders",
-					valuePath: "Name"
-				},
-				{
-					id: 5,
-					name: "Материал",
-					path: "material",
-					dataPath: "refMaterials",
-					valuePath: "Name"
-				},
-				{
-					id: 6,
-					name: "Рейсийн тоо",
-					path: "reis",
-					dataPath: "refMaterials",
-					valuePath: "Name"
-				}
-			]
-		},
-		Other: {
-			name: 3,
-			code: "Other",
-			label: "Туслах тоног төхөөрөмж",
-			title: "ДААЛГАВАР",
-			fields: [
-				{
-					id: 1,
-					name: "Ногдуулсан даалгавар",
-					path: "assignedTask",
-					valuePath: "Name"
-				}
-			]
-		}
-	};
 	const refData = {
 		refStates: state.refStates,
 		refLocations: state.refLocations,
@@ -126,9 +42,15 @@ const HeaderFloatItem = (props) => {
 	};
 
 	useEffect(() => {
+		console.log("projectData", state.projectData);
 		getDefaultAssignedTask();
 		state.detectOrientation();
+
+		if (state.projectData && state.projectData.ShiftTime !== null) {
+			// Энэ дотор цагаа шалгаж секунд тутамд шалгах
+		}
 	}, []);
+
 	useEffect(() => {
 		if (state.orientation == "PORTRAIT") {
 			setVisibleLines(startLines);
@@ -196,6 +118,45 @@ const HeaderFloatItem = (props) => {
 				});
 		} catch (error) {
 			console.log("CATCH get DefaultAssignedTask", error);
+		}
+	};
+
+	const stopProgress = async () => {
+		try {
+			await axios
+				.post(
+					`${SERVER_URL}/mobile/progress/stop`,
+					{
+						PMSProjectId: state.projectData?.id,
+						PMSEquipmentId: state.selectedEquipment?.id,
+						PMSProgressStateId: state.selectedState?.id,
+						CurrentDate: dayjs().format("YYYY-MM-DD"),
+						PMSEmployeeId: state.employeeData?.id,
+						IsTest: 1
+					},
+					{
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${state.token}`
+						}
+					}
+				)
+				.then(function (response) {
+					// console.log("stop progress response", JSON.stringify(response.data));
+					setDialogText(response.data?.Msg);
+
+					if (response.data?.Type == 0) {
+						navigation.navigate("CreateMotoHourAndFuelScreenHOME");
+						setVisibleDialog(false);
+					} else {
+						setVisibleDialog(true);
+					}
+				})
+				.catch(function (error) {
+					console.log("error stop progress", error);
+				});
+		} catch (error) {
+			console.log("CATCH stop progress", error);
 		}
 	};
 
@@ -283,9 +244,10 @@ const HeaderFloatItem = (props) => {
 				>
 					<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
 				</TouchableOpacity>
-				{/* <TouchableOpacity
+				<TouchableOpacity
 					onPress={() => {
-						navigation.navigate("TestTilesScreen");
+						setDialogText("Та ээлжээ дуусгах уу?");
+						setVisibleDialog(true);
 					}}
 					style={styles.eachFloatButton}
 				>
@@ -298,7 +260,7 @@ const HeaderFloatItem = (props) => {
 						contentFit="contain"
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity
+				{/* <TouchableOpacity
 					onPress={() => {
 						// props.navigation.navigate("TestSQL");
 						navigation.navigate("TestRenderUurhai");
@@ -330,6 +292,21 @@ const HeaderFloatItem = (props) => {
 					/>
 				</TouchableOpacity>
 			</View>
+
+			<CustomDialog
+				visible={visibleDialog}
+				confirmFunction={() => {
+					stopProgress();
+				}}
+				declineFunction={() => {
+					setVisibleDialog(false);
+				}}
+				text={dialogText}
+				confirmBtnText="Дуусгах"
+				DeclineBtnText="Үгүй"
+				type={"warning"}
+				screenOrientation={state.orientation}
+			/>
 		</View>
 	);
 };
