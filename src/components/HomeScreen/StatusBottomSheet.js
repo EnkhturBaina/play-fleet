@@ -1,4 +1,4 @@
-import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import MainContext from "../../contexts/MainContext";
@@ -12,11 +12,11 @@ export default function (props) {
 	const [stateParentId, setStateParentId] = useState(null);
 	const [mainStates, setMainStates] = useState(null);
 	const [selectedStateImage, setSelectedStateImage] = useState(null);
+	const [allowedState, setAllowedState] = useState(null);
 
-	const handleSheetChanges = useCallback((index) => {
-		console.log("handleSheetChanges", index);
-	}, []);
+	const ENABLE_NEXT_STATUS = 3; // SECOND
 
+	const MAIN_STATE_CODES = ["Loading", "Hauling", "Dumping", "Traveling", "Queueing"];
 	const IMAGE_LIST = [
 		{
 			code: "Loading",
@@ -41,31 +41,21 @@ export default function (props) {
 	];
 
 	useEffect(() => {
-		// 1. "W1" ActivityShort-той объектын ID-г авах
-		const w1Item = state.refStates?.find((item) => item.ActivityShort === "W1");
-		if (w1Item) {
-			setStateParentId(w1Item.id);
-		}
-
-		if (state.seconds == 3) {
-			if (1 == 1) {
-				Animated.loop(
-					Animated.sequence([
-						Animated.timing(animatedValue, {
-							toValue: 0.5,
-							duration: 500,
-							useNativeDriver: true
-						}),
-						Animated.timing(animatedValue, {
-							toValue: 1,
-							duration: 500,
-							useNativeDriver: true
-						})
-					])
-				).start();
-			} else {
-				animatedValue.setValue(1); // Эхлэл төлөвт буцаана
-			}
+		if (state.seconds == ENABLE_NEXT_STATUS) {
+			Animated.loop(
+				Animated.sequence([
+					Animated.timing(animatedValue, {
+						toValue: 0.5,
+						duration: 500,
+						useNativeDriver: true
+					}),
+					Animated.timing(animatedValue, {
+						toValue: 1,
+						duration: 500,
+						useNativeDriver: true
+					})
+				])
+			).start();
 		}
 	}, [state.seconds]);
 
@@ -80,6 +70,12 @@ export default function (props) {
 	}, [stateParentId]);
 
 	useEffect(() => {
+		// 1. "W1" ActivityShort-той объектын ID-г авах
+		const w1Item = state.refStates?.find((item) => item.ActivityShort === "W1");
+		if (w1Item) {
+			setStateParentId(w1Item.id);
+		}
+
 		const filteredDefaultState = state.refStates?.filter(
 			(item) => item.id === state.projectData?.PMSProgressStateId && item.IsActive === 1
 		);
@@ -87,18 +83,72 @@ export default function (props) {
 		state.setSelectedState(filteredDefaultState[0]);
 	}, []);
 
-	const selectState = (selectedState, selectedStateImage) => {
+	const proceedWithStateChange = (selectedState, selectedStateImage) => {
+		console.log("proceed With State Change selectedState =>", selectedState);
+
 		animatedValue.setValue(1);
+
 		state.handleReset();
 		state.handleStart();
+
 		state.setSelectedState(selectedState);
 		setSelectedStateImage(selectedStateImage);
 
-		//setSelectedId(id === selectedId ? null : id); // Дахин дарахад анивчилтыг зогсооно
+		// Сонгосон төлөвийн дараагийн төлөвийг 30 секунд хүлээнэ
+		setTimeout(() => {
+			setAllowedState(selectedState.ViewOrder + 1);
+		}, ENABLE_NEXT_STATUS * 1000);
 	};
 
+	const selectState = (selectedState, selectedStateImage) => {
+		console.log("selectedState", selectedState);
+		console.log("state.selectedState", state.selectedState);
+
+		if (
+			MAIN_STATE_CODES.includes(state.selectedState?.ActivityShort) &&
+			MAIN_STATE_CODES.includes(selectedState?.ActivityShort)
+		) {
+			// 1. Өмнөх төлөвийг сонгоход анхааруулга өгөх
+			if (selectedState.ViewOrder < state.selectedState.ViewOrder) {
+				Alert.alert("Анхаар!", "Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?", [
+					{ text: "Үгүй", style: "cancel" },
+					{
+						text: "Тийм",
+						onPress: () => {
+							proceedWithStateChange(selectedState, selectedStateImage);
+						}
+					}
+				]);
+				return;
+			}
+
+			// 2. Алхам алгасах үед анхааруулга өгөх
+			if (selectedState.ViewOrder > state.selectedState.ViewOrder + 1) {
+				Alert.alert(
+					"Анхаар!",
+					"Алхам алгасаж байгаа тул таны одоогийн рейсийн бүртгэл дутуу хадгалагдах боломжтой. Итгэлтэй байна уу?",
+					[
+						{ text: "Үгүй", style: "cancel" },
+						{
+							text: "Тийм",
+							onPress: () => {
+								proceedWithStateChange(selectedState, selectedStateImage);
+							}
+						}
+					]
+				);
+				return;
+			}
+
+			// 3. Төлөв сонгогдсон бол
+			proceedWithStateChange(selectedState, selectedStateImage);
+		} else {
+			// 3. Төлөв сонгогдсон бол
+			proceedWithStateChange(selectedState, selectedStateImage);
+		}
+	};
 	return (
-		<BottomSheet ref={props.bottomSheetRef} snapPoints={[130, 500]} onChange={handleSheetChanges}>
+		<BottomSheet ref={props.bottomSheetRef} snapPoints={[130, 500]}>
 			<BottomSheetView style={styles.contentContainer}>
 				<View
 					style={{
@@ -107,15 +157,7 @@ export default function (props) {
 						justifyContent: "space-between"
 					}}
 				>
-					<View
-						style={{
-							backgroundColor: MAIN_COLOR,
-							borderRadius: 50,
-							padding: 5,
-							paddingHorizontal: 10,
-							alignSelf: "flex-start"
-						}}
-					>
+					<View style={styles.selectedLabel}>
 						<Text style={{ color: "#fff", fontSize: 20 }}>CОНГОГДСОН ТӨЛӨВ</Text>
 					</View>
 					<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(state.seconds)}</Text>
@@ -125,30 +167,11 @@ export default function (props) {
 						source={selectedStateImage ? selectedStateImage?.img : require("../../../assets/only_icon.png")}
 						style={{ height: 50, width: 50 }}
 					/>
-					<Text
-						style={{
-							color: "#6287CA",
-							fontSize: 22,
-							flex: 1,
-							marginLeft: 10,
-							textAlign: "center",
-							flexWrap: "wrap"
-						}}
-					>
+					<Text style={styles.selectedStateText}>
 						{state.selectedState ? state.selectedState?.Activity : "Төлөв сонгогдоогүй"}
 					</Text>
 				</View>
-				<View
-					style={{
-						backgroundColor: MAIN_COLOR_GREEN,
-						borderRadius: 50,
-						padding: 5,
-						paddingHorizontal: 10,
-						alignSelf: "flex-start",
-						marginTop: 10,
-						marginBottom: 10
-					}}
-				>
+				<View style={styles.selectLabelTitleStyle}>
 					<Text style={{ color: "#fff", fontSize: 20 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
 				</View>
 				<ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
@@ -156,7 +179,7 @@ export default function (props) {
 						mainStates?.map((el) => {
 							const matchedImage = IMAGE_LIST.find((img) => img.code === el.ActivityShort);
 							const borderColor =
-								34 === el.id
+								state.selectedState?.ViewOrder + 1 === el.ViewOrder
 									? animatedValue.interpolate({
 											inputRange: [0.5, 1],
 											outputRange: [MAIN_COLOR, "#fff"]
@@ -165,9 +188,17 @@ export default function (props) {
 
 							return (
 								<TouchableOpacity
-									style={[styles.eachBottomList, { borderWidth: 3, borderColor }]}
+									style={[
+										styles.eachBottomList,
+										{
+											borderWidth: 3,
+											borderColor,
+											opacity: state.selectedState.id == el.id ? 0.5 : 1
+										}
+									]}
 									key={el.id}
 									onPress={() => selectState(el, matchedImage)}
+									disabled={state.selectedState.id === el.id}
 								>
 									<Image
 										source={matchedImage ? matchedImage?.img : require("../../../assets/only_icon.png")}
@@ -195,5 +226,29 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		padding: 5,
 		height: 60
+	},
+	selectLabelTitleStyle: {
+		backgroundColor: MAIN_COLOR_GREEN,
+		borderRadius: 50,
+		padding: 5,
+		paddingHorizontal: 10,
+		alignSelf: "flex-start",
+		marginTop: 10,
+		marginBottom: 10
+	},
+	selectedStateText: {
+		color: "#6287CA",
+		fontSize: 22,
+		flex: 1,
+		marginLeft: 10,
+		textAlign: "center",
+		flexWrap: "wrap"
+	},
+	selectedLabel: {
+		backgroundColor: MAIN_COLOR,
+		borderRadius: 50,
+		padding: 5,
+		paddingHorizontal: 10,
+		alignSelf: "flex-start"
 	}
 });
