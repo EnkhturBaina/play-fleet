@@ -79,16 +79,18 @@ export default function (props) {
 		if (w1Item) {
 			setStateParentId(w1Item.id);
 		}
+		if (!state.selectedState) {
+			const filteredDefaultState = state.refStates?.filter(
+				(item) => item.id === state.projectData?.PMSProgressStateId && item.IsActive === 1
+			);
+			// console.log("default assign from bottom", filteredDefaultState);
 
-		const filteredDefaultState = state.refStates?.filter(
-			(item) => item.id === state.projectData?.PMSProgressStateId && item.IsActive === 1
-		);
-
-		state.setSelectedState(filteredDefaultState[0]);
+			state.setSelectedState(filteredDefaultState[0]);
+		}
 	}, []);
 
 	const proceedWithStateChange = (selectedState, selectedStateImage) => {
-		console.log("proceed With State Change selectedState =>", selectedState);
+		// console.log("proceed With State Change selectedState =>", selectedState);
 
 		animatedValue.setValue(1);
 
@@ -117,7 +119,7 @@ export default function (props) {
 				return;
 			}
 			// 2. Өмнөх төлөвийг сонгоход анхааруулга өгөх
-			if (selectedState.ViewOrder < state.selectedState.ViewOrder) {
+			if (selectedState.ViewOrder < state.selectedState?.ViewOrder) {
 				setDialogText("Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?");
 				setOnConfirm(() => () => proceedWithStateChange(selectedState, selectedStateImage));
 				setVisibleDialog(true);
@@ -125,7 +127,7 @@ export default function (props) {
 			}
 
 			// 3. Алхам алгасах үед анхааруулга өгөх
-			if (selectedState.ViewOrder > state.selectedState.ViewOrder + 1) {
+			if (selectedState.ViewOrder > state.selectedState?.ViewOrder + 1) {
 				setDialogText(
 					"Алхам алгасаж байгаа тул таны одоогийн рейсийн бүртгэл дутуу хадгалагдах боломжтой. Итгэлтэй байна уу?"
 				);
@@ -187,12 +189,12 @@ export default function (props) {
 										{
 											borderWidth: 3,
 											borderColor,
-											opacity: state.selectedState.id == el.id ? 0.5 : 1
+											opacity: state.selectedState?.id == el.id ? 0.5 : 1
 										}
 									]}
 									key={el.id}
 									onPress={() => selectState(el, matchedImage)}
-									disabled={state.selectedState.id === el.id}
+									disabled={state.selectedState?.id === el.id}
 								>
 									<Image
 										source={matchedImage ? matchedImage?.img : require("../../../assets/only_icon.png")}

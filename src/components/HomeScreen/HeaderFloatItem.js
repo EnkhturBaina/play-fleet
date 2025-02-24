@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, SERVER_URL, TEXT_COLOR_GRAY } from "../../constant";
 import { Dropdown } from "react-native-element-dropdown";
@@ -16,7 +16,7 @@ const HeaderFloatItem = (props) => {
 	const [assignedData, setAssignedData] = useState(null);
 
 	const startLines = 3;
-	const totalLines = 6;
+	const totalLines = 5;
 
 	const VEHICLE_TYPE = {
 		Loader: {
@@ -86,13 +86,6 @@ const HeaderFloatItem = (props) => {
 					id: 5,
 					name: "Материал",
 					path: "material",
-					dataPath: "refMaterials",
-					valuePath: "Name"
-				},
-				{
-					id: 6,
-					name: "Рейсийн тоо",
-					path: "reis",
 					dataPath: "refMaterials",
 					valuePath: "Name"
 				}
@@ -170,7 +163,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					// console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
+					console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						state.setHeaderSelections((prev) => ({
@@ -181,6 +174,14 @@ const HeaderFloatItem = (props) => {
 							exca: response.data?.Extra?.PMSLoaderId,
 							material: response.data?.Extra?.PMSMaterialId
 						}));
+
+						const filteredDefaultState = state.refStates?.filter(
+							(item) => item.id === response.data?.Extra?.PMSSubProgressStateId
+						);
+						// console.log("default assign from header", filteredDefaultState);
+
+						// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+						state.setSelectedState(filteredDefaultState[0]);
 					}
 				})
 				.catch(function (error) {
@@ -195,7 +196,7 @@ const HeaderFloatItem = (props) => {
 		<View style={styles.floatButtons}>
 			<View style={styles.mainContainer}>
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-					<Text style={{ color: MAIN_COLOR, fontSize: 18, height: 20 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
+					<Text style={{ color: MAIN_COLOR, fontSize: 18, height: 15 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
 					{state.orientation == "PORTRAIT" ? (
 						<TouchableOpacity
 							onPress={() => {
@@ -232,34 +233,31 @@ const HeaderFloatItem = (props) => {
 								>
 									{el.name}
 								</Text>
-								{el.path == "reis" ? <TextInput style={styles.inputStyle} value={"0"} editable={false} /> : null}
-								{el.path != "reis" ? (
-									<Dropdown
-										key={index}
-										style={[styles.dropdown, focusStates[el.path] && { borderColor: "blue" }]}
-										placeholderStyle={[styles.placeholderStyle, { color: isEmpty ? TEXT_COLOR_GRAY : "#000" }]}
-										selectedTextStyle={styles.selectedTextStyle}
-										data={fieldData}
-										maxHeight={300}
-										labelField={el.valuePath}
-										valueField="id"
-										placeholder={isEmpty ? "Сонголт байхгүй" : !focusStates[el.path] ? "Сонгох" : "..."}
-										value={state.headerSelections?.[el.path]}
-										onFocus={() => handleFocus(el.path)} // focus болох үед handleFocus
-										onBlur={() => handleBlur(el.path)} // blur болох үед handleBlur
-										onChange={(item) => {
-											setFocusStates((prevState) => ({
-												...prevState,
-												[el.path]: false // select хийснээр focus-ийг салгана
-											}));
-											state.setHeaderSelections((prevState) => ({
-												...prevState,
-												[el.path]: item.id
-											}));
-										}}
-										disable={isEmpty}
-									/>
-								) : null}
+								<Dropdown
+									key={index}
+									style={[styles.dropdown, focusStates[el.path] && { borderColor: "blue" }]}
+									placeholderStyle={[styles.placeholderStyle, { color: isEmpty ? TEXT_COLOR_GRAY : "#000" }]}
+									selectedTextStyle={styles.selectedTextStyle}
+									data={fieldData}
+									maxHeight={300}
+									labelField={el.valuePath}
+									valueField="id"
+									placeholder={isEmpty ? "Сонголт байхгүй" : !focusStates[el.path] ? "Сонгох" : "..."}
+									value={state.headerSelections?.[el.path]}
+									onFocus={() => handleFocus(el.path)} // focus болох үед handleFocus
+									onBlur={() => handleBlur(el.path)} // blur болох үед handleBlur
+									onChange={(item) => {
+										setFocusStates((prevState) => ({
+											...prevState,
+											[el.path]: false // select хийснээр focus-ийг салгана
+										}));
+										state.setHeaderSelections((prevState) => ({
+											...prevState,
+											[el.path]: item.id
+										}));
+									}}
+									disable={isEmpty}
+								/>
 							</View>
 						);
 					})}
@@ -275,9 +273,9 @@ const HeaderFloatItem = (props) => {
 				>
 					<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
 				</TouchableOpacity>
-				<TouchableOpacity
+				{/* <TouchableOpacity
 					onPress={() => {
-						props.setVisibleDialog();
+						navigation.navigate("TestTilesScreen");
 					}}
 					style={styles.eachFloatButton}
 				>
@@ -290,7 +288,7 @@ const HeaderFloatItem = (props) => {
 						contentFit="contain"
 					/>
 				</TouchableOpacity>
-				{/*<TouchableOpacity
+				<TouchableOpacity
 					onPress={() => {
 						// props.navigation.navigate("TestSQL");
 						navigation.navigate("TestRenderUurhai");
@@ -334,15 +332,6 @@ const styles = StyleSheet.create({
 		left: 0,
 		top: 5,
 		alignSelf: "flex-end" //for align to right
-	},
-	inputStyle: {
-		borderColor: "#aeaeae",
-		borderWidth: 0.5,
-		paddingHorizontal: 8,
-		width: 200,
-		height: 35,
-		borderRadius: MAIN_BORDER_RADIUS,
-		fontWeight: "600"
 	},
 	dropdown: {
 		borderColor: "#aeaeae",

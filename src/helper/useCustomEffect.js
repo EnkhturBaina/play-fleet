@@ -43,7 +43,7 @@ const useCustomEffect = (
 		const userChannel = `user.${state.employeeData?.id}`;
 		if (echo) {
 			echo.private(userChannel).listen(ECHO_EVENT_PROGRESS, (event) => {
-				console.log("ECHO_EVENT_PROGRESS:", JSON.stringify(event));
+				// console.log("ECHO_EVENT_PROGRESS:", JSON.stringify(event));
 
 				if (event) {
 					// Сонгогдсон төлөв шинэчлэх
@@ -72,7 +72,7 @@ const useCustomEffect = (
 			});
 
 			return () => {
-				console.log("Cleaning up Echo listener");
+				// console.log("Cleaning up Echo listener");
 				echo.private(userChannel).stopListening(ECHO_EVENT_PROGRESS);
 			};
 		}
