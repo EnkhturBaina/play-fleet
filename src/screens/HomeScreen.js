@@ -305,7 +305,13 @@ const HomeScreen = (props) => {
 					}}
 				>
 					{/* <Text style={{ backgroundColor: "red" }}>speed:{state.speed}</Text> */}
-					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
+					<StatusBottomSheet
+						bottomSheetRef={bottomSheetRef}
+						setDialogDeclineText={setDialogDeclineText}
+						setDialogConfirmText={setDialogConfirmText}
+						setDialogText={setDialogText}
+						setVisibleDialog={setVisibleDialog}
+					/>
 				</View>
 			</SideMenu>
 

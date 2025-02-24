@@ -12,7 +12,6 @@ export default function (props) {
 	const [stateParentId, setStateParentId] = useState(null);
 	const [mainStates, setMainStates] = useState(null);
 	const [selectedStateImage, setSelectedStateImage] = useState(null);
-	const [allowedState, setAllowedState] = useState(null);
 
 	const ENABLE_NEXT_STATUS = 3; // SECOND
 
@@ -93,22 +92,38 @@ export default function (props) {
 
 		state.setSelectedState(selectedState);
 		setSelectedStateImage(selectedStateImage);
-
-		// Сонгосон төлөвийн дараагийн төлөвийг 30 секунд хүлээнэ
-		setTimeout(() => {
-			setAllowedState(selectedState.ViewOrder + 1);
-		}, ENABLE_NEXT_STATUS * 1000);
 	};
 
 	const selectState = (selectedState, selectedStateImage) => {
-		console.log("selectedState", selectedState);
-		console.log("state.selectedState", state.selectedState);
+		// Үндсэн W1 -н State -үүд мөн эсэх
+
+		// setDialogText("Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?");
+		// setDialogConfirmText("Тийм");
+		// setDialogDeclineText("Үгүй");
+		// setVisibleDialog(true);
 
 		if (
 			MAIN_STATE_CODES.includes(state.selectedState?.ActivityShort) &&
 			MAIN_STATE_CODES.includes(selectedState?.ActivityShort)
 		) {
-			// 1. Өмнөх төлөвийг сонгоход анхааруулга өгөх
+			// 1. Хэрэв 30 секунд дотор сонгогдсон бол анхааруулга
+			if (state.seconds < 30) {
+				Alert.alert(
+					"Анхаар!",
+					"Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?",
+					[
+						{ text: "Үгүй", style: "cancel" },
+						{
+							text: "Тийм",
+							onPress: () => {
+								proceedWithStateChange(selectedState, selectedStateImage);
+							}
+						}
+					]
+				);
+				return;
+			}
+			// 2. Өмнөх төлөвийг сонгоход анхааруулга өгөх
 			if (selectedState.ViewOrder < state.selectedState.ViewOrder) {
 				Alert.alert("Анхаар!", "Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?", [
 					{ text: "Үгүй", style: "cancel" },
@@ -122,7 +137,7 @@ export default function (props) {
 				return;
 			}
 
-			// 2. Алхам алгасах үед анхааруулга өгөх
+			// 3. Алхам алгасах үед анхааруулга өгөх
 			if (selectedState.ViewOrder > state.selectedState.ViewOrder + 1) {
 				Alert.alert(
 					"Анхаар!",
@@ -140,10 +155,10 @@ export default function (props) {
 				return;
 			}
 
-			// 3. Төлөв сонгогдсон бол
+			// 4. Төлөв сонгогдсон бол
 			proceedWithStateChange(selectedState, selectedStateImage);
 		} else {
-			// 3. Төлөв сонгогдсон бол
+			// 4. Төлөв сонгогдсон бол
 			proceedWithStateChange(selectedState, selectedStateImage);
 		}
 	};
