@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
 	itemDate: {
 		fontWeight: "600",
 		fontSize: 16,
-		width: "30%"
+		width: 90
 	},
 	itemValue: {
 		fontSize: 16

@@ -151,7 +151,7 @@ const MotoHoursAndFuelScreen = (props) => {
 				activeOpacity={0.8}
 			>
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
-				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Мото цагийн болон түлшний бүртгэл</Text>
+				<Text style={{ flex: 1, color: "#fff", fontSize: 18, marginLeft: 10 }}>Мото цагийн болон түлшний бүртгэл</Text>
 			</TouchableOpacity>
 
 			<View style={styles.headerActions}>
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		backgroundColor: "#2C2E45",
-		height: 50,
+		minHeight: 50,
 		paddingHorizontal: 10
 	},
 	addBtnStyle: {
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	itemLabel: {
-		width: 200,
+		width: "70%",
 		fontSize: 16
 	},
 	dividerVertical: {

@@ -160,7 +160,7 @@ export const createReferenceTables = async () => {
 };
 
 export const saveReferencesWithClear = async (data, is_clear) => {
-	console.log("run SAVE-ReferencesWithClear");
+	// console.log("run SAVE-ReferencesWithClear");
 	try {
 		let result;
 
@@ -182,7 +182,7 @@ export const saveReferencesWithClear = async (data, is_clear) => {
 };
 
 export const insertReferencesData = async (data) => {
-	console.log("RUN INSERT-ReferencesData");
+	// console.log("RUN INSERT-ReferencesData");
 
 	const insertPromises = []; // Гүйцэтгэсэн бүх insert үйлдлийг хадгалах массив
 
@@ -536,7 +536,7 @@ export const insertReferencesData = async (data) => {
 
 // References TABLE үүдийг цэвэрлэж. Шинэ дата хадгалахад бэлдэх
 export const clearReferencesTables = async () => {
-	console.log("RUN CLEAR-ReferencesTables");
+	// console.log("RUN CLEAR-ReferencesTables");
 
 	const tablesToClear = [
 		"ref_states",
@@ -555,7 +555,7 @@ export const clearReferencesTables = async () => {
 		// Хүснэгтүүдийг устгах
 		for (let table of tablesToClear) {
 			await db.runAsync(`DELETE FROM ${table}`);
-			console.log(`Successfully cleared table: ${table}`);
+			// console.log(`Successfully cleared table: ${table}`);
 		}
 
 		return "DONE_CLEAR_REF";

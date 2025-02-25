@@ -307,7 +307,7 @@ export const fetchLoginData = async () => {
 			db.getAllAsync(`SELECT * FROM project`),
 			db.getAllAsync(`SELECT * FROM shift`)
 		]);
-		console.log("FETCH SHALGAJ BAINAAA", { employee });
+		console.log("FETCH SHALGAJ BAINAAA", { project });
 		// Combine results into a single object
 		data = {
 			employee,

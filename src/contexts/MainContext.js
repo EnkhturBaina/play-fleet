@@ -15,7 +15,6 @@ import { getDistanceFromLatLonInMeters } from "../helper/functions";
 const MainContext = React.createContext();
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
-const isClearTables = 1;
 
 export const MainStore = (props) => {
 	const { isConnected } = useNetworkStatus();
@@ -116,21 +115,10 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		const performAsyncTasks = async () => {
-			if (isClearTables) {
-				// Бүх хүснэгтийг зэрэг устгах
-				await Promise.all([dropTable("project")]);
-
-				if (isConnected) {
-					await checkForUpdates(); // Интернэт холболттой бол Update шалгах
-				} else {
-					await checkLocation(); // Интернэтгүй бол local шалгах
-				}
+			if (isConnected) {
+				await checkForUpdates(); // Интернэт холболттой бол Update шалгах
 			} else {
-				if (isConnected) {
-					await checkForUpdates();
-				} else {
-					await checkLocation();
-				}
+				await checkLocation(); // Интернэтгүй бол local шалгах
 			}
 		};
 

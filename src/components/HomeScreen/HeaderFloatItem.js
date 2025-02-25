@@ -47,7 +47,29 @@ const HeaderFloatItem = (props) => {
 		state.detectOrientation();
 
 		if (state.projectData && state.projectData.ShiftTime !== null) {
-			// Энэ дотор цагаа шалгаж секунд тутамд шалгах
+			// Эхлэх цаг
+			const startTime = dayjs(state.projectData.ShiftTime);
+			// const startTime = dayjs("2025-02-02 01:29:00");
+			console.log("startTime", startTime);
+
+			// Дуусах цагийг тооцоолох (12 цаг нэмэх, 20 мин хасах)
+			const endTime = startTime.add(12, "hour").subtract(20, "minute");
+			console.log("endTime", endTime);
+
+			// Секунд тутамд цагийг шалгах
+			const interval = setInterval(() => {
+				const now = dayjs(); // Одоогийн цагийг авах
+				// console.log("now", now.format("HH:mm:ss"));
+				// console.log("endTime", endTime.format("HH:mm:ss"));
+
+				if (now.format("HH:mm:ss") === endTime.format("HH:mm:ss")) {
+					setDialogText("Та ээлжээ дуусгах уу.?");
+					setVisibleDialog(true);
+					clearInterval(interval); // Давхардахгүй байх үүднээс interval-ийг цэвэрлэх
+				}
+			}, 1000); // 1 секунд тутамд шалгана
+
+			return () => clearInterval(interval); // Компонент унтрах үед interval-ийг цэвэрлэнэ
 		}
 	}, []);
 
@@ -164,7 +186,7 @@ const HeaderFloatItem = (props) => {
 		<View style={styles.floatButtons}>
 			<View style={styles.mainContainer}>
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-					<Text style={{ color: MAIN_COLOR, fontSize: 18, height: 15 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
+					<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
 					{state.orientation == "PORTRAIT" ? (
 						<TouchableOpacity
 							onPress={() => {
@@ -244,7 +266,7 @@ const HeaderFloatItem = (props) => {
 				>
 					<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
 				</TouchableOpacity>
-				<TouchableOpacity
+				{/* <TouchableOpacity
 					onPress={() => {
 						console.log("isLoggedIn", state.isLoggedIn);
 						console.log("inspectionDone", state.inspectionDone);
@@ -261,7 +283,7 @@ const HeaderFloatItem = (props) => {
 						}}
 						contentFit="contain"
 					/>
-				</TouchableOpacity>
+				</TouchableOpacity> */}
 				{/* <TouchableOpacity
 					onPress={() => {
 						// props.navigation.navigate("TestSQL");
@@ -326,7 +348,7 @@ const styles = StyleSheet.create({
 		borderColor: "#aeaeae",
 		borderWidth: 0.5,
 		paddingHorizontal: 8,
-		width: 200,
+		width: 150,
 		height: 35,
 		borderRadius: MAIN_BORDER_RADIUS
 	},
@@ -378,7 +400,7 @@ const styles = StyleSheet.create({
 		borderColor: "#aeaeae",
 		borderWidth: 0.5,
 		paddingHorizontal: 8,
-		width: 200,
+		width: 150,
 		height: 35,
 		borderRadius: MAIN_BORDER_RADIUS,
 		fontWeight: "600"

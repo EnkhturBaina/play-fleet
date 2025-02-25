@@ -119,9 +119,7 @@ const InspectionReportScreen = (props) => {
 							<View style={styles.eachRowContainer} key={index}>
 								<Text style={{ width: "68%" }}>{el.code?.Name}</Text>
 								<Button
-									containerStyle={{
-										width: "28%"
-									}}
+									containerStyle={{}}
 									buttonStyle={{
 										backgroundColor: el.Checked ? MAIN_COLOR_GREEN : MAIN_COLOR_RED,
 										paddingVertical: 10,

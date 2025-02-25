@@ -161,7 +161,17 @@ export default function (props) {
 					}}
 				>
 					<View style={styles.selectedLabel}>
-						<Text style={{ color: "#fff", fontSize: 20 }}>CОНГОГДСОН ТӨЛӨВ</Text>
+						<Text
+							style={{
+								maxWidth: 200,
+								textAlign: "center",
+								flexWrap: "wrap",
+								color: "#fff",
+								fontSize: 20
+							}}
+						>
+							CОНГОГДСОН ТӨЛӨВ
+						</Text>
 					</View>
 					<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(state.seconds)}</Text>
 				</View>
@@ -182,7 +192,7 @@ export default function (props) {
 						mainStates?.map((el) => {
 							const matchedImage = IMAGE_LIST.find((img) => img.code === el.ActivityShort);
 							const borderColor =
-								state.selectedState?.ViewOrder + 1 === el.ViewOrder
+								state.selectedState?.PMSParentId == stateParentId && state.selectedState?.ViewOrder + 1 === el.ViewOrder
 									? animatedValue.interpolate({
 											inputRange: [0.5, 1],
 											outputRange: [MAIN_COLOR, "#fff"]
@@ -207,7 +217,7 @@ export default function (props) {
 										source={matchedImage ? matchedImage?.img : require("../../../assets/only_icon.png")}
 										style={{ height: 50, width: 50, marginRight: 5 }}
 									/>
-									<Text style={{}}>{el.Activity}</Text>
+									<Text style={styles.eachState}>{el.Activity}</Text>
 								</TouchableOpacity>
 							);
 						})}
@@ -244,7 +254,7 @@ const styles = StyleSheet.create({
 		borderRadius: MAIN_BORDER_RADIUS,
 		marginTop: 10,
 		padding: 5,
-		height: 60
+		minHeight: 60
 	},
 	selectLabelTitleStyle: {
 		backgroundColor: MAIN_COLOR_GREEN,
@@ -269,5 +279,12 @@ const styles = StyleSheet.create({
 		padding: 5,
 		paddingHorizontal: 10,
 		alignSelf: "flex-start"
+	},
+	eachState: {
+		fontSize: 14,
+		flex: 1,
+		marginLeft: 10,
+		textAlign: "center",
+		flexWrap: "wrap"
 	}
 });
