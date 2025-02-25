@@ -114,7 +114,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
+					console.log("get DefaultAssignedTask response ", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						state.setHeaderSelections((prev) => ({
@@ -268,41 +268,6 @@ const HeaderFloatItem = (props) => {
 				>
 					<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
 				</TouchableOpacity>
-				{/* <TouchableOpacity
-					onPress={() => {
-						console.log("isLoggedIn", state.isLoggedIn);
-						console.log("inspectionDone", state.inspectionDone);
-						setDialogText("Та ээлжээ дуусгах уу.?");
-						setVisibleDialog(true);
-					}}
-					style={styles.eachFloatButton}
-				>
-					<Image
-						source={require("../../../assets/images/route.png")}
-						style={{
-							height: 35,
-							width: 35
-						}}
-						contentFit="contain"
-					/>
-				</TouchableOpacity> */}
-				{/* <TouchableOpacity
-					onPress={() => {
-						// props.navigation.navigate("TestSQL");
-						navigation.navigate("TestRenderUurhai");
-						// navigation.navigate("TestTilesScreen");
-					}}
-					style={styles.eachFloatButton}
-				>
-					<Image
-						source={require("../../../assets/images/Picture2.png")}
-						style={{
-							height: 35,
-							width: 35
-						}}
-						contentFit="contain"
-					/>
-				</TouchableOpacity> */}
 				<TouchableOpacity
 					onPress={() => props.setIsOpen(!props.isOpen)}
 					style={styles.eachFloatButton}

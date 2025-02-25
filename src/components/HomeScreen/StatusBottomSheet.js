@@ -1,5 +1,5 @@
-import { Alert, Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useContext, useEffect, useRef, useState } from "react";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import MainContext from "../../contexts/MainContext";
 import { Image } from "expo-image";
@@ -12,7 +12,6 @@ export default function (props) {
 	const animatedValue = useRef(new Animated.Value(1)).current;
 	const [stateParentId, setStateParentId] = useState(null);
 	const [mainStates, setMainStates] = useState(null);
-	const [selectedStateImage, setSelectedStateImage] = useState(null);
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
@@ -85,11 +84,13 @@ export default function (props) {
 			);
 			// console.log("default assign from bottom", filteredDefaultState);
 
-			state.setSelectedState(filteredDefaultState[0]);
+			if (filteredDefaultState[0]) {
+				state.setSelectedState(filteredDefaultState[0]);
+			}
 		}
 	}, []);
 
-	const proceedWithStateChange = (selectedState, selectedStateImage) => {
+	const proceedWithStateChange = (selectedState) => {
 		// console.log("proceed With State Change selectedState =>", selectedState);
 
 		animatedValue.setValue(1);
@@ -98,10 +99,9 @@ export default function (props) {
 		state.handleStart();
 
 		state.setSelectedState(selectedState);
-		setSelectedStateImage(selectedStateImage);
 	};
 
-	const selectState = (selectedState, selectedStateImage) => {
+	const selectState = (selectedState) => {
 		// Үндсэн W1 -н State -үүд мөн эсэх
 
 		if (
@@ -111,7 +111,7 @@ export default function (props) {
 			if (state.seconds == 0) {
 				// 0. Operator төлөв тохируулсан үед ямар ч төлөврүү шууд орох
 				// Энэ тохиолдол нь seconds == 0 Байх учир
-				proceedWithStateChange(selectedState, selectedStateImage);
+				proceedWithStateChange(selectedState);
 				return;
 			}
 
@@ -120,7 +120,7 @@ export default function (props) {
 				setDialogText(
 					"Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?"
 				);
-				setOnConfirm(() => () => proceedWithStateChange(selectedState, selectedStateImage));
+				setOnConfirm(() => () => proceedWithStateChange(selectedState));
 				setVisibleDialog(true);
 
 				return;
@@ -128,7 +128,7 @@ export default function (props) {
 			// 2. Өмнөх төлөвийг сонгоход анхааруулга өгөх
 			if (selectedState.ViewOrder < state.selectedState?.ViewOrder) {
 				setDialogText("Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?");
-				setOnConfirm(() => () => proceedWithStateChange(selectedState, selectedStateImage));
+				setOnConfirm(() => () => proceedWithStateChange(selectedState));
 				setVisibleDialog(true);
 				return;
 			}
@@ -138,46 +138,35 @@ export default function (props) {
 				setDialogText(
 					"Алхам алгасаж байгаа тул таны одоогийн рейсийн бүртгэл дутуу хадгалагдах боломжтой. Итгэлтэй байна уу?"
 				);
-				setOnConfirm(() => () => proceedWithStateChange(selectedState, selectedStateImage));
+				setOnConfirm(() => () => proceedWithStateChange(selectedState));
 				setVisibleDialog(true);
 				return;
 			}
 
 			// 4. Төлөв сонгогдсон бол
-			proceedWithStateChange(selectedState, selectedStateImage);
+			proceedWithStateChange(selectedState);
 		} else {
 			// 4. Төлөв сонгогдсон бол
-			proceedWithStateChange(selectedState, selectedStateImage);
+			proceedWithStateChange(selectedState);
 		}
 	};
 	return (
 		<BottomSheet ref={props.bottomSheetRef} snapPoints={[130, 500]}>
 			<BottomSheetView style={styles.contentContainer}>
-				<View
-					style={{
-						flexDirection: "row",
-						alignItems: "center",
-						justifyContent: "space-between"
-					}}
-				>
+				<View style={styles.selectedStateContainer}>
 					<View style={styles.selectedLabel}>
-						<Text
-							style={{
-								maxWidth: 200,
-								textAlign: "center",
-								flexWrap: "wrap",
-								color: "#fff",
-								fontSize: 20
-							}}
-						>
-							CОНГОГДСОН ТӨЛӨВ
-						</Text>
+						<Text style={styles.selectedStateLabel}>CОНГОГДСОН ТӨЛӨВ</Text>
 					</View>
 					<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(state.seconds)}</Text>
 				</View>
 				<View style={styles.eachBottomList}>
 					<Image
-						source={selectedStateImage ? selectedStateImage?.img : require("../../../assets/only_icon.png")}
+						source={
+							state.selectedState && state.selectedState.ActivityShort
+								? IMAGE_LIST.find((img) => img.code === state.selectedState.ActivityShort)?.img ||
+								  require("../../../assets/only_icon.png") // Fallback if no match is found
+								: require("../../../assets/only_icon.png")
+						}
 						style={{ height: 50, width: 50 }}
 					/>
 					<Text style={styles.selectedStateText}>
@@ -286,5 +275,17 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		textAlign: "center",
 		flexWrap: "wrap"
+	},
+	selectedStateLabel: {
+		maxWidth: 200,
+		textAlign: "center",
+		flexWrap: "wrap",
+		color: "#fff",
+		fontSize: 20
+	},
+	selectedStateContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between"
 	}
 });
