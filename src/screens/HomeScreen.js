@@ -59,7 +59,7 @@ const HomeScreen = (props) => {
 		// Байршил шалгах
 		checkIfFileExistsAndLoad();
 
-		console.log("selectedEquipment", state.selectedEquipment);
+		// console.log("selectedEquipment", state.selectedEquipment);
 		// console.log("refStates", state.refStates);
 
 		const locationSource = transformLocations(state.refLocations, state.refLocationTypes);
@@ -175,7 +175,7 @@ const HomeScreen = (props) => {
 							radius={state.selectedEquipmentCode == 1 ? 400 : 200}
 							strokeWidth={1}
 							strokeColor="#fff"
-							fillColor={`${state.selectedState?.Color}80`}
+							fillColor={state.selectedState?.Color ? `${state.selectedState?.Color}80` : "#ffffff80"}
 						/>
 						<Marker
 							title="Таны одоогийн байршил"

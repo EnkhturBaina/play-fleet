@@ -42,7 +42,7 @@ const HeaderFloatItem = (props) => {
 	};
 
 	useEffect(() => {
-		console.log("projectData", state.projectData);
+		// console.log("projectData", state.projectData);
 		getDefaultAssignedTask();
 		state.detectOrientation();
 
@@ -92,7 +92,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
+					// console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						state.setHeaderSelections((prev) => ({
@@ -246,6 +246,8 @@ const HeaderFloatItem = (props) => {
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() => {
+						console.log("isLoggedIn", state.isLoggedIn);
+						console.log("inspectionDone", state.inspectionDone);
 						setDialogText("Та ээлжээ дуусгах уу.?");
 						setVisibleDialog(true);
 					}}

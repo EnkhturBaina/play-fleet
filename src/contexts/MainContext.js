@@ -115,9 +115,7 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		// logout();
-		// dropTable("ref_locations");
-
-		// dropTable("ref_states");
+		// dropTable("employee");
 		// dropTable("company");
 		// dropTable("roster");
 		// dropTable("shift");
@@ -131,19 +129,84 @@ export const MainStore = (props) => {
 			//Интернэтгүй бол шууд location шалгаад local шалгах
 			checkLocation();
 		}
-		isLoggedIn && inspectionDone && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
-
-		const interval = setInterval(
-			() => {
-				checkLocationWithSpeed();
-			},
-			// 3000
-			projectData?.SyncTime != null ? projectData?.SyncTime * 1000 : 5 * 60 * 1000
-		); // Login response -н Project дотор SyncTime -д тохируулсан хугацаагааны давтамжаар Location илгээх
-
-		// Component unmount үед interval-ийг устгах
-		return () => clearInterval(interval);
 	}, []);
+
+	const checkLocationWithSpeed = async () => {
+		console.log("RUN check Location With Speed");
+
+		const { status } = await Location.requestForegroundPermissionsAsync();
+		if (status !== "granted") {
+			console.log("Permission to access location was denied");
+			return;
+		}
+
+		try {
+			const currentLocation = await Location.getCurrentPositionAsync({
+				accuracy: Location.Accuracy.Balanced
+			});
+			setLocation(currentLocation);
+			// console.log("Location response =>", currentLocation);
+
+			const currentSpeed = Math.max(0, currentLocation.coords.speed || 0); // Сөрөг утга гарахаас сэргийлэх
+			const speedKmH = (currentSpeed * 3.6).toFixed(2); // м/сек -> км/цаг
+
+			setSpeed(speedKmH);
+
+			// Байршил болон хурд амжилттай авсны дараа дараагийн функцээ дуудна
+			await sendEquipmentLocation(currentLocation, currentSpeed);
+		} catch (error) {
+			console.error("Error getting location:", error);
+		}
+	};
+
+	const sendEquipmentLocation = async (currentLocation, currentSpeed) => {
+		console.log("RUN send EquipmentLocation", currentLocation, currentSpeed);
+		if (currentLocation && currentSpeed != null) {
+			await AsyncStorage.getItem("access_token").then(async (localToken) => {
+				try {
+					await axios
+						.post(
+							`${SERVER_URL}/mobile/progress/track/save`,
+							{
+								PMSEquipmentId: selectedEquipment?.id,
+								Latitude: parseFloat(currentLocation?.coords?.latitude) || 0,
+								Longitude: parseFloat(currentLocation?.coords?.longitude) || 0,
+								Speed: currentSpeed,
+								CurrentDate: dayjs().format("YYYY-MM-DD"),
+								EventTime: dayjs().format("YYYY-MM-DD HH:mm:ss")
+							},
+							{
+								headers: {
+									"Content-Type": "application/json",
+									Authorization: `Bearer ${localToken}`
+								}
+							}
+						)
+						.then(function (response) {
+							// console.log("send EQ Location response", JSON.stringify(response.data));
+							console.log("send EQ Location response", JSON.stringify(response.data.Msg));
+							if (response.data?.Type == 0) {
+								// setLocationHistory((prevItems) => [
+								// 	...prevItems,
+								// 	{
+								// 		lat: parseFloat(currentLocation?.coords?.latitude),
+								// 		long: parseFloat(currentLocation?.coords?.longitude),
+								// 		speed: currentSpeed,
+								// 		eventTime: dayjs().format("YYYY-MM-DD HH:mm:ss")
+								// 	}
+								// ]);
+							} else {
+							}
+						})
+						.catch(function (error) {
+							console.log("error send EQ Location", error);
+						});
+				} catch (error) {
+					console.log("CATCH send EQ Location", error);
+				}
+			});
+		}
+	};
 
 	const checkForUpdates = async () => {
 		setIsLoading(true);
@@ -220,7 +283,7 @@ export const MainStore = (props) => {
 			setMainCompanyId(mainCompanyId);
 
 			const accessToken = await AsyncStorage.getItem("access_token");
-			console.log("access_token", accessToken);
+			// console.log("access_token", accessToken);
 
 			if (accessToken != null) {
 				setToken(accessToken);
@@ -328,89 +391,8 @@ export const MainStore = (props) => {
 		}
 	};
 
-	const checkLocationWithSpeed = async () => {
-		console.log("RUN check Location With Speed");
-
-		const { status } = await Location.requestForegroundPermissionsAsync();
-		if (status !== "granted") {
-			console.log("Permission to access location was denied");
-			return;
-		}
-
-		try {
-			const currentLocation = await Location.getCurrentPositionAsync({
-				accuracy: Location.Accuracy.Balanced
-			});
-			setLocation(currentLocation);
-			// console.log("Location response =>", currentLocation);
-
-			const currentSpeed = Math.max(0, currentLocation.coords.speed || 0); // Сөрөг утга гарахаас сэргийлэх
-			const speedKmH = (currentSpeed * 3.6).toFixed(2); // м/сек -> км/цаг
-
-			setSpeed(speedKmH);
-
-			// Байршил болон хурд амжилттай авсны дараа дараагийн функцээ дуудна
-			await sendEquipmentLocation(currentLocation, currentSpeed);
-		} catch (error) {
-			console.error("Error getting location:", error);
-		}
-	};
-
-	const sendEquipmentLocation = async (currentLocation, currentSpeed) => {
-		console.log("RUN send EquipmentLocation", currentLocation, currentSpeed);
-		if (currentLocation && currentSpeed != null) {
-			await AsyncStorage.getItem("access_token").then(async (localToken) => {
-				try {
-					await axios
-						.post(
-							`${SERVER_URL}/mobile/progress/track/save`,
-							{
-								PMSEquipmentId: selectedEquipment?.id,
-								Latitude: parseFloat(currentLocation?.coords?.latitude) || 0,
-								Longitude: parseFloat(currentLocation?.coords?.longitude) || 0,
-								Speed: currentSpeed,
-								CurrentDate: dayjs().format("YYYY-MM-DD"),
-								EventTime: dayjs().format("YYYY-MM-DD HH:mm:ss")
-							},
-							{
-								headers: {
-									"Content-Type": "application/json",
-									Authorization: `Bearer ${localToken}`
-								}
-							}
-						)
-						.then(function (response) {
-							// console.log("send EQ Location response", JSON.stringify(response.data));
-							console.log("send EQ Location response", JSON.stringify(response.data.Msg));
-							if (response.data?.Type == 0) {
-								// setLocationHistory((prevItems) => [
-								// 	...prevItems,
-								// 	{
-								// 		lat: parseFloat(currentLocation?.coords?.latitude),
-								// 		long: parseFloat(currentLocation?.coords?.longitude),
-								// 		speed: currentSpeed,
-								// 		eventTime: dayjs().format("YYYY-MM-DD HH:mm:ss")
-								// 	}
-								// ]);
-							} else {
-							}
-						})
-						.catch(function (error) {
-							console.log("error send EQ Location", error);
-						});
-				} catch (error) {
-					console.log("CATCH send EQ Location", error);
-				}
-			});
-		}
-	};
-
 	// AsyncStorage.clear();
 	const logout = async (type) => {
-		handleReset();
-		setSelectedState(null);
-		setSelectedEquipmentCode(null);
-		setSelectedEquipment(null);
 		//***** Profile -с гарах дарсан үед утасны LOCALSTORE -с user, user_bio устгах
 		const keys = [
 			// "local_notif",
@@ -421,6 +403,9 @@ export const MainStore = (props) => {
 		];
 
 		AsyncStorage.multiRemove(keys).then(() => {
+			handleReset();
+			setSelectedState(null);
+			setSelectedEquipmentCode(null);
 			setSelectedEquipment(null);
 			setInspectionDone(false);
 			setDispId(null);
@@ -571,7 +556,8 @@ export const MainStore = (props) => {
 				speed,
 				checkLocationStatus,
 				locationSource,
-				setLocationSource
+				setLocationSource,
+				checkLocationWithSpeed
 			}}
 		>
 			{props.children}

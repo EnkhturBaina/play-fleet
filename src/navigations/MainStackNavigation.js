@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { StyleSheet, TouchableOpacity, Text, Dimensions, View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Icon } from "@rneui/base";
@@ -29,6 +29,25 @@ const width = Dimensions.get("screen").width;
 const MainStackNavigator = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
+
+	useEffect(() => {
+		state.isLoggedIn && state.inspectionDone && state.checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
+
+		const interval = setInterval(
+			() => {
+				console.log("isLoggedIn - inspectionDone =>", state.isLoggedIn, state.inspectionDone);
+
+				if (state.isLoggedIn && state.inspectionDone) {
+					state.checkLocationWithSpeed();
+				}
+			},
+			// 5000
+			state.projectData?.SyncTime != null ? state.projectData?.SyncTime * 1000 : 5 * 60 * 1000
+		); // Login response -н Project дотор SyncTime -д тохируулсан хугацаагааны давтамжаар Location илгээх
+
+		// Component unmount үед interval-ийг устгах
+		return () => clearInterval(interval);
+	}, [state.isLoggedIn, state.inspectionDone]);
 
 	// SplashScreen.preventAutoHideAsync();
 

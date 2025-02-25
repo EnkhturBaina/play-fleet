@@ -4,7 +4,7 @@ export const db = SQLite.openDatabaseSync("offline_data2");
 
 // 1.DONE SQLite хүснэгт үүсгэх
 export const createTable = async () => {
-	console.log("RUN CREATE Table");
+	// console.log("RUN CREATE Table");
 	try {
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS employee (
@@ -18,11 +18,6 @@ export const createTable = async () => {
         Email TEXT,
         IsActive INTEGER,
         IsOperator INTEGER,
-        CreatedBy INTEGER,
-        ModifiedBy INTEGER,
-        created_at TEXT,
-        updated_at TEXT,
-        deleted_at TEXT,
         FullName TEXT,
         status TEXT
       );`
@@ -36,12 +31,7 @@ export const createTable = async () => {
         email TEXT,
         Mobile TEXT,
         IsMain INTEGER,
-        ViewOrder INTEGER,
-        CreatedBy INTEGER,
-        ModifiedBy INTEGER,
-        created_at TEXT,
-        updated_at TEXT,
-        deleted_at TEXT
+        ViewOrder INTEGER
       );`
 		);
 		await db.execAsync(
@@ -52,11 +42,6 @@ export const createTable = async () => {
         Description TEXT,
         IsSystem INTEGER,
         IsActive INTEGER,
-        CreatedBy INTEGER,
-        ModifiedBy INTEGER,
-        created_at TEXT,
-        updated_at TEXT,
-        deleted_at TEXT,
         status TEXT
       );`
 		);
@@ -95,8 +80,6 @@ export const createTable = async () => {
 				ShiftTime TEXT,
 				StartedDate TEXT,
 				CurrentProject INTEGER,
-        CreatedBy INTEGER,
-        ModifiedBy INTEGER,
 				Latitude REAL,
 				Longitude REAL,
 				PMSProgressStateId INTEGER,
@@ -112,7 +95,7 @@ export const createTable = async () => {
 };
 
 export const saveLoginDataWithClear = async (data, is_clear) => {
-	console.log("run SAVE LoginDataWithClear");
+	// console.log("run SAVE LoginDataWithClear");
 	try {
 		let result;
 
@@ -147,8 +130,8 @@ export const insertLoginData = async (data) => {
 
 		// employee өгөгдөл оруулах
 		const resultEmployee = await db.runAsync(
-			`INSERT INTO employee (id, PMSCompanyId, PMSRosterId, Code, FirstName, LastName, Profile, Email, IsActive, IsOperator, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at, FullName, status)
-		  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+			`INSERT INTO employee (id, PMSCompanyId, PMSRosterId, Code, FirstName, LastName, Profile, Email, IsActive, IsOperator, FullName, status)
+		  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 			[
 				employee.id,
 				employee.PMSCompanyId,
@@ -160,11 +143,6 @@ export const insertLoginData = async (data) => {
 				employee.Email,
 				employee.IsActive,
 				employee.IsOperator,
-				employee.CreatedBy,
-				employee.ModifiedBy,
-				employee.created_at,
-				employee.updated_at,
-				employee.deleted_at,
 				employee.FullName,
 				employee.status
 			]
@@ -178,8 +156,8 @@ export const insertLoginData = async (data) => {
 		// company өгөгдөл оруулах
 		if (company) {
 			const resultCompany = await db.runAsync(
-				`INSERT INTO company (id, Code, Name, Image, email, Mobile, IsMain, ViewOrder, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+				`INSERT INTO company (id, Code, Name, Image, email, Mobile, IsMain, ViewOrder)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
 				[
 					company.id,
 					company.Code,
@@ -188,12 +166,7 @@ export const insertLoginData = async (data) => {
 					company.email,
 					company.Mobile,
 					company.IsMain,
-					company.ViewOrder,
-					company.CreatedBy,
-					company.ModifiedBy,
-					company.created_at,
-					company.updated_at,
-					company.deleted_at
+					company.ViewOrder
 				]
 			);
 
@@ -205,8 +178,8 @@ export const insertLoginData = async (data) => {
 		// roster өгөгдөл оруулах
 		if (roster) {
 			const resultRoster = await db.runAsync(
-				`INSERT INTO roster (id, PMSProjectId, Name, Description, IsSystem, IsActive, CreatedBy, ModifiedBy, created_at, updated_at, deleted_at, status)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+				`INSERT INTO roster (id, PMSProjectId, Name, Description, IsSystem, IsActive, status)
+				VALUES (?, ?, ?, ?, ?, ?, ?);`,
 				[
 					roster.id,
 					roster.PMSProjectId,
@@ -214,11 +187,6 @@ export const insertLoginData = async (data) => {
 					roster.Description,
 					roster.IsSystem,
 					roster.IsActive,
-					roster.CreatedBy,
-					roster.ModifiedBy,
-					roster.created_at,
-					roster.updated_at,
-					roster.deleted_at,
 					roster.status
 				]
 			);
@@ -230,9 +198,11 @@ export const insertLoginData = async (data) => {
 
 		// project өгөгдөл оруулах
 		if (project) {
+			console.log("DB project ========>", project);
+
 			const resultProject = await db.runAsync(
-				`INSERT INTO project (id, Name, PMSCompanyId, Commodity, ShiftTime, StartedDate, CurrentProject, CreatedBy, ModifiedBy, Latitude, Longitude, PMSProgressStateId, KMLFile, Radius, SyncTime, status)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+				`INSERT INTO project (id, Name, PMSCompanyId, Commodity, ShiftTime, StartedDate, CurrentProject, Latitude, Longitude, PMSProgressStateId, KMLFile, Radius, SyncTime, status)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 				[
 					project.id,
 					project.Name,
@@ -241,8 +211,6 @@ export const insertLoginData = async (data) => {
 					project.ShiftTime,
 					project.StartedDate,
 					project.CurrentProject,
-					project.CreatedBy,
-					project.ModifiedBy,
 					project.Latitude,
 					project.Longitude,
 					project.PMSProgressStateId,
@@ -307,7 +275,7 @@ export const insertLoginData = async (data) => {
 
 // Login TABLE үүдийг цэвэрлэж. Шинэ дата хадгалахад бэлдэх
 export const clearLoginTables = async (id) => {
-	console.log("RUN CLEAR LoginTables");
+	// console.log("RUN CLEAR LoginTables");
 
 	const tablesToClear = ["employee", "company", "roster", "equipments", "project", "shift"];
 
@@ -315,7 +283,7 @@ export const clearLoginTables = async (id) => {
 		// Хүснэгтүүдийг устгах
 		for (let table of tablesToClear) {
 			await db.runAsync(`DELETE FROM ${table}`);
-			console.log(`Successfully cleared table: ${table}`);
+			// console.log(`Successfully cleared table: ${table}`);
 		}
 
 		return "DONE_CLEAR_MAIN_TABLES";
@@ -327,7 +295,7 @@ export const clearLoginTables = async (id) => {
 
 // 3.DONE Локал өгөгдлийг авах функц
 export const fetchLoginData = async () => {
-	console.log("RUN fetch-Login-Data");
+	// console.log("RUN fetch-Login-Data");
 	let data = null;
 	try {
 		// Parallel database queries using Promise.all
@@ -339,7 +307,7 @@ export const fetchLoginData = async () => {
 			db.getAllAsync(`SELECT * FROM project`),
 			db.getAllAsync(`SELECT * FROM shift`)
 		]);
-
+		console.log("FETCH SHALGAJ BAINAAA", { employee });
 		// Combine results into a single object
 		data = {
 			employee,
@@ -357,6 +325,18 @@ export const fetchLoginData = async () => {
 	}
 };
 
+// 3.DONE Локал өгөгдлийг авах функц
+export const fetchCustomTable = async () => {
+	try {
+		let data = await db.getFirstAsync(`SELECT * FROM project`);
+		console.log("data", data);
+
+		return data; // Return the combined data
+	} catch (error) {
+		console.error("Error fetching login data", error);
+		throw new Error("Failed to fetch login data. Please try again later.");
+	}
+};
 // 4.DONE Локал өгөгдлийг устгах функц
 export const deleteData = async (id) => {
 	try {
