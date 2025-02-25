@@ -59,7 +59,7 @@ const HomeScreen = (props) => {
 		// Байршил шалгах
 		checkIfFileExistsAndLoad();
 
-		// console.log("refLocationTypes", state.refLocationTypes);
+		console.log("selectedEquipment", state.selectedEquipment);
 		// console.log("refStates", state.refStates);
 
 		const locationSource = transformLocations(state.refLocations, state.refLocationTypes);
@@ -199,7 +199,7 @@ const HomeScreen = (props) => {
 							</View>
 						</Marker>
 					</View>
-					<Circle
+					{/* <Circle
 						center={{
 							latitude: 47.912620040145065,
 							longitude: 106.93352509456994
@@ -208,7 +208,7 @@ const HomeScreen = (props) => {
 						strokeWidth={1}
 						strokeColor={"red"}
 						fillColor={"#4F9CC380"}
-					/>
+					/> */}
 					{/* TEST CIRCLE */}
 					{/* <Circle
 						center={{

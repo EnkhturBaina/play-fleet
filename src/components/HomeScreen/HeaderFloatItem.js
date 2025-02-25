@@ -92,7 +92,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					// console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
+					console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						state.setHeaderSelections((prev) => ({
@@ -105,7 +105,7 @@ const HeaderFloatItem = (props) => {
 						}));
 
 						const filteredDefaultState = state.refStates?.filter(
-							(item) => item.id === response.data?.Extra?.PMSSubProgressStateId
+							(item) => item.id === response.data?.Extra?.PMSProgressStateId
 						);
 						// console.log("default assign from header", filteredDefaultState);
 
@@ -246,7 +246,7 @@ const HeaderFloatItem = (props) => {
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() => {
-						setDialogText("Та ээлжээ дуусгах уу?");
+						setDialogText("Та ээлжээ дуусгах уу.?");
 						setVisibleDialog(true);
 					}}
 					style={styles.eachFloatButton}
