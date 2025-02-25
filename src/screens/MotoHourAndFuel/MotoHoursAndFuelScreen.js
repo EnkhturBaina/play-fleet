@@ -151,7 +151,9 @@ const MotoHoursAndFuelScreen = (props) => {
 				activeOpacity={0.8}
 			>
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
-				<Text style={{ flex: 1, color: "#fff", fontSize: 18, marginLeft: 10 }}>Мото цагийн болон түлшний бүртгэл</Text>
+				<Text style={{ flex: 1, color: "#fff", fontSize: 18, marginLeft: 10, lineHeight: 18 }}>
+					Мото цагийн болон түлшний бүртгэл
+				</Text>
 			</TouchableOpacity>
 
 			<View style={styles.headerActions}>

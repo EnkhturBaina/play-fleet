@@ -101,17 +101,29 @@ const Tab1 = (props) => {
 				}}
 			>
 				<View style={styles.itemRow}>
-					<Text style={styles.itemValue}>Рейсийн дундаж хугацаа</Text>
+					<Text style={styles.itemLabel}>Рейсийн дундаж хугацаа</Text>
 					<Text style={styles.dividerVertical}>|</Text>
-					<Text style={styles.itemValue}>{item.TM} мин</Text>
+					<Text style={styles.itemLabel}>{item.TM} мин</Text>
 				</View>
 				<View style={{ flexDirection: "row", marginTop: 10 }}>
 					<Text style={styles.itemDate}>{item.SavedDate}</Text>
-					<View style={{ flexDirection: "column", justifyContent: "flex-start" }}>
-						<Text style={styles.itemValue}>Экскаватор: {item.loader2?.Name ?? "-"}</Text>
-						<Text style={styles.itemValue}>Ачилтын блок: {item.source2?.Name + item.shot2?.ShotName}</Text>
-						<Text style={styles.itemValue}>Материал: {item.material2?.Name ?? "-"}</Text>
-						<Text style={styles.itemValue}>Хүргэсэн байршил: {item.source2?.Name ?? "-"}</Text>
+					<View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-start" }}>
+						<View style={styles.eachRowValueContainer}>
+							<Text style={styles.itemLabel}>Экскаватор:</Text>
+							<Text style={styles.itemValue2}>{item.loader2?.Name ?? "-"}</Text>
+						</View>
+						<View style={styles.eachRowValueContainer}>
+							<Text style={styles.itemLabel}>Ачилтын блок:</Text>
+							<Text style={styles.itemValue2}>{item.source2?.Name + item.shot2?.ShotName}</Text>
+						</View>
+						<View style={styles.eachRowValueContainer}>
+							<Text style={styles.itemLabel}>Материал:</Text>
+							<Text style={styles.itemValue2}>{item.material2?.Name ?? "-"}</Text>
+						</View>
+						<View style={styles.eachRowValueContainer}>
+							<Text style={styles.itemLabel}>Хүргэсэн байршил:</Text>
+							<Text style={styles.itemValue2}>{item.source2?.Name ?? "-"}</Text>
+						</View>
 					</View>
 				</View>
 			</View>
@@ -208,10 +220,23 @@ const styles = StyleSheet.create({
 	itemDate: {
 		fontWeight: "600",
 		fontSize: 16,
-		width: 90
+		width: "30%"
 	},
-	itemValue: {
-		fontSize: 16
+	eachRowValueContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		alignItems: "center",
+		width: "100%"
+	},
+	itemLabel: {
+		fontSize: 16,
+		flexShrink: 1
+		// fontWeight: 600
+	},
+	itemValue2: {
+		fontSize: 16,
+		flexShrink: 1,
+		marginLeft: 10
 	},
 	headerActions: {
 		flexDirection: "row",
