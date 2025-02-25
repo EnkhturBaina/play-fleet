@@ -141,7 +141,7 @@ export const MainStore = (props) => {
 			setLocation(currentLocation);
 			// console.log("Location response =>", currentLocation);
 
-			const currentSpeed = Math.max(0, currentLocation.coords.speed || 0); // Сөрөг утга гарахаас сэргийлэх
+			const currentSpeed = Math.max(0, currentLocation?.coords?.speed || 0); // Сөрөг утга гарахаас сэргийлэх
 			const speedKmH = (currentSpeed * 3.6).toFixed(2); // м/сек -> км/цаг
 
 			setSpeed(speedKmH);
@@ -178,7 +178,7 @@ export const MainStore = (props) => {
 						)
 						.then(function (response) {
 							// console.log("send EQ Location response", JSON.stringify(response.data));
-							console.log("send EQ Location response", JSON.stringify(response.data.Msg));
+							console.log("send EQ Location response", JSON.stringify(response.data?.Msg));
 							if (response.data?.Type == 0) {
 								// setLocationHistory((prevItems) => [
 								// 	...prevItems,
@@ -288,15 +288,15 @@ export const MainStore = (props) => {
 					logout();
 				}
 				// Login response -с state үүд салгаж хадгалах
-				setEmployeeData(responseOfflineLoginData.employee[0]);
-				setCompanyData(responseOfflineLoginData.company[0]);
-				setRosterData(responseOfflineLoginData.roster[0]);
-				setEquipmentsData(responseOfflineLoginData.equipments);
-				setProjectData(responseOfflineLoginData.project[0]);
-				setShiftData(responseOfflineLoginData.shift[0]);
+				setEmployeeData(responseOfflineLoginData?.employee[0]);
+				setCompanyData(responseOfflineLoginData?.company[0]);
+				setRosterData(responseOfflineLoginData?.roster[0]);
+				setEquipmentsData(responseOfflineLoginData?.equipments);
+				setProjectData(responseOfflineLoginData?.project[0]);
+				setShiftData(responseOfflineLoginData?.shift[0]);
 
-				if (responseOfflineLoginData.company[0]?.id) {
-					getReferencesService(responseOfflineLoginData.company[0]?.id, accessToken, true);
+				if (responseOfflineLoginData?.company[0]?.id) {
+					getReferencesService(responseOfflineLoginData?.company[0]?.id, accessToken, true);
 				}
 			} else {
 				setIsLoggedIn(false);
@@ -438,22 +438,22 @@ export const MainStore = (props) => {
 	const checkLocationStatus = (currentLocation, prevStatus) => {
 		const { latitude, longitude } = currentLocation;
 
-		const distanceToSRC = haversine(latitude, longitude, locationSource.SRC.latitude, locationSource.SRC.longitude);
-		const distanceToDST = haversine(latitude, longitude, locationSource.DST.latitude, locationSource.DST.longitude);
+		const distanceToSRC = haversine(latitude, longitude, locationSource?.SRC?.latitude, locationSource?.SRC?.longitude);
+		const distanceToDST = haversine(latitude, longitude, locationSource?.DST?.latitude, locationSource?.DST?.longitude);
 
 		// ✅ SRC шалгах
-		if (distanceToSRC <= locationSource.SRC.radius * 0.8) {
+		if (distanceToSRC <= locationSource?.SRC?.radius * 0.8) {
 			return "SRC_IN";
-		} else if (distanceToSRC > locationSource.SRC.radius * 0.8 && distanceToSRC <= locationSource.SRC.radius) {
+		} else if (distanceToSRC > locationSource?.SRC?.radius * 0.8 && distanceToSRC <= locationSource?.SRC?.radius) {
 			return "MINOR";
-		} else if (distanceToSRC > locationSource.SRC.radius && prevStatus === "SRC_IN") {
+		} else if (distanceToSRC > locationSource?.SRC?.radius && prevStatus === "SRC_IN") {
 			return "SRC_OUT";
 		}
 
 		// ✅ DST шалгах
-		if (distanceToDST <= locationSource.DST.radius * 0.8) {
+		if (distanceToDST <= locationSource?.DST?.radius * 0.8) {
 			return "DST_IN";
-		} else if (distanceToDST > locationSource.DST.radius && prevStatus === "DST_IN") {
+		} else if (distanceToDST > locationSource?.DST?.radius && prevStatus === "DST_IN") {
 			return "DST_OUT";
 		}
 

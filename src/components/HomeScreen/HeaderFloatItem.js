@@ -46,14 +46,14 @@ const HeaderFloatItem = (props) => {
 		getDefaultAssignedTask();
 		state.detectOrientation();
 
-		if (state.projectData && state.projectData.ShiftTime !== null) {
+		if (state.projectData && state.projectData?.ShiftTime !== null) {
 			// Эхлэх цаг
-			const startTime = dayjs(state.projectData.ShiftTime);
+			const startTime = dayjs(state.projectData?.ShiftTime);
 			// const startTime = dayjs("2025-02-02 01:29:00");
 			console.log("startTime", startTime);
 
 			// Дуусах цагийг тооцоолох (12 цаг нэмэх, 20 мин хасах)
-			const endTime = startTime.add(12, "hour").subtract(20, "minute");
+			const endTime = startTime?.add(12, "hour")?.subtract(20, "minute");
 			console.log("endTime", endTime);
 
 			// Секунд тутамд цагийг шалгах
@@ -62,7 +62,7 @@ const HeaderFloatItem = (props) => {
 				// console.log("now", now.format("HH:mm:ss"));
 				// console.log("endTime", endTime.format("HH:mm:ss"));
 
-				if (now.format("HH:mm:ss") === endTime.format("HH:mm:ss")) {
+				if (now?.format("HH:mm:ss") === endTime?.format("HH:mm:ss")) {
 					setDialogText("Та ээлжээ дуусгах уу.?");
 					setVisibleDialog(true);
 					clearInterval(interval); // Давхардахгүй байх үүднээс interval-ийг цэвэрлэх
@@ -114,7 +114,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					// console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
+					console.log("get DefaultAssignedTask response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						state.setHeaderSelections((prev) => ({
@@ -126,17 +126,19 @@ const HeaderFloatItem = (props) => {
 							material: response.data?.Extra?.PMSMaterialId
 						}));
 
-						const filteredDefaultState = state.refStates?.filter(
-							(item) => item.id === response.data?.Extra?.PMSProgressStateId
-						);
-						// console.log("default assign from header", filteredDefaultState);
+						if (response.data?.Extra?.PMSSubProgressStateId != null) {
+							const filteredDefaultState = state.refStates?.filter(
+								(item) => item.id === response.data?.Extra?.PMSSubProgressStateId
+							);
+							// console.log("default assign from header", filteredDefaultState);
 
-						// Default assign -с тухайн төхөөрөмжиййн төлөв авах
-						state.setSelectedState(filteredDefaultState[0]);
+							// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+							state.setSelectedState(filteredDefaultState[0]);
+						}
 					}
 				})
 				.catch(function (error) {
-					console.log("error get DefaultAssignedTask", error.response.data);
+					console.log("error get DefaultAssignedTask", error.response?.data);
 				});
 		} catch (error) {
 			console.log("CATCH get DefaultAssignedTask", error);
@@ -207,11 +209,11 @@ const HeaderFloatItem = (props) => {
 					) : null}
 				</View>
 				<View style={styles.itemsContainer}>
-					{VEHICLE_TYPE[state.vehicleType]?.fields.slice(0, visibleLines).map((el, index) => {
+					{VEHICLE_TYPE[state.vehicleType]?.fields?.slice(0, visibleLines).map((el, index) => {
 						const fieldData = refData[el.dataPath] || [];
 
 						// Хэрэв fieldData хоосон бол "Сонголт байхгүй" гэж харуулах
-						const isEmpty = fieldData.length === 0;
+						const isEmpty = fieldData?.length === 0;
 
 						return (
 							<View style={[styles.stack1, { width: state.orientation == "PORTRAIT" ? "100%" : "48%" }]} key={index}>

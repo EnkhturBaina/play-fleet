@@ -9,15 +9,15 @@ import Pusher from "pusher-js/react-native";
 import { useNetworkStatus } from "../contexts/NetworkContext";
 
 const convertHexWithAlpha = (kmlColor) => {
-	if (!kmlColor || kmlColor.length !== 8) {
+	if (!kmlColor || kmlColor?.length !== 8) {
 		console.error("Invalid color format. Expected AABBGGRR (8 characters).");
 		return null;
 	}
 
-	const alphaHex = kmlColor.substring(0, 2); // Alpha
-	const blue = kmlColor.substring(2, 4); // Blue
-	const green = kmlColor.substring(4, 6); // Green
-	const red = kmlColor.substring(6, 8); // Red
+	const alphaHex = kmlColor?.substring(0, 2); // Alpha
+	const blue = kmlColor?.substring(2, 4); // Blue
+	const green = kmlColor?.substring(4, 6); // Green
+	const red = kmlColor?.substring(6, 8); // Red
 
 	const alphaDecimal = (parseInt(alphaHex, 16) / 255).toFixed(2);
 
@@ -127,10 +127,10 @@ const TestRenderUurhai = () => {
 
 						const coordinatesString = placemark.LineString[0].coordinates[0];
 						const coordinatesArray = coordinatesString
-							.trim()
-							.split(" ")
-							.map((coordinate) => {
-								const [longitude, latitude] = coordinate.split(",").map(Number);
+							?.trim()
+							?.split(" ")
+							?.map((coordinate) => {
+								const [longitude, latitude] = coordinate.split(",")?.map(Number);
 								return { latitude, longitude };
 							});
 						return { coords: coordinatesArray, strokeColor, strokeWidth };

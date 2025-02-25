@@ -22,7 +22,7 @@ export const formatTime = (time) => {
 };
 
 export const convertHexWithAlpha = (kmlColor) => {
-	if (!kmlColor || kmlColor.length !== 8) {
+	if (!kmlColor || kmlColor?.length !== 8) {
 		console.error("Invalid color format. Expected AABBGGRR (8 characters).");
 		return null;
 	}
@@ -102,7 +102,7 @@ export const transformLocations = (refLocations, refLocationTypes) => {
 	}, {});
 
 	refLocations.forEach((location) => {
-		const typeName = locationTypeMap[location.PMSLocationTypeId];
+		const typeName = locationTypeMap[location?.PMSLocationTypeId];
 		if (!typeName) return;
 
 		if (locationSource.SRC.hasOwnProperty(typeName)) {

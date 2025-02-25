@@ -33,16 +33,16 @@ export const processKML = (fileContent) => {
 			if (err) {
 				reject("Error parsing KML");
 			}
-			const placemarks = result.kml.Document[0].Folder[0].Placemark || [];
+			const placemarks = result.kml?.Document[0]?.Folder[0]?.Placemark || [];
 			const extractedPolygons = placemarks.map((placemark) => {
 				const strokeColor = convertHexWithAlpha(placemark?.Style?.[0]?.LineStyle?.[0]?.color?.[0]);
 				const strokeWidth = placemark?.Style?.[0]?.LineStyle?.[0]?.width?.[0];
 				const coordinatesString = placemark?.LineString[0]?.coordinates[0];
 				const coordinatesArray = coordinatesString
-					.trim()
-					.split(" ")
-					.map((coordinate) => {
-						const [longitude, latitude] = coordinate.split(",").map(Number);
+					?.trim()
+					?.split(" ")
+					?.map((coordinate) => {
+						const [longitude, latitude] = coordinate?.split(",")?.map(Number);
 						return { latitude, longitude };
 					});
 				return { coords: coordinatesArray, strokeColor, strokeWidth };

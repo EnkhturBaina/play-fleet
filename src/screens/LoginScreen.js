@@ -106,18 +106,18 @@ const LoginScreen = (props) => {
 					console.log("Fetched Login Data:", responseOfflineLoginData);
 
 					// Login response -с state үүд салгаж хадгалах
-					state.setEmployeeData(responseOfflineLoginData.employee[0]);
-					state.setCompanyData(responseOfflineLoginData.company[0]);
-					state.setRosterData(responseOfflineLoginData.roster[0]);
-					state.setEquipmentsData(responseOfflineLoginData.equipments);
-					state.setProjectData(responseOfflineLoginData.project[0]);
-					state.setShiftData(responseOfflineLoginData.shift[0]);
+					state.setEmployeeData(responseOfflineLoginData?.employee[0]);
+					state.setCompanyData(responseOfflineLoginData?.company[0]);
+					state.setRosterData(responseOfflineLoginData?.roster[0]);
+					state.setEquipmentsData(responseOfflineLoginData?.equipments);
+					state.setProjectData(responseOfflineLoginData?.project[0]);
+					state.setShiftData(responseOfflineLoginData?.shift[0]);
 
 					// Local storage руу access_token хадгалах
 					await AsyncStorage.setItem("access_token", accessToken);
 
-					if (responseOfflineLoginData.company[0]?.id) {
-						state.getReferencesService(responseOfflineLoginData.company[0]?.id, accessToken, true);
+					if (responseOfflineLoginData?.company[0]?.id) {
+						state.getReferencesService(responseOfflineLoginData?.company[0]?.id, accessToken, true);
 					}
 				} else {
 					setLoginError("Өгөгдөл хадгалахад алдаа гарлаа.");
