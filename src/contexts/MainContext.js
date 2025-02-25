@@ -15,6 +15,7 @@ import { getDistanceFromLatLonInMeters } from "../helper/functions";
 const MainContext = React.createContext();
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
+const isClearTables = 1;
 
 export const MainStore = (props) => {
 	const { isConnected } = useNetworkStatus();
@@ -114,22 +115,27 @@ export const MainStore = (props) => {
 	};
 
 	useEffect(() => {
-		// logout();
-		// dropTable("employee");
-		// dropTable("company");
-		// dropTable("roster");
-		// dropTable("shift");
-		// dropTable("equipments");
-		// dropTable("project");
+		const performAsyncTasks = async () => {
+			if (isClearTables) {
+				// Бүх хүснэгтийг зэрэг устгах
+				await Promise.all([dropTable("project")]);
 
-		if (isConnected) {
-			//Интернэт холболттой бол Update шалгах
-			checkForUpdates();
-		} else {
-			//Интернэтгүй бол шууд location шалгаад local шалгах
-			checkLocation();
-		}
-	}, []);
+				if (isConnected) {
+					await checkForUpdates(); // Интернэт холболттой бол Update шалгах
+				} else {
+					await checkLocation(); // Интернэтгүй бол local шалгах
+				}
+			} else {
+				if (isConnected) {
+					await checkForUpdates();
+				} else {
+					await checkLocation();
+				}
+			}
+		};
+
+		performAsyncTasks(); // Асинхрон функцыг дуудна
+	}, []); // Empty dependency array for only running once (on mount)
 
 	const checkLocationWithSpeed = async () => {
 		console.log("RUN check Location With Speed");
@@ -225,7 +231,7 @@ export const MainStore = (props) => {
 			checkLocation();
 		}
 	};
-	const checkLocation = () => {
+	const checkLocation = async () => {
 		//***** LOCATION мэдээлэл авах
 		console.log("RUN check-Location");
 		(async () => {
