@@ -6,13 +6,16 @@ import { Icon } from "@rneui/base";
 import { MAIN_COLOR_BLUE, MAIN_COLOR_GRAY } from "../constant";
 import CustomDialog from "../components/CustomDialog";
 import MainContext from "../contexts/MainContext";
+import { sendSelectedState } from "../helper/apiService";
+import { useNetworkStatus } from "../contexts/NetworkContext";
 
 const StatusListScreen = (props) => {
 	const state = useContext(MainContext);
+	const { isConnected } = useNetworkStatus();
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogType, setDialogType] = useState("warning"); //Dialog харуулах төрөл
-	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
+	const [dialogText, setDialogText] = useState(""); //Dialog харуулах text
 	const [statusList, setStatusList] = useState(null);
 	const [selectedState, setSelectedState] = useState(null);
 
@@ -27,6 +30,33 @@ const StatusListScreen = (props) => {
 			}
 		}
 	}, []);
+
+	const statusListScreenSendSelectedState = async () => {
+		try {
+			const response = await sendSelectedState(
+				state.token,
+				state.projectData,
+				state.selectedEquipment,
+				selectedState,
+				state.employeeData,
+				state.headerSelections,
+				state.location,
+				isConnected
+			);
+			// console.log("statusListScreenSendSelectedState response=>", response);
+			if (response?.Type === 0) {
+				state.handleReset();
+				state.handleStart();
+				state.setSelectedState(selectedState);
+				setVisibleDialog(false);
+				props.navigation.goBack();
+			} else {
+				setDialogText(response?.Msg);
+			}
+		} catch (error) {
+			console.log("Error in stopProgressHandler:", error);
+		}
+	};
 
 	return (
 		<SafeAreaView
@@ -69,10 +99,9 @@ const StatusListScreen = (props) => {
 								style={styles.eachStatus}
 								key={index}
 								onPress={() => {
+									setDialogText("Та итгэлтэй байна уу?");
 									setSelectedState(el);
 									setVisibleDialog(true);
-									state.handleReset();
-									state.handleStart();
 								}}
 							>
 								<Text style={{ width: "68%", color: MAIN_COLOR_BLUE }}>{el.Activity}</Text>
@@ -85,9 +114,7 @@ const StatusListScreen = (props) => {
 			<CustomDialog
 				visible={visibleDialog}
 				confirmFunction={() => {
-					state.setSelectedState(selectedState);
-					setVisibleDialog(false);
-					props.navigation.goBack();
+					statusListScreenSendSelectedState();
 				}}
 				declineFunction={() => {
 					setVisibleDialog(false);

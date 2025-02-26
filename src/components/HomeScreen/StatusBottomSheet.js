@@ -7,9 +7,11 @@ import { MAIN_BORDER_RADIUS, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN,
 import { formatTime } from "../../helper/functions";
 import CustomDialog from "../CustomDialog";
 import { sendSelectedState } from "../../helper/apiService";
+import { useNetworkStatus } from "../../contexts/NetworkContext";
 
 export default function (props) {
 	const state = useContext(MainContext);
+	const { isConnected } = useNetworkStatus();
 	const animatedValue = useRef(new Animated.Value(1)).current;
 	const [stateParentId, setStateParentId] = useState(null);
 	const [mainStates, setMainStates] = useState(null);
@@ -74,7 +76,7 @@ export default function (props) {
 	}, [stateParentId]);
 
 	useEffect(() => {
-		console.log("headerSelections", state.headerSelections);
+		// console.log("headerSelections", state.headerSelections);
 
 		// 1. "W1" ActivityShort-той объектын ID-г авах
 		const w1Item = state.refStates?.find((item) => item.ActivityShort === "W1");
@@ -165,9 +167,10 @@ export default function (props) {
 				newState,
 				state.employeeData,
 				state.headerSelections,
-				state.location
+				state.location,
+				isConnected
 			);
-			console.log("bottomSheetSendSelectedState response=>", response);
+			// console.log("bottomSheetSendSelectedState response=>", response);
 
 			if (response?.Type === 0) {
 			} else {
