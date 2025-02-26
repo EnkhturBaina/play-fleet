@@ -8,14 +8,14 @@
 			{
 				"id": 1,
 				"name": "Блокын дугаар",
-				"path": "blockNo",
+				"path": "PMSBlastShotId",
 				"dataPath": "refShots",
 				"valuePath": "ShotName"
 			},
 			{
 				"id": 2,
 				"name": "Материал",
-				"path": "material",
+				"path": "PMSMaterialId",
 				"dataPath": "refMaterials",
 				"valuePath": "Name"
 			},
@@ -37,35 +37,35 @@
 			{
 				"id": 1,
 				"name": "Эхлэх байршил",
-				"path": "startPosition",
+				"path": "PMSSrcId",
 				"dataPath": "refLocations",
 				"valuePath": "Name"
 			},
 			{
 				"id": 2,
 				"name": "Блокын дугаар",
-				"path": "blockNo",
+				"path": "PMSBlastShotId",
 				"dataPath": "refShots",
 				"valuePath": "ShotName"
 			},
 			{
 				"id": 3,
 				"name": "Хүргэх байршил",
-				"path": "endLocation",
+				"path": "PMSDstId",
 				"dataPath": "refLocations",
 				"valuePath": "Name"
 			},
 			{
 				"id": 4,
 				"name": "Экскаватор",
-				"path": "exca",
+				"path": "PMSLoaderId",
 				"dataPath": "refLoaders",
 				"valuePath": "Name"
 			},
 			{
 				"id": 5,
 				"name": "Материал",
-				"path": "material",
+				"path": "PMSMaterialId",
 				"dataPath": "refMaterials",
 				"valuePath": "Name"
 			},

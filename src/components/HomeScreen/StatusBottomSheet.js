@@ -93,17 +93,6 @@ export default function (props) {
 		}
 	}, []);
 
-	const proceedWithStateChange = (selectedState) => {
-		// console.log("proceed With State Change selectedState =>", selectedState);
-
-		animatedValue.setValue(1);
-
-		state.handleReset();
-		state.handleStart();
-
-		state.setSelectedState(selectedState);
-	};
-
 	const selectState = (selectedState) => {
 		// Үндсэн W1 -н State -үүд мөн эсэх
 
@@ -154,14 +143,29 @@ export default function (props) {
 		}
 	};
 
-	const bottomSheetSendSelectedState = async () => {
+	const proceedWithStateChange = (selectedState) => {
+		// console.log("proceed With State Change selectedState =>", selectedState);
+
+		animatedValue.setValue(1);
+
+		state.handleReset();
+		state.handleStart();
+
+		state.setSelectedState(selectedState);
+		//Сонгогдсон төлөвийг SERVER -т илгээх
+		bottomSheetSendSelectedState(selectedState);
+	};
+
+	const bottomSheetSendSelectedState = async (newState) => {
 		try {
 			const response = await sendSelectedState(
 				state.token,
 				state.projectData,
 				state.selectedEquipment,
-				state.selectedState,
-				state.employeeData
+				newState,
+				state.employeeData,
+				state.headerSelections,
+				state.location
 			);
 			console.log("bottomSheetSendSelectedState response=>", response);
 

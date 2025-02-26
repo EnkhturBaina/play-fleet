@@ -1,5 +1,4 @@
 import axios from "axios";
-import dayjs from "dayjs";
 import { SERVER_URL } from "../constant";
 
 export const sendSelectedState = async (
@@ -8,7 +7,8 @@ export const sendSelectedState = async (
 	selectedEquipment,
 	selectedState,
 	employeeData,
-	LoaderData
+	headerSelections,
+	location
 ) => {
 	try {
 		const response = await axios.post(
@@ -16,16 +16,16 @@ export const sendSelectedState = async (
 			{
 				PMSProjectId: projectData?.id,
 				PMSEquipmentId: selectedEquipment?.id,
-				PMSProgressStateId: selectedState?.id,
+				PMSProgressStateId: selectedState?.PMSParentId,
 				PMSProgressSubStateId: selectedState?.id,
 				PMSEmployeeId: employeeData?.id,
-				PMSLoaderId: selectedState?.id,
-				PMSLocationId: selectedState?.id,
-				PMSBlastShotId: selectedState?.id,
-				PMSDestination: selectedState?.id,
-				PMSMaterialUnitId: selectedState?.id,
-				Latitude: selectedState?.id,
-				Longitude: selectedState?.id
+				PMSLoaderId: headerSelections?.PMSLoaderId,
+				PMSLocationId: headerSelections?.PMSSrcId,
+				PMSBlastShotId: headerSelections?.PMSBlastShotId,
+				PMSDestination: headerSelections?.PMSDstId,
+				PMSMaterialUnitId: headerSelections?.PMSMaterialId,
+				Latitude: parseFloat(location?.coords?.latitude) || 0,
+				Longitude: parseFloat(location?.coords?.longitude) || 0
 			},
 			{
 				headers: {

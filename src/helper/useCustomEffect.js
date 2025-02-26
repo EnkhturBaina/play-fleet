@@ -46,11 +46,11 @@ const useCustomEffect = (state, setEquipmentImage, setDialogText, setDialogConfi
 					// Header мэдээлэл шинэчлэх
 					state.setHeaderSelections((prev) => ({
 						...prev,
-						startPosition: event.extra?.PMSLocationId,
-						blockNo: event.extra?.PMSBlastShotId,
-						endLocation: event.extra?.PMSDestinationId,
-						exca: event.extra?.PMSLoaderId,
-						material: event.extra?.PMSMaterialUnitId
+						PMSSrcId: event.extra?.PMSLocationId,
+						PMSBlastShotId: event.extra?.PMSBlastShotId,
+						PMSDstId: event.extra?.PMSDestinationId,
+						PMSLoaderId: event.extra?.PMSLoaderId,
+						PMSMaterialId: event.extra?.PMSMaterialUnitId
 					}));
 
 					// Харилцах цонх гаргах

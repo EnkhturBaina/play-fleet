@@ -119,11 +119,11 @@ const HeaderFloatItem = (props) => {
 						setAssignedData(response.data?.Extra);
 						state.setHeaderSelections((prev) => ({
 							...prev,
-							startPosition: response.data?.Extra?.PMSSrcId,
-							blockNo: response.data?.Extra?.PMSBlastShotId,
-							endLocation: response.data?.Extra?.PMSDstId,
-							exca: response.data?.Extra?.PMSLoaderId,
-							material: response.data?.Extra?.PMSMaterialId
+							PMSSrcId: response.data?.Extra?.PMSSrcId,
+							PMSBlastShotId: response.data?.Extra?.PMSBlastShotId,
+							PMSDstId: response.data?.Extra?.PMSDstId,
+							PMSLoaderId: response.data?.Extra?.PMSLoaderId,
+							PMSMaterialId: response.data?.Extra?.PMSMaterialId
 						}));
 
 						if (response.data?.Extra?.PMSSubProgressStateId != null) {
