@@ -23,42 +23,12 @@
 
 -------Q??
 
-1. Inspection зөвхөн login хийх үед байх уу? Апп хаагаад нээх үед дахиж гарж ирээгүй байгаа
+# isConnected == true
 
--------TASK
+Send to server
 
-1. Тухайн RADIUS орж ирэхэд анивчуулах
-   # Ямар талбараар тухайн RADIUS -д орж ирэхэд аль төлөвийг анивчуулах?
-   # Төлөвийг дарааллын дагуу ажиллаж байгаа эсэхийг энэ дотор шалгах эсэх?
-2. Төлөвийг дарааллын дагуу анивчуулах
-   # Хэдэн минутын дараа анивчуулах REFERENCE маягийн дата байх эсэх?
-3. Бүтээлийн бүртгэл
+# isConnected == false
 
-   # Сервис ?
-
--------TASK 25/02/23
-
-# SEND EQ LOCATION service SyncTime
-
-# Equipment Location
-
-#
-
-########### DONE
-
-1.  Assigned => PMSProgressStateId
-2.  Login => Project => PMSProgressStateId (SOngogdson tolow -d tohriuulah)
-
-# Eelj duusgah
-
-1.  progress/stop (test gej damjuulah => eelj duusah tsag shalgaxgv)
-
-# STATE songoh
-
-########### DONE
-
-1.  Алхам ухрах үед, одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул энэхүү үйлдлийг хийхдээ итгэлтэй байна уу?
-    ########### DONE
-2.  Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?
-    ########### DONE
-3.  Алхам алгасаж байгаа тул таны одоогийн рейсийн бүртгэл дутуу хадгалагдах боломжтой. Энэ үйлдлийг хийхдээ итгэлтэй байна уу?
+Save to SQLite
+Check isConnected == true
+Send to server
