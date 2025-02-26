@@ -1,4 +1,7 @@
 import * as SQLite from "expo-sqlite";
+import { SERVER_URL } from "../constant";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const db = SQLite.openDatabaseSync("offline_data2");
 
@@ -87,6 +90,23 @@ export const createTable = async () => {
 				Radius INTEGER,
 				SyncTime INTEGER,
 				status TEXT
+      );`
+		);
+		await db.execAsync(
+			`CREATE TABLE IF NOT EXISTS send_state (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				PMSProjectId INTEGER,
+				PMSEquipmentId INTEGER,
+				PMSProgressStateId INTEGER,
+				PMSProgressSubStateId INTEGER,
+				PMSEmployeeId INTEGER,
+				PMSLoaderId INTEGER,
+				PMSLocationId INTEGER,
+				PMSBlastShotId INTEGER,
+				PMSDestination INTEGER,
+				PMSMaterialUnitId INTEGER,
+				Latitude REAL,
+				Longitude REAL
       );`
 		);
 	} catch (error) {
@@ -307,7 +327,6 @@ export const fetchLoginData = async () => {
 			db.getAllAsync(`SELECT * FROM project`),
 			db.getAllAsync(`SELECT * FROM shift`)
 		]);
-		console.log("FETCH SHALGAJ BAINAAA", { project });
 		// Combine results into a single object
 		data = {
 			employee,
@@ -357,37 +376,96 @@ export const updateData = async (id) => {
 	}
 };
 
-// 6. Локал өгөгдлийг сервер рүү илгээх функц
-export const syncDataToServer = async () => {
-	db.transaction((tx) => {
-		tx.executeSql(
-			"SELECT * FROM local_data;",
-			[],
-			async (_, { rows }) => {
-				const data = rows._array;
-				console.log("Offline data:", data);
+export const insertSendStateData = async (data) => {
+	console.log("data", data);
 
-				// Датаг нэг бүрчлэн сервер рүү илгээх
-				for (let item of data) {
+	if (data) {
+		const resultSendState = await db.runAsync(
+			`INSERT INTO send_state (
+				PMSProjectId,
+				PMSEquipmentId,
+				PMSProgressStateId,
+				PMSProgressSubStateId,
+				PMSEmployeeId,
+				PMSLoaderId,
+				PMSLocationId,
+				PMSBlastShotId,
+				PMSDestination,
+				PMSMaterialUnitId,
+				Latitude,
+				Longitude)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+			data
+		);
+		console.log("resultSendState", resultSendState);
+
+		if (resultSendState.rowsAffected === 0) {
+			throw new Error("send_state өгөгдлийг оруулж чадсангүй.");
+		}
+	}
+};
+
+export const fetchSendStateData = async () => {
+	try {
+		await AsyncStorage.getItem("access_token").then(async (localToken) => {
+			// Parallel database queries using Promise.all
+			const data = await db.getAllAsync("SELECT * FROM send_state");
+			// console.log("data ==========>", data);
+			// console.log("token ==========>", token);
+
+			if (data) {
+				for (const item of data) {
+					// console.log("item =======>", JSON.stringify(item));
 					try {
-						const response = await fetch("https://your-server.com/api", {
-							method: "POST",
-							headers: { "Content-Type": "application/json" },
-							body: item.data
-						});
+						const response = await axios.post(
+							`${SERVER_URL}/mobile/progress/send`,
+							{
+								PMSProjectId: item?.PMSProjectId,
+								PMSEquipmentId: item?.PMSEquipmentId,
+								PMSProgressStateId: item?.PMSProgressStateId,
+								PMSProgressSubStateId: item?.PMSProgressSubStateId,
+								PMSEmployeeId: item?.PMSEmployeeId,
+								PMSLoaderId: item?.PMSLoaderId,
+								PMSLocationId: item?.PMSLocationId,
+								PMSBlastShotId: item?.PMSBlastShotId,
+								PMSDestination: item?.PMSDestination,
+								PMSMaterialUnitId: item?.PMSMaterialUnitId,
+								Latitude: item?.Latitude ? parseFloat(item?.Latitude) : 0,
+								Longitude: item?.Longitude ? parseFloat(item?.Longitude) : 0
+							},
+							{
+								headers: {
+									"Content-Type": "application/json",
+									Authorization: `Bearer ${localToken}`
+								}
+							}
+						);
+						// console.log("response", response.data);
 
-						if (response.ok) {
-							// Амжилттай илгээгдсэн бол SQLite доторх датаг устгах
-							deleteData(item.id);
+						if (response.data?.Type == 0) {
+							// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
+							await deleteSendStateRowById(item.id);
 						} else {
-							console.error("Failed to sync data:", item);
+							console.error(`Failed to send item ${item.id}:`);
 						}
 					} catch (error) {
-						console.error("Error syncing data:", error);
+						console.error(`Error sending item ${item.id}:`, error);
 					}
 				}
-			},
-			(_, error) => console.error("Error fetching data for sync:", error)
-		);
-	});
+			}
+			return data; // Return the combined data
+		});
+	} catch (error) {
+		console.error("Error fetching send state data", error);
+		throw new Error("Failed to fetch send state data. Please try again later.");
+	}
+};
+
+const deleteSendStateRowById = async (id) => {
+	try {
+		await db.runAsync("DELETE FROM send_state WHERE id = ?;", [id]);
+		console.log(`Row with id ${id} deleted.`);
+	} catch (error) {
+		console.error(`Error deleting row with id ${id}:`, error);
+	}
 };

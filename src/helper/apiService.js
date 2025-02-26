@@ -1,5 +1,6 @@
 import axios from "axios";
 import { SERVER_URL } from "../constant";
+import { fetchSendStateData, insertSendStateData } from "./db";
 
 export const sendSelectedState = async (
 	token,
@@ -38,8 +39,8 @@ export const sendSelectedState = async (
 					PMSBlastShotId: headerSelections?.PMSBlastShotId,
 					PMSDestination: headerSelections?.PMSDstId,
 					PMSMaterialUnitId: headerSelections?.PMSMaterialId,
-					Latitude: parseFloat(location?.coords?.latitude) || 0,
-					Longitude: parseFloat(location?.coords?.longitude) || 0
+					Latitude: location?.coords?.latitude ? parseFloat(location.coords.latitude) : 0,
+					Longitude: location?.coords?.longitude ? parseFloat(location.coords.longitude) : 0
 				},
 				{
 					headers: {
@@ -56,6 +57,24 @@ export const sendSelectedState = async (
 			throw error; // Алдаа гарвал component-д дамжуулна
 		}
 	} else {
+		try {
+			await insertSendStateData([
+				projectData?.id,
+				selectedEquipment?.id,
+				state_id,
+				sub_state_id,
+				employeeData?.id,
+				headerSelections?.PMSLoaderId,
+				headerSelections?.PMSSrcId,
+				headerSelections?.PMSBlastShotId,
+				headerSelections?.PMSDstId,
+				headerSelections?.PMSMaterialId,
+				location?.coords?.latitude ? parseFloat(location.coords.latitude) : 0,
+				location?.coords?.longitude ? parseFloat(location.coords.longitude) : 0
+			]);
+		} catch (error) {
+			console.error("Error inserting send state data:", error);
+		}
 		// console.log("isConnected FALSE");
 	}
 };

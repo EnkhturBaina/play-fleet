@@ -15,6 +15,7 @@ import { Image } from "expo-image";
 import CustomDialog from "../components/CustomDialog";
 import useCustomEffect from "../helper/useCustomEffect";
 import { transformLocations } from "../helper/functions";
+import { fetchSendStateData } from "../helper/db";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -45,8 +46,8 @@ const HomeScreen = (props) => {
 	const animateRef = useCallback(() => {
 		if (mapRef.current && state.location) {
 			mapRef.current.animateToRegion({
-				latitude: parseFloat(state.location?.coords?.latitude) || 0,
-				longitude: parseFloat(state.location?.coords?.longitude) || 0,
+				latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+				longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
 				latitudeDelta: 0.05,
 				longitudeDelta: 0.05
 			});
@@ -123,6 +124,13 @@ const HomeScreen = (props) => {
 		}
 	}, [fileContent]);
 
+	useEffect(() => {
+		if (isConnected) {
+			console.log("📶 Интернет холбогдлоо! Өгөгдөл сервер рүү илгээж байна...");
+			fetchSendStateData(); // Сервер лүү SQLite-с дата илгээх функц
+		}
+	}, [isConnected]);
+
 	return (
 		<SafeAreaView
 			style={{
@@ -158,8 +166,8 @@ const HomeScreen = (props) => {
 					ref={mapRef}
 					style={[styles.map, { width: width, height: height }]}
 					initialRegion={{
-						latitude: parseFloat(state.location?.coords?.latitude) || 0,
-						longitude: parseFloat(state.location?.coords?.longitude) || 0,
+						latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+						longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
 						latitudeDelta: 0.05,
 						longitudeDelta: 0.05
 					}}
@@ -169,8 +177,8 @@ const HomeScreen = (props) => {
 					<View>
 						<Circle
 							center={{
-								latitude: parseFloat(state.location?.coords?.latitude) || 0,
-								longitude: parseFloat(state.location?.coords?.longitude) || 0
+								latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+								longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
 							}}
 							radius={state.selectedEquipmentCode == 1 ? 400 : 200}
 							strokeWidth={1}
@@ -180,8 +188,8 @@ const HomeScreen = (props) => {
 						<Marker
 							title="Таны одоогийн байршил"
 							coordinate={{
-								latitude: parseFloat(state.location?.coords?.latitude) || 0,
-								longitude: parseFloat(state.location?.coords?.longitude) || 0
+								latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+								longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
 							}}
 						>
 							<View style={styles.customMarker}>
@@ -235,8 +243,8 @@ const HomeScreen = (props) => {
 						// DMP, STK, MILL => DST
 
 						const locationImg = locationImages[location?.Name] || null;
-						const latitude = parseFloat(el.Latitude);
-						const longitude = parseFloat(el.Longitude);
+						const latitude = el.Latitude ? parseFloat(el.Latitude) : 0;
+						const longitude = el.Longitude ? parseFloat(el.Longitude) : 0;
 
 						return (
 							<View key={index}>
