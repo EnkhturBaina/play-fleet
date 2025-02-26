@@ -182,7 +182,7 @@ export const saveReferencesWithClear = async (data, is_clear) => {
 };
 
 export const insertReferencesData = async (data) => {
-	// console.log("RUN INSERT-ReferencesData");
+	// console.log("RUN INSERT-ReferencesData", data);
 
 	const insertPromises = []; // Гүйцэтгэсэн бүх insert үйлдлийг хадгалах массив
 
@@ -197,6 +197,8 @@ export const insertReferencesData = async (data) => {
 
 		// ref_states insert хийх
 		if (ref_states) {
+			// console.log("ref_states DB", ref_states);
+
 			ref_states.forEach((el) => {
 				const promise = db
 					.runAsync(

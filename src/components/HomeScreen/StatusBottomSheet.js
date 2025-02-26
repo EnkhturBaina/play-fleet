@@ -76,10 +76,12 @@ export default function (props) {
 	}, [stateParentId]);
 
 	useEffect(() => {
-		// console.log("headerSelections", state.headerSelections);
+		// console.log("refStates", state.refStates);
 
 		// 1. "W1" ActivityShort-той объектын ID-г авах
 		const w1Item = state.refStates?.find((item) => item.ActivityShort === "W1");
+		// console.log("w1Item", w1Item);
+
 		if (w1Item) {
 			setStateParentId(w1Item.id);
 		}
@@ -170,7 +172,7 @@ export default function (props) {
 				state.location,
 				isConnected
 			);
-			// console.log("bottomSheetSendSelectedState response=>", response);
+			console.log("bottomSheet_Send_Selected_State_Response=>", response);
 
 			if (response?.Type === 0) {
 			} else {

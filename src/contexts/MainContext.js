@@ -338,6 +338,7 @@ export const MainStore = (props) => {
 								if (result === "DONE_INSERT") {
 									const data = await fetchReferencesData();
 
+									// console.log("get SQLite reference DATA=>", data);
 									// Бүх тохиргоог автоматаар хийх функц
 									const updateReferences = (data, setters) => {
 										Object.entries(setters).forEach(([key, setter]) => {

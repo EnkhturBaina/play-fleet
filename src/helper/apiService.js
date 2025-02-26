@@ -48,6 +48,8 @@ export const sendSelectedState = async (
 					}
 				}
 			);
+			console.log("response", JSON.stringify(response));
+
 			return response.data;
 		} catch (error) {
 			console.log("Error in stopProgress service:", error);

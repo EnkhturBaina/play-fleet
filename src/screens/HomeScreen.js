@@ -286,7 +286,7 @@ const HomeScreen = (props) => {
 					}}
 				>
 					{/* <Text style={{ backgroundColor: "red" }}>speed:{state.speed}</Text> */}
-					{state.selectedState ? <StatusBottomSheet bottomSheetRef={bottomSheetRef} /> : null}
+					<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
 				</View>
 			</SideMenu>
 
