@@ -6,6 +6,7 @@ import { Image } from "expo-image";
 import { MAIN_BORDER_RADIUS, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR } from "../../constant";
 import { formatTime } from "../../helper/functions";
 import CustomDialog from "../CustomDialog";
+import { sendSelectedState } from "../../helper/apiService";
 
 export default function (props) {
 	const state = useContext(MainContext);
@@ -73,6 +74,8 @@ export default function (props) {
 	}, [stateParentId]);
 
 	useEffect(() => {
+		console.log("headerSelections", state.headerSelections);
+
 		// 1. "W1" ActivityShort-той объектын ID-г авах
 		const w1Item = state.refStates?.find((item) => item.ActivityShort === "W1");
 		if (w1Item) {
@@ -148,6 +151,25 @@ export default function (props) {
 		} else {
 			// 4. Төлөв сонгогдсон бол
 			proceedWithStateChange(selectedState);
+		}
+	};
+
+	const bottomSheetSendSelectedState = async () => {
+		try {
+			const response = await sendSelectedState(
+				state.token,
+				state.projectData,
+				state.selectedEquipment,
+				state.selectedState,
+				state.employeeData
+			);
+			console.log("bottomSheetSendSelectedState response=>", response);
+
+			if (response?.Type === 0) {
+			} else {
+			}
+		} catch (error) {
+			console.log("Error in stopProgressHandler:", error);
 		}
 	};
 	return (
