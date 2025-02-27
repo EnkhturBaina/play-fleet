@@ -57,6 +57,14 @@ const HomeScreen = (props) => {
 	// useEchoCustomEffect(state, setEquipmentImage, setDialogText, setDialogConfirmText, setVisibleDialog);
 
 	useEffect(() => {
+		// Төхөөрөмжийн төрлийг тодорхойлох
+		const equipmentType = state.selectedEquipment?.TypeName;
+		const equipmentImages = {
+			Truck: require("../../assets/status/truck_main.png"),
+			Loader: require("../../assets/status/loader_main.png"),
+			Other: require("../../assets/status/other_main.png")
+		};
+		setEquipmentImage(equipmentImages[equipmentType] || require("../../assets/icon.png"));
 		state.detectOrientation();
 		// Байршил шалгах
 		checkIfFileExistsAndLoad();

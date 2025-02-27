@@ -3,17 +3,8 @@ import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import { ECHO_EVENT_PROGRESS, ECHO_REVERB_HOST, ECHO_REVERB_KEY } from "../constant";
 
-const useEchoCustomEffect = (state, setEquipmentImage, setDialogText, setDialogConfirmText, setVisibleDialog) => {
+const useEchoCustomEffect = (state, setDialogText, setDialogConfirmText, setVisibleDialog) => {
 	useEffect(() => {
-		// Төхөөрөмжийн төрлийг тодорхойлох
-		const equipmentType = state.selectedEquipment?.TypeName;
-		const equipmentImages = {
-			Truck: require("../../assets/status/truck_main.png"),
-			Loader: require("../../assets/status/loader_main.png"),
-			Other: require("../../assets/status/other_main.png")
-		};
-		setEquipmentImage(equipmentImages[equipmentType] || require("../../assets/icon.png"));
-
 		// Laravel Echo тохиргоо
 		window.Pusher = Pusher;
 		// Pusher.logToConsole = true;
