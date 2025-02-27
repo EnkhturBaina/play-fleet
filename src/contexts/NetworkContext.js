@@ -14,17 +14,14 @@ export const NetworkProvider = ({ children }) => {
 			console.log("state", state);
 
 			setIsConnected(state.isConnected);
-			if (state.isConnected && state.details) {
-				const speed = state.details.downlink; // Mbps
-				if (speed > 5) {
-					setConnectionQuality("good");
-				} else if (speed > 1) {
-					setConnectionQuality("medium");
-				} else {
-					setConnectionQuality("poor");
-				}
+			if (!state.isConnected) {
+				setConnectionQuality("poor");
+			} else if (state.type === "wifi") {
+				setConnectionQuality(state.isInternetReachable ? "good" : "medium");
+			} else if (state.type === "cellular") {
+				setConnectionQuality(state.isInternetReachable ? "good" : "medium");
 			} else {
-				setConnectionQuality("none");
+				setConnectionQuality("poor");
 			}
 		});
 
