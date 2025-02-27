@@ -20,7 +20,7 @@ export default function (props) {
 	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
 	const [onConfirm, setOnConfirm] = useState(null); // Дialog-ийн баталгаажуулалтын үйлдэл
 
-	const ENABLE_NEXT_STATUS = 3; // SECOND
+	const ENABLE_NEXT_STATUS = 10; // SECOND
 
 	const MAIN_STATE_CODES = ["Loading", "Hauling", "Dumping", "Traveling", "Queueing"];
 	const IMAGE_LIST = [
@@ -112,7 +112,7 @@ export default function (props) {
 			}
 
 			// 1. Хэрэв 30 секунд дотор сонгогдсон бол анхааруулга
-			if (state.seconds < 3) {
+			if (state.seconds < 30) {
 				setDialogText(
 					"Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?"
 				);
