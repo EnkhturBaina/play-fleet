@@ -49,7 +49,7 @@ export const sendSelectedState = async (
 					}
 				}
 			);
-			console.log("response", JSON.stringify(response));
+			// console.log("response", JSON.stringify(response));
 
 			return response.data;
 		} catch (error) {

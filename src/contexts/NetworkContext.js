@@ -6,11 +6,26 @@ const NetworkContext = createContext();
 
 export const NetworkProvider = ({ children }) => {
 	const [isConnected, setIsConnected] = useState(true);
+	const [connectionQuality, setConnectionQuality] = useState("unknown");
 
 	useEffect(() => {
 		// NetInfo listener нэмэх
 		const unsubscribe = useNetInfo.addEventListener((state) => {
+			console.log("state", state);
+
 			setIsConnected(state.isConnected);
+			if (state.isConnected && state.details) {
+				const speed = state.details.downlink; // Mbps
+				if (speed > 5) {
+					setConnectionQuality("good");
+				} else if (speed > 1) {
+					setConnectionQuality("medium");
+				} else {
+					setConnectionQuality("poor");
+				}
+			} else {
+				setConnectionQuality("none");
+			}
 		});
 
 		return () => {
@@ -19,7 +34,7 @@ export const NetworkProvider = ({ children }) => {
 		};
 	}, []);
 
-	return <NetworkContext.Provider value={{ isConnected }}>{children}</NetworkContext.Provider>;
+	return <NetworkContext.Provider value={{ isConnected, connectionQuality }}>{children}</NetworkContext.Provider>;
 };
 
 // Интернет төлөвийг ашиглах туслах функц

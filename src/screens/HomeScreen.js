@@ -13,9 +13,9 @@ import * as FileSystem from "expo-file-system";
 import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
 import { Image } from "expo-image";
 import CustomDialog from "../components/CustomDialog";
-import useCustomEffect from "../helper/useCustomEffect";
 import { transformLocations } from "../helper/functions";
 import { fetchSendStateData } from "../helper/db";
+import useEchoCustomEffect from "../helper/useEchoCustomEffect";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -54,9 +54,10 @@ const HomeScreen = (props) => {
 		}
 	}, [state.location]);
 
-	useCustomEffect(state, setEquipmentImage, setDialogText, setDialogConfirmText, setVisibleDialog);
+	// useEchoCustomEffect(state, setEquipmentImage, setDialogText, setDialogConfirmText, setVisibleDialog);
 
 	useEffect(() => {
+		state.detectOrientation();
 		// Байршил шалгах
 		checkIfFileExistsAndLoad();
 
