@@ -153,9 +153,7 @@ const HomeScreen = (props) => {
 		console.log("RUN downloadTiles");
 		console.log("Starting tile download for Ulaanbaatar...");
 		setProgress("Серверээс татаж эхэллээ...");
-		await downloadTilesForRegion(ZOOM_LEVEL, LAT_START, LAT_END, LON_START, LON_END).then((e) => {
-			console.log("XXXXXXXXXXXXXXXXXXXX", e);
-		});
+		await downloadTilesForRegion(ZOOM_LEVEL, LAT_START, LAT_END, LON_START, LON_END);
 		console.log("Tile download completed!");
 		setProgress("Серверээс татаж дууслаа!");
 		setTilesReady(true);
