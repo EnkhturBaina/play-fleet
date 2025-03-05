@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Platform, StatusBar, SafeAreaView, Dimensions } from "react-native";
-import React, { useContext, useEffect, useState, useRef, useCallback } from "react";
+import React, { useContext, useEffect, useState, useRef, useCallback, useMemo } from "react";
 import HeaderUser from "../components/HeaderUser";
 import MainContext from "../contexts/MainContext";
 import Constants from "expo-constants";
@@ -94,14 +94,27 @@ const HomeScreen = (props) => {
 		};
 	}, [echo]);
 
-	useEffect(() => {
-		// Төхөөрөмжийн төрлийг тодорхойлох
-		const equipmentType = state.selectedEquipment?.TypeName;
-		const equipmentImages = {
+	const equipmentImages = useMemo(
+		() => ({
 			Truck: require("../../assets/status/truck_main.png"),
 			Loader: require("../../assets/status/loader_main.png"),
 			Other: require("../../assets/status/other_main.png")
-		};
+		}),
+		[]
+	);
+	const locationImages = useMemo(
+		() => ({
+			DMP: require("../../assets/locations/DMP.png"),
+			MILL: require("../../assets/locations/MILL.png"),
+			STK: require("../../assets/locations/STK.png"),
+			PIT: require("../../assets/locations/PIT.png")
+		}),
+		[]
+	);
+	useEffect(() => {
+		// Төхөөрөмжийн төрлийг тодорхойлох
+		const equipmentType = state.selectedEquipment?.TypeName;
+
 		setEquipmentImage(equipmentImages[equipmentType] || require("../../assets/icon.png"));
 		state.detectOrientation();
 		// Байршил шалгах
@@ -177,6 +190,13 @@ const HomeScreen = (props) => {
 			fetchSendStateData(); // Сервер лүү SQLite-с дата илгээх функц
 		}
 	}, [isConnected]);
+
+	const renderedPolygons = useMemo(() => {
+		if (!loadingKML && polygons?.length > 0) {
+			return polygons.map((el, index) => <Polyline key={index} coordinates={el.coords} strokeColor={el.strokeColor} />);
+		}
+		return null;
+	}, [loadingKML, polygons]);
 
 	return (
 		<SafeAreaView
@@ -278,14 +298,6 @@ const HomeScreen = (props) => {
 					{state.refLocations?.map((el, index) => {
 						const location = state.refLocationTypes?.find((item) => item.id === el.PMSLocationTypeId);
 
-						// Optimize location image lookup with a dictionary
-						const locationImages = {
-							DMP: require("../../assets/locations/DMP.png"),
-							MILL: require("../../assets/locations/MILL.png"),
-							STK: require("../../assets/locations/STK.png"),
-							PIT: require("../../assets/locations/PIT.png")
-						};
-
 						// STK, PIT => SRC
 						// DMP, STK, MILL => DST
 
@@ -316,8 +328,8 @@ const HomeScreen = (props) => {
 							</View>
 						);
 					})}
-
-					{!loadingKML &&
+					{renderedPolygons}
+					{/* {!loadingKML &&
 						polygons?.length > 0 &&
 						polygons?.map((el, index) => {
 							return (
@@ -328,7 +340,7 @@ const HomeScreen = (props) => {
 									// strokeWidth={el.strokeWidth}
 								/>
 							);
-						})}
+						})} */}
 				</MapView>
 				<HeaderFloatItem isOpen={isOpen} setIsOpen={setIsOpen} mapRef={animateRef} />
 				<View
@@ -347,9 +359,7 @@ const HomeScreen = (props) => {
 
 			<CustomDialog
 				visible={visibleDialog}
-				confirmFunction={() => {
-					setVisibleDialog(false);
-				}}
+				confirmFunction={() => setVisibleDialog(false)}
 				declineFunction={() => {}}
 				text={dialogText}
 				confirmBtnText={dialogConfirmText}
