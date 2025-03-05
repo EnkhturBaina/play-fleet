@@ -30,3 +30,6 @@ export const ECHO_EVENT_PROGRESS = ".PMSEquipmentStateChanged";
 export const ECHO_EVENT_NOTIFICATION = ".PMSNotificationSent";
 export const ECHO_REVERB_KEY = "qqm6lnpmsapiright";
 export const ECHO_REVERB_HOST = "pms.talent.mn";
+
+export const IOS_MAP_API = "AIzaSyDn0I3ngMxtI1ZJJUnpqAasbb7OurMqUKE";
+export const ANDROID_MAP_API = "AIzaSyD9zeS9o_eX6gX54t9yedncuGS84zcwr20";

@@ -34,8 +34,9 @@ const TestTilesScreen = (props) => {
 
 	// Газрын зурагны tile татаж хадгалах
 	const downloadTile = async (z, x, y) => {
-		const url = `https://tile.openstreetmap.org/${z}/${x}/${y}.png`; // OSM tiles URL
-		const fileUri = `${FileSystem.documentDirectory}tiles4/${z}/${x}/${y}.png`;
+		// const url = `https://tile.openstreetmap.org/${z}/${x}/${y}.png`; // OSM tiles URL
+		const url = `https://mt1.google.com/vt/lyrs=s&x=${x}&y=${y}&z=${z}&key=AIzaSyDn0I3ngMxtI1ZJJUnpqAasbb7OurMqUKE`; // OSM tiles URL
+		const fileUri = `${FileSystem.documentDirectory}local_tiles1/${z}/${x}/${y}.png`;
 
 		// Фолдер үүсгэх
 		const dir = fileUri.substring(0, fileUri.lastIndexOf("/"));
@@ -77,7 +78,7 @@ const TestTilesScreen = (props) => {
 		// Бүх tile-ууд хадгалагдсан эсэхийг шалгах
 		for (let x = start.x; x <= end.x; x++) {
 			for (let y = end.y; y <= start.y; y++) {
-				const tileUri = `${FileSystem.documentDirectory}tiles4/${ZOOM_LEVEL}/${x}/${y}.png`;
+				const tileUri = `${FileSystem.documentDirectory}local_tiles1/${ZOOM_LEVEL}/${x}/${y}.png`;
 				const fileInfo = await FileSystem.getInfoAsync(tileUri);
 				// console.log("fileInfo", fileInfo);
 				if (!fileInfo.exists) {
@@ -90,7 +91,7 @@ const TestTilesScreen = (props) => {
 
 		// Хэрэв бүх tile-ууд хадгалагдсан бол Map-д харуулна
 		if (allTilesExist) {
-			setTileUri(`${FileSystem.documentDirectory}tiles4/{z}/{x}/{y}.png`);
+			setTileUri(`${FileSystem.documentDirectory}local_tiles1/{z}/{x}/{y}.png`);
 			setProgress("Tiles loaded storage");
 			setTilesReady(true);
 		} else {
@@ -108,7 +109,7 @@ const TestTilesScreen = (props) => {
 		console.log("Tile download completed!");
 		setProgress("Tile download completed!");
 		setTilesReady(true);
-		setTileUri(`${FileSystem.documentDirectory}tiles4/{z}/{x}/{y}.png`);
+		setTileUri(`${FileSystem.documentDirectory}local_tiles1/{z}/{x}/{y}.png`);
 	};
 
 	useEffect(() => {
@@ -139,11 +140,13 @@ const TestTilesScreen = (props) => {
 						latitudeDelta: 0.1,
 						longitudeDelta: 0.1
 					}}
+					mapType="satellite"
 				>
 					<UrlTile
 						urlTemplate={tileUri} // Урл замыг хэрэглэнэ
 						maximumZ={ZOOM_LEVEL}
 						tileSize={256}
+						offlineMode={true}
 					/>
 				</MapView>
 			) : (
