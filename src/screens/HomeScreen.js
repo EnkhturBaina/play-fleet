@@ -37,7 +37,7 @@ var Buffer = require("buffer/").Buffer;
 
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
-	const echo = useEcho();
+	// const echo = useEcho();
 
 	const { isConnected } = useNetworkStatus();
 
@@ -171,43 +171,43 @@ const HomeScreen = (props) => {
 		}
 	}, [state.location]);
 
-	useEffect(() => {
-		// console.log("echo", echo);
-		if (!echo || !state.employeeData?.PMSCompanyId) return;
+	// useEffect(() => {
+	// 	// console.log("echo", echo);
+	// 	if (!echo || !state.employeeData?.PMSCompanyId) return;
 
-		const channel = echo.private(`user.${state.employeeData?.id}`);
+	// 	const channel = echo.private(`user.${state.employeeData?.id}`);
 
-		const handleProgressUpdate = (event) => {
-			// console.log("ECHO EVENT => ", event);
-			if (event) {
-				// Сонгогдсон төлөв шинэчлэх
-				const selectedState = state.refStates?.find((item) => item.id === event.extra?.PMSProgressStateId);
-				state.setSelectedState(selectedState);
+	// 	const handleProgressUpdate = (event) => {
+	// 		// console.log("ECHO EVENT => ", event);
+	// 		if (event) {
+	// 			// Сонгогдсон төлөв шинэчлэх
+	// 			const selectedState = state.refStates?.find((item) => item.id === event.extra?.PMSProgressStateId);
+	// 			state.setSelectedState(selectedState);
 
-				// Header мэдээлэл шинэчлэх
-				state.setHeaderSelections((prev) => ({
-					...prev,
-					PMSSrcId: event.extra?.PMSLocationId,
-					PMSBlastShotId: event.extra?.PMSBlastShotId,
-					PMSDstId: event.extra?.PMSDestinationId,
-					PMSLoaderId: event.extra?.PMSLoaderId,
-					PMSMaterialId: event.extra?.PMSMaterialUnitId
-				}));
+	// 			// Header мэдээлэл шинэчлэх
+	// 			state.setHeaderSelections((prev) => ({
+	// 				...prev,
+	// 				PMSSrcId: event.extra?.PMSLocationId,
+	// 				PMSBlastShotId: event.extra?.PMSBlastShotId,
+	// 				PMSDstId: event.extra?.PMSDestinationId,
+	// 				PMSLoaderId: event.extra?.PMSLoaderId,
+	// 				PMSMaterialId: event.extra?.PMSMaterialUnitId
+	// 			}));
 
-				// Dialog гаргах
-				setDialogText(event.message);
-				setDialogConfirmText("Ок");
-				setVisibleDialog(true);
-			}
-		};
+	// 			// Dialog гаргах
+	// 			setDialogText(event.message);
+	// 			setDialogConfirmText("Ок");
+	// 			setVisibleDialog(true);
+	// 		}
+	// 	};
 
-		channel.listen(ECHO_EVENT_PROGRESS, handleProgressUpdate);
+	// 	channel.listen(ECHO_EVENT_PROGRESS, handleProgressUpdate);
 
-		return () => {
-			console.log("🛑 Stopping Echo Listener");
-			channel.stopListening(ECHO_EVENT_PROGRESS);
-		};
-	}, [echo]);
+	// 	return () => {
+	// 		console.log("🛑 Stopping Echo Listener");
+	// 		channel.stopListening(ECHO_EVENT_PROGRESS);
+	// 	};
+	// }, [echo]);
 
 	const equipmentImages = useMemo(
 		() => ({
