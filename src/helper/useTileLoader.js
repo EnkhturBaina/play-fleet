@@ -55,7 +55,7 @@ const useTileLoader = (isRemove) => {
 			setProgress(`${x}${y} хадгалсан`);
 		} catch (error) {
 			console.error(`Error downloading tile ${z}/${x}/${y}: `, error);
-			setProgress(`Серверээс татах үед алдаа гарлаа`);
+			setProgress(`Газрын зураг татах үед алдаа гарлаа`);
 		}
 	};
 
@@ -90,19 +90,19 @@ const useTileLoader = (isRemove) => {
 		}
 
 		if (allTilesExist) {
-			setProgress("Файлаас уншсан");
+			setProgress("Файлаас газрын зураг уншсан");
 			setTileUri(`${FileSystem.documentDirectory}local_tile/{z}/{x}/{y}.png`);
 			setTilesReady(true);
 		} else {
-			setProgress("Файлаас олдсонгүй. Серверээс татаж байна...");
+			setProgress("Файлаас мэп олдсонгүй. Газрын зураг татаж байна...");
 			downloadTiles();
 		}
 	};
 
 	const downloadTiles = async () => {
-		setProgress("Серверээс татаж эхэллээ...");
+		setProgress("Газрын зураг татаж эхэллээ...");
 		await downloadTilesForRegion(ZOOM_LEVEL, LAT_START, LAT_END, LON_START, LON_END);
-		setProgress("Серверээс татаж дууслаа!");
+		setProgress("Газрын зураг татаж дууслаа!");
 		setTilesReady(true);
 		setTileUri(`${FileSystem.documentDirectory}local_tile/{z}/{x}/{y}.png`);
 	};

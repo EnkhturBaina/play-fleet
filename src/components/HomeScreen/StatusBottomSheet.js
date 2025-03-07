@@ -43,6 +43,26 @@ export default function (props) {
 		{
 			code: "Queueing",
 			img: require("../../../assets/images/Picture9.png")
+		},
+		{
+			code: "",
+			img: require("../../../assets/images/Picture10.png"),
+			codeIds: [2]
+		},
+		{
+			code: "",
+			img: require("../../../assets/images/Picture12.png"),
+			codeIds: [3]
+		},
+		{
+			code: "",
+			img: require("../../../assets/images/Picture11.png"),
+			codeIds: [4]
+		},
+		{
+			code: "",
+			img: require("../../../assets/images/Picture13.png"),
+			codeIds: [5, 6]
 		}
 	];
 
@@ -122,7 +142,11 @@ export default function (props) {
 				return;
 			}
 			// 2. Өмнөх төлөвийг сонгоход анхааруулга өгөх
-			if (selectedState.ViewOrder < state.selectedState?.ViewOrder) {
+			if (
+				//Сүүлийн төлөвөөс эхний төлөв дарах үед
+				!(selectedState.ViewOrder == 0 && state.selectedState.ViewOrder == 4) &&
+				selectedState.ViewOrder < state.selectedState?.ViewOrder
+			) {
 				setDialogText("Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?");
 				setOnConfirm(() => () => proceedWithStateChange(selectedState));
 				setVisibleDialog(true);
@@ -201,9 +225,12 @@ export default function (props) {
 				>
 					<Image
 						source={
-							state.selectedState && state.selectedState.ActivityShort
+							state.selectedState?.ActivityShort && MAIN_STATE_CODES.includes(state.selectedState.ActivityShort)
 								? IMAGE_LIST.find((img) => img.code === state.selectedState.ActivityShort)?.img ||
-								  require("../../../assets/only_icon.png") // Fallback if no match is found
+								  require("../../../assets/only_icon.png")
+								: [2, 3, 4, 5, 6].some((id) => state.selectedState?.PMSGroupId == id)
+								? IMAGE_LIST.find((img) => img.codeIds?.includes(state.selectedState.PMSGroupId))?.img ||
+								  require("../../../assets/only_icon.png")
 								: require("../../../assets/only_icon.png")
 						}
 						style={{ height: 50, width: 50 }}
@@ -234,12 +261,23 @@ export default function (props) {
 										{
 											borderWidth: 3,
 											borderColor,
-											opacity: state.selectedState?.id == el.id ? 0.5 : 1
+											opacity:
+												state.selectedState?.ViewOrder === 4
+													? el.ViewOrder !== 0
+														? 0.5 // 0-с бусад нь СААРАЛ
+														: 1
+													: el.ViewOrder <= state.selectedState?.ViewOrder
+													? 0.5 // Өмнөх ViewOrder-ууд СААРАЛ
+													: 1
 										}
 									]}
 									key={el.id}
 									onPress={() => selectState(el, matchedImage)}
-									disabled={state.selectedState?.id === el.id}
+									disabled={
+										state.selectedState?.ViewOrder === 4
+											? el.ViewOrder !== 0 // Зөвхөн 0 боломжтой, бусад нь disable
+											: el.ViewOrder <= state.selectedState?.ViewOrder // Өмнөх ViewOrder-ууд disable
+									}
 								>
 									<Image
 										source={matchedImage ? matchedImage?.img : require("../../../assets/only_icon.png")}

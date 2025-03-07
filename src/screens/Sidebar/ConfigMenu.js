@@ -7,7 +7,7 @@ import MainContext from "../../contexts/MainContext";
 import useTileLoader from "../../helper/useTileLoader";
 
 const ConfigMenu = (props) => {
-	const { callFnc } = useTileLoader(false);
+	const { callFnc, progress } = useTileLoader(false);
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const MENU_LIST = {
@@ -107,13 +107,7 @@ const ConfigMenu = (props) => {
 		<View>
 			{/* https://chatgpt.com/share/67a5cf70-7c60-8013-af37-7e2d50f59fc7 */}
 			<TouchableOpacity
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
-					height: 60,
-					paddingHorizontal: 10
-				}}
+				style={styles.eachItemContainer}
 				onPress={() => {
 					Alert.alert("Амжилттай", "KML амжилттай шинэчлэгдлээ", [
 						{ text: "Хаах", onPress: () => console.log("OK Pressed") }
@@ -124,13 +118,7 @@ const ConfigMenu = (props) => {
 				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
 			</TouchableOpacity>
 			<TouchableOpacity
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
-					height: 60,
-					paddingHorizontal: 10
-				}}
+				style={styles.eachItemContainer}
 				onPress={() => {
 					Alert.alert("Оффлайн мэп татах уу?", "", [
 						{
@@ -146,7 +134,10 @@ const ConfigMenu = (props) => {
 					]);
 				}}
 			>
-				<Text style={{ fontSize: 16, fontWeight: "600" }}>Газрын зураг татах</Text>
+				<View>
+					<Text style={{ fontSize: 16, fontWeight: "600" }}>Газрын зураг татах</Text>
+					<Text style={{ fontSize: 12 }}>{progress}</Text>
+				</View>
 				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
 			</TouchableOpacity>
 		</View>
@@ -156,12 +147,14 @@ const ConfigMenu = (props) => {
 export default ConfigMenu;
 
 const styles = StyleSheet.create({
-	eachMenuContainer: {
+	eachItemContainer: {
 		flexDirection: "row",
 		alignItems: "center",
+		justifyContent: "space-between",
+		height: 60,
+		paddingHorizontal: 10,
 		borderBottomColor: MAIN_COLOR_GRAY,
 		borderBottomWidth: 1,
-		paddingHorizontal: 10,
-		height: 60
+		paddingHorizontal: 10
 	}
 });

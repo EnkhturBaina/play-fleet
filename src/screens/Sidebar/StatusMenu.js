@@ -20,20 +20,20 @@ const StatusMenu = (props) => {
 				codeIds: [2]
 			},
 			{
-				img: require("../../../assets/images/Picture11.png"),
+				img: require("../../../assets/images/Picture12.png"),
 				label: "Саатал",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_BLUE,
+				borderColor: MAIN_COLOR,
 				codeList: ["Delay"],
 				codeIds: [3]
 			},
 			{
-				img: require("../../../assets/images/Picture12.png"),
+				img: require("../../../assets/images/Picture11.png"),
 				label: "Сул зогсолт",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR,
+				borderColor: MAIN_COLOR_BLUE,
 				codeList: ["Standby"],
 				codeIds: [4]
 			},
@@ -58,20 +58,20 @@ const StatusMenu = (props) => {
 				codeIds: [2]
 			},
 			{
-				img: require("../../../assets/images/Picture11.png"),
+				img: require("../../../assets/images/Picture12.png"),
 				label: "Саатал",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR_BLUE,
+				borderColor: MAIN_COLOR,
 				codeList: ["Delay"],
 				codeIds: [3]
 			},
 			{
-				img: require("../../../assets/images/Picture12.png"),
+				img: require("../../../assets/images/Picture11.png"),
 				label: "Сул зогсолт",
 				nav: "NAV_PATH",
 				isMore: true,
-				borderColor: MAIN_COLOR,
+				borderColor: MAIN_COLOR_BLUE,
 				codeList: ["Standby"],
 				codeIds: [4]
 			},
@@ -133,7 +133,7 @@ const StatusMenu = (props) => {
 						key={index}
 						style={styles.eachMenuContainer}
 						onPress={() => {
-							// props.setIsOpen(false);
+							props.setIsOpen(false);
 							navigation.navigate("StatusListScreen", {
 								codeIds: el.codeIds
 							});

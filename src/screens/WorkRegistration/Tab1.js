@@ -105,7 +105,7 @@ const Tab1 = (props) => {
 					<Text style={styles.dividerVertical}>|</Text>
 					<Text style={styles.itemLabel}>{item.TM} мин</Text>
 				</View>
-				<View style={{ flexDirection: "row", marginTop: 10 }}>
+				<View style={{ flexDirection: "row" }}>
 					<Text style={styles.itemDate}>{item.SavedDate}</Text>
 					<View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-start" }}>
 						<View style={styles.eachRowValueContainer}>
