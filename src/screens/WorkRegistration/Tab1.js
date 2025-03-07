@@ -90,8 +90,6 @@ const Tab1 = (props) => {
 	}, [isFocused, selectedDate]);
 
 	const renderItem = ({ item }) => {
-		console.log("ITEM", item);
-
 		return (
 			<View
 				style={{
