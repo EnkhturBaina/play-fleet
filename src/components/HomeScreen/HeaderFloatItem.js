@@ -1,6 +1,14 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { MAIN_BORDER_RADIUS, MAIN_COLOR, MAIN_COLOR_BLUE, SERVER_URL, TEXT_COLOR_GRAY } from "../../constant";
+import {
+	MAIN_BORDER_RADIUS,
+	MAIN_COLOR,
+	MAIN_COLOR_BLUE,
+	MAIN_COLOR_GREEN,
+	MAIN_COLOR_RED,
+	SERVER_URL,
+	TEXT_COLOR_GRAY
+} from "../../constant";
 import { Dropdown } from "react-native-element-dropdown";
 import MainContext from "../../contexts/MainContext";
 import { Icon } from "@rneui/base";
@@ -11,6 +19,7 @@ import CustomDialog from "../CustomDialog";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 import { useNavigation } from "@react-navigation/native";
+import { useNetworkStatus } from "../../contexts/NetworkContext";
 
 const width = Dimensions.get("screen").width;
 
@@ -18,6 +27,8 @@ const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const intervalRef = useRef(null);
+
+	const { connectionQuality } = useNetworkStatus();
 
 	const [focusStates, setFocusStates] = useState({});
 	const [visibleLines, setVisibleLines] = useState(null);
@@ -188,7 +199,23 @@ const HeaderFloatItem = (props) => {
 		<View style={styles.floatButtons}>
 			<View style={styles.mainContainer}>
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-					<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
+					<View style={{ flexDirection: "row", alignItems: "center" }}>
+						<Icon
+							name="wifi"
+							type="feather"
+							size={20}
+							color={
+								connectionQuality === "good"
+									? MAIN_COLOR_GREEN
+									: connectionQuality === "medium"
+									? MAIN_COLOR
+									: MAIN_COLOR_RED
+							}
+						/>
+						<Text style={{ color: MAIN_COLOR, fontSize: 18, marginLeft: 5 }}>
+							{VEHICLE_TYPE[state.vehicleType]?.title}
+						</Text>
+					</View>
 					{state.orientation == "PORTRAIT" ? (
 						<TouchableOpacity
 							onPress={() => {

@@ -1,16 +1,12 @@
 import React, { useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { MAIN_COLOR, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../constant";
+import { MAIN_COLOR } from "../constant";
 import MainContext from "../contexts/MainContext";
 import notif from "../../assets/notif.png";
-import icon from "../../assets/icon.png";
 import { Image } from "expo-image";
-import { Icon } from "@rneui/base";
-import { useNetworkStatus } from "../contexts/NetworkContext";
 
 const HeaderUser = (props) => {
 	const state = useContext(MainContext);
-	const { connectionQuality } = useNetworkStatus();
 
 	return (
 		<View style={styles.headerContainer}>
@@ -25,21 +21,7 @@ const HeaderUser = (props) => {
 			>
 				<Image source={require("../../assets/only_icon.png")} style={styles.userImg} contentFit="contain" />
 				<View style={styles.titleContainer}>
-					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<Icon
-							name="wifi"
-							type="feather"
-							size={20}
-							color={
-								connectionQuality === "good"
-									? MAIN_COLOR_GREEN
-									: connectionQuality === "medium"
-									? MAIN_COLOR
-									: MAIN_COLOR_RED
-							}
-						/>
-						<Text style={styles.topText}>Сайн байна уу?</Text>
-					</View>
+					<Text style={styles.topText}>Сайн байна уу?</Text>
 					<Text style={styles.userName} numberOfLines={1}>
 						{state.headerUserName ?? "User"}
 					</Text>
@@ -86,8 +68,7 @@ const styles = StyleSheet.create({
 	topText: {
 		color: MAIN_COLOR,
 		fontWeight: "bold",
-		fontSize: 16,
-		marginLeft: 5
+		fontSize: 16
 	},
 	userName: {
 		fontWeight: "bold",

@@ -58,7 +58,7 @@ export default function (props) {
 							},
 							roundness: MAIN_BORDER_RADIUS
 						}}
-						// maxLength={4}
+						maxLength={6}
 					/>
 
 					{errorMsg != null ? <Text style={styles.errorTextStyle}>{errorMsg}</Text> : null}
