@@ -90,6 +90,8 @@ const Tab1 = (props) => {
 	}, [isFocused, selectedDate]);
 
 	const renderItem = ({ item }) => {
+		console.log("ITEM", item);
+
 		return (
 			<View
 				style={{
@@ -105,8 +107,8 @@ const Tab1 = (props) => {
 					<Text style={styles.dividerVertical}>|</Text>
 					<Text style={styles.itemLabel}>{item.TM} мин</Text>
 				</View>
+				<Text style={styles.itemDate}>{item.SavedDate}</Text>
 				<View style={{ flexDirection: "row" }}>
-					<Text style={styles.itemDate}>{item.SavedDate}</Text>
 					<View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-start" }}>
 						<View style={styles.eachRowValueContainer}>
 							<Text style={styles.itemLabel}>Экскаватор:</Text>
@@ -114,7 +116,7 @@ const Tab1 = (props) => {
 						</View>
 						<View style={styles.eachRowValueContainer}>
 							<Text style={styles.itemLabel}>Ачилтын блок:</Text>
-							<Text style={styles.itemValue2}>{item.source2?.Name + item.shot2?.ShotName}</Text>
+							<Text style={styles.itemValue2}>{`${item.source2?.Name}${item.shot2 ? item.shot2?.ShotName : ""}`}</Text>
 						</View>
 						<View style={styles.eachRowValueContainer}>
 							<Text style={styles.itemLabel}>Материал:</Text>
@@ -226,7 +228,9 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		flexWrap: "wrap",
 		alignItems: "center",
-		width: "100%"
+		justifyContent: "space-between",
+		width: "100%",
+		marginTop: 2
 	},
 	itemLabel: {
 		fontSize: 16,

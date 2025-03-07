@@ -245,6 +245,7 @@ export default function (props) {
 				<ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
 					{mainStates &&
 						mainStates?.map((el) => {
+							var disableState = false;
 							const matchedImage = IMAGE_LIST.find((img) => img.code === el.ActivityShort);
 							const borderColor =
 								state.selectedState?.PMSParentId == stateParentId && state.selectedState?.ViewOrder + 1 === el.ViewOrder
@@ -254,6 +255,19 @@ export default function (props) {
 									  })
 									: "transparent";
 
+							if (state.selectedState?.ViewOrder === 4) {
+								disableState = el.ViewOrder !== 0; // сонгогдсон төлөв нь сүүлийх үед зөвхөн эхнийх enable, бусад нь disable
+							} else if (el.ViewOrder <= state.selectedState?.ViewOrder) {
+								disableState = true; // өмнөх бүх утгуудыг disable болгох
+							}
+
+							const isMainState = MAIN_STATE_CODES.includes(state.selectedState?.ActivityShort);
+
+							// Үндсэн W1 -н төлөвүүдээс өөр төлөв сонгогдсон бол disable хийхгүй
+							if (!isMainState) {
+								disableState = false;
+							}
+
 							return (
 								<TouchableOpacity
 									style={[
@@ -261,23 +275,12 @@ export default function (props) {
 										{
 											borderWidth: 3,
 											borderColor,
-											opacity:
-												state.selectedState?.ViewOrder === 4
-													? el.ViewOrder !== 0
-														? 0.5 // 0-с бусад нь СААРАЛ
-														: 1
-													: el.ViewOrder <= state.selectedState?.ViewOrder
-													? 0.5 // Өмнөх ViewOrder-ууд СААРАЛ
-													: 1
+											opacity: disableState ? 0.5 : 1
 										}
 									]}
 									key={el.id}
 									onPress={() => selectState(el, matchedImage)}
-									disabled={
-										state.selectedState?.ViewOrder === 4
-											? el.ViewOrder !== 0 // Зөвхөн 0 боломжтой, бусад нь disable
-											: el.ViewOrder <= state.selectedState?.ViewOrder // Өмнөх ViewOrder-ууд disable
-									}
+									disabled={disableState}
 								>
 									<Image
 										source={matchedImage ? matchedImage?.img : require("../../../assets/only_icon.png")}
