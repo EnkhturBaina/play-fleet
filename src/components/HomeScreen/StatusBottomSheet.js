@@ -188,9 +188,17 @@ export default function (props) {
 					<View style={styles.selectedLabel}>
 						<Text style={styles.selectedStateLabel}>CОНГОГДСОН ТӨЛӨВ</Text>
 					</View>
-					<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 28 }}>{formatTime(state.seconds)}</Text>
+					<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 20 }}>{formatTime(state.seconds)}</Text>
 				</View>
-				<View style={styles.eachBottomList}>
+				<View
+					style={[
+						styles.eachBottomList,
+						{
+							marginBottom: 0,
+							marginTop: 10
+						}
+					]}
+				>
 					<Image
 						source={
 							state.selectedState && state.selectedState.ActivityShort
@@ -205,7 +213,7 @@ export default function (props) {
 					</Text>
 				</View>
 				<View style={styles.selectLabelTitleStyle}>
-					<Text style={{ color: "#fff", fontSize: 20 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
+					<Text style={{ color: "#fff", fontSize: 16 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
 				</View>
 				<ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
 					{mainStates &&
@@ -272,7 +280,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		backgroundColor: MAIN_COLOR_GRAY,
 		borderRadius: MAIN_BORDER_RADIUS,
-		marginTop: 10,
+		marginBottom: 10,
 		padding: 5,
 		minHeight: 60
 	},
@@ -308,11 +316,10 @@ const styles = StyleSheet.create({
 		flexWrap: "wrap"
 	},
 	selectedStateLabel: {
-		maxWidth: 200,
 		textAlign: "center",
 		flexWrap: "wrap",
 		color: "#fff",
-		fontSize: 20
+		fontSize: 16
 	},
 	selectedStateContainer: {
 		flexDirection: "row",

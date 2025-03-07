@@ -4,8 +4,10 @@ import { fonts, Icon } from "@rneui/base";
 import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR_RED } from "../../constant";
 import { useNavigation } from "@react-navigation/native";
 import MainContext from "../../contexts/MainContext";
+import useTileLoader from "../../helper/useTileLoader";
 
 const ConfigMenu = (props) => {
+	const { callFnc } = useTileLoader(false);
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const MENU_LIST = {
@@ -119,6 +121,32 @@ const ConfigMenu = (props) => {
 				}}
 			>
 				<Text style={{ fontSize: 16, fontWeight: "600" }}>KML шинэчлэх</Text>
+				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={{
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					height: 60,
+					paddingHorizontal: 10
+				}}
+				onPress={() => {
+					Alert.alert("Оффлайн мэп татах уу?", "", [
+						{
+							text: "Үгүй",
+							onPress: () => console.log("Cancel Pressed"),
+							style: "cancel"
+						},
+						,
+						{
+							text: "Тийм",
+							onPress: () => callFnc()
+						}
+					]);
+				}}
+			>
+				<Text style={{ fontSize: 16, fontWeight: "600" }}>Газрын зураг татах</Text>
 				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
 			</TouchableOpacity>
 		</View>

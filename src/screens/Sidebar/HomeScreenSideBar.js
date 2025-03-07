@@ -77,7 +77,6 @@ const HomeScreenSideBar = (props) => {
 						onPress: () => console.log("Cancel Pressed"),
 						style: "cancel"
 					},
-					,
 					{
 						text: "Тийм",
 						onPress: () => {
