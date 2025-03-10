@@ -20,13 +20,8 @@ const StatusListScreen = (props) => {
 	const [selectedState, setSelectedState] = useState(null);
 
 	useEffect(() => {
-		console.log("state.selectedEquipmentCode", state.selectedEquipmentCode);
-		console.log("state.refStates", state.refStates);
-
 		if (props.route?.params?.codeIds) {
-			const filteredData = state.refStates?.filter(
-				(item) => item.Type === state.selectedEquipmentCode && props.route?.params?.codeIds.includes(item.PMSGroupId)
-			);
+			const filteredData = state.refStates?.filter((item) => props.route?.params?.codeIds.includes(item.PMSGroupId));
 			console.log("filteredData", filteredData);
 			if (filteredData) {
 				setStatusList(filteredData);

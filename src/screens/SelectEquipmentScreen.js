@@ -14,7 +14,7 @@ const SelectEquipmentScreen = () => {
 	const [savingEq, setSavingEq] = useState(false);
 
 	useEffect(() => {
-		console.log("state.equipmentsData", state.equipmentsData);
+		// console.log("state.equipmentsData", state.equipmentsData);
 
 		getLocalSelectedEq();
 	}, []);

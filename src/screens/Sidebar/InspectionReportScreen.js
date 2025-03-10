@@ -13,8 +13,6 @@ import Constants from "expo-constants";
 import { Button, Icon } from "@rneui/base";
 import { MAIN_BUTTON_HEIGHT, MAIN_COLOR, MAIN_COLOR_GREEN, MAIN_COLOR_RED, SERVER_URL } from "../../constant";
 import axios from "axios";
-import "dayjs/locale/es";
-import dayjs from "dayjs";
 import MainContext from "../../contexts/MainContext";
 import HeaderUser from "../../components/HeaderUser";
 import AsyncStorage from "@react-native-async-storage/async-storage";

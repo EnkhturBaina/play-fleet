@@ -1,5 +1,5 @@
-import { StyleSheet, View, LogBox, Text } from "react-native";
-import React, { useContext, useEffect, useRef } from "react";
+import { View, LogBox, Text } from "react-native";
+import React, { useContext, useRef } from "react";
 import LottieView from "lottie-react-native";
 import Constants from "expo-constants";
 import { Image } from "expo-image";
@@ -70,5 +70,3 @@ const SplashScreen = () => {
 };
 
 export default SplashScreen;
-
-const styles = StyleSheet.create({});
