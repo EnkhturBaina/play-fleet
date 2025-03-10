@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	MAIN_BORDER_RADIUS,
 	MAIN_COLOR,
@@ -26,7 +26,6 @@ const width = Dimensions.get("screen").width;
 const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
-	const intervalRef = useRef(null);
 
 	const { connectionQuality } = useNetworkStatus();
 

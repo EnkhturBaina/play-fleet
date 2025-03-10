@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { SEND_EQUIPMENT_LOCATION_MINS, SERVER_URL } from "../constant";
+import { SERVER_URL } from "../constant";
 import * as Location from "expo-location";
 import { createTable, fetchLoginData } from "../helper/db";
 import { createReferenceTables, dropTable, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";
@@ -362,7 +362,7 @@ export const MainStore = (props) => {
 		}
 	};
 
-	const setRefsToState = (data, isRunLocal) => {
+	const setRefsToState = async (data, isRunLocal) => {
 		console.log("RUN set Refs To State");
 
 		const updateReferences = (data, setters) => {
@@ -384,7 +384,20 @@ export const MainStore = (props) => {
 			ref_loader_types: setRefLoaderTypes,
 			ref_shots: setRefShots
 		});
-		console.log("isRunLocal", isRunLocal);
+		// console.log("isRunLocal", isRunLocal);
+		const responseOfflineLoginData = await fetchLoginData();
+		// console.log("Fetched Login Data local:", responseOfflineLoginData);
+
+		if (!responseOfflineLoginData.employee[0]) {
+			logout();
+		}
+		// Login response -с state үүд салгаж хадгалах
+		setEmployeeData(responseOfflineLoginData?.employee[0]);
+		setCompanyData(responseOfflineLoginData?.company[0]);
+		setRosterData(responseOfflineLoginData?.roster[0]);
+		setEquipmentsData(responseOfflineLoginData?.equipments);
+		setProjectData(responseOfflineLoginData?.project[0]);
+		setShiftData(responseOfflineLoginData?.shift[0]);
 
 		if (isRunLocal) {
 			setIsLoggedIn(true);

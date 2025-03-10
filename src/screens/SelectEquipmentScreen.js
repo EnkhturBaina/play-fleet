@@ -40,7 +40,7 @@ const SelectEquipmentScreen = () => {
 		try {
 			setSavingEq(true);
 			const jsonValue = await AsyncStorage.getItem("selected_eq");
-			console.log("jsonValue", jsonValue);
+			// console.log("jsonValue", jsonValue);
 
 			if (jsonValue != null) {
 				const selectedLocalEq = JSON.parse(jsonValue);

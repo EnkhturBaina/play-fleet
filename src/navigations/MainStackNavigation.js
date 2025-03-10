@@ -24,6 +24,7 @@ import InspectionReportScreen from "../screens/Sidebar/InspectionReportScreen";
 import CreateMotoHourAndFuelScreenHOME from "../screens/MotoHourAndFuel/CreateMotoHourAndFuelScreenHOME";
 import NotificationScreen from "../screens/Notification/NotificationScreen";
 import NotificationDTLScreen from "../screens/Notification/NotificationDTLScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -244,6 +245,16 @@ const MainStackNavigator = (props) => {
 				<Stack.Screen
 					name="NotificationDTLScreen"
 					component={NotificationDTLScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="ProfileScreen"
+					component={ProfileScreen}
 					options={{
 						headerShown: false,
 						title: "",

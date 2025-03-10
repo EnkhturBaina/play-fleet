@@ -16,9 +16,7 @@ const HeaderUser = (props) => {
 				activeOpacity={0.9}
 				style={styles.headerFirstSection}
 				onPress={() => {
-					if (props.isBack) {
-						props.setIsOpen(!props.isOpen);
-					}
+					// navigation.navigate("ProfileScreen");
 				}}
 			>
 				<Image

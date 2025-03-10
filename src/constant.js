@@ -23,7 +23,6 @@ export const WEEKDAYS = [
 	{ value: 7, label: "Saturday", mn: "Бямба", mnVal: 6 }
 ];
 
-export const SEND_EQUIPMENT_LOCATION_MINS = 1;
 export const HOME_STATES_START_CODE = "W1";
 
 export const ECHO_EVENT_PROGRESS = ".PMSEquipmentStateChanged";

@@ -41,7 +41,7 @@ const StatusListScreen = (props) => {
 				state.location,
 				isConnected
 			);
-			// console.log("statusListScreenSendSelectedState response=>", response);
+			// console.log("statusListScreen Send Selected State response=>", response);
 			if (response?.Type === 0) {
 			} else {
 				// setDialogText(response?.Msg);

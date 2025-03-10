@@ -109,6 +109,18 @@ export const createTable = async () => {
 				Longitude REAL
       );`
 		);
+		await db.execAsync(
+			`CREATE TABLE IF NOT EXISTS moto_hour (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				PMSEquipmentId INTEGER,
+				PMSShiftId INTEGER,
+				SavedDate TEXT,
+				StartSMU INTEGER,
+				FinishSMU INTEGER,
+				Fuel INTEGER,
+				ProgressSMU INTEGER
+      );`
+		);
 	} catch (error) {
 		console.log("error createTable", error);
 	}
@@ -400,6 +412,7 @@ export const insertSendStateData = async (data) => {
 		if (resultSendState.rowsAffected === 0) {
 			throw new Error("send_state өгөгдлийг оруулж чадсангүй.");
 		}
+		return resultSendState;
 	}
 };
 
@@ -466,6 +479,93 @@ const deleteSendStateRowById = async (id) => {
 		await db.runAsync("DELETE FROM send_state WHERE id = ?;", [id]);
 		console.log(`Row with id ${id} deleted.`);
 	} catch (error) {
-		console.error(`Error deleting row with id ${id}:`, error);
+		console.error(`Error deleting sendState row with id ${id}:`, error);
+	}
+};
+
+export const insertMotoHourData = async (data) => {
+	console.log("data", data);
+
+	if (data) {
+		const resultMotoHour = await db.runAsync(
+			`INSERT INTO moto_hour (
+				PMSEquipmentId,
+				PMSShiftId,
+				SavedDate,
+				StartSMU,
+				FinishSMU,
+				Fuel,
+				ProgressSMU)
+			VALUES (?, ?, ?, ?, ?, ?, ?);`,
+			data
+		);
+		console.log("resultMotoHour", resultMotoHour);
+
+		if (resultMotoHour.rowsAffected === 0) {
+			throw new Error("moto_hour өгөгдлийг оруулж чадсангүй.");
+		}
+		return resultMotoHour;
+	}
+};
+
+export const fetchMotoHourData = async () => {
+	console.log("RUN fetch MotoHour Data.");
+
+	try {
+		await AsyncStorage.getItem("access_token").then(async (localToken) => {
+			// Parallel database queries using Promise.all
+			const data = await db.getAllAsync("SELECT * FROM moto_hour");
+			console.log("data ==========>", data);
+			// console.log("token ==========>", token);
+
+			if (data) {
+				for (const item of data) {
+					// console.log("item =======>", JSON.stringify(item));
+					try {
+						const response = await axios.post(
+							`${SERVER_URL}/mobile/truck/fuel/save`,
+							{
+								PMSEquipmentId: item.PMSEquipmentId,
+								PMSShiftId: item.PMSShiftId,
+								SavedDate: item.SavedDate,
+								StartSMU: item.StartSMU,
+								FinishSMU: item.FinishSMU,
+								Fuel: item.Fuel,
+								ProgressSMU: item.ProgressSMU // Дараа нь хасах
+							},
+							{
+								headers: {
+									"Content-Type": "application/json",
+									Authorization: `Bearer ${localToken}`
+								}
+							}
+						);
+						console.log("response", response.data);
+
+						if (response.data?.Type == 0) {
+							// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
+							await deleteMotoHourRowById(item.id);
+						} else {
+							console.error(`Failed to send item ${item.id}:`);
+						}
+					} catch (error) {
+						console.error(`Error sending item ${item.id}:`, error);
+					}
+				}
+			}
+			return data; // Return the combined data
+		});
+	} catch (error) {
+		console.error("Error fetching motoHour data", error);
+		throw new Error("Failed to fetch motoHour data. Please try again later.");
+	}
+};
+
+const deleteMotoHourRowById = async (id) => {
+	try {
+		await db.runAsync("DELETE FROM moto_hour WHERE id = ?;", [id]);
+		console.log(`Row with id ${id} deleted.`);
+	} catch (error) {
+		console.error(`Error deleting motoHour row with id ${id}:`, error);
 	}
 };

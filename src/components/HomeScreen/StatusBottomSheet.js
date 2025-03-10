@@ -24,7 +24,8 @@ export default function (props) {
 
 	const MAIN_STATE_CODES = {
 		Truck: ["Loading", "Hauling", "Dumping", "Traveling", "Queueing"],
-		Loader: ["Loading2", "Waiting", "Prepping", "Moving"]
+		Loader: ["Loading2", "Waiting", "Prepping", "Moving"],
+		Other: ["Working"]
 	};
 	const IMAGE_LIST = [
 		{

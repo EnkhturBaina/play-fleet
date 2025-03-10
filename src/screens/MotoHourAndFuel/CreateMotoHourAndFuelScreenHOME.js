@@ -14,17 +14,20 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import CustomSnackbar from "../../components/CustomSnackbar";
 import LoanInput from "../../components/LoanInput";
 import MainContext from "../../contexts/MainContext";
-import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, SERVER_URL } from "../../constant";
+import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR } from "../../constant";
 import { Button } from "@rneui/base";
 import { addCommas, removeNonNumeric } from "../../helper/functions";
-import axios from "axios";
 import CustomDialog from "../../components/CustomDialog";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 import { useFocusEffect } from "@react-navigation/native";
+import { sendMotoHour } from "../../helper/apiService";
+import { useNetworkStatus } from "../../contexts/NetworkContext";
 
 const CreateMotoHourAndFuelScreenHOME = (props) => {
 	const state = useContext(MainContext);
+	const { isConnected } = useNetworkStatus();
+
 	const [visibleSnack, setVisibleSnack] = useState(false);
 	const [snackBarMsg, setSnackBarMsg] = useState("");
 	const [startSMU, setStartSMU] = useState(null);
@@ -70,45 +73,38 @@ const CreateMotoHourAndFuelScreenHOME = (props) => {
 		} else {
 			try {
 				setSavingSMU(true);
-				await axios
-					.post(
-						`${SERVER_URL}/mobile/truck/fuel/save`,
-						{
-							PMSEquipmentId: state.selectedEquipment?.id,
-							PMSShiftId: state.shiftData?.id,
-							SavedDate: dayjs().format("YYYY-MM-DD"),
-							StartSMU: parseInt(startSMU?.replaceAll(",", "")),
-							FinishSMU: parseInt(finishSMU?.replaceAll(",", "")),
-							Fuel: parseInt(fuel?.replaceAll(",", "")),
-							ProgressSMU: 0 // Дараа нь хасах
-						},
-						{
-							headers: {
-								"Content-Type": "application/json",
-								Authorization: `Bearer ${state.token}`
-							}
-						}
-					)
-					.then(function (response) {
-						// console.log("save SMU response", JSON.stringify(response.data));
-						if (response.data?.Type == 0) {
-							setDialogType("success");
-							setDialogBtnText("Үргэлжлүүлэх");
-						} else {
-							setDialogType("warning");
-							setDialogBtnText("Хаах");
-						}
-						setVisibleDialog(true);
-						setDialogText(response.data?.Msg);
-					})
-					.catch(function (error) {
-						console.log("error save SMU", error.response.data);
-					})
-					.finally(async () => {
-						setSavingSMU(false);
-					});
+				const response = await sendMotoHour(
+					state.token,
+					state.selectedEquipment,
+					state.shiftData,
+					dayjs().format("YYYY-MM-DD"),
+					parseInt(startSMU?.replaceAll(",", "")),
+					parseInt(finishSMU?.replaceAll(",", "")),
+					parseInt(fuel?.replaceAll(",", "")),
+					0,
+					isConnected
+				);
+				// console.log("SEND_MOTO_HOUR_RESPONSE=>", response);
+				if (isConnected) {
+					setDialogText(response?.Msg);
+					if (response?.Type == 0) {
+						setDialogType("success");
+						setDialogBtnText("Хаах");
+					} else {
+						setDialogType("warning");
+						setDialogBtnText("Хаах");
+					}
+				} else {
+					if (response.changes >= 1) {
+						setDialogType("success");
+						setDialogText("Түлшний мэдээлэл амжилттай хадгалагдлаа.");
+						setDialogBtnText("Хаах");
+					}
+				}
+				setVisibleDialog(true);
+				setSavingSMU(false);
 			} catch (error) {
-				console.log("CATCH save SMU", error);
+				console.log("Error in stopProgressHandler:", error);
 			}
 		}
 	};
