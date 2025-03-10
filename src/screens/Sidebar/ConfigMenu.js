@@ -3,9 +3,11 @@ import React from "react";
 import { Icon } from "@rneui/base";
 import { MAIN_COLOR_GRAY } from "../../constant";
 import useTileLoader from "../../helper/useTileLoader";
+import { useNetworkStatus } from "../../contexts/NetworkContext";
 
 const ConfigMenu = (props) => {
 	const { callFnc, progress } = useTileLoader(false);
+	const { isConnected } = useNetworkStatus();
 
 	return (
 		<View>
@@ -24,18 +26,28 @@ const ConfigMenu = (props) => {
 			<TouchableOpacity
 				style={styles.eachItemContainer}
 				onPress={() => {
-					Alert.alert("Оффлайн мэп татах уу?", "", [
-						{
-							text: "Үгүй",
-							onPress: () => console.log("Cancel Pressed"),
-							style: "cancel"
-						},
-						,
-						{
-							text: "Тийм",
-							onPress: () => callFnc()
-						}
-					]);
+					if (isConnected) {
+						Alert.alert("Оффлайн мэп татах уу?", "", [
+							{
+								text: "Үгүй",
+								onPress: () => console.log("Cancel Pressed"),
+								style: "cancel"
+							},
+							,
+							{
+								text: "Тийм",
+								onPress: () => callFnc()
+							}
+						]);
+					} else {
+						Alert.alert("Интернэт холболт шалгана уу?", "", [
+							,
+							{
+								text: "Хаах",
+								onPress: () => null
+							}
+						]);
+					}
 				}}
 			>
 				<View>
