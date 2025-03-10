@@ -135,7 +135,8 @@ const StatusMenu = (props) => {
 						onPress={() => {
 							props.setIsOpen(false);
 							navigation.navigate("StatusListScreen", {
-								codeIds: el.codeIds
+								codeIds: el.codeIds,
+								label: el.label
 							});
 							props.setSideBarStep(1);
 						}}

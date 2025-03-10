@@ -115,7 +115,8 @@ const HeaderFloatItem = (props) => {
 					`${SERVER_URL}/mobile/task/assigned`,
 					{
 						cid: state.companyData?.id,
-						PMSEquipmentId: state.selectedEquipment?.id
+						PMSEquipmentId: state.selectedEquipment?.id,
+						PMSShiftId: state.shiftData?.id
 					},
 					{
 						headers: {

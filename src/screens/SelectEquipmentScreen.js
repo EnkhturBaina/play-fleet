@@ -6,6 +6,7 @@ import { Image } from "expo-image";
 import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR } from "../constant";
 import { Button } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Empty from "../components/Empty";
 
 const SelectEquipmentScreen = () => {
 	const state = useContext(MainContext);
@@ -13,13 +14,10 @@ const SelectEquipmentScreen = () => {
 	const [savingEq, setSavingEq] = useState(false);
 
 	useEffect(() => {
+		console.log("state.equipmentsData", state.equipmentsData);
+
 		getLocalSelectedEq();
 	}, []);
-
-	const data = [
-		{ id: 1, TypeName: "Truck", Name: "CAT-773-04" },
-		{ id: 2, TypeName: "Loader", Name: "CAT-773-03" }
-	];
 
 	const saveSelectedEqToLocal = async () => {
 		//Local руу сонгогдсон Equipment хадгалах
@@ -84,7 +82,12 @@ const SelectEquipmentScreen = () => {
 					alignItems: "center"
 				}}
 			>
-				{state.equipmentsData &&
+				{state.equipmentsData?.length == 0 ? (
+					<View>
+						<Empty text="Төхөөрөмж олдсонгүй" />
+					</View>
+				) : (
+					state.equipmentsData &&
 					state.equipmentsData?.map((el, index) => {
 						var imageType = null;
 						if (el.TypeName == "Truck") {
@@ -115,38 +118,71 @@ const SelectEquipmentScreen = () => {
 								<Text style={{ fontWeight: "600" }}>{el.Name}</Text>
 							</TouchableOpacity>
 						);
-					})}
+					})
+				)}
 			</View>
-			<Button
-				disabled={savingEq || selectedEq == null}
-				containerStyle={{
-					width: state.orientation == "PORTRAIT" ? "90%" : "50%",
-					marginTop: 10,
-					alignSelf: "center"
-				}}
-				buttonStyle={styles.loginBtnStyle}
-				title={
-					<>
-						<Text
-							style={{
-								fontSize: 16,
-								color: "#fff",
-								fontWeight: "bold"
-							}}
-						>
-							Үргэлжлүүлэх
-						</Text>
-						{savingEq ? <ActivityIndicator style={{ marginLeft: 10 }} color="#fff" /> : null}
-					</>
-				}
-				titleStyle={{
-					fontSize: 16,
-					fontWeight: "bold"
-				}}
-				onPress={() => {
-					saveSelectedEqToLocal();
-				}}
-			/>
+			{state.equipmentsData?.length == 0 ? (
+				<Button
+					containerStyle={{
+						width: state.orientation == "PORTRAIT" ? "90%" : "50%",
+						marginTop: 10,
+						alignSelf: "center"
+					}}
+					buttonStyle={styles.loginBtnStyle}
+					title={
+						<>
+							<Text
+								style={{
+									fontSize: 16,
+									color: "#fff",
+									fontWeight: "bold"
+								}}
+							>
+								Буцах
+							</Text>
+							{savingEq ? <ActivityIndicator style={{ marginLeft: 10 }} color="#fff" /> : null}
+						</>
+					}
+					titleStyle={{
+						fontSize: 16,
+						fontWeight: "bold"
+					}}
+					onPress={() => {
+						state.logout();
+					}}
+				/>
+			) : (
+				<Button
+					disabled={savingEq || selectedEq == null}
+					containerStyle={{
+						width: state.orientation == "PORTRAIT" ? "90%" : "50%",
+						marginTop: 10,
+						alignSelf: "center"
+					}}
+					buttonStyle={styles.loginBtnStyle}
+					title={
+						<>
+							<Text
+								style={{
+									fontSize: 16,
+									color: "#fff",
+									fontWeight: "bold"
+								}}
+							>
+								Үргэлжлүүлэх
+							</Text>
+							{savingEq ? <ActivityIndicator style={{ marginLeft: 10 }} color="#fff" /> : null}
+						</>
+					}
+					titleStyle={{
+						fontSize: 16,
+						fontWeight: "bold"
+					}}
+					onPress={() => {
+						saveSelectedEqToLocal();
+					}}
+				/>
+			)}
 		</View>
 	);
 };

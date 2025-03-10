@@ -23,7 +23,7 @@ const HeaderUser = (props) => {
 				<View style={styles.titleContainer}>
 					<Text style={styles.topText}>Сайн байна уу?</Text>
 					<Text style={styles.userName} numberOfLines={1}>
-						{state.headerUserName ?? "User"}
+						{state.employeeData?.FullName ?? "User"}
 					</Text>
 				</View>
 			</TouchableOpacity>
@@ -72,6 +72,6 @@ const styles = StyleSheet.create({
 	},
 	userName: {
 		fontWeight: "bold",
-		fontSize: 24
+		fontSize: 22
 	}
 });

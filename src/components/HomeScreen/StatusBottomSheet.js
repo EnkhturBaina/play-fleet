@@ -22,7 +22,10 @@ export default function (props) {
 
 	const ENABLE_NEXT_STATUS = 10; // SECOND
 
-	const MAIN_STATE_CODES = ["Loading", "Hauling", "Dumping", "Traveling", "Queueing"];
+	const MAIN_STATE_CODES = {
+		Truck: ["Loading", "Hauling", "Dumping", "Traveling", "Queueing"],
+		Loader: ["Loading2", "Waiting", "Prepping", "Moving"]
+	};
 	const IMAGE_LIST = [
 		{
 			code: "Loading",
@@ -63,6 +66,22 @@ export default function (props) {
 			code: "",
 			img: require("../../../assets/images/Picture13.png"),
 			codeIds: [5, 6]
+		},
+		{
+			code: "Loading2",
+			img: require("../../../assets/images/Picture4.png")
+		},
+		{
+			code: "Waiting",
+			img: require("../../../assets/images/Picture5.png")
+		},
+		{
+			code: "Prepping",
+			img: require("../../../assets/images/Picture19.png")
+		},
+		{
+			code: "Moving",
+			img: require("../../../assets/images/Picture20.png")
 		}
 	];
 
@@ -96,7 +115,7 @@ export default function (props) {
 	}, [stateParentId]);
 
 	useEffect(() => {
-		// console.log("refStates", state.refStates);
+		console.log("refStates", MAIN_STATE_CODES[state.selectedEquipment?.TypeName]);
 
 		// 1. "W1" ActivityShort-той объектын ID-г авах
 		const w1Item = state.refStates?.find((item) => item.ActivityShort === "W1");
@@ -121,8 +140,8 @@ export default function (props) {
 		// Үндсэн W1 -н State -үүд мөн эсэх
 
 		if (
-			MAIN_STATE_CODES.includes(state.selectedState?.ActivityShort) &&
-			MAIN_STATE_CODES.includes(selectedState?.ActivityShort)
+			MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(state.selectedState?.ActivityShort) &&
+			MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(selectedState?.ActivityShort)
 		) {
 			if (state.seconds == 0) {
 				// 0. Operator төлөв тохируулсан үед ямар ч төлөврүү шууд орох
@@ -141,10 +160,23 @@ export default function (props) {
 
 				return;
 			}
-			// 2. Өмнөх төлөвийг сонгоход анхааруулга өгөх
+			// 2. Truck Өмнөх төлөвийг сонгоход анхааруулга өгөх
 			if (
 				//Сүүлийн төлөвөөс эхний төлөв дарах үед
+				state.selectedEquipmentCode == 0 &&
 				!(selectedState.ViewOrder == 0 && state.selectedState.ViewOrder == 4) &&
+				selectedState.ViewOrder < state.selectedState?.ViewOrder
+			) {
+				setDialogText("Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?");
+				setOnConfirm(() => () => proceedWithStateChange(selectedState));
+				setVisibleDialog(true);
+				return;
+			}
+			// 2. Loader Өмнөх төлөвийг сонгоход анхааруулга өгөх
+			if (
+				//Сүүлийн төлөвөөс эхний төлөв дарах үед
+				state.selectedEquipmentCode == 1 &&
+				!(selectedState.ViewOrder == 1 && state.selectedState.ViewOrder == 4) &&
 				selectedState.ViewOrder < state.selectedState?.ViewOrder
 			) {
 				setDialogText("Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?");
@@ -225,7 +257,8 @@ export default function (props) {
 				>
 					<Image
 						source={
-							state.selectedState?.ActivityShort && MAIN_STATE_CODES.includes(state.selectedState.ActivityShort)
+							state.selectedState?.ActivityShort &&
+							MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(state.selectedState.ActivityShort)
 								? IMAGE_LIST.find((img) => img.code === state.selectedState.ActivityShort)?.img ||
 								  require("../../../assets/only_icon.png")
 								: [2, 3, 4, 5, 6].some((id) => state.selectedState?.PMSGroupId == id)
@@ -255,13 +288,17 @@ export default function (props) {
 									  })
 									: "transparent";
 
-							if (state.selectedState?.ViewOrder === 4) {
-								disableState = el.ViewOrder !== 0; // сонгогдсон төлөв нь сүүлийх үед зөвхөн эхнийх enable, бусад нь disable
+							if (state.selectedEquipmentCode == 0 && state.selectedState?.ViewOrder === 4) {
+								disableState = el.ViewOrder !== 0; // Truck сонгогдсон төлөв нь сүүлийх үед зөвхөн эхнийх enable, бусад нь disable
+							} else if (state.selectedEquipmentCode == 1 && state.selectedState?.ViewOrder === 4) {
+								disableState = el.ViewOrder !== 1; // Loader сонгогдсон төлөв нь сүүлийх үед зөвхөн эхнийх enable, бусад нь disable
 							} else if (el.ViewOrder <= state.selectedState?.ViewOrder) {
 								disableState = true; // өмнөх бүх утгуудыг disable болгох
 							}
 
-							const isMainState = MAIN_STATE_CODES.includes(state.selectedState?.ActivityShort);
+							const isMainState = MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(
+								state.selectedState?.ActivityShort
+							);
 
 							// Үндсэн W1 -н төлөвүүдээс өөр төлөв сонгогдсон бол disable хийхгүй
 							if (!isMainState) {

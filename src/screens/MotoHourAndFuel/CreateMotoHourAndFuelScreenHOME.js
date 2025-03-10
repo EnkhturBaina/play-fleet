@@ -77,9 +77,9 @@ const CreateMotoHourAndFuelScreenHOME = (props) => {
 							PMSEquipmentId: state.selectedEquipment?.id,
 							PMSShiftId: state.shiftData?.id,
 							SavedDate: dayjs().format("YYYY-MM-DD"),
-							StartSMU: startSMU,
-							FinishSMU: finishSMU,
-							Fuel: fuel,
+							StartSMU: parseInt(startSMU?.replaceAll(",", "")),
+							FinishSMU: parseInt(finishSMU?.replaceAll(",", "")),
+							Fuel: parseInt(fuel?.replaceAll(",", "")),
 							ProgressSMU: 0 // Дараа нь хасах
 						},
 						{

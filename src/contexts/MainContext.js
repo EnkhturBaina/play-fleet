@@ -32,7 +32,6 @@ export const MainStore = (props) => {
 	const [isLoading, setIsLoading] = useState(false); //*****Апп ачааллах эсэх
 	const [location, setLocation] = useState(null); //*****Location мэдээлэл хадгалах
 	const [locationErrorCode, setLocationErrorCode] = useState(null); //*****Location error type
-	const [headerUserName, setHeaderUserName] = useState(null); //*****Дээр харагдах хэрэглэгчийн нэр
 	const [vehicleType, setVehicleType] = useState("Truck"); //Loader, Truck, Other
 	const [headerSelections, setHeaderSelections] = useState({
 		PMSSrcId: null,
@@ -481,8 +480,6 @@ export const MainStore = (props) => {
 				logout,
 				location,
 				setLocation,
-				headerUserName,
-				setHeaderUserName,
 				locationStatus,
 				setLocationStatus,
 				checkLocation,

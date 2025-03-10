@@ -11,8 +11,6 @@ export const NetworkProvider = ({ children }) => {
 	useEffect(() => {
 		// NetInfo listener нэмэх
 		const unsubscribe = useNetInfo.addEventListener((state) => {
-			console.log("state", state);
-
 			setIsConnected(state.isConnected);
 			if (!state.isConnected) {
 				setConnectionQuality("poor");
