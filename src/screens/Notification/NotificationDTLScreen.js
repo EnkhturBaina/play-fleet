@@ -15,7 +15,6 @@ const NotificationDTLScreen = (props) => {
 	const [loadingData, setLoadingData] = useState(true);
 
 	useEffect(() => {
-		console.log("data", props.route.params?.data);
 		if (props.route.params && props.route.params?.data) {
 			setNotifData(props.route.params?.data);
 		}
@@ -23,8 +22,37 @@ const NotificationDTLScreen = (props) => {
 	useEffect(() => {
 		if (notifData) {
 			setLoadingData(false);
+			updateNotifications(notifData?.id);
 		}
 	}, [notifData]);
+
+	const updateNotifications = async (notif_id) => {
+		try {
+			await axios
+				.post(
+					`${SERVER_URL}/mobile/notification/status`,
+					{
+						id: notif_id
+					},
+					{
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${state.token}`
+						}
+					}
+				)
+				.then(function (response) {
+					// console.log("report update Notifications response", JSON.stringify(response.data));
+					if (response.data?.Type == 0) {
+					}
+				})
+				.catch(function (error) {
+					console.log("error report update Notifications", error);
+				});
+		} catch (error) {
+			console.log("CATCH update Notifications", error);
+		}
+	};
 
 	const deleteNotifications = async (notif_id) => {
 		try {
@@ -42,10 +70,14 @@ const NotificationDTLScreen = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("report delete Notifications response", JSON.stringify(response.data));
+					// console.log("report delete Notifications response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
-						getNotifications();
-						onToggleSnackBar(response.data?.Msg);
+						Alert.alert(response.data?.Msg, "", [
+							{
+								text: "Хаах",
+								onPress: () => props.navigation.goBack()
+							}
+						]);
 					}
 				})
 				.catch(function (error) {
@@ -82,12 +114,21 @@ const NotificationDTLScreen = (props) => {
 			) : (
 				<View style={{ padding: 20 }}>
 					<Text style={{ fontWeight: "600", marginBottom: 5 }}>{notifData?.notification?.Title}</Text>
-					<Text>XXXX</Text>
-					<View>
-						<Text></Text>
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							justifyContent: "space-between",
+							marginBottom: 10
+						}}
+					>
+						<View style={{ flexDirection: "column" }}>
+							<Text style={{ textTransform: "capitalize" }}>{notifData?.type?.Name}</Text>
+
+							<Text>{dayjs(notifData.created_at).format("YYYY-MM-DD HH:mm:ss") ?? "-"}</Text>
+						</View>
 						<Button
 							containerStyle={{
-								marginTop: 10,
 								alignSelf: "center"
 							}}
 							buttonStyle={styles.loginBtnStyle}
@@ -96,9 +137,22 @@ const NotificationDTLScreen = (props) => {
 								fontSize: 16,
 								fontWeight: "bold"
 							}}
-							onPress={() => {}}
+							onPress={() =>
+								Alert.alert("Мэдэгдлийг устгах уу?", "Та мэдэгдлийг устгахдаа итгэлтэй байна уу?", [
+									{
+										text: "Үгүй",
+										onPress: () => console.log("Cancel Pressed"),
+										style: "cancel"
+									},
+									{
+										text: "Тийм",
+										onPress: () => deleteNotifications(notifData?.id)
+									}
+								])
+							}
 						/>
 					</View>
+					<Text>{notifData?.notification?.Message}</Text>
 				</View>
 			)}
 		</View>

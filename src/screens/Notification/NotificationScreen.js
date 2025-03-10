@@ -105,7 +105,7 @@ const NotificationScreen = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("report delete Notifications response", JSON.stringify(response.data));
+					// console.log("report delete Notifications response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						getNotifications();
 						onToggleSnackBar(response.data?.Msg);
