@@ -218,8 +218,6 @@ export const insertLoginData = async (data) => {
 
 		// project өгөгдөл оруулах
 		if (project) {
-			console.log("DB project ========>", project);
-
 			const resultProject = await db.runAsync(
 				`INSERT INTO project (id, Name, PMSCompanyId, Commodity, ShiftTime, StartedDate, CurrentProject, Latitude, Longitude, PMSProgressStateId, KMLFile, Radius, SyncTime, status)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
@@ -406,6 +404,8 @@ export const insertSendStateData = async (data) => {
 };
 
 export const fetchSendStateData = async () => {
+	console.log("RUN fetch Send State Data.");
+
 	try {
 		await AsyncStorage.getItem("access_token").then(async (localToken) => {
 			// Parallel database queries using Promise.all
@@ -440,7 +440,7 @@ export const fetchSendStateData = async () => {
 								}
 							}
 						);
-						// console.log("response", response.data);
+						console.log("response", response.data);
 
 						if (response.data?.Type == 0) {
 							// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах

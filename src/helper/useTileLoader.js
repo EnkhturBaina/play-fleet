@@ -21,8 +21,6 @@ const useTileLoader = (isRemove) => {
 	const [progress, setProgress] = useState(null);
 
 	useEffect(() => {
-		console.log("isRemove", isRemove);
-
 		if (isRemove) {
 			removeOldTiles().then(() => loadTiles());
 		} else {

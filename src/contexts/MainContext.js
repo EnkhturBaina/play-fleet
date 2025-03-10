@@ -22,7 +22,6 @@ export const MainStore = (props) => {
 	/* GENERAL STATEs START */
 	const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
 	const [updateAvailable, setUpdateAvailable] = useState(false);
-	const [appIsReady, setAppIsReady] = useState(false);
 	const [inspectionDone, setInspectionDone] = useState(false);
 	const [seconds, setSeconds] = useState(0);
 	const [isActiveTimer, setIsActiveTimer] = useState(false);
@@ -226,7 +225,6 @@ export const MainStore = (props) => {
 				let { status } = await Location.requestForegroundPermissionsAsync();
 				setLocationStatus(status);
 				if (status !== "granted") {
-					setAppIsReady(true);
 					// setIsLoggedIn(false);
 					return;
 				}
@@ -256,10 +254,15 @@ export const MainStore = (props) => {
 					if (isConnected) {
 						await checkUserData();
 					} else {
-						fetchReferencesData().then((e) => {
-							console.log("RESULT FETCH REF=> ", e);
-							checkUserData();
-						});
+						const data = await fetchReferencesData();
+
+						// console.log("get SQLite reference DATA=>", data);
+						// Бүх тохиргоог автоматаар хийх функц
+						setRefsToState(data, true);
+						// fetchReferencesData().then((e) => {
+						// 	console.log("RESULT FETCH REF=> ", e);
+						// 	checkUserData();
+						// });
 					}
 				});
 			});
@@ -281,7 +284,7 @@ export const MainStore = (props) => {
 			if (accessToken != null) {
 				setToken(accessToken);
 				const responseOfflineLoginData = await fetchLoginData();
-				console.log("Fetched Login Data local:", responseOfflineLoginData);
+				// console.log("Fetched Login Data local:", responseOfflineLoginData);
 
 				if (!responseOfflineLoginData.employee[0]) {
 					logout();
@@ -303,8 +306,6 @@ export const MainStore = (props) => {
 			}
 		} catch (error) {
 			console.error("Алдаа гарлаа checkUserData: ", error);
-		} finally {
-			setAppIsReady(true);
 		}
 	};
 
@@ -332,41 +333,17 @@ export const MainStore = (props) => {
 							//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
 							try {
 								const result = await saveReferencesWithClear(response.data?.Extra, true);
-								console.log("STATE get ReferencesData", result);
+								// console.log("STATE get ReferencesData", result);
 
 								if (result === "DONE_INSERT") {
 									const data = await fetchReferencesData();
 
 									// console.log("get SQLite reference DATA=>", data);
 									// Бүх тохиргоог автоматаар хийх функц
-									const updateReferences = (data, setters) => {
-										Object.entries(setters).forEach(([key, setter]) => {
-											data[key] && setter(data[key]);
-										});
-									};
-
-									// Тохиргоог тохируулах
-									updateReferences(data, {
-										ref_states: setRefStates,
-										ref_locations: setRefLocations,
-										ref_movements: setRefMovements,
-										ref_operators: setRefOperators,
-										ref_materials: setRefMaterials,
-										ref_state_groups: setRefStateGroups,
-										ref_location_types: setRefLocationTypes,
-										ref_loaders: setRefLoaders,
-										ref_loader_types: setRefLoaderTypes,
-										ref_shots: setRefShots
-									});
-									console.log("isRunLocal", isRunLocal);
-
-									if (isRunLocal) {
-										setIsLoggedIn(true);
-										setIsLoading(false);
-									}
+									setRefsToState(data, isRunLocal);
 								}
 							} catch (error) {
-								console.error("Алдаа гарлаа getReferencesService:", error);
+								console.error("Алдаа гарлаа get ReferencesService:", error);
 							}
 						}
 					})
@@ -385,6 +362,35 @@ export const MainStore = (props) => {
 		}
 	};
 
+	const setRefsToState = (data, isRunLocal) => {
+		console.log("RUN set Refs To State");
+
+		const updateReferences = (data, setters) => {
+			Object.entries(setters).forEach(([key, setter]) => {
+				data[key] && setter(data[key]);
+			});
+		};
+
+		// Тохиргоог тохируулах
+		updateReferences(data, {
+			ref_states: setRefStates,
+			ref_locations: setRefLocations,
+			ref_movements: setRefMovements,
+			ref_operators: setRefOperators,
+			ref_materials: setRefMaterials,
+			ref_state_groups: setRefStateGroups,
+			ref_location_types: setRefLocationTypes,
+			ref_loaders: setRefLoaders,
+			ref_loader_types: setRefLoaderTypes,
+			ref_shots: setRefShots
+		});
+		console.log("isRunLocal", isRunLocal);
+
+		if (isRunLocal) {
+			setIsLoggedIn(true);
+			setIsLoading(false);
+		}
+	};
 	// AsyncStorage.clear();
 	const logout = async (type) => {
 		//***** Profile -с гарах дарсан үед утасны LOCALSTORE -с user, user_bio устгах
@@ -498,8 +504,6 @@ export const MainStore = (props) => {
 				handlePause,
 				isActiveTimer,
 				setIsActiveTimer,
-				appIsReady,
-				setAppIsReady,
 				employeeData,
 				setEmployeeData,
 				companyData,

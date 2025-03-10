@@ -22,7 +22,7 @@ const StatusListScreen = (props) => {
 	useEffect(() => {
 		if (props.route?.params?.codeIds) {
 			const filteredData = state.refStates?.filter((item) => props.route?.params?.codeIds.includes(item.PMSGroupId));
-			console.log("filteredData", filteredData);
+			// console.log("filteredData", filteredData);
 			if (filteredData) {
 				setStatusList(filteredData);
 			}
@@ -43,14 +43,14 @@ const StatusListScreen = (props) => {
 			);
 			// console.log("statusListScreenSendSelectedState response=>", response);
 			if (response?.Type === 0) {
-				state.handleReset();
-				state.handleStart();
-				state.setSelectedState(selectedState);
-				setVisibleDialog(false);
-				props.navigation.goBack();
 			} else {
-				setDialogText(response?.Msg);
+				// setDialogText(response?.Msg);
 			}
+			state.handleReset();
+			state.handleStart();
+			state.setSelectedState(selectedState);
+			setVisibleDialog(false);
+			props.navigation.goBack();
 		} catch (error) {
 			console.log("Error in stopProgressHandler:", error);
 		}

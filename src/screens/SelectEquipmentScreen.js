@@ -34,11 +34,13 @@ const SelectEquipmentScreen = () => {
 		}
 	};
 	const getLocalSelectedEq = async () => {
+		console.log("RUN get LocalSelectedEq");
+
 		//Өмнө сонгогдсон Equipment Local -с авах
 		try {
 			setSavingEq(true);
 			const jsonValue = await AsyncStorage.getItem("selected_eq");
-			// console.log("jsonValue", jsonValue);
+			console.log("jsonValue", jsonValue);
 
 			if (jsonValue != null) {
 				const selectedLocalEq = JSON.parse(jsonValue);

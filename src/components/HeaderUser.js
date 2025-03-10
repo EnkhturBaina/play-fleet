@@ -21,7 +21,14 @@ const HeaderUser = (props) => {
 					}
 				}}
 			>
-				<Image source={require("../../assets/only_icon.png")} style={styles.userImg} contentFit="contain" />
+				<Image
+					source={
+						state.employeeData?.Profile ? { uri: state.employeeData.Profile } : require("../../assets/avatar.png")
+					}
+					style={styles.userImg}
+					contentFit="contain"
+				/>
+
 				<View style={styles.titleContainer}>
 					<Text style={styles.topText}>Сайн байна уу?</Text>
 					<Text style={styles.userName} numberOfLines={1}>

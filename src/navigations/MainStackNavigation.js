@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { StyleSheet, TouchableOpacity, Text, Dimensions, View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Icon } from "@rneui/base";
@@ -33,6 +33,10 @@ const MainStackNavigator = (props) => {
 	const navigation = useNavigation();
 
 	useEffect(() => {
+		console.log("isLoggedIn", state.isLoggedIn);
+		console.log("inspectionDone", state.inspectionDone);
+		// console.log("", );
+
 		state.isLoggedIn && state.inspectionDone && state.checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
 
 		const interval = setInterval(
@@ -53,15 +57,6 @@ const MainStackNavigator = (props) => {
 
 	// SplashScreen.preventAutoHideAsync();
 
-	// const onLayoutRootView = useCallback(() => {
-	// 	if (state.appIsReady) {
-	// 		SplashScreen.hide();
-	// 	}
-	// }, [state.appIsReady]);
-
-	// if (!state.appIsReady) {
-	// 	return null;
-	// }
 	if (state.isLoading) {
 		// Апп ачааллах бүрт SplashScreen харуулах
 		return <SplashScreen />;
@@ -70,11 +65,11 @@ const MainStackNavigator = (props) => {
 		// Login хийгээгүй үед
 		return <LoginScreen />;
 	}
-	if (!state.isLoading && state.isLoggedIn && state.appIsReady && state.selectedEquipment == null) {
+	if (!state.isLoading && state.isLoggedIn && state.selectedEquipment == null) {
 		// Login хийсэн ч EQUIPMENT сонгоогүй үед
 		return <SelectEquipmentScreen />;
 	}
-	if (!state.isLoading && state.isLoggedIn && state.appIsReady && state.selectedEquipment && !state.inspectionDone) {
+	if (!state.isLoading && state.isLoggedIn && state.selectedEquipment && !state.inspectionDone) {
 		// Login хийгээд EQUIPMENT сонгоод Inspection
 		return <InspectionScreen />;
 	}

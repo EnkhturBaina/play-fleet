@@ -115,7 +115,7 @@ export default function (props) {
 	}, [stateParentId]);
 
 	useEffect(() => {
-		console.log("refStates", MAIN_STATE_CODES[state.selectedEquipment?.TypeName]);
+		// console.log("refStates", MAIN_STATE_CODES[state.selectedEquipment?.TypeName]);
 
 		// 1. "W1" ActivityShort-той объектын ID-г авах
 		const w1Item = state.refStates?.find((item) => item.ActivityShort === "W1");
@@ -228,7 +228,7 @@ export default function (props) {
 				state.location,
 				isConnected
 			);
-			console.log("bottomSheet_Send_Selected_State_Response=>", response);
+			// console.log("bottomSheet_Send_Selected_State_Response=>", response);
 
 			if (response?.Type === 0) {
 			} else {

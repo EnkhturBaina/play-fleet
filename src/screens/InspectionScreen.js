@@ -31,6 +31,8 @@ const InspectionScreen = () => {
 	const [dialogText, setDialogText] = useState("Та итгэлтэй байна уу?"); //Dialog харуулах text
 
 	const getLocalInspectionId = async () => {
+		console.log("RUN get Local InspectionId");
+
 		//Өмнө хадгалсан InspectionId LOCAL -с авах
 		try {
 			setSavingInspections(true);
@@ -91,8 +93,16 @@ const InspectionScreen = () => {
 	};
 
 	useEffect(() => {
-		state.token && getLocalInspectionId();
-	}, [state.token]);
+		const fetchData = async () => {
+			const accessToken = await AsyncStorage.getItem("access_token");
+
+			if (accessToken) {
+				getLocalInspectionId(accessToken);
+			}
+		};
+
+		fetchData();
+	}, []);
 
 	const saveInspections = async () => {
 		const checkedList = [];

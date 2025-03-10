@@ -61,11 +61,11 @@ const HeaderFloatItem = (props) => {
 			// Эхлэх цаг
 			const startTime = dayjs(state.projectData?.ShiftTime);
 			// const startTime = dayjs("2025-02-02 01:29:00");
-			console.log("startTime", startTime);
+			// console.log("startTime", startTime);
 
 			// Дуусах цагийг тооцоолох (12 цаг нэмэх, 20 мин хасах)
 			const endTime = startTime?.add(12, "hour")?.subtract(20, "minute");
-			console.log("endTime", endTime);
+			// console.log("endTime", endTime);
 
 			// Секунд тутамд цагийг шалгах
 			const interval = setInterval(() => {
