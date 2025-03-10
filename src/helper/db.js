@@ -469,8 +469,8 @@ export const fetchSendStateData = async () => {
 			return data; // Return the combined data
 		});
 	} catch (error) {
-		console.error("Error fetching send state data", error);
-		throw new Error("Failed to fetch send state data. Please try again later.");
+		console.error("Error fetching sendState data", error);
+		throw new Error("Failed to fetch sendState data. Please try again later.");
 	}
 };
 
@@ -546,10 +546,10 @@ export const fetchMotoHourData = async () => {
 							// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
 							await deleteMotoHourRowById(item.id);
 						} else {
-							console.error(`Failed to send item ${item.id}:`);
+							console.error(`Failed to send motoHour item ${item.id}:`);
 						}
 					} catch (error) {
-						console.error(`Error sending item ${item.id}:`, error);
+						console.error(`Error sending motoHour item ${item.id}:`, error);
 					}
 				}
 			}

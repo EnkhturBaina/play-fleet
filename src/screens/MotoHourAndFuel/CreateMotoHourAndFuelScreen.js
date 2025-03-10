@@ -9,7 +9,7 @@ import {
 	ScrollView,
 	ActivityIndicator
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import CustomSnackbar from "../../components/CustomSnackbar";
 import LoanInput from "../../components/LoanInput";
 import MainContext from "../../contexts/MainContext";
@@ -46,10 +46,6 @@ const CreateMotoHourAndFuelScreen = (props) => {
 
 	//Snacbkbar хаах
 	const onDismissSnackBar = () => setVisibleSnack(false);
-
-	useEffect(() => {
-		console.log("state.shiftData", state.shiftData);
-	}, []);
 
 	const saveSMU = async () => {
 		if (!startSMU) {
