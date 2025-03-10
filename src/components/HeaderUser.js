@@ -4,9 +4,11 @@ import { MAIN_COLOR } from "../constant";
 import MainContext from "../contexts/MainContext";
 import notif from "../../assets/notif.png";
 import { Image } from "expo-image";
+import { useNavigation } from "@react-navigation/native";
 
 const HeaderUser = (props) => {
 	const state = useContext(MainContext);
+	const navigation = useNavigation();
 
 	return (
 		<View style={styles.headerContainer}>
@@ -28,7 +30,7 @@ const HeaderUser = (props) => {
 				</View>
 			</TouchableOpacity>
 			{props.isShowNotif ? (
-				<TouchableOpacity onPress={() => {}}>
+				<TouchableOpacity onPress={() => navigation.navigate("NotificationScreen")}>
 					<Image source={notif} style={{ width: 35, height: 35 }} contentFit="contain" />
 				</TouchableOpacity>
 			) : null}

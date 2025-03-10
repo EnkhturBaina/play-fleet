@@ -22,6 +22,8 @@ import SelectEquipmentScreen from "../screens/SelectEquipmentScreen";
 import InspectionScreen from "../screens/InspectionScreen";
 import InspectionReportScreen from "../screens/Sidebar/InspectionReportScreen";
 import CreateMotoHourAndFuelScreenHOME from "../screens/MotoHourAndFuel/CreateMotoHourAndFuelScreenHOME";
+import NotificationScreen from "../screens/Notification/NotificationScreen";
+import NotificationDTLScreen from "../screens/Notification/NotificationDTLScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -232,6 +234,26 @@ const MainStackNavigator = (props) => {
 								<Text style={styles.headerLeftText}>Мото цагийн болон түлшний бүртгэл</Text>
 							</TouchableOpacity>
 						)
+					}}
+				/>
+				<Stack.Screen
+					name="NotificationScreen"
+					component={NotificationScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="NotificationDTLScreen"
+					component={NotificationDTLScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
 					}}
 				/>
 			</Stack.Navigator>
