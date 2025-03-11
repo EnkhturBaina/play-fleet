@@ -136,8 +136,10 @@ const NotificationScreen = (props) => {
 						width: "60%"
 					}}
 				>
-					<Text style={{ fontWeight: "600", marginBottom: 5 }}>{item?.notification?.Title}</Text>
-					<Text numberOfLines={2}>{item?.notification?.Message}</Text>
+					<Text style={{ fontWeight: "600", marginBottom: 5 }} numberOfLines={1}>
+						{item?.notification?.Title}
+					</Text>
+					<Text numberOfLines={1}>{item?.notification?.Message}</Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
 						<Text style={{ textTransform: "capitalize" }}>{item?.type?.Name}</Text>
 						<Icon name="dot-single" type="entypo" size={15} />
