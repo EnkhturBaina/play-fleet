@@ -20,6 +20,7 @@ import "dayjs/locale/es";
 import dayjs from "dayjs";
 import { useNavigation } from "@react-navigation/native";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const width = Dimensions.get("screen").width;
 
@@ -149,10 +150,23 @@ const HeaderFloatItem = (props) => {
 					}
 				})
 				.catch(function (error) {
-					console.log("error get DefaultAssignedTask", error.response?.data);
+					console.log("error get DefaultAssignedTask", error);
+
+					getLocalLastState();
 				});
 		} catch (error) {
 			console.log("CATCH get DefaultAssignedTask", error);
+		}
+	};
+
+	const getLocalLastState = async () => {
+		// Assign service -д ямар 1 асуудал гарвал local -д хадгалсан хамгийн сүүлд сонгогдсон төлөв харуулах
+
+		const jsonValue = await AsyncStorage.getItem("lastState");
+		// console.log("jsonValue", JSON.parse(jsonValue));
+		if (jsonValue && JSON.parse(jsonValue)?.id) {
+			const filteredDefaultState = state.refStates?.filter((item) => item.id === JSON.parse(jsonValue)?.id);
+			state.setSelectedState(filteredDefaultState[0]);
 		}
 	};
 

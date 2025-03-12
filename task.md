@@ -23,12 +23,8 @@
 
 -------Q??
 
-# isConnected == true
+# 1. WEB -с төлөв солиход echo -с ирсэн дэд төлөвийн өмнөх төлөвүүдийг disable хийх Жнь: ХООСОН БУЦАХ
 
-Send to server
+# 2.1 Хийсэн шийдэл нь ажилтан апп дээрээ гараар төлөв сонгох үед LOCAL руу сүүлийн төлөв гэж бичиж байгаа.
 
-# isConnected == false
-
-Save to SQLite
-Check isConnected == true
-Send to server
+# 2.2 echo -р ирж байгаа төлөвийг сүүлийн төлөв гэж LOCAL руу хадгалах уу?
