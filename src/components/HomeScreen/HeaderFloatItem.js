@@ -18,7 +18,7 @@ import VEHICLE_TYPE from "../../helper/vehicleType.json";
 import CustomDialog from "../CustomDialog";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -29,6 +29,7 @@ const HeaderFloatItem = (props) => {
 	const navigation = useNavigation();
 
 	const { connectionQuality } = useNetworkStatus();
+	const isFocused = useIsFocused();
 
 	const [focusStates, setFocusStates] = useState({});
 	const [visibleLines, setVisibleLines] = useState(null);
@@ -82,7 +83,7 @@ const HeaderFloatItem = (props) => {
 
 			return () => clearInterval(interval); // Компонент унтрах үед interval-ийг цэвэрлэнэ
 		}
-	}, []);
+	}, [isFocused]);
 
 	useEffect(() => {
 		if (state.orientation == "PORTRAIT") {
