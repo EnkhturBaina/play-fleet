@@ -46,9 +46,6 @@ const useTileLoader = (isRemove, mapType) => {
 		} else {
 			mapType = "m";
 		}
-		console.log("state.mapType", state.mapType);
-
-		console.log("mapType ==========================>", mapType);
 
 		const url = `https://mt1.google.com/vt/lyrs=${mapType}&x=${x}&y=${y}&z=${z}&key=${MAPS_API_KEY}`;
 		const fileUri = `${FileSystem.documentDirectory}local_tile/${z}/${x}/${y}.png`;

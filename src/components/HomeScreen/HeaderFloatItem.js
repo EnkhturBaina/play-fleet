@@ -55,9 +55,10 @@ const HeaderFloatItem = (props) => {
 
 	useEffect(() => {
 		// console.log("projectData", state.projectData);
-		setTimeout(() => {
-			getDefaultAssignedTask();
-		}, 2000);
+		// setTimeout(() => {
+		// 	getDefaultAssignedTask();
+		// }, 2000);
+		getDefaultAssignedTask();
 		state.detectOrientation();
 
 		if (state.projectData && state.projectData?.ShiftTime !== null) {
