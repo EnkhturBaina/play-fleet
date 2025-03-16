@@ -57,26 +57,28 @@ const HeaderFloatItem = (props) => {
 	};
 
 	useEffect(() => {
-		// console.log("projectData", state.projectData);
-		getDefaultAssignedTask();
-		state.detectOrientation();
-
-		if (state.projectData && state.projectData?.ShiftTime !== null) {
-			// Эхлэх цагийг зөвхөн цаг, минут, секундын утгаар авах
+		if (state.projectData?.ShiftTime) {
 			const shiftDateTime = dayjs(state.projectData?.ShiftTime);
-			// console.log("shiftDateTime", shiftDateTime);
+			// const shiftDateTime = dayjs("2025-02-02 05:38:00");
 
+			// Эхлэх цагийг зөвхөн цаг, минут, секундын утгаар авах
 			const startTime = dayjs()
 				.startOf("day")
 				.add(shiftDateTime.hour(), "hour")
 				.add(shiftDateTime.minute(), "minute")
 				.add(shiftDateTime.second(), "second");
-			// console.log("startTime", startTime);
+			// Эхлэх цагаас 12 цаг нэмээд дуусах цагийг тооцоолох
+			const endTime = startTime.add(12, "hour");
 
-			// Дуусах цагийг тооцоолох (12 цаг нэмэх, 20 мин хасах)
-			const endTime = startTime.add(12, "hour").subtract(20, "minute");
+			// Дуусах цагаас дараагийн ээлжийн эхлэх цагийг тооцоолох (12 цаг нэмэх)
+			const nextShiftStart = endTime;
+			const nextShiftEnd = endTime.add(12, "hour");
 
-			// console.log("endTime", endTime);
+			// 12 цаг нэмээд дуусах цагийг анхааруулах цагийг тооцоолох (20 минут хасах)
+			const endTimeAlert = startTime.add(12, "hour").subtract(20, "minute");
+
+			let shiftName = "OFF"; // Ээлж тодорхойлох
+
 			// Секунд тутамд цагийг шалгах
 			const interval = setInterval(() => {
 				const now = dayjs()
@@ -84,20 +86,30 @@ const HeaderFloatItem = (props) => {
 					.add(dayjs().hour(), "hour")
 					.add(dayjs().minute(), "minute")
 					.add(dayjs().second(), "second");
-
 				// console.log("now", now.format("HH:mm:ss"));
-				// console.log("startTime", startTime.format("HH:mm:ss"));
-				// console.log("endTime", endTime.format("HH:mm:ss"));
 
-				if (now.isSame(endTime, "second")) {
+				// Ээлжийн дуусах цагаар анхааруулах
+				if (now.isSame(endTimeAlert, "second")) {
 					setDialogText("Та ээлжээ дуусгах уу?");
 					setConfirmText("Дуусгах");
 					setDeclineText("Үгүй");
 					setVisibleDialog(true);
-					clearInterval(interval);
-				} else if (now.isAfter(endTime)) {
+					clearInterval(interval); // Анхааруулах хойшлуулах
+				}
+
+				// Өгөгдсөн ээлжийн цаг
+				if (now.isAfter(startTime) && now.isBefore(endTime)) {
+					shiftName = state.shiftData?.Name;
+				}
+				// Дараагийн ээлжийн цаг
+				else if (now.isAfter(nextShiftStart) && now.isBefore(nextShiftEnd)) {
+					shiftName = state.shiftData?.Name === "DS" ? "NS" : "DS";
+				}
+
+				// Ээлж солигдсон үед үзүүлж болох албан ёсны мэдэгдэл
+				if (shiftName !== state.shiftData?.Name) {
 					setShowDialogDecline(false);
-					setDialogText("Ээлж дууссан байна.");
+					setDialogText("Ээлж дууссан байна. Та дахин нэвтэрнэ үү");
 					setConfirmText("ОК");
 					setDeclineText("");
 					setVisibleDialog(true);
@@ -105,9 +117,10 @@ const HeaderFloatItem = (props) => {
 				}
 			}, 1000); // 1 секунд тутамд шалгана
 
-			return () => clearInterval(interval); // Компонент унтрах үед interval-ийг цэвэрлэнэ
+			// Компонент унтрах үед interval-ийг цэвэрлэнэ
+			return () => clearInterval(interval);
 		}
-	}, []);
+	}, []); // Зөвхөн эхний удаа ажиллана
 
 	// }, [isFocused]);
 
@@ -157,7 +170,7 @@ const HeaderFloatItem = (props) => {
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						if (response.data?.Extra?.ShiftChanged) {
-							setDialogText("Ээлж дууссан байна.");
+							setDialogText("Ээлж дууссан байна. Та дахин нэвтэрнэ үү");
 							setConfirmText("ОК");
 							setDeclineText("");
 							setVisibleDialog(true);
