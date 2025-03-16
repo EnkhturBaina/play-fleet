@@ -104,6 +104,11 @@ const MotoHoursAndFuelScreen = (props) => {
 			>
 				<Text style={styles.itemDate}>{item.SavedDate}</Text>
 				<View style={styles.itemRow}>
+					<Text style={styles.itemLabel}>Ээлж</Text>
+					<Text style={styles.dividerVertical}>|</Text>
+					<Text style={styles.itemValue}>{item.shift?.Name}</Text>
+				</View>
+				<View style={styles.itemRow}>
 					<Text style={styles.itemLabel}>Хуримтлагдсан мото цаг</Text>
 					<Text style={styles.dividerVertical}>|</Text>
 					<Text style={styles.itemValue}>{item.StartSMU} цаг</Text>
@@ -142,7 +147,7 @@ const MotoHoursAndFuelScreen = (props) => {
 			}}
 		>
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-			<HeaderUser isShowNotif={true} isBack={false} />
+			<HeaderUser isShowNotif={true} />
 			<TouchableOpacity
 				onPress={() => {
 					props.navigation.goBack();

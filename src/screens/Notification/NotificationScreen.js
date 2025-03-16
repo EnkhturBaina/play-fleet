@@ -1,6 +1,5 @@
 import {
 	ActivityIndicator,
-	Alert,
 	FlatList,
 	Platform,
 	RefreshControl,
@@ -20,7 +19,6 @@ import MainContext from "../../contexts/MainContext";
 import Empty from "../../components/Empty";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
-import CustomSnackbar from "../../components/CustomSnackbar";
 import { useIsFocused } from "@react-navigation/native";
 
 const NotificationScreen = (props) => {
@@ -30,18 +28,6 @@ const NotificationScreen = (props) => {
 	const [notificationData, setNotificationData] = useState(null);
 	const [loadingNotification, setLoadingNotification] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
-
-	const [visibleSnack, setVisibleSnack] = useState(false);
-	const [snackBarMsg, setSnackBarMsg] = useState("");
-
-	//Snacbkbar харуулах
-	const onToggleSnackBar = (msg) => {
-		setVisibleSnack(!visibleSnack);
-		setSnackBarMsg(msg);
-	};
-
-	//Snacbkbar хаах
-	const onDismissSnackBar = () => setVisibleSnack(false);
 
 	const wait = (timeout) => {
 		return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -89,36 +75,6 @@ const NotificationScreen = (props) => {
 		getNotifications();
 	}, [isFocused]);
 
-	const deleteNotifications = async (notif_id) => {
-		try {
-			await axios
-				.post(
-					`${SERVER_URL}/mobile/notification/delete`,
-					{
-						id: notif_id
-					},
-					{
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${state.token}`
-						}
-					}
-				)
-				.then(function (response) {
-					// console.log("report delete Notifications response", JSON.stringify(response.data));
-					if (response.data?.Type == 0) {
-						getNotifications();
-						onToggleSnackBar(response.data?.Msg);
-					}
-				})
-				.catch(function (error) {
-					console.log("error report delete Notifications", error);
-				});
-		} catch (error) {
-			console.log("CATCH delete Notifications", error);
-		}
-	};
-
 	const renderItem = ({ item }) => {
 		return (
 			<TouchableOpacity
@@ -133,41 +89,26 @@ const NotificationScreen = (props) => {
 					style={{
 						flex: 1,
 						flexDirection: "column",
-						width: "60%"
+						width: "100%"
 					}}
 				>
-					<Text style={{ fontWeight: "600", marginBottom: 5 }} numberOfLines={1}>
-						{item?.notification?.Title}
-					</Text>
+					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+						<Text style={{ flex: 1, fontWeight: "600", marginBottom: 5 }} numberOfLines={1}>
+							{item?.notification?.Title}
+							{false}
+						</Text>
+						<Text style={{ fontWeight: "600", marginBottom: 5 }} numberOfLines={1}>
+							<Text style={{ textTransform: "capitalize" }}>{item?.type?.Name}</Text>
+						</Text>
+					</View>
 					<Text numberOfLines={1}>{item?.notification?.Message}</Text>
-					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<Text style={{ textTransform: "capitalize" }}>{item?.type?.Name}</Text>
-						<Icon name="dot-single" type="entypo" size={15} />
+					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
 						<Text>{dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss") ?? "-"}</Text>
-						<Icon name="dot-single" type="entypo" size={15} />
 						<Text style={{ color: item.state?.Code == "unread" ? MAIN_COLOR_BLUE : MAIN_COLOR_GREEN }}>
 							{item.state?.Name}
 						</Text>
 					</View>
 				</View>
-				<TouchableOpacity
-					style={styles.deleteContainer}
-					onPress={() =>
-						Alert.alert("Мэдэгдлийг устгах уу?", "Та мэдэгдлийг устгахдаа итгэлтэй байна уу?", [
-							{
-								text: "Үгүй",
-								onPress: () => console.log("Cancel Pressed"),
-								style: "cancel"
-							},
-							{
-								text: "Тийм",
-								onPress: () => deleteNotifications(item.id)
-							}
-						])
-					}
-				>
-					<Icon name="trash" type="octicon" size={25} color="red" />
-				</TouchableOpacity>
 			</TouchableOpacity>
 		);
 	};
@@ -182,8 +123,7 @@ const NotificationScreen = (props) => {
 			}}
 		>
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-			<HeaderUser isShowNotif={true} isBack={false} />
-			<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={50} />
+			<HeaderUser isShowNotif={true} />
 			<TouchableOpacity
 				onPress={() => {
 					props.navigation.goBack();
@@ -226,17 +166,11 @@ const styles = StyleSheet.create({
 	itemContainer: {
 		borderBottomWidth: 1,
 		borderBottomColor: TEXT_COLOR_GRAY,
-		paddingLeft: 20,
+		paddingHorizontal: 20,
 		paddingVertical: 15,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
 		height: 80
-	},
-	deleteContainer: {
-		alignSelf: "center",
-		justifyContent: "center",
-		height: 80,
-		width: 80
 	}
 });

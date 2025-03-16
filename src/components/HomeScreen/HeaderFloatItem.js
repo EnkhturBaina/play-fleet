@@ -55,7 +55,9 @@ const HeaderFloatItem = (props) => {
 
 	useEffect(() => {
 		// console.log("projectData", state.projectData);
-		getDefaultAssignedTask();
+		setTimeout(() => {
+			getDefaultAssignedTask();
+		}, 2000);
 		state.detectOrientation();
 
 		if (state.projectData && state.projectData?.ShiftTime !== null) {
@@ -109,6 +111,10 @@ const HeaderFloatItem = (props) => {
 	};
 
 	const getDefaultAssignedTask = async () => {
+		console.log("companyData", state.companyData?.id);
+		console.log("selectedEquipment", state.selectedEquipment?.id);
+		console.log("PMSShiftId ", state.shiftData?.id);
+
 		setAssignedData(null);
 		try {
 			await axios
@@ -127,7 +133,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					// console.log("get DefaultAssignedTask response ", JSON.stringify(response.data));
+					console.log("get DefaultAssignedTask response ", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						state.setHeaderSelections((prev) => ({
@@ -139,9 +145,25 @@ const HeaderFloatItem = (props) => {
 							PMSMaterialId: response.data?.Extra?.PMSMaterialId
 						}));
 
-						if (response.data?.Extra?.PMSSubProgressStateId != null) {
+						if (
+							response.data?.Extra?.PMSProgressStateId != null &&
+							response.data?.Extra?.PMSSubProgressStateId != null
+						) {
+							// Зөвхөн W1 Буюу SUB STATE тэй үед
 							const filteredDefaultState = state.refStates?.filter(
 								(item) => item.id === response.data?.Extra?.PMSSubProgressStateId
+							);
+							// console.log("default assign from header", filteredDefaultState);
+
+							// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+							state.setSelectedState(filteredDefaultState[0]);
+						} else if (
+							response.data?.Extra?.PMSProgressStateId != null &&
+							response.data?.Extra?.PMSSubProgressStateId == null
+						) {
+							// W1 -с бусад үед буюу SUB_STATE тэй үед
+							const filteredDefaultState = state.refStates?.filter(
+								(item) => item.id === response.data?.Extra?.PMSProgressStateId
 							);
 							// console.log("default assign from header", filteredDefaultState);
 

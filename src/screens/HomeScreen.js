@@ -62,6 +62,8 @@ const HomeScreen = (props) => {
 	}, [state.location]);
 
 	useEffect(() => {
+		console.log("X", state.projectData);
+
 		if (!echo || !state.employeeData?.PMSCompanyId) return;
 
 		const channel = echo.private(`user.${state.employeeData?.id}`);
@@ -220,7 +222,7 @@ const HomeScreen = (props) => {
 					}}
 				>
 					<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-					<HeaderUser isBack={true} isOpen={isOpen} setIsOpen={setIsOpen} isShowNotif={true} />
+					<HeaderUser isSideBar={true} isOpen={isOpen} setIsOpen={setIsOpen} isShowNotif={true} />
 					<SideMenu
 						menu={
 							<MainSideBar
@@ -246,7 +248,7 @@ const HomeScreen = (props) => {
 								longitudeDelta: 0.05
 							}}
 							scrollEnabled={true}
-							mapType="satellite"
+							mapType={state.mapType}
 						>
 							<UrlTile
 								urlTemplate={tileUri} // Урл замыг хэрэглэнэ

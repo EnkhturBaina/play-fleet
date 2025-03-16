@@ -1,11 +1,13 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Icon } from "@rneui/base";
 import { MAIN_COLOR_GRAY } from "../../constant";
 import useTileLoader from "../../helper/useTileLoader";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
+import MainContext from "../../contexts/MainContext";
 
 const ConfigMenu = (props) => {
+	const state = useContext(MainContext);
 	const { callFnc, progress } = useTileLoader(false);
 	const { isConnected } = useNetworkStatus();
 
@@ -27,7 +29,7 @@ const ConfigMenu = (props) => {
 				style={styles.eachItemContainer}
 				onPress={() => {
 					if (isConnected) {
-						Alert.alert("Оффлайн мэп татах уу?", "", [
+						Alert.alert("Оффлайн газрын зураг татах уу?", "", [
 							{
 								text: "Үгүй",
 								onPress: () => console.log("Cancel Pressed"),
@@ -53,6 +55,41 @@ const ConfigMenu = (props) => {
 				<View>
 					<Text style={{ fontSize: 16, fontWeight: "600" }}>Газрын зураг татах</Text>
 					<Text style={{ fontSize: 12 }}>{progress}</Text>
+				</View>
+				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.eachItemContainer}
+				onPress={() => {
+					if (isConnected) {
+						Alert.alert("Газрын зураг солих уу?", "Оффлайн газрын зураг шинээр татагдана.", [
+							{
+								text: "Үгүй",
+								onPress: () => console.log("Cancel Pressed"),
+								style: "cancel"
+							},
+							,
+							{
+								text: "Тийм",
+								onPress: () => callFnc()
+							}
+						]);
+					} else {
+						Alert.alert("Интернэт холболт шалгана уу?", "", [
+							,
+							{
+								text: "Хаах",
+								onPress: () => null
+							}
+						]);
+					}
+				}}
+			>
+				<View>
+					<Text style={{ fontSize: 16, fontWeight: "600" }}>Газрын зураг солих</Text>
+					<Text style={{ fontSize: 12 }}>
+						{state.mapType == "satellite" ? "Satellite – Хиймэл дагуул" : "Standard – Стандарт"}
+					</Text>
 				</View>
 				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
 			</TouchableOpacity>
