@@ -417,7 +417,7 @@ export const fetchSendStateData = async () => {
 	console.log("RUN fetch Send State Data.");
 
 	try {
-		await AsyncStorage.getItem("access_token").then(async (localToken) => {
+		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
 			// Parallel database queries using Promise.all
 			const data = await db.getAllAsync("SELECT * FROM send_state");
 			// console.log("data ==========>", data);
@@ -507,7 +507,7 @@ export const fetchMotoHourData = async () => {
 	console.log("RUN fetch MotoHour Data.");
 
 	try {
-		await AsyncStorage.getItem("access_token").then(async (localToken) => {
+		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
 			// Parallel database queries using Promise.all
 			const data = await db.getAllAsync("SELECT * FROM moto_hour");
 			// console.log("data ==========>", data);

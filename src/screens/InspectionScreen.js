@@ -36,7 +36,7 @@ const InspectionScreen = () => {
 		//Өмнө хадгалсан InspectionId LOCAL -с авах
 		try {
 			setSavingInspections(true);
-			const jsonValue = await AsyncStorage.getItem("inspectionId");
+			const jsonValue = await AsyncStorage.getItem("L_inspection_id");
 			// console.log("LOCAL inspectionId", jsonValue);
 
 			if (jsonValue != null) {
@@ -94,7 +94,7 @@ const InspectionScreen = () => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const accessToken = await AsyncStorage.getItem("access_token");
+			const accessToken = await AsyncStorage.getItem("L_access_token");
 
 			if (accessToken) {
 				getLocalInspectionId(accessToken);
@@ -151,7 +151,7 @@ const InspectionScreen = () => {
 					console.log("error save Inspections", error.response.data);
 				})
 				.finally(async () => {
-					await AsyncStorage.setItem("inspectionId", JSON.stringify(mainData?.id)).then(() => {
+					await AsyncStorage.setItem("L_inspection_id", JSON.stringify(mainData?.id)).then(() => {
 						setSavingInspections(false);
 						setVisibleDialog(true);
 					});

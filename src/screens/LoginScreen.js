@@ -114,7 +114,7 @@ const LoginScreen = (props) => {
 					state.setShiftData(responseOfflineLoginData?.shift[0]);
 
 					// Local storage руу access_token хадгалах
-					await AsyncStorage.setItem("access_token", accessToken);
+					await AsyncStorage.setItem("L_access_token", accessToken);
 
 					if (responseOfflineLoginData?.company[0]?.id) {
 						state.getReferencesService(responseOfflineLoginData?.company[0]?.id, accessToken, true);

@@ -62,7 +62,7 @@ const InspectionReportScreen = (props) => {
 	useEffect(() => {
 		const fetchInspectionId = async () => {
 			try {
-				const inspectionId = await AsyncStorage.getItem("inspectionId");
+				const inspectionId = await AsyncStorage.getItem("L_inspection_id");
 				if (inspectionId) {
 					getInspections(inspectionId);
 				}

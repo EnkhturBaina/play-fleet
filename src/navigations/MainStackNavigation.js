@@ -42,8 +42,6 @@ const MainStackNavigator = (props) => {
 
 		const interval = setInterval(
 			() => {
-				console.log("isLoggedIn - inspectionDone =>", state.isLoggedIn, state.inspectionDone);
-
 				if (state.isLoggedIn && state.inspectionDone) {
 					state.checkLocationWithSpeed();
 				}

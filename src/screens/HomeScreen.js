@@ -62,8 +62,6 @@ const HomeScreen = (props) => {
 	}, [state.location]);
 
 	useEffect(() => {
-		console.log("tileUri", tileUri);
-
 		if (!echo || !state.employeeData?.PMSCompanyId) return;
 
 		const channel = echo.private(`user.${state.employeeData?.id}`);

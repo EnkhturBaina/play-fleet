@@ -90,7 +90,7 @@ const ConfigMenu = (props) => {
 									} else {
 										mapType = "standart";
 									}
-									await AsyncStorage.setItem("map_type", mapType).then(() => {
+									await AsyncStorage.setItem("L_map_type", mapType).then(() => {
 										state.setMapType(mapType);
 									});
 								}

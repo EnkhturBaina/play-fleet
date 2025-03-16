@@ -24,7 +24,7 @@ const SelectEquipmentScreen = () => {
 		try {
 			setSavingEq(true);
 
-			await AsyncStorage.setItem("selected_eq", JSON.stringify(selectedEq)).then(() => {
+			await AsyncStorage.setItem("L_selected_eq", JSON.stringify(selectedEq)).then(() => {
 				setSelectedEqCode(selectedEq.TypeName);
 				state.setSelectedEquipment(selectedEq);
 				setSavingEq(false);
@@ -39,7 +39,7 @@ const SelectEquipmentScreen = () => {
 		//Өмнө сонгогдсон Equipment Local -с авах
 		try {
 			setSavingEq(true);
-			const jsonValue = await AsyncStorage.getItem("selected_eq");
+			const jsonValue = await AsyncStorage.getItem("L_selected_eq");
 			// console.log("jsonValue", jsonValue);
 
 			if (jsonValue != null) {

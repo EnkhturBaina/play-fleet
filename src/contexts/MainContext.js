@@ -9,12 +9,14 @@ import { useNetworkStatus } from "./NetworkContext";
 import { Dimensions } from "react-native";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import * as Updates from "expo-updates";
 import { getDistanceFromLatLonInMeters } from "../helper/functions";
 
 const MainContext = React.createContext();
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
+dayjs.extend(customParseFormat);
 
 export const MainStore = (props) => {
 	const { isConnected } = useNetworkStatus();
@@ -114,17 +116,33 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		const performAsyncTasks = async () => {
-			await AsyncStorage.getItem("map_type").then(async (map_type) => {
-				if (map_type) {
-					setMapType(map_type);
-				} else {
-					setMapType("satellite");
+			await AsyncStorage.getItem("L_last_state_time").then(async (local_last_state_time) => {
+				try {
+					if (local_last_state_time) {
+						const last_state_time = dayjs(local_last_state_time, "YYYY-DD-MM HH:mm:ss");
+						const current_time = dayjs();
+
+						const differenceInSeconds = current_time.diff(last_state_time, "second");
+						if (typeof differenceInSeconds === "number" && !isNaN(differenceInSeconds) && differenceInSeconds > 0) {
+							setSeconds(differenceInSeconds);
+							handleStart();
+						}
+					}
+				} catch (error) {
+					console.log("error", error);
 				}
-				if (isConnected) {
-					await checkForUpdates(); // Интернэт холболттой бол Update шалгах
-				} else {
-					await checkLocation(); // Интернэтгүй бол local шалгах
-				}
+				await AsyncStorage.getItem("L_map_type").then(async (map_type) => {
+					if (map_type) {
+						setMapType(map_type);
+					} else {
+						setMapType("satellite");
+					}
+					if (isConnected) {
+						await checkForUpdates(); // Интернэт холболттой бол Update шалгах
+					} else {
+						await checkLocation(); // Интернэтгүй бол local шалгах
+					}
+				});
 			});
 		};
 
@@ -162,7 +180,7 @@ export const MainStore = (props) => {
 	const sendEquipmentLocation = async (currentLocation, currentSpeed) => {
 		console.log("RUN send EquipmentLocation", currentLocation, currentSpeed);
 		if (currentLocation && currentSpeed != null) {
-			await AsyncStorage.getItem("access_token").then(async (localToken) => {
+			await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
 				try {
 					await axios
 						.post(
@@ -283,11 +301,11 @@ export const MainStore = (props) => {
 	const checkUserData = async () => {
 		console.log("RUN check User Data");
 		try {
-			const mainCompanyId = await AsyncStorage.getItem("mainCompanyId");
+			const mainCompanyId = await AsyncStorage.getItem("L_main_company_id");
 			setMainCompanyId(mainCompanyId);
 
-			const accessToken = await AsyncStorage.getItem("access_token");
-			// console.log("access_token", accessToken);
+			const accessToken = await AsyncStorage.getItem("L_access_token");
+			// console.log("L_access_token", L_access_token);
 
 			if (accessToken != null) {
 				setToken(accessToken);
@@ -417,11 +435,12 @@ export const MainStore = (props) => {
 		//***** Profile -с гарах дарсан үед утасны LOCALSTORE -с user, user_bio устгах
 		const keys = [
 			// "local_notif",
-			"access_token",
-			"inspectionId",
-			"selected_eq",
-			"inspectionId",
-			"map_type"
+			"L_access_token",
+			"L_inspection_id",
+			"L_selected_eq",
+			"L_map_type",
+			"L_last_state_time",
+			"L_last_state"
 		];
 
 		AsyncStorage.multiRemove(keys).then(() => {

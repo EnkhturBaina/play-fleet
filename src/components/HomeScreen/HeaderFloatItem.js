@@ -37,6 +37,9 @@ const HeaderFloatItem = (props) => {
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
+	const [showDialogDecline, setShowDialogDecline] = useState(true);
+	const [confirmText, setConfirmText] = useState("Дуусгах");
+	const [declineText, setDeclineText] = useState("Үгүй");
 
 	const startLines = 3;
 	const totalLines = 6;
@@ -55,38 +58,58 @@ const HeaderFloatItem = (props) => {
 
 	useEffect(() => {
 		// console.log("projectData", state.projectData);
-		// setTimeout(() => {
-		// 	getDefaultAssignedTask();
-		// }, 2000);
 		getDefaultAssignedTask();
 		state.detectOrientation();
 
 		if (state.projectData && state.projectData?.ShiftTime !== null) {
-			// Эхлэх цаг
-			const startTime = dayjs(state.projectData?.ShiftTime);
-			// const startTime = dayjs("2025-02-02 01:29:00");
+			// Эхлэх цагийг зөвхөн цаг, минут, секундын утгаар авах
+			const shiftDateTime = dayjs(state.projectData?.ShiftTime);
+			// console.log("shiftDateTime", shiftDateTime);
+
+			const startTime = dayjs()
+				.startOf("day")
+				.add(shiftDateTime.hour(), "hour")
+				.add(shiftDateTime.minute(), "minute")
+				.add(shiftDateTime.second(), "second");
 			// console.log("startTime", startTime);
 
 			// Дуусах цагийг тооцоолох (12 цаг нэмэх, 20 мин хасах)
-			const endTime = startTime?.add(12, "hour")?.subtract(20, "minute");
-			// console.log("endTime", endTime);
+			const endTime = startTime.add(12, "hour").subtract(20, "minute");
 
+			// console.log("endTime", endTime);
 			// Секунд тутамд цагийг шалгах
 			const interval = setInterval(() => {
-				const now = dayjs(); // Одоогийн цагийг авах
+				const now = dayjs()
+					.startOf("day")
+					.add(dayjs().hour(), "hour")
+					.add(dayjs().minute(), "minute")
+					.add(dayjs().second(), "second");
+
 				// console.log("now", now.format("HH:mm:ss"));
+				// console.log("startTime", startTime.format("HH:mm:ss"));
 				// console.log("endTime", endTime.format("HH:mm:ss"));
 
-				if (now?.format("HH:mm:ss") === endTime?.format("HH:mm:ss")) {
-					setDialogText("Та ээлжээ дуусгах уу.?");
+				if (now.isSame(endTime, "second")) {
+					setDialogText("Та ээлжээ дуусгах уу?");
+					setConfirmText("Дуусгах");
+					setDeclineText("Үгүй");
 					setVisibleDialog(true);
-					clearInterval(interval); // Давхардахгүй байх үүднээс interval-ийг цэвэрлэх
+					clearInterval(interval);
+				} else if (now.isAfter(endTime)) {
+					setShowDialogDecline(false);
+					setDialogText("Ээлж дууссан байна.");
+					setConfirmText("ОК");
+					setDeclineText("");
+					setVisibleDialog(true);
+					clearInterval(interval);
 				}
 			}, 1000); // 1 секунд тутамд шалгана
 
 			return () => clearInterval(interval); // Компонент унтрах үед interval-ийг цэвэрлэнэ
 		}
-	}, [isFocused]);
+	}, []);
+
+	// }, [isFocused]);
 
 	useEffect(() => {
 		if (state.orientation == "PORTRAIT") {
@@ -112,10 +135,6 @@ const HeaderFloatItem = (props) => {
 	};
 
 	const getDefaultAssignedTask = async () => {
-		console.log("companyData", state.companyData?.id);
-		console.log("selectedEquipment", state.selectedEquipment?.id);
-		console.log("PMSShiftId ", state.shiftData?.id);
-
 		setAssignedData(null);
 		try {
 			await axios
@@ -134,42 +153,49 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("get DefaultAssignedTask response ", JSON.stringify(response.data));
+					// console.log("get DefaultAssignedTask response ", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
-						state.setHeaderSelections((prev) => ({
-							...prev,
-							PMSSrcId: response.data?.Extra?.PMSSrcId,
-							PMSBlastShotId: response.data?.Extra?.PMSBlastShotId,
-							PMSDstId: response.data?.Extra?.PMSDstId,
-							PMSLoaderId: response.data?.Extra?.PMSLoaderId,
-							PMSMaterialId: response.data?.Extra?.PMSMaterialId
-						}));
+						if (response.data?.Extra?.ShiftChanged) {
+							setDialogText("Ээлж дууссан байна.");
+							setConfirmText("ОК");
+							setDeclineText("");
+							setVisibleDialog(true);
+						} else {
+							state.setHeaderSelections((prev) => ({
+								...prev,
+								PMSSrcId: response.data?.Extra?.PMSSrcId,
+								PMSBlastShotId: response.data?.Extra?.PMSBlastShotId,
+								PMSDstId: response.data?.Extra?.PMSDstId,
+								PMSLoaderId: response.data?.Extra?.PMSLoaderId,
+								PMSMaterialId: response.data?.Extra?.PMSMaterialId
+							}));
 
-						if (
-							response.data?.Extra?.PMSProgressStateId != null &&
-							response.data?.Extra?.PMSSubProgressStateId != null
-						) {
-							// Зөвхөн W1 Буюу SUB STATE тэй үед
-							const filteredDefaultState = state.refStates?.filter(
-								(item) => item.id === response.data?.Extra?.PMSSubProgressStateId
-							);
-							// console.log("default assign from header", filteredDefaultState);
+							if (
+								response.data?.Extra?.PMSProgressStateId != null &&
+								response.data?.Extra?.PMSSubProgressStateId != null
+							) {
+								// Зөвхөн W1 Буюу SUB STATE тэй үед
+								const filteredDefaultState = state.refStates?.filter(
+									(item) => item.id === response.data?.Extra?.PMSSubProgressStateId
+								);
+								// console.log("default assign from header", filteredDefaultState);
 
-							// Default assign -с тухайн төхөөрөмжиййн төлөв авах
-							state.setSelectedState(filteredDefaultState[0]);
-						} else if (
-							response.data?.Extra?.PMSProgressStateId != null &&
-							response.data?.Extra?.PMSSubProgressStateId == null
-						) {
-							// W1 -с бусад үед буюу SUB_STATE тэй үед
-							const filteredDefaultState = state.refStates?.filter(
-								(item) => item.id === response.data?.Extra?.PMSProgressStateId
-							);
-							// console.log("default assign from header", filteredDefaultState);
+								// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+								state.setSelectedState(filteredDefaultState[0]);
+							} else if (
+								response.data?.Extra?.PMSProgressStateId != null &&
+								response.data?.Extra?.PMSSubProgressStateId == null
+							) {
+								// W1 -с бусад үед буюу SUB_STATE тэй үед
+								const filteredDefaultState = state.refStates?.filter(
+									(item) => item.id === response.data?.Extra?.PMSProgressStateId
+								);
+								// console.log("default assign from header", filteredDefaultState);
 
-							// Default assign -с тухайн төхөөрөмжиййн төлөв авах
-							state.setSelectedState(filteredDefaultState[0]);
+								// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+								state.setSelectedState(filteredDefaultState[0]);
+							}
 						}
 					}
 				})
@@ -186,7 +212,7 @@ const HeaderFloatItem = (props) => {
 	const getLocalLastState = async () => {
 		// Assign service -д ямар 1 асуудал гарвал local -д хадгалсан хамгийн сүүлд сонгогдсон төлөв харуулах
 
-		const jsonValue = await AsyncStorage.getItem("lastState");
+		const jsonValue = await AsyncStorage.getItem("L_last_state");
 		// console.log("jsonValue", JSON.parse(jsonValue));
 		if (jsonValue && JSON.parse(jsonValue)?.id) {
 			const filteredDefaultState = state.refStates?.filter((item) => item.id === JSON.parse(jsonValue)?.id);
@@ -355,11 +381,11 @@ const HeaderFloatItem = (props) => {
 					stopProgress();
 				}}
 				declineFunction={() => {
-					setVisibleDialog(false);
+					showDialogDecline && setVisibleDialog(false);
 				}}
 				text={dialogText}
-				confirmBtnText="Дуусгах"
-				DeclineBtnText="Үгүй"
+				confirmBtnText={confirmText}
+				DeclineBtnText={declineText}
 				type={"warning"}
 				screenOrientation={state.orientation}
 			/>

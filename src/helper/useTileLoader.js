@@ -78,7 +78,7 @@ const useTileLoader = (isRemove, mapType) => {
 	};
 
 	const loadTiles = async () => {
-		console.log("RUN loadTiles");
+		// console.log("RUN loadTiles");
 
 		const start = latLonToTile(LAT_START, LON_START, ZOOM_LEVEL);
 		const end = latLonToTile(LAT_END, LON_END, ZOOM_LEVEL);

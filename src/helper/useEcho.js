@@ -12,7 +12,7 @@ const useEcho = () => {
 			if (typeof window === "undefined" || !ECHO_REVERB_HOST) return;
 
 			try {
-				const token = await AsyncStorage.getItem("access_token");
+				const token = await AsyncStorage.getItem("L_access_token");
 				// console.log("token", token);
 
 				if (!token) {

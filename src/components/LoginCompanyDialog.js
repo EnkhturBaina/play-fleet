@@ -14,7 +14,7 @@ export default function (props) {
 		if (state.mainCompanyId == null || state.mainCompanyId == "") {
 			setErrorMsg("Компаний код оруулна уу.");
 		} else {
-			await AsyncStorage.setItem("mainCompanyId", state.mainCompanyId).then(() => {
+			await AsyncStorage.setItem("L_main_company_id", state.mainCompanyId).then(() => {
 				setErrorMsg(null);
 				props.setVisibleDialog(false);
 			});
