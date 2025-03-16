@@ -62,7 +62,7 @@ const HomeScreen = (props) => {
 	}, [state.location]);
 
 	useEffect(() => {
-		console.log("X", state.projectData);
+		console.log("tileUri", tileUri);
 
 		if (!echo || !state.employeeData?.PMSCompanyId) return;
 

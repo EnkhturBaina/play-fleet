@@ -358,7 +358,6 @@ export const fetchLoginData = async () => {
 export const fetchCustomTable = async () => {
 	try {
 		let data = await db.getFirstAsync(`SELECT * FROM project`);
-		console.log("data", data);
 
 		return data; // Return the combined data
 	} catch (error) {
@@ -387,8 +386,6 @@ export const updateData = async (id) => {
 };
 
 export const insertSendStateData = async (data) => {
-	console.log("data", data);
-
 	if (data) {
 		const resultSendState = await db.runAsync(
 			`INSERT INTO send_state (
@@ -484,8 +481,6 @@ const deleteSendStateRowById = async (id) => {
 };
 
 export const insertMotoHourData = async (data) => {
-	console.log("data", data);
-
 	if (data) {
 		const resultMotoHour = await db.runAsync(
 			`INSERT INTO moto_hour (
@@ -515,7 +510,7 @@ export const fetchMotoHourData = async () => {
 		await AsyncStorage.getItem("access_token").then(async (localToken) => {
 			// Parallel database queries using Promise.all
 			const data = await db.getAllAsync("SELECT * FROM moto_hour");
-			console.log("data ==========>", data);
+			// console.log("data ==========>", data);
 			// console.log("token ==========>", token);
 
 			if (data) {

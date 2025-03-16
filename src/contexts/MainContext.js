@@ -114,11 +114,18 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		const performAsyncTasks = async () => {
-			if (isConnected) {
-				await checkForUpdates(); // Интернэт холболттой бол Update шалгах
-			} else {
-				await checkLocation(); // Интернэтгүй бол local шалгах
-			}
+			await AsyncStorage.getItem("map_type").then(async (map_type) => {
+				if (map_type) {
+					setMapType(map_type);
+				} else {
+					setMapType("satellite");
+				}
+				if (isConnected) {
+					await checkForUpdates(); // Интернэт холболттой бол Update шалгах
+				} else {
+					await checkLocation(); // Интернэтгүй бол local шалгах
+				}
+			});
 		};
 
 		performAsyncTasks(); // Асинхрон функцыг дуудна
@@ -413,7 +420,8 @@ export const MainStore = (props) => {
 			"access_token",
 			"inspectionId",
 			"selected_eq",
-			"inspectionId"
+			"inspectionId",
+			"map_type"
 		];
 
 		AsyncStorage.multiRemove(keys).then(() => {

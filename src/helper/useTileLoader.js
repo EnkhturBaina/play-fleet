@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import * as FileSystem from "expo-file-system";
 import axios from "axios";
 import { Platform } from "react-native";
 import { ANDROID_MAP_API, IOS_MAP_API, ZOOM_LEVEL } from "../constant";
+import MainContext from "../contexts/MainContext";
 
 // Улаанбаатар хотын төв координатууд
 const UB_CENTER_LAT = 47.92123;
@@ -15,7 +16,8 @@ const MAPS_API_KEY = Platform.OS == "ios" ? IOS_MAP_API : Platform.OS == "androi
 
 var Buffer = require("buffer/").Buffer;
 
-const useTileLoader = (isRemove) => {
+const useTileLoader = (isRemove, mapType) => {
+	const state = useContext(MainContext);
 	const [tileUri, setTileUri] = useState(null);
 	const [tilesReady, setTilesReady] = useState(false);
 	const [progress, setProgress] = useState(null);
@@ -38,7 +40,17 @@ const useTileLoader = (isRemove) => {
 	};
 
 	const downloadTile = async (z, x, y) => {
-		const url = `https://mt1.google.com/vt/lyrs=s&x=${x}&y=${y}&z=${z}&key=${MAPS_API_KEY}`;
+		var mapType = "";
+		if (state.mapType == "satellite") {
+			mapType = "s";
+		} else {
+			mapType = "m";
+		}
+		console.log("state.mapType", state.mapType);
+
+		console.log("mapType ==========================>", mapType);
+
+		const url = `https://mt1.google.com/vt/lyrs=${mapType}&x=${x}&y=${y}&z=${z}&key=${MAPS_API_KEY}`;
 		const fileUri = `${FileSystem.documentDirectory}local_tile/${z}/${x}/${y}.png`;
 		const dir = fileUri.substring(0, fileUri.lastIndexOf("/"));
 		await FileSystem.makeDirectoryAsync(dir, { intermediates: true });

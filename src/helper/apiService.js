@@ -13,6 +13,8 @@ export const sendSelectedState = async (
 	location,
 	isConnected
 ) => {
+	console.log("RUN sendSelectedState ******************************************>");
+
 	var state_id,
 		sub_state_id = null;
 	if (selectedState?.PMSParentId == null) {

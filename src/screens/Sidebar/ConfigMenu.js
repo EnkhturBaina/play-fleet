@@ -1,15 +1,27 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useContext } from "react";
+import React, { useEffect, useContext, useRef } from "react";
 import { Icon } from "@rneui/base";
 import { MAIN_COLOR_GRAY } from "../../constant";
 import useTileLoader from "../../helper/useTileLoader";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
 import MainContext from "../../contexts/MainContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ConfigMenu = (props) => {
 	const state = useContext(MainContext);
 	const { callFnc, progress } = useTileLoader(false);
 	const { isConnected } = useNetworkStatus();
+	const isInitialMount = useRef(true);
+
+	useEffect(() => {
+		if (isInitialMount.current) {
+			// Skip the effect on initial mount
+			isInitialMount.current = false;
+		} else {
+			// Call the function only when state.mapType changes after the initial render
+			callFnc();
+		}
+	}, [state.mapType]);
 
 	return (
 		<View>
@@ -71,7 +83,17 @@ const ConfigMenu = (props) => {
 							,
 							{
 								text: "Тийм",
-								onPress: () => callFnc()
+								onPress: async () => {
+									var mapType = "";
+									if (state.mapType == "standart") {
+										mapType = "satellite";
+									} else {
+										mapType = "standart";
+									}
+									await AsyncStorage.setItem("map_type", mapType).then(() => {
+										state.setMapType(mapType);
+									});
+								}
 							}
 						]);
 					} else {
