@@ -95,7 +95,11 @@
 		},
 		"updates": {
 			"url": "https://u.expo.dev/7cbb54e3-047b-4551-9e83-834541911205",
-			"fallbackToCacheTimeout": 0
+			"fallbackToCacheTimeout": 0,
+			"requestHeaders": {
+				"expo-runtime-version": "1.0.0",
+				"expo-channel-name": "production"
+			}
 		},
 		"owner": "gamemine"
 	}

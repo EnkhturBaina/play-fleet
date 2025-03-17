@@ -20,7 +20,7 @@ export default function App() {
 			}
 		} catch (error) {
 			// You can also add an alert() to see the error message in case of an error when fetching updates.
-			alert(`Error fetching latest Expo update: ${error}`);
+			// alert(`Error fetching latest Expo update: ${error}`);
 		}
 	}
 

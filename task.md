@@ -36,4 +36,4 @@
 1. Calendar гаргаж ирээд өдөрөөр шүүх
 2.
 
-#
+# Android deer build hiij suulgaad, Android studio deer LOG CAT harah ygaad update install faield bolood baigaag olox

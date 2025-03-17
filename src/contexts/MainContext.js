@@ -231,6 +231,8 @@ export const MainStore = (props) => {
 		setIsCheckingUpdate(true);
 		try {
 			const update = await Updates.checkForUpdateAsync();
+			console.log("update", update);
+
 			if (update.isAvailable) {
 				setUpdateAvailable(true);
 				await Updates.fetchUpdateAsync();
