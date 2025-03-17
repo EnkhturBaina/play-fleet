@@ -186,10 +186,10 @@ const InspectionScreen = () => {
 					inspectionData?.map((el, index) => {
 						return (
 							<View style={styles.eachRowContainer} key={index}>
-								<Text style={{ width: "70%" }}>{el.code?.Name}</Text>
+								<Text style={{ flex: 1, marginRight: 5 }}>{el.code?.Name}</Text>
 								<Button
 									containerStyle={{
-										width: "30%"
+										width: "ТЭНЦЭЭГҮЙ"?.length * 16
 									}}
 									buttonStyle={{
 										backgroundColor: el.Checked ? MAIN_COLOR_GREEN : MAIN_COLOR_RED,

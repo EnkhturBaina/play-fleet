@@ -127,10 +127,10 @@ const InspectionReportScreen = (props) => {
 	const renderItem = ({ item }) => {
 		return (
 			<View style={styles.eachRowContainer}>
-				<Text style={{ width: "60%" }}>{item.code?.Name}</Text>
+				<Text style={{ flex: 1, marginRight: 5 }}>{item.code?.Name}</Text>
 				<Button
 					containerStyle={{
-						width: "36%"
+						width: "ТЭНЦЭЭГҮЙ"?.length * 16
 					}}
 					buttonStyle={{
 						backgroundColor: item.Checked ? MAIN_COLOR_GREEN : MAIN_COLOR_RED,
