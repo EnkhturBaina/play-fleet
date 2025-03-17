@@ -277,21 +277,22 @@ const HeaderFloatItem = (props) => {
 			<View style={styles.mainContainer}>
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<Icon
-							name="wifi"
-							type="feather"
-							size={20}
-							color={
-								connectionQuality === "good"
-									? MAIN_COLOR_GREEN
-									: connectionQuality === "medium"
-									? MAIN_COLOR
-									: MAIN_COLOR_RED
-							}
-						/>
-						<Text style={{ color: MAIN_COLOR, fontSize: 18, marginLeft: 5 }}>
-							{VEHICLE_TYPE[state.vehicleType]?.title}
-						</Text>
+						{connectionQuality !== "good" && (
+							<Icon
+								name="wifi"
+								type="feather"
+								size={20}
+								color={
+									connectionQuality === "good"
+										? MAIN_COLOR_GREEN
+										: connectionQuality === "medium"
+										? MAIN_COLOR
+										: MAIN_COLOR_RED
+								}
+								style={{ marginRight: 5 }}
+							/>
+						)}
+						<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
 					</View>
 					{state.orientation == "PORTRAIT" ? (
 						<TouchableOpacity

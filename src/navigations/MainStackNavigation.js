@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { StyleSheet, TouchableOpacity, Text, Dimensions, View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Icon } from "@rneui/base";
+import * as Location from "expo-location";
 
 import MainContext from "../contexts/MainContext";
 
@@ -53,6 +54,30 @@ const MainStackNavigator = (props) => {
 		// Component unmount үед interval-ийг устгах
 		return () => clearInterval(interval);
 	}, [state.isLoggedIn, state.inspectionDone]);
+
+	useEffect(() => {
+		state.isLoggedIn &&
+			state.inspectionDone &&
+			(async () => {
+				let { status } = await Location.requestForegroundPermissionsAsync();
+				if (status !== "granted") {
+					// setErrorMsg("Байршил авах эрх олгогдоогүй байна.");
+					return;
+				}
+
+				await Location.watchPositionAsync(
+					{
+						accuracy: Location.Accuracy.High,
+						distanceInterval: 1 // 1 метрээр өөрчлөгдвөл шинэчлэнэ
+					},
+					(newLocation) => {
+						// console.log("newLocation", newLocation);
+
+						state.setLocation(newLocation);
+					}
+				);
+			})();
+	}, []);
 
 	// SplashScreen.preventAutoHideAsync();
 

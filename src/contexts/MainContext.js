@@ -160,9 +160,8 @@ export const MainStore = (props) => {
 
 		try {
 			const currentLocation = await Location.getCurrentPositionAsync({
-				accuracy: Location.Accuracy.Balanced
+				accuracy: Location.Accuracy.High
 			});
-			setLocation(currentLocation);
 			// console.log("Location response =>", currentLocation);
 
 			const currentSpeed = Math.max(0, currentLocation?.coords?.speed || 0); // Сөрөг утга гарахаас сэргийлэх
@@ -257,7 +256,7 @@ export const MainStore = (props) => {
 
 				try {
 					let location = await Location.getCurrentPositionAsync({
-						accuracy: Location.Accuracy.Balanced
+						accuracy: Location.Accuracy.High
 					});
 					console.log("location", location);
 					setLocation(location);
