@@ -56,27 +56,36 @@ const MainStackNavigator = (props) => {
 	}, [state.isLoggedIn, state.inspectionDone]);
 
 	useEffect(() => {
-		state.isLoggedIn &&
-			state.inspectionDone &&
-			(async () => {
-				let { status } = await Location.requestForegroundPermissionsAsync();
-				if (status !== "granted") {
-					// setErrorMsg("Байршил авах эрх олгогдоогүй байна.");
-					return;
+		let locationSubscription = null;
+
+		const startTracking = async () => {
+			// Байршил авах эрхийг шалгах
+			let { status } = await Location.requestForegroundPermissionsAsync();
+			if (status !== "granted") {
+				console.log("Байршил авах эрх олгогдоогүй байна!");
+				return;
+			}
+
+			// Машины бодит цагийн tracking (25м өөрчлөгдвөл update хийнэ)
+			locationSubscription = await Location.watchPositionAsync(
+				{
+					accuracy: Location.Accuracy.High,
+					distanceInterval: 25, // 25 метрээс дээш хөдөлгөөнд update хийнэ
+					timeInterval: 5000 // 5 секунд тутамд шинэ мэдээлэл авах
+				},
+				(newLocation) => {
+					console.log("newLocation", newLocation);
+					state.setLocation(newLocation);
 				}
+			);
+		};
 
-				await Location.watchPositionAsync(
-					{
-						accuracy: Location.Accuracy.High,
-						distanceInterval: 1 // 1 метрээр өөрчлөгдвөл шинэчлэнэ
-					},
-					(newLocation) => {
-						// console.log("newLocation", newLocation);
+		startTracking();
 
-						state.setLocation(newLocation);
-					}
-				);
-			})();
+		// Unmount хийх үед байршлын tracking-ийг зогсооно
+		return () => {
+			if (locationSubscription) locationSubscription.remove();
+		};
 	}, []);
 
 	// SplashScreen.preventAutoHideAsync();

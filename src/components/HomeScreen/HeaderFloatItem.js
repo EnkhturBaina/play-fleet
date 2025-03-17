@@ -57,6 +57,10 @@ const HeaderFloatItem = (props) => {
 	};
 
 	useEffect(() => {
+		// console.log("projectData", state.projectData);
+		getDefaultAssignedTask();
+		state.detectOrientation();
+
 		if (state.projectData?.ShiftTime) {
 			const shiftDateTime = dayjs(state.projectData?.ShiftTime);
 			// const shiftDateTime = dayjs("2025-02-02 05:38:00");

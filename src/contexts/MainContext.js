@@ -140,7 +140,7 @@ export const MainStore = (props) => {
 					if (isConnected) {
 						await checkForUpdates(); // Интернэт холболттой бол Update шалгах
 					} else {
-						await checkLocation(); // Интернэтгүй бол local шалгах
+						await createSQLTables(); // Интернэтгүй бол local шалгах
 					}
 				});
 			});
@@ -239,7 +239,8 @@ export const MainStore = (props) => {
 			console.error(error);
 		} finally {
 			setIsCheckingUpdate(false);
-			checkLocation();
+			// checkLocation();
+			createSQLTables();
 		}
 	};
 	const checkLocation = async () => {
@@ -528,7 +529,6 @@ export const MainStore = (props) => {
 				setLocation,
 				locationStatus,
 				setLocationStatus,
-				checkLocation,
 				password,
 				setPassword,
 				locationErrorCode,
