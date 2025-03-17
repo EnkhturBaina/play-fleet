@@ -18,4 +18,4 @@ npm install expo@latest
 
 npx expo-doctor
 
-##
+## npx expo install react-native-modal-datetime-picker @react-native-community/datetimepicker

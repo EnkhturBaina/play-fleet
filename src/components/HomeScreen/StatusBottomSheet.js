@@ -241,20 +241,6 @@ export default function (props) {
 	return (
 		<BottomSheet ref={props.bottomSheetRef} snapPoints={[130, 500]}>
 			<BottomSheetView style={styles.contentContainer}>
-				{/* {state.location ? (
-					<View>
-						<Text>{JSON.stringify(state.location)}</Text>
-						<Text style={styles.text}>
-							Өргөрөг: {state.location?.coords?.latitude}
-							{"\n"}
-							Уртраг: {state.location?.coords?.longitude}
-							{"\n"}
-							Өндөр: {state.location?.coords?.altitude} м
-						</Text>
-					</View>
-				) : (
-					<Text style={styles.text}></Text>
-				)} */}
 				<View style={styles.selectedStateContainer}>
 					<View style={styles.selectedLabel}>
 						<Text style={styles.selectedStateLabel}>CОНГОГДСОН ТӨЛӨВ</Text>

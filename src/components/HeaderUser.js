@@ -34,6 +34,19 @@ const HeaderUser = (props) => {
 					<Text style={styles.userName} numberOfLines={1}>
 						{state.employeeData?.FullName ?? "User"}
 					</Text>
+					{state.showLocationInfo && state.location && (
+						<View>
+							<Text style={styles.text}>
+								Өргөрөг: {state.location?.coords?.latitude}
+								{"\n"}
+								Уртраг: {state.location?.coords?.longitude}
+								{"\n"}
+								Өндөр: {state.location?.coords?.altitude}
+								{"\n"}
+								Хурд: {state.location?.speed ? (state.location?.speed * 3.6).toFixed(2) : 0} км/ц
+							</Text>
+						</View>
+					)}
 				</View>
 			</TouchableOpacity>
 			{props.isShowNotif ? (

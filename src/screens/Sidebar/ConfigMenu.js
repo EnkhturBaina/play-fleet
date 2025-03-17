@@ -115,6 +115,13 @@ const ConfigMenu = (props) => {
 				</View>
 				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
 			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.eachItemContainer}
+				onPress={() => state.setShowLocationInfo(!state.showLocationInfo)}
+			>
+				<Text style={{ fontSize: 16, fontWeight: "600" }}>Байршил харах</Text>
+				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
+			</TouchableOpacity>
 		</View>
 	);
 };

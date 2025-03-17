@@ -69,6 +69,7 @@ export const MainStore = (props) => {
 	});
 	const [locationHistory, setLocationHistory] = useState(null);
 	const [mapType, setMapType] = useState("satellite");
+	const [showLocationInfo, setShowLocationInfo] = useState(false);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -595,7 +596,9 @@ export const MainStore = (props) => {
 				setLocationSource,
 				checkLocationWithSpeed,
 				mapType,
-				setMapType
+				setMapType,
+				showLocationInfo,
+				setShowLocationInfo
 			}}
 		>
 			{props.children}
