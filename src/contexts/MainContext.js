@@ -433,6 +433,7 @@ export const MainStore = (props) => {
 			setIsLoading(false);
 		}
 	};
+
 	// AsyncStorage.clear();
 	const logout = async (type) => {
 		//***** Profile -с гарах дарсан үед утасны LOCALSTORE -с user, user_bio устгах
