@@ -103,7 +103,7 @@ const LoginScreen = (props) => {
 					console.log("LOGIN SUCCESS");
 
 					const responseOfflineLoginData = await fetchLoginData();
-					console.log("Fetched Login Data:", responseOfflineLoginData);
+					console.log("Fetched Login Data:", JSON.stringify(responseOfflineLoginData));
 
 					// Login response -с state үүд салгаж хадгалах
 					state.setEmployeeData(responseOfflineLoginData?.employee[0]);

@@ -56,8 +56,10 @@ const HeaderFloatItem = (props) => {
 		refShots: state.refShots
 	};
 
+	const checkShift = () => {};
 	useEffect(() => {
-		// console.log("projectData", state.projectData);
+		// var tempShift = 'NS';
+		console.log("shiftData ==========>", state.shiftData);
 		getDefaultAssignedTask();
 		state.detectOrientation();
 
@@ -73,7 +75,6 @@ const HeaderFloatItem = (props) => {
 				.add(shiftDateTime.second(), "second");
 			// Эхлэх цагаас 12 цаг нэмээд дуусах цагийг тооцоолох
 			const endTime = startTime.add(12, "hour");
-			console.log("endTime", endTime);
 
 			// Дуусах цагаас дараагийн ээлжийн эхлэх цагийг тооцоолох (12 цаг нэмэх)
 			const nextShiftStart = endTime;
@@ -100,7 +101,11 @@ const HeaderFloatItem = (props) => {
 					clearInterval(interval);
 				}
 
-				let shiftName = "OFF"; // Ээлж тодорхойлох
+				// console.log("now", now.format("YYYY-MM-DD HH:mm:ss"));
+				// console.log("startTime", startTime.format("YYYY-MM-DD HH:mm:ss"));
+				// console.log("endTime", endTime.format("YYYY-MM-DD HH:mm:ss"));
+
+				let shiftName = "OFF";
 
 				// Өгөгдсөн ээлжийн цаг(Нэвтэрсэн)
 				if (now.isAfter(startTime) && now.isBefore(endTime)) {
@@ -111,7 +116,7 @@ const HeaderFloatItem = (props) => {
 				else if (now.isAfter(nextShiftStart) && now.isBefore(nextShiftEnd)) {
 					shiftName = state.shiftData?.Name === "DS" ? "NS" : "DS";
 				}
-				console.log("shiftName", shiftName);
+				// console.log("shiftName", shiftName);
 
 				// Ээлж солигдсон үед
 				if (shiftName !== state.shiftData?.Name) {

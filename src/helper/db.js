@@ -127,7 +127,7 @@ export const createTable = async () => {
 };
 
 export const saveLoginDataWithClear = async (data, is_clear) => {
-	// console.log("run SAVE LoginDataWithClear");
+	console.log("run SAVE LoginDataWithClear", data, is_clear);
 	try {
 		let result;
 
@@ -150,7 +150,7 @@ export const saveLoginDataWithClear = async (data, is_clear) => {
 
 // 2.DONE Локал өгөгдлийг хадгалах функц
 export const insertLoginData = async (data) => {
-	// console.log("RUN INSERT LoginData", JSON.stringify(data));
+	console.log("RUN INSERT LoginData", JSON.stringify(data));
 
 	try {
 		const employee = data.employee;
@@ -159,6 +159,7 @@ export const insertLoginData = async (data) => {
 		const project = data.project;
 		const shift = data.shift;
 		const equipments = employee.equipments;
+		console.log("LOCAL shift =================>", shift);
 
 		// employee өгөгдөл оруулах
 		const resultEmployee = await db.runAsync(
@@ -305,7 +306,7 @@ export const insertLoginData = async (data) => {
 
 // Login TABLE үүдийг цэвэрлэж. Шинэ дата хадгалахад бэлдэх
 export const clearLoginTables = async (id) => {
-	// console.log("RUN CLEAR LoginTables");
+	console.log("RUN CLEAR LoginTables");
 
 	const tablesToClear = ["employee", "company", "roster", "equipments", "project", "shift"];
 

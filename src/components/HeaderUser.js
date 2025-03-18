@@ -43,7 +43,11 @@ const HeaderUser = (props) => {
 								{"\n"}
 								Өндөр: {state.location?.coords?.altitude}
 								{"\n"}
-								Хурд: {state.location?.speed ? (state.location?.speed * 3.6).toFixed(2) : 0} км/ц
+								Хурд км/ц: {state.location?.speed ? (state.location?.speed * 3.6).toFixed(2) : 0}
+								{"\n"}
+								Хурд м/с: {state.location?.speed}
+								{"\n"}
+								shift: {state.shiftData?.Name}
 							</Text>
 						</View>
 					)}
