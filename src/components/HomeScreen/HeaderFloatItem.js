@@ -82,8 +82,6 @@ const HeaderFloatItem = (props) => {
 			// 12 цаг нэмээд дуусах цагийг анхааруулах цагийг тооцоолох (20 минут хасах)
 			const endTimeAlert = startTime.add(12, "hour").subtract(20, "minute");
 
-			let shiftName = "OFF"; // Ээлж тодорхойлох
-
 			// Секунд тутамд цагийг шалгах
 			const interval = setInterval(() => {
 				const now = dayjs()
@@ -101,6 +99,8 @@ const HeaderFloatItem = (props) => {
 					setVisibleDialog(true);
 					clearInterval(interval);
 				}
+
+				let shiftName = "OFF"; // Ээлж тодорхойлох
 
 				// Өгөгдсөн ээлжийн цаг(Нэвтэрсэн)
 				if (now.isAfter(startTime) && now.isBefore(endTime)) {
