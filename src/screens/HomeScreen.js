@@ -76,10 +76,15 @@ const HomeScreen = (props) => {
 		const channel = echo.private(`user.${state.employeeData?.id}`);
 
 		const handleProgressUpdate = (event) => {
-			// console.log("ECHO EVENT => ", event);
 			if (event) {
+				let selectedState = null;
 				// Сонгогдсон төлөв шинэчлэх
-				const selectedState = state.refStates?.find((item) => item.id === event.extra?.PMSProgressStateId);
+				if (event.extra?.state?.ActivityShort == "W1") {
+					selectedState = state.refStates?.find((item) => item.id === event.extra?.sub_state?.id);
+				} else {
+					selectedState = state.refStates?.find((item) => item.id === event.extra?.PMSProgressStateId);
+				}
+
 				state.setSelectedState(selectedState);
 
 				// Header мэдээлэл шинэчлэх
