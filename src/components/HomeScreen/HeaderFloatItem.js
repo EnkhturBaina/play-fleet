@@ -56,14 +56,12 @@ const HeaderFloatItem = (props) => {
 		refShots: state.refShots
 	};
 
-	const checkShift = () => {};
 	useEffect(() => {
-		// var tempShift = 'NS';
-		console.log("shiftData ==========>", state.shiftData);
+		// var tempShift = "DS";
 		getDefaultAssignedTask();
 		state.detectOrientation();
 
-		if (state.projectData?.ShiftTime) {
+		if (state.projectData?.ShiftTime && state.shiftData?.Name) {
 			const shiftDateTime = dayjs(state.projectData?.ShiftTime);
 			// const shiftDateTime = dayjs("2025-02-02 22:38:00");
 
@@ -105,21 +103,23 @@ const HeaderFloatItem = (props) => {
 				// console.log("startTime", startTime.format("YYYY-MM-DD HH:mm:ss"));
 				// console.log("endTime", endTime.format("YYYY-MM-DD HH:mm:ss"));
 
-				let shiftName = "OFF";
+				let newShift = "OFF";
 
 				// Өгөгдсөн ээлжийн цаг(Нэвтэрсэн)
 				if (now.isAfter(startTime) && now.isBefore(endTime)) {
-					shiftName = state.shiftData?.Name;
-					// shiftName = "NS";
+					newShift = "DS";
+				} else {
+					newShift = "NS";
 				}
-				// Дараагийн ээлжийн цаг
-				else if (now.isAfter(nextShiftStart) && now.isBefore(nextShiftEnd)) {
-					shiftName = state.shiftData?.Name === "DS" ? "NS" : "DS";
+				// If the input time is exactly at 19:00 or later, consider it as Night Shift (NS)
+				if (now.isAfter(endTime)) {
+					newShift = "NS";
 				}
-				// console.log("shiftName", shiftName);
+
+				// console.log("newShift", newShift);
 
 				// Ээлж солигдсон үед
-				if (shiftName !== state.shiftData?.Name) {
+				if (state.shiftData?.Name != newShift) {
 					setShowDialogDecline(false);
 					setDialogText("Ээлж дууссан байна. Та дахин нэвтэрнэ үү");
 					setConfirmText("ОК");

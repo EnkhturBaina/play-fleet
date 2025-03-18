@@ -251,8 +251,8 @@ const HomeScreen = (props) => {
 							initialRegion={{
 								latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
 								longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
-								latitudeDelta: 0.05,
-								longitudeDelta: 0.05
+								latitudeDelta: 0.009,
+								longitudeDelta: 0.009
 							}}
 							scrollEnabled={!state.isTrack} // Гулсах боломжгүй болгох
 							zoomEnabled={!state.isTrack} // Томруулах боломжгүй болгох
