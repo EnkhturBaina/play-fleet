@@ -48,7 +48,6 @@ export const MainStore = (props) => {
 	const [orientation, setOrientation] = useState("PORTRAIT"); //LANDSCAPE, PORTRAIT
 	const [selectedEquipment, setSelectedEquipment] = useState(null); //Сонгогдсон Төхөөрөмж
 	const [selectedEquipmentCode, setSelectedEquipmentCode] = useState(null); //Сонгогдсон Төхөөрөмжийн КОД {0 - Truck},{1 - Loader},{? - Other}
-	const [speed, setSpeed] = useState(null);
 	const [savedInspectionId, setSavedInspectionId] = useState(null);
 	const [selectedState, setSelectedState] = useState(null);
 	const [echoStateData, setEchoStateData] = useState(null); // echo -р ирсэн дата хадгалах
@@ -67,7 +66,6 @@ export const MainStore = (props) => {
 			MILL: { latitude: 47.912, longitude: 106.923, radius: 150 }
 		}
 	});
-	const [locationHistory, setLocationHistory] = useState(null);
 	const [mapType, setMapType] = useState("satellite");
 	const [showLocationInfo, setShowLocationInfo] = useState(false);
 	const [isTrack, setIsTrack] = useState(true);
@@ -166,64 +164,47 @@ export const MainStore = (props) => {
 			});
 			// console.log("Location response =>", currentLocation);
 
-			const currentSpeed = Math.max(0, currentLocation?.coords?.speed || 0); // Сөрөг утга гарахаас сэргийлэх
-			const speedKmH = (currentSpeed * 3.6).toFixed(2); // м/сек -> км/цаг
-
-			setSpeed(speedKmH);
-
 			// Байршил болон хурд амжилттай авсны дараа дараагийн функцээ дуудна
-			await sendEquipmentLocation(currentLocation, currentSpeed);
+			await sendEquipmentLocation(currentLocation);
 		} catch (error) {
 			console.error("Error getting location:", error);
 		}
 	};
 
-	const sendEquipmentLocation = async (currentLocation, currentSpeed) => {
-		console.log("RUN send EquipmentLocation", currentLocation, currentSpeed);
-		if (currentLocation && currentSpeed != null) {
-			await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
-				try {
-					await axios
-						.post(
-							`${SERVER_URL}/mobile/progress/track/save`,
-							{
-								PMSEquipmentId: selectedEquipment?.id,
-								Latitude: currentLocation?.coords?.latitude ? parseFloat(currentLocation?.coords?.latitude) : 0,
-								Longitude: currentLocation?.coords?.longitude ? parseFloat(currentLocation?.coords?.longitude) : 0,
-								Speed: currentSpeed,
-								CurrentDate: dayjs().format("YYYY-MM-DD"),
-								EventTime: dayjs().format("YYYY-MM-DD HH:mm:ss")
-							},
-							{
-								headers: {
-									"Content-Type": "application/json",
-									Authorization: `Bearer ${localToken}`
-								}
-							}
-						)
-						.then(function (response) {
-							// console.log("send EQ Location response", JSON.stringify(response.data));
-							console.log("send EQ Location response", JSON.stringify(response.data?.Msg));
-							if (response.data?.Type == 0) {
-								// setLocationHistory((prevItems) => [
-								// 	...prevItems,
-								// 	{
-								// 		lat: parseFloat(currentLocation?.coords?.latitude),
-								// 		long: parseFloat(currentLocation?.coords?.longitude),
-								// 		speed: currentSpeed,
-								// 		eventTime: dayjs().format("YYYY-MM-DD HH:mm:ss")
-								// 	}
-								// ]);
-							} else {
-							}
-						})
-						.catch(function (error) {
-							console.log("error send EQ Location", error);
-						});
-				} catch (error) {
-					console.log("CATCH send EQ Location", error);
+	const sendEquipmentLocation = async (currentLocation) => {
+		try {
+			if (!currentLocation) return;
+
+			console.log("RUN sendEquipmentLocation", currentLocation);
+
+			// Token болон Speed-ийг зэрэг авах
+			const [localToken, currentSpeed] = await Promise.all([
+				AsyncStorage.getItem("L_access_token"),
+				AsyncStorage.getItem("L_current_speed")
+			]);
+
+			// Сервер рүү хүсэлт илгээх
+			const response = await axios.post(
+				`${SERVER_URL}/mobile/progress/track/save`,
+				{
+					PMSEquipmentId: selectedEquipment?.id,
+					Latitude: parseFloat(currentLocation?.coords?.latitude) || 0,
+					Longitude: parseFloat(currentLocation?.coords?.longitude) || 0,
+					Speed: currentSpeed ?? 0,
+					CurrentDate: dayjs().format("YYYY-MM-DD"),
+					EventTime: dayjs().format("YYYY-MM-DD HH:mm:ss")
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${localToken}`
+					}
 				}
-			});
+			);
+
+			console.log("sendEquipmentLocation response", JSON.stringify(response.data?.Msg));
+		} catch (error) {
+			console.error("Error in sendEquipmentLocation", error);
 		}
 	};
 
@@ -445,7 +426,8 @@ export const MainStore = (props) => {
 			"L_selected_eq",
 			"L_map_type",
 			"L_last_state_time",
-			"L_last_state"
+			"L_last_state",
+			"L_current_speed"
 		];
 
 		AsyncStorage.multiRemove(keys).then(() => {
@@ -594,7 +576,6 @@ export const MainStore = (props) => {
 				refShots,
 				echoStateData,
 				setEchoStateData,
-				speed,
 				checkLocationStatus,
 				locationSource,
 				setLocationSource,

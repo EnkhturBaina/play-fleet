@@ -376,7 +376,6 @@ const HomeScreen = (props) => {
 								height: "100%"
 							}}
 						>
-							{/* <Text style={{ backgroundColor: "red" }}>speed:{state.speed}</Text> */}
 							<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
 						</View>
 					</SideMenu>

@@ -3,6 +3,7 @@ import { StyleSheet, TouchableOpacity, Text, Dimensions, View } from "react-nati
 import { createStackNavigator } from "@react-navigation/stack";
 import { Icon } from "@rneui/base";
 import * as Location from "expo-location";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import MainContext from "../contexts/MainContext";
 
@@ -59,25 +60,41 @@ const MainStackNavigator = (props) => {
 		let locationSubscription = null;
 
 		const startTracking = async () => {
-			// Байршил авах эрхийг шалгах
-			let { status } = await Location.requestForegroundPermissionsAsync();
-			if (status !== "granted") {
-				console.log("Байршил авах эрх олгогдоогүй байна!");
-				return;
-			}
-
-			// Машины бодит цагийн tracking (25м өөрчлөгдвөл update хийнэ)
-			locationSubscription = await Location.watchPositionAsync(
-				{
-					accuracy: Location.Accuracy.High,
-					distanceInterval: 25, // 25 метрээс дээш хөдөлгөөнд update хийнэ
-					timeInterval: 5000 // 5 секунд тутамд шинэ мэдээлэл авах
-				},
-				(newLocation) => {
-					console.log("newLocation", newLocation);
-					state.setLocation(newLocation);
+			try {
+				// Байршил авах эрхийг шалгах
+				const { status } = await Location.requestForegroundPermissionsAsync();
+				if (status !== "granted") {
+					console.warn("📍 Байршил авах эрх олгогдоогүй байна!");
+					return;
 				}
-			);
+
+				// Машины бодит цагийн tracking (25м өөрчлөгдвөл update хийнэ)
+				locationSubscription = await Location.watchPositionAsync(
+					{
+						accuracy: Location.Accuracy.High,
+						distanceInterval: 25, // 25 метрээс дээш хөдөлгөөнд update хийнэ
+						timeInterval: 5000 // 5 секунд тутамд шинэ мэдээлэл авах
+					},
+					async (newLocation) => {
+						console.log("📍 Шинэ байршил:", newLocation);
+
+						// Шинэ байршлыг state-д хадгалах
+						state.setLocation(newLocation);
+
+						// Хурдыг км/ц болгон хувиргаж хадгалах
+						const speedKmh = (newLocation?.coords?.speed ?? 0) * 3.6;
+						if (speedKmh > 0) {
+							try {
+								await AsyncStorage.setItem("L_current_speed", speedKmh.toFixed(2));
+							} catch (error) {
+								console.error("⚠️ Хурд хадгалах үед алдаа гарлаа:", error);
+							}
+						}
+					}
+				);
+			} catch (error) {
+				console.error("❌ startTracking алдаа:", error);
+			}
 		};
 
 		startTracking();
