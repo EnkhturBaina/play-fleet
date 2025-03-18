@@ -63,7 +63,7 @@ const HeaderFloatItem = (props) => {
 
 		if (state.projectData?.ShiftTime) {
 			const shiftDateTime = dayjs(state.projectData?.ShiftTime);
-			// const shiftDateTime = dayjs("2025-02-02 05:38:00");
+			// const shiftDateTime = dayjs("2025-02-02 22:38:00");
 
 			// Эхлэх цагийг зөвхөн цаг, минут, секундын утгаар авах
 			const startTime = dayjs()
@@ -73,6 +73,7 @@ const HeaderFloatItem = (props) => {
 				.add(shiftDateTime.second(), "second");
 			// Эхлэх цагаас 12 цаг нэмээд дуусах цагийг тооцоолох
 			const endTime = startTime.add(12, "hour");
+			console.log("endTime", endTime);
 
 			// Дуусах цагаас дараагийн ээлжийн эхлэх цагийг тооцоолох (12 цаг нэмэх)
 			const nextShiftStart = endTime;
@@ -92,25 +93,27 @@ const HeaderFloatItem = (props) => {
 					.add(dayjs().second(), "second");
 				// console.log("now", now.format("HH:mm:ss"));
 
-				// Ээлжийн дуусах цагаар анхааруулах
+				// Ээлж дуусах цаг анхааруулах
 				if (now.isSame(endTimeAlert, "second")) {
 					setDialogText("Та ээлжээ дуусгах уу?");
 					setConfirmText("Дуусгах");
 					setDeclineText("Үгүй");
 					setVisibleDialog(true);
-					clearInterval(interval); // Анхааруулах хойшлуулах
+					clearInterval(interval);
 				}
 
-				// Өгөгдсөн ээлжийн цаг
+				// Өгөгдсөн ээлжийн цаг(Нэвтэрсэн)
 				if (now.isAfter(startTime) && now.isBefore(endTime)) {
 					shiftName = state.shiftData?.Name;
+					// shiftName = "NS";
 				}
 				// Дараагийн ээлжийн цаг
 				else if (now.isAfter(nextShiftStart) && now.isBefore(nextShiftEnd)) {
 					shiftName = state.shiftData?.Name === "DS" ? "NS" : "DS";
 				}
+				console.log("shiftName", shiftName);
 
-				// Ээлж солигдсон үед үзүүлж болох албан ёсны мэдэгдэл
+				// Ээлж солигдсон үед
 				if (shiftName !== state.shiftData?.Name) {
 					setShowDialogDecline(false);
 					setDialogText("Ээлж дууссан байна. Та дахин нэвтэрнэ үү");
@@ -174,7 +177,7 @@ const HeaderFloatItem = (props) => {
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						if (response.data?.Extra?.ShiftChanged) {
-							setDialogText("Ээлж дууссан байна. Та дахин нэвтэрнэ үү");
+							setDialogText("Ээлж дууссан байна. Та дахин нэвтэрнэ үү.");
 							setConfirmText("ОК");
 							setDeclineText("");
 							setVisibleDialog(true);
@@ -258,13 +261,13 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					// console.log("stop progress response", JSON.stringify(response.data));
-					setDialogText(response.data?.Msg);
+					console.log("stop progress response", JSON.stringify(response.data));
 
 					if (response.data?.Type == 0) {
 						navigation.navigate("CreateMotoHourAndFuelScreenHOME");
 						setVisibleDialog(false);
 					} else {
+						setDialogText(response.data?.Msg);
 						setVisibleDialog(true);
 					}
 				})
