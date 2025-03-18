@@ -62,7 +62,7 @@ const HomeScreen = (props) => {
 	}, [state.location]);
 
 	useEffect(() => {
-		if (mapRef.current && state.location) {
+		if (mapRef.current && state.location && state.isTrack) {
 			mapRef.current.animateToRegion({
 				latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
 				longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
@@ -256,7 +256,10 @@ const HomeScreen = (props) => {
 								latitudeDelta: 0.05,
 								longitudeDelta: 0.05
 							}}
-							scrollEnabled={true}
+							scrollEnabled={!state.isTrack} // Гулсах боломжгүй болгох
+							zoomEnabled={!state.isTrack} // Томруулах боломжгүй болгох
+							rotateEnabled={!state.isTrack} // Эргүүлэх боломжгүй болгох
+							pitchEnabled={!state.isTrack} // 3D харагдац боломжгүй болгох
 							mapType={state.mapType}
 						>
 							<UrlTile

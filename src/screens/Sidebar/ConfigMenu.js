@@ -122,6 +122,13 @@ const ConfigMenu = (props) => {
 				<Text style={{ fontSize: 16, fontWeight: "600" }}>Байршил харах</Text>
 				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
 			</TouchableOpacity>
+			<TouchableOpacity style={styles.eachItemContainer} onPress={() => state.setIsTrack(!state.isTrack)}>
+				<View>
+					<Text style={{ fontSize: 16, fontWeight: "600" }}>Байршил дагах</Text>
+					<Text style={{ fontSize: 12 }}>{state.isTrack ? "Тийм" : "Үгүй"}</Text>
+				</View>
+				<Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} />
+			</TouchableOpacity>
 		</View>
 	);
 };
