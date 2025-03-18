@@ -50,25 +50,23 @@ const HomeScreen = (props) => {
 	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
 	const [dialogConfirmText, setDialogConfirmText] = useState(null); //Dialog confirm button text
 
+	const focusLocation = () => {
+		mapRef.current.animateToRegion({
+			latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+			longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
+			latitudeDelta: 0.009,
+			longitudeDelta: 0.009
+		});
+	};
 	const animateRef = useCallback(() => {
 		if (mapRef.current && state.location) {
-			mapRef.current.animateToRegion({
-				latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
-				longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
-				latitudeDelta: 0.009,
-				longitudeDelta: 0.009
-			});
+			focusLocation();
 		}
 	}, [state.location]);
 
 	useEffect(() => {
 		if (mapRef.current && state.location && state.isTrack) {
-			mapRef.current.animateToRegion({
-				latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
-				longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
-				latitudeDelta: 0.009,
-				longitudeDelta: 0.009
-			});
+			focusLocation();
 		}
 	}, [state.location]);
 
