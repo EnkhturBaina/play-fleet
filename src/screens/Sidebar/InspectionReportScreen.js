@@ -207,19 +207,21 @@ const InspectionReportScreen = (props) => {
 						display="spinner"
 					/>
 				</View>
-				<TouchableOpacity
-					style={styles.shiftPicker}
-					onPress={() => {
-						if (selectedShift == "DS") {
-							setSelectedShift("NS");
-						} else {
-							setSelectedShift("DS");
-						}
-					}}
-				>
-					<Text style={{ fontSize: 16, fontWeight: "600" }}>{selectedShift}:</Text>
-					<Icon name={selectedShift == "DS" ? "sun" : "moon"} type="feather" size={25} />
-				</TouchableOpacity>
+				<View style={{ flexDirection: "row", alignItems: "center" }}>
+					<Text style={{ fontSize: 16, fontWeight: "600", marginRight: 10 }}>{selectedShift}</Text>
+					<TouchableOpacity
+						style={styles.shiftPicker}
+						onPress={() => {
+							if (selectedShift == "DS") {
+								setSelectedShift("NS");
+							} else {
+								setSelectedShift("DS");
+							}
+						}}
+					>
+						<Icon name={selectedShift == "DS" ? "sun" : "moon"} type="feather" size={25} />
+					</TouchableOpacity>
+				</View>
 			</View>
 			<View
 				style={{

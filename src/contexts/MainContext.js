@@ -265,21 +265,13 @@ export const MainStore = (props) => {
 			setToken(accessToken);
 			const responseOfflineLoginData = await fetchLoginData();
 
-			if (!responseOfflineLoginData?.employee?.[0]) {
+			if (!responseOfflineLoginData?.company?.[0]) {
 				logout();
 				return;
 			}
 
 			if (responseOfflineLoginData?.company?.[0]?.id) {
 				await getReferencesService(responseOfflineLoginData.company[0].id, accessToken, true);
-			} else {
-				// Login response -с state-үүд салгаж хадгалах
-				setEmployeeData(responseOfflineLoginData.employee[0]);
-				setCompanyData(responseOfflineLoginData.company[0]);
-				setRosterData(responseOfflineLoginData.roster[0]);
-				setEquipmentsData(responseOfflineLoginData.equipments);
-				setProjectData(responseOfflineLoginData.project[0]);
-				setShiftData(responseOfflineLoginData.shift[0]);
 			}
 		} catch (error) {
 			console.error("Алдаа гарлаа check_User_Data: ", error);
@@ -350,7 +342,7 @@ export const MainStore = (props) => {
 
 		try {
 			const responseOfflineLoginData = await fetchLoginData();
-			if (!responseOfflineLoginData?.employee?.[0]) {
+			if (!responseOfflineLoginData?.company?.[0]) {
 				logout();
 				return;
 			}
@@ -367,7 +359,7 @@ export const MainStore = (props) => {
 				setIsLoading(false);
 			}
 		} catch (error) {
-			console.error("Алдаа гарлаа setRefsToState:", error);
+			console.error("Алдаа гарлаа set Refs To State:", error);
 			logout();
 		}
 	};
