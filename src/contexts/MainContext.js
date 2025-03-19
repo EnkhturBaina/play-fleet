@@ -256,30 +256,30 @@ export const MainStore = (props) => {
 
 			const accessToken = await AsyncStorage.getItem("L_access_token");
 			// console.log("L_access_token", L_access_token);
-
-			if (accessToken != null) {
-				setToken(accessToken);
-				const responseOfflineLoginData = await fetchLoginData();
-				// console.log("Fetched Login Data local:", responseOfflineLoginData);
-
-				if (!responseOfflineLoginData.employee[0]) {
-					logout();
-				}
-
-				if (responseOfflineLoginData?.company[0]?.id) {
-					getReferencesService(responseOfflineLoginData?.company[0]?.id, accessToken, true);
-				} else {
-					// Login response -с state үүд салгаж хадгалах
-					setEmployeeData(responseOfflineLoginData?.employee[0]);
-					setCompanyData(responseOfflineLoginData?.company[0]);
-					setRosterData(responseOfflineLoginData?.roster[0]);
-					setEquipmentsData(responseOfflineLoginData?.equipments);
-					setProjectData(responseOfflineLoginData?.project[0]);
-					setShiftData(responseOfflineLoginData?.shift[0]);
-				}
-			} else {
+			if (!accessToken) {
 				setIsLoggedIn(false);
 				setIsLoading(false);
+				return;
+			}
+
+			setToken(accessToken);
+			const responseOfflineLoginData = await fetchLoginData();
+
+			if (!responseOfflineLoginData?.employee?.[0]) {
+				logout();
+				return;
+			}
+
+			if (responseOfflineLoginData?.company?.[0]?.id) {
+				await getReferencesService(responseOfflineLoginData.company[0].id, accessToken, true);
+			} else {
+				// Login response -с state-үүд салгаж хадгалах
+				setEmployeeData(responseOfflineLoginData.employee[0]);
+				setCompanyData(responseOfflineLoginData.company[0]);
+				setRosterData(responseOfflineLoginData.roster[0]);
+				setEquipmentsData(responseOfflineLoginData.equipments);
+				setProjectData(responseOfflineLoginData.project[0]);
+				setShiftData(responseOfflineLoginData.shift[0]);
 			}
 		} catch (error) {
 			console.error("Алдаа гарлаа check_User_Data: ", error);
@@ -287,55 +287,42 @@ export const MainStore = (props) => {
 	};
 
 	const getReferencesService = async (companyId, accessToken, isRunLocal) => {
-		// console.log("RUN get-References-Service", isRunLocal, accessToken);
-		if (accessToken) {
-			try {
-				await axios
-					.post(
-						`${SERVER_URL}/mobile/filter/references`,
-						{
-							cid: companyId
-						},
-						{
-							headers: {
-								"Content-Type": "application/json",
-								Authorization: `Bearer ${accessToken}`
-							}
-						}
-					)
-					.then(async function (response) {
-						// console.log("get references response", JSON.stringify(response.data));
-						if (response.data?.Type == 0) {
-							//Local storage руу access_token хадгалах
-							//Сүлжээтэй үед сэрвэрээс мэдээлэл татаад, LOCAL TABLE үүдийг цэвэрлэж хадгалах (true үед)
-							try {
-								const result = await saveReferencesWithClear(response.data?.Extra, true);
-								// console.log("STATE get ReferencesData", result);
-
-								if (result === "DONE_INSERT") {
-									const data = await fetchReferencesData();
-
-									// console.log("get SQLite reference DATA=>", data);
-									// Бүх тохиргоог автоматаар хийх функц
-									if (data) {
-										setRefsToState(data, isRunLocal);
-									}
-								}
-							} catch (error) {
-								console.error("Алдаа гарлаа get ReferencesService:", error);
-							}
-						}
-					})
-					.catch(function (error) {
-						logout();
-						console.log("error get references", error.response.data);
-					});
-			} catch (error) {
-				console.error("Error loading local JSON:", error);
-			}
-		} else {
+		if (!accessToken) {
 			setIsLoggedIn(false);
 			setIsLoading(false);
+			return;
+		}
+		try {
+			const response = await axios.post(
+				`${SERVER_URL}/mobile/filter/references`,
+				{
+					cid: companyId
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${accessToken}`
+					}
+				}
+			);
+
+			if (response.data?.Type === 0) {
+				try {
+					const result = await saveReferencesWithClear(response.data?.Extra, true);
+
+					if (result === "DONE_INSERT") {
+						const data = await fetchReferencesData();
+						if (data) {
+							setRefsToState(data, isRunLocal);
+						}
+					}
+				} catch (error) {
+					console.error("Алдаа гарлаа getReferencesService:", error);
+				}
+			}
+		} catch (error) {
+			console.error("Алдаа гарлаа getReferencesService API:", error);
+			logout();
 		}
 	};
 
@@ -344,11 +331,10 @@ export const MainStore = (props) => {
 
 		const updateReferences = (data, setters) => {
 			Object.entries(setters).forEach(([key, setter]) => {
-				data[key] && setter(data[key]);
+				if (data[key]) setter(data[key]);
 			});
 		};
 
-		// Тохиргоог тохируулах
 		updateReferences(data, {
 			ref_states: setRefStates,
 			ref_locations: setRefLocations,
@@ -361,24 +347,28 @@ export const MainStore = (props) => {
 			ref_loader_types: setRefLoaderTypes,
 			ref_shots: setRefShots
 		});
-		// console.log("isRunLocal", isRunLocal);
-		const responseOfflineLoginData = await fetchLoginData();
-		// console.log("Fetched Login Data local:", responseOfflineLoginData);
 
-		if (!responseOfflineLoginData.employee[0]) {
+		try {
+			const responseOfflineLoginData = await fetchLoginData();
+			if (!responseOfflineLoginData?.employee?.[0]) {
+				logout();
+				return;
+			}
+
+			setEmployeeData(responseOfflineLoginData.employee[0]);
+			setCompanyData(responseOfflineLoginData.company[0]);
+			setRosterData(responseOfflineLoginData.roster[0]);
+			setEquipmentsData(responseOfflineLoginData.equipments);
+			setProjectData(responseOfflineLoginData.project[0]);
+			setShiftData(responseOfflineLoginData.shift[0]);
+
+			if (isRunLocal) {
+				setIsLoggedIn(true);
+				setIsLoading(false);
+			}
+		} catch (error) {
+			console.error("Алдаа гарлаа setRefsToState:", error);
 			logout();
-		}
-		// Login response -с state үүд салгаж хадгалах
-		setEmployeeData(responseOfflineLoginData?.employee[0]);
-		setCompanyData(responseOfflineLoginData?.company[0]);
-		setRosterData(responseOfflineLoginData?.roster[0]);
-		setEquipmentsData(responseOfflineLoginData?.equipments);
-		setProjectData(responseOfflineLoginData?.project[0]);
-		setShiftData(responseOfflineLoginData?.shift[0]);
-
-		if (isRunLocal) {
-			setIsLoggedIn(true);
-			setIsLoading(false);
 		}
 	};
 
