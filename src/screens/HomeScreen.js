@@ -54,8 +54,8 @@ const HomeScreen = (props) => {
 		mapRef.current.animateToRegion({
 			latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
 			longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
-			latitudeDelta: 0.009,
-			longitudeDelta: 0.009
+			latitudeDelta: 0.01,
+			longitudeDelta: 0.01
 		});
 	};
 	const animateRef = useCallback(() => {
@@ -256,8 +256,8 @@ const HomeScreen = (props) => {
 							initialRegion={{
 								latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
 								longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
-								latitudeDelta: 0.009,
-								longitudeDelta: 0.009
+								latitudeDelta: 0.01,
+								longitudeDelta: 0.01
 							}}
 							scrollEnabled={!state.isTrack} // Гулсах боломжгүй болгох
 							zoomEnabled={!state.isTrack} // Томруулах боломжгүй болгох

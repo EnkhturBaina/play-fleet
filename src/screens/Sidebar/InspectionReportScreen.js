@@ -217,6 +217,7 @@ const InspectionReportScreen = (props) => {
 						}
 					}}
 				>
+					<Text style={{ fontSize: 16, fontWeight: "600" }}>{selectedShift}:</Text>
 					<Icon name={selectedShift == "DS" ? "sun" : "moon"} type="feather" size={25} />
 				</TouchableOpacity>
 			</View>
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
 	headerActions: {
 		flexDirection: "row",
 		justifyContent: "space-between",
-		marginHorizontal: 20,
+		marginHorizontal: 15,
 		alignItems: "center",
 		paddingBottom: 5,
 		marginTop: 10

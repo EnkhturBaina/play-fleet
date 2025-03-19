@@ -96,12 +96,12 @@ export const transformLocations = (refLocations, refLocationTypes) => {
 	};
 
 	// Map location types by ID for easy lookup
-	const locationTypeMap = refLocationTypes.reduce((acc, type) => {
+	const locationTypeMap = refLocationTypes?.reduce((acc, type) => {
 		acc[type.id] = type.Name;
 		return acc;
 	}, {});
 
-	refLocations.forEach((location) => {
+	refLocations?.forEach((location) => {
 		const typeName = locationTypeMap[location?.PMSLocationTypeId];
 		if (!typeName) return;
 

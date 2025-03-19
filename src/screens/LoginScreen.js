@@ -85,7 +85,7 @@ const LoginScreen = (props) => {
 				}
 			);
 
-			console.log("response", JSON.stringify(response.data));
+			// console.log("response", JSON.stringify(response.data));
 
 			if (response.data.Type === 1) {
 				setLoginError(response.data.Msg);
@@ -102,22 +102,11 @@ const LoginScreen = (props) => {
 				if (saveResult === "DONE") {
 					console.log("LOGIN SUCCESS");
 
-					const responseOfflineLoginData = await fetchLoginData();
-					console.log("Fetched Login Data:", JSON.stringify(responseOfflineLoginData));
-
-					// Login response -с state үүд салгаж хадгалах
-					state.setEmployeeData(responseOfflineLoginData?.employee[0]);
-					state.setCompanyData(responseOfflineLoginData?.company[0]);
-					state.setRosterData(responseOfflineLoginData?.roster[0]);
-					state.setEquipmentsData(responseOfflineLoginData?.equipments);
-					state.setProjectData(responseOfflineLoginData?.project[0]);
-					state.setShiftData(responseOfflineLoginData?.shift[0]);
-
 					// Local storage руу access_token хадгалах
 					await AsyncStorage.setItem("L_access_token", accessToken);
 
-					if (responseOfflineLoginData?.company[0]?.id) {
-						state.getReferencesService(responseOfflineLoginData?.company[0]?.id, accessToken, true);
+					if (response?.data?.Extra?.employee?.company?.id) {
+						state.getReferencesService(response?.data?.Extra?.employee?.company?.id, accessToken, true);
 					}
 				} else {
 					setLoginError("Өгөгдөл хадгалахад алдаа гарлаа.");

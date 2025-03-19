@@ -14,7 +14,7 @@ const SelectEquipmentScreen = () => {
 	const [savingEq, setSavingEq] = useState(false);
 
 	useEffect(() => {
-		// console.log("state.equipmentsData", state.equipmentsData);
+		console.log("SelectEquipmentScreen=================>");
 
 		getLocalSelectedEq();
 	}, []);
@@ -25,6 +25,7 @@ const SelectEquipmentScreen = () => {
 			setSavingEq(true);
 
 			await AsyncStorage.setItem("L_selected_eq", JSON.stringify(selectedEq)).then(() => {
+				console.log("selectedEq==============>", selectedEq);
 				setSelectedEqCode(selectedEq.TypeName);
 				state.setSelectedEquipment(selectedEq);
 				setSavingEq(false);
@@ -40,7 +41,7 @@ const SelectEquipmentScreen = () => {
 		try {
 			setSavingEq(true);
 			const jsonValue = await AsyncStorage.getItem("L_selected_eq");
-			// console.log("jsonValue", jsonValue);
+			console.log("getLocalSelectedEq =============>", jsonValue);
 
 			if (jsonValue != null) {
 				const selectedLocalEq = JSON.parse(jsonValue);

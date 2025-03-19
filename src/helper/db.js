@@ -127,11 +127,11 @@ export const createTable = async () => {
 };
 
 export const saveLoginDataWithClear = async (data, is_clear) => {
-	console.log("run SAVE LoginDataWithClear", data, is_clear);
+	// console.log("run SAVE LoginDataWithClear", data, is_clear);
 	try {
 		let result;
 
-		// clearLoginTables амжилттай дууссаны дараа insert хийх
+		// clear_Login_Tables амжилттай дууссаны дараа insert хийх
 		if (is_clear) {
 			await clearLoginTables().then(async (e) => {
 				if (e == "DONE_CLEAR_MAIN_TABLES") {
@@ -150,7 +150,7 @@ export const saveLoginDataWithClear = async (data, is_clear) => {
 
 // 2.DONE Локал өгөгдлийг хадгалах функц
 export const insertLoginData = async (data) => {
-	console.log("RUN INSERT LoginData", JSON.stringify(data));
+	// console.log("RUN INSERT LoginData", JSON.stringify(data));
 
 	try {
 		const employee = data.employee;

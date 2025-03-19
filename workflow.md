@@ -20,3 +20,28 @@
 │ └─ 2.1.3 `fetchReferencesData()` - Өгөгдлийг локал BASE -д хадгалсан өгөгдлөөс ачаалах.(Хамгийн сүүлд ажиллуулах ❗❗❗)
 
 #
+
+# RELOAD
+
+isConnected
+-runFirst
+-checkForUpdates
+-createSQLTables
+-checkUserData
+-getReferencesService
+-saveReferencesWithClear
+-fetchReferencesData
+-setRefsToState
+-fetchLoginData
+-setIsLoggedIn(true);
+
+# LOGIN
+
+-saveLoginDataWithClear
+-fetchLoginData
+-getReferencesService
+-saveReferencesWithClear
+-fetchReferencesData
+-setRefsToState
+-fetchLoginData
+-setIsLoggedIn(true);

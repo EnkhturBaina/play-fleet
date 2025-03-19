@@ -36,20 +36,7 @@ const HeaderUser = (props) => {
 					</Text>
 					{state.showLocationInfo && state.location && (
 						<View>
-							<Text style={styles.text}>
-								Өргөрөг: {state.location?.coords?.latitude}
-								{"\n"}
-								Уртраг: {state.location?.coords?.longitude}
-								{"\n"}
-								Өндөр: {state.location?.coords?.altitude}
-								{"\n"}
-								Хурд м/с: {state.location?.coords?.speed}
-								{"\n"}
-								Хурд км/ц:{" "}
-								{state.location?.coords?.speed ? Math.max((state.location.coords.speed * 3.6).toFixed(2), 0) : 0}
-								{"\n"}
-								shift: {state.shiftData?.Name}
-							</Text>
+							<Text style={styles.text}>shift: {state.shiftData?.Name}</Text>
 						</View>
 					)}
 				</View>

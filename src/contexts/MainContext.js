@@ -67,8 +67,8 @@ export const MainStore = (props) => {
 		}
 	});
 	const [mapType, setMapType] = useState("satellite");
-	const [showLocationInfo, setShowLocationInfo] = useState(false);
 	const [isTrack, setIsTrack] = useState(true);
+	const [showLocationInfo, setShowLocationInfo] = useState(false);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -115,7 +115,8 @@ export const MainStore = (props) => {
 	};
 
 	useEffect(() => {
-		const performAsyncTasks = async () => {
+		const runFirst = async () => {
+			setIsLoading(true);
 			await AsyncStorage.getItem("L_last_state_time").then(async (local_last_state_time) => {
 				try {
 					if (local_last_state_time) {
@@ -146,7 +147,7 @@ export const MainStore = (props) => {
 			});
 		};
 
-		performAsyncTasks(); // Асинхрон функцыг дуудна
+		runFirst();
 	}, []); // Empty dependency array for only running once (on mount)
 
 	const checkLocationWithSpeed = async () => {
@@ -209,7 +210,6 @@ export const MainStore = (props) => {
 	};
 
 	const checkForUpdates = async () => {
-		setIsLoading(true);
 		setIsCheckingUpdate(true);
 		try {
 			const update = await Updates.checkForUpdateAsync();
@@ -224,36 +224,8 @@ export const MainStore = (props) => {
 			console.error(error);
 		} finally {
 			setIsCheckingUpdate(false);
-			// checkLocation();
 			createSQLTables();
 		}
-	};
-	const checkLocation = async () => {
-		//***** LOCATION мэдээлэл авах
-		console.log("RUN check-Location");
-		(async () => {
-			try {
-				let { status } = await Location.requestForegroundPermissionsAsync();
-				setLocationStatus(status);
-				if (status !== "granted") {
-					// setIsLoggedIn(false);
-					return;
-				}
-
-				try {
-					let location = await Location.getCurrentPositionAsync({
-						accuracy: Location.Accuracy.High
-					});
-					console.log("location", location);
-					setLocation(location);
-				} catch (error) {
-					console.log("check Location error", error);
-				}
-			} catch (error) {
-				console.log("check Location error", error);
-			}
-		})().then((e) => {});
-		createSQLTables();
 	};
 
 	const createSQLTables = async () => {
@@ -266,14 +238,7 @@ export const MainStore = (props) => {
 						await checkUserData();
 					} else {
 						const data = await fetchReferencesData();
-
-						// console.log("get SQLite reference DATA=>", data);
-						// Бүх тохиргоог автоматаар хийх функц
 						setRefsToState(data, true);
-						// fetchReferencesData().then((e) => {
-						// 	console.log("RESULT FETCH REF=> ", e);
-						// 	checkUserData();
-						// });
 					}
 				});
 			});
@@ -300,23 +265,24 @@ export const MainStore = (props) => {
 				if (!responseOfflineLoginData.employee[0]) {
 					logout();
 				}
-				// Login response -с state үүд салгаж хадгалах
-				setEmployeeData(responseOfflineLoginData?.employee[0]);
-				setCompanyData(responseOfflineLoginData?.company[0]);
-				setRosterData(responseOfflineLoginData?.roster[0]);
-				setEquipmentsData(responseOfflineLoginData?.equipments);
-				setProjectData(responseOfflineLoginData?.project[0]);
-				setShiftData(responseOfflineLoginData?.shift[0]);
 
 				if (responseOfflineLoginData?.company[0]?.id) {
 					getReferencesService(responseOfflineLoginData?.company[0]?.id, accessToken, true);
+				} else {
+					// Login response -с state үүд салгаж хадгалах
+					setEmployeeData(responseOfflineLoginData?.employee[0]);
+					setCompanyData(responseOfflineLoginData?.company[0]);
+					setRosterData(responseOfflineLoginData?.roster[0]);
+					setEquipmentsData(responseOfflineLoginData?.equipments);
+					setProjectData(responseOfflineLoginData?.project[0]);
+					setShiftData(responseOfflineLoginData?.shift[0]);
 				}
 			} else {
 				setIsLoggedIn(false);
 				setIsLoading(false);
 			}
 		} catch (error) {
-			console.error("Алдаа гарлаа checkUserData: ", error);
+			console.error("Алдаа гарлаа check_User_Data: ", error);
 		}
 	};
 
@@ -351,7 +317,9 @@ export const MainStore = (props) => {
 
 									// console.log("get SQLite reference DATA=>", data);
 									// Бүх тохиргоог автоматаар хийх функц
-									setRefsToState(data, isRunLocal);
+									if (data) {
+										setRefsToState(data, isRunLocal);
+									}
 								}
 							} catch (error) {
 								console.error("Алдаа гарлаа get ReferencesService:", error);
@@ -364,8 +332,6 @@ export const MainStore = (props) => {
 					});
 			} catch (error) {
 				console.error("Error loading local JSON:", error);
-			} finally {
-				// state.setIsLoggedIn(true);
 			}
 		} else {
 			setIsLoggedIn(false);
@@ -416,31 +382,48 @@ export const MainStore = (props) => {
 		}
 	};
 
-	// AsyncStorage.clear();
-	const logout = async (type) => {
-		//***** Profile -с гарах дарсан үед утасны LOCALSTORE -с user, user_bio устгах
-		const keys = [
-			// "local_notif",
-			"L_access_token",
-			"L_inspection_id",
-			"L_selected_eq",
-			"L_map_type",
-			"L_last_state_time",
-			"L_last_state",
-			"L_current_speed"
-		];
-
-		AsyncStorage.multiRemove(keys).then(() => {
-			handleReset();
-			setSelectedState(null);
-			setSelectedEquipmentCode(null);
-			setSelectedEquipment(null);
-			setInspectionDone(false);
-			setDispId(null);
-			setIsLoading(false);
-			setIsLoggedIn(false);
-		});
+	const resetStates = () => {
+		setEmployeeData(null);
+		setCompanyData(null);
+		setRosterData(null);
+		setEquipmentsData(null);
+		setProjectData(null);
+		setShiftData(null);
+		handleReset();
+		setSelectedState(null);
+		setSelectedEquipmentCode(null);
+		setSelectedEquipment(null);
+		setInspectionDone(false);
+		setDispId(null);
 	};
+
+	const logout = async (type) => {
+		try {
+			setIsLoading(true); // Indicate that logout is in progress
+			resetStates();
+
+			await new Promise((resolve) => setTimeout(resolve, 0)); // Allow state updates
+
+			const keys = [
+				"L_access_token",
+				"L_inspection_id",
+				"L_selected_eq",
+				"L_map_type",
+				"L_last_state_time",
+				"L_last_state",
+				"L_current_speed"
+			];
+
+			await AsyncStorage.multiRemove(keys);
+
+			setIsLoggedIn(false);
+		} catch (error) {
+			console.error("Error during logout:", error);
+		} finally {
+			setIsLoading(false); // Ensure loading state is reset
+		}
+	};
+
 	const detectOrientation = () => {
 		setOrientation(width > height ? "LANDSCAPE" : "PORTRAIT");
 	};
@@ -582,10 +565,10 @@ export const MainStore = (props) => {
 				checkLocationWithSpeed,
 				mapType,
 				setMapType,
-				showLocationInfo,
-				setShowLocationInfo,
 				isTrack,
-				setIsTrack
+				setIsTrack,
+				showLocationInfo,
+				setShowLocationInfo
 			}}
 		>
 			{props.children}
