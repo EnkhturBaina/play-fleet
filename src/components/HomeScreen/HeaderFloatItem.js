@@ -342,7 +342,9 @@ const HeaderFloatItem = (props) => {
 								>
 									{el.name}
 								</Text>
-								{el.path == "reis" ? <TextInput style={styles.inputStyle} value={"0"} editable={false} /> : null}
+								{el.path == "reis" ? (
+									<TextInput style={styles.inputStyle} value={String(state.trackCount)} editable={false} />
+								) : null}
 								{el.path != "reis" ? (
 									<Dropdown
 										key={index}

@@ -40,7 +40,7 @@
 
 # ✔ mapType songosnoor ni bailgah
 
-# reis (trackCount) tooloh
+# ✔ reis (trackCount) tooloh
 
 # zoom leed togtson zoom deer ni tugjih (Zoom iin toog ni headerUser deer haruulah)
 

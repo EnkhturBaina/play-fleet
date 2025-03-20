@@ -8,6 +8,7 @@ import { formatTime } from "../../helper/functions";
 import CustomDialog from "../CustomDialog";
 import { sendSelectedState } from "../../helper/apiService";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function (props) {
 	const state = useContext(MainContext);
@@ -137,26 +138,26 @@ export default function (props) {
 		}
 	}, []);
 
-	const selectState = (selectedState) => {
+	const selectState = (newState) => {
 		// Үндсэн W1 -н State -үүд мөн эсэх
 
 		if (
 			MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(state.selectedState?.ActivityShort) &&
-			MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(selectedState?.ActivityShort)
+			MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(newState?.ActivityShort)
 		) {
 			if (state.seconds == 0) {
 				// 0. Operator төлөв тохируулсан үед ямар ч төлөврүү шууд орох
 				// Энэ тохиолдол нь seconds == 0 Байх учир
-				proceedWithStateChange(selectedState);
+				proceedWithStateChange(newState);
 				return;
 			}
 
 			// 1. Хэрэв 30 секунд дотор сонгогдсон бол анхааруулга
-			if (state.seconds < 30) {
+			if (state.seconds < 3) {
 				setDialogText(
 					"Ажиллаж буй төлөвийн нэгж алхам дор хаяж 30 секунд үргэлжлэх шаардлагатай. Шууд дараагийн алхам руу шилжихдээ итгэлтэй байна уу?"
 				);
-				setOnConfirm(() => () => proceedWithStateChange(selectedState));
+				setOnConfirm(() => () => proceedWithStateChange(newState));
 				setVisibleDialog(true);
 
 				return;
@@ -165,11 +166,11 @@ export default function (props) {
 			if (
 				//Сүүлийн төлөвөөс эхний төлөв дарах үед
 				state.selectedEquipmentCode == 0 &&
-				!(selectedState.ViewOrder == 0 && state.selectedState.ViewOrder == 4) &&
-				selectedState.ViewOrder < state.selectedState?.ViewOrder
+				!(newState.ViewOrder == 0 && state.selectedState.ViewOrder == 4) &&
+				newState.ViewOrder < state.selectedState?.ViewOrder
 			) {
 				setDialogText("Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?");
-				setOnConfirm(() => () => proceedWithStateChange(selectedState));
+				setOnConfirm(() => () => proceedWithStateChange(newState));
 				setVisibleDialog(true);
 				return;
 			}
@@ -177,44 +178,44 @@ export default function (props) {
 			if (
 				//Сүүлийн төлөвөөс эхний төлөв дарах үед
 				state.selectedEquipmentCode == 1 &&
-				!(selectedState.ViewOrder == 1 && state.selectedState.ViewOrder == 4) &&
-				selectedState.ViewOrder < state.selectedState?.ViewOrder
+				!(newState.ViewOrder == 1 && state.selectedState.ViewOrder == 4) &&
+				newState.ViewOrder < state.selectedState?.ViewOrder
 			) {
 				setDialogText("Одоогийн дэд төлөв тухайн рейст тооцогдохгүй болох тул итгэлтэй байна уу?");
-				setOnConfirm(() => () => proceedWithStateChange(selectedState));
+				setOnConfirm(() => () => proceedWithStateChange(newState));
 				setVisibleDialog(true);
 				return;
 			}
 
 			// 3. Алхам алгасах үед анхааруулга өгөх
-			if (selectedState.ViewOrder > state.selectedState?.ViewOrder + 1) {
+			if (newState.ViewOrder > state.selectedState?.ViewOrder + 1) {
 				setDialogText(
 					"Алхам алгасаж байгаа тул таны одоогийн рейсийн бүртгэл дутуу хадгалагдах боломжтой. Итгэлтэй байна уу?"
 				);
-				setOnConfirm(() => () => proceedWithStateChange(selectedState));
+				setOnConfirm(() => () => proceedWithStateChange(newState));
 				setVisibleDialog(true);
 				return;
 			}
 
 			// 4. Төлөв сонгогдсон бол
-			proceedWithStateChange(selectedState);
+			proceedWithStateChange(newState);
 		} else {
 			// 4. Төлөв сонгогдсон бол
-			proceedWithStateChange(selectedState);
+			proceedWithStateChange(newState);
 		}
 	};
 
-	const proceedWithStateChange = (selectedState) => {
-		// console.log("proceed With State Change selectedState =>", selectedState);
+	const proceedWithStateChange = (newState) => {
+		// console.log("proceed With State Change newState =>", newState);
 
 		animatedValue.setValue(1);
 
 		state.handleReset();
 		state.handleStart();
 
-		state.setSelectedState(selectedState);
+		state.setSelectedState(newState);
 		//Сонгогдсон төлөвийг SERVER -т илгээх
-		bottomSheetSendSelectedState(selectedState);
+		bottomSheetSendSelectedState(newState);
 	};
 
 	const bottomSheetSendSelectedState = async (newState) => {
@@ -233,6 +234,25 @@ export default function (props) {
 
 			if (response?.Type === 0) {
 			} else {
+			}
+			if (state.selectedEquipmentCode == 0 && newState.ViewOrder == 0 && state.selectedState.ViewOrder == 4) {
+				//Truck
+				try {
+					await AsyncStorage.setItem("L_track_count", String(state.trackCount + 1)).then(() => {
+						state.setTrackCount(state.trackCount + 1);
+					});
+				} catch (error) {
+					console.log("save local track count", error);
+				}
+			} else if (state.selectedEquipmentCode == 1 && newState.ViewOrder == 1 && state.selectedState.ViewOrder == 4) {
+				//Loader
+				try {
+					await AsyncStorage.setItem("L_track_count", String(state.trackCount + 1)).then(() => {
+						state.setTrackCount(state.trackCount + 1);
+					});
+				} catch (error) {
+					console.log("save local track count", error);
+				}
 			}
 		} catch (error) {
 			console.log("Error in stopProgressHandler:", error);
@@ -317,7 +337,7 @@ export default function (props) {
 										}
 									]}
 									key={el.id}
-									onPress={() => selectState(el, matchedImage)}
+									onPress={() => selectState(el)}
 									disabled={disableState}
 								>
 									<Image

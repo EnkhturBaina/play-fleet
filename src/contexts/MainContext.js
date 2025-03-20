@@ -71,6 +71,7 @@ export const MainStore = (props) => {
 	const [isTrack, setIsTrack] = useState(true);
 	const [showLocationInfo, setShowLocationInfo] = useState(false);
 	const [storedItems, setStoredItems] = useState([]);
+	const [trackCount, setTrackCount] = useState(0);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -135,17 +136,26 @@ export const MainStore = (props) => {
 				} catch (error) {
 					console.log("error", error);
 				}
-				await AsyncStorage.getItem("L_map_type").then(async (map_type) => {
-					if (map_type) {
-						setMapType(map_type);
+				await AsyncStorage.getItem("L_track_count").then(async (totalTrack) => {
+					console.log("totalTrack", totalTrack);
+
+					if (totalTrack) {
+						setTrackCount(parseInt(totalTrack));
 					} else {
-						setMapType("satellite");
+						setTrackCount(0);
 					}
-					if (isConnected) {
-						await checkForUpdates(); // Интернэт холболттой бол Update шалгах
-					} else {
-						await createSQLTables(); // Интернэтгүй бол local шалгах
-					}
+					await AsyncStorage.getItem("L_map_type").then(async (map_type) => {
+						if (map_type) {
+							setMapType(map_type);
+						} else {
+							setMapType("satellite");
+						}
+						if (isConnected) {
+							await checkForUpdates(); // Интернэт холболттой бол Update шалгах
+						} else {
+							await createSQLTables(); // Интернэтгүй бол local шалгах
+						}
+					});
 				});
 			});
 		};
@@ -154,7 +164,7 @@ export const MainStore = (props) => {
 	}, []); // Empty dependency array for only running once (on mount)
 
 	const checkLocationWithSpeed = async () => {
-		console.log("RUN check Location With Speed");
+		// console.log("RUN check Location With Speed");
 
 		const { status } = await Location.requestForegroundPermissionsAsync();
 		if (status !== "granted") {
@@ -285,7 +295,7 @@ export const MainStore = (props) => {
 
 	//*****Апп ажиллахад утасны local storage -с мэдээлэл шалгах
 	const checkUserData = async () => {
-		console.log("RUN check User Data");
+		// console.log("RUN check User Data");
 		try {
 			const mainCompanyId = await AsyncStorage.getItem("L_main_company_id");
 			setMainCompanyId(mainCompanyId);
@@ -355,7 +365,7 @@ export const MainStore = (props) => {
 	};
 
 	const setRefsToState = async (data, isRunLocal) => {
-		console.log("RUN set Refs To State");
+		// console.log("RUN set Refs To State");
 
 		const updateReferences = (data, setters) => {
 			Object.entries(setters).forEach(([key, setter]) => {
@@ -413,6 +423,7 @@ export const MainStore = (props) => {
 		setSelectedEquipment(null);
 		setInspectionDone(false);
 		setDispId(null);
+		setTrackCount(0);
 	};
 
 	const logout = async (type) => {
@@ -430,7 +441,8 @@ export const MainStore = (props) => {
 				"L_last_state_time",
 				"L_last_state",
 				"L_current_speed",
-				"L_last_logged"
+				"L_last_logged",
+				"L_track_count"
 			];
 
 			await AsyncStorage.multiRemove(keys);
@@ -588,7 +600,9 @@ export const MainStore = (props) => {
 				setIsTrack,
 				showLocationInfo,
 				setShowLocationInfo,
-				storedItems
+				storedItems,
+				trackCount,
+				setTrackCount
 			}}
 		>
 			{props.children}

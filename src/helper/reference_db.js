@@ -2,7 +2,7 @@ import { db } from "./db";
 
 // 1.Лавлах TABLE үүд үүсгэх
 export const createReferenceTables = async () => {
-	console.log("RUN CREATE-ReferenceTables");
+	// console.log("RUN CREATE-ReferenceTables");
 	try {
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS ref_states (
@@ -527,7 +527,7 @@ export const insertReferencesData = async (data) => {
 
 		// Бүх insert үйлдлүүд амжилттай дууссан эсэхийг шалгах
 		await Promise.all(insertPromises); // Энд бүх асинхрон үйлдлүүдийг хүлээж дуусгах
-		console.log("All insert operations completed successfully.");
+		// console.log("All insert operations completed successfully.");
 
 		return "DONE_INSERT"; // Бүх үйлдэл амжилттай бол "DONE_INSERT" буцаана
 	} catch (error) {
@@ -568,7 +568,7 @@ export const clearReferencesTables = async () => {
 };
 
 export const fetchReferencesData = async () => {
-	console.log("RUN fetch-References-Data");
+	// console.log("RUN fetch-References-Data");
 	let data = null;
 	try {
 		// Parallel database queries using Promise.all
