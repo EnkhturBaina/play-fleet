@@ -10,6 +10,16 @@ const HomeScreenSideBar = (props) => {
 	const navigation = useNavigation();
 	const MENU_LIST = [
 		{
+			img: require("../../../assets/images/profile.png"),
+			label: "Профайл",
+			nav: "NAV_PATH",
+			isMore: true,
+			action: () => {
+				// props.setIsOpen(false);
+				navigation.navigate("ProfileScreen");
+			}
+		},
+		{
 			img: require("../../../assets/images/Picture4.png"),
 			label: "Бүтээлийн бүртгэл",
 			nav: "NAV_PATH",

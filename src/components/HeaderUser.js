@@ -32,11 +32,22 @@ const HeaderUser = (props) => {
 				<View style={styles.titleContainer}>
 					<Text style={styles.topText}>Сайн байна уу?</Text>
 					<Text style={styles.userName} numberOfLines={1}>
-						{state.employeeData?.FullName ?? "User"}
+						{`${state.employeeData?.LastName ?? " "} ${state.employeeData?.FirstName ?? "User"}`}
 					</Text>
 					{state.showLocationInfo && state.location && (
 						<View>
 							<Text style={styles.text}>shift: {state.shiftData?.Name}</Text>
+							<Text>EventTime: </Text>
+							<View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+								{state.storedItems?.map((el, index) => {
+									return (
+										<Text key={index} style={{ fontSize: 12 }}>
+											{el}
+											{index !== state.storedItems.length - 1 ? "," : ""}
+										</Text>
+									);
+								})}
+							</View>
 						</View>
 					)}
 				</View>

@@ -58,7 +58,7 @@ export const sendSelectedState = async (
 
 					return response.data;
 				} catch (error) {
-					console.log("Error in stopProgress service:", error);
+					console.log("Error in send_state_data service:", error);
 					throw error; // Алдаа гарвал component-д дамжуулна
 				}
 			} else {
@@ -79,7 +79,7 @@ export const sendSelectedState = async (
 					]);
 					return responseOff;
 				} catch (error) {
-					console.error("Error inserting send state data:", error);
+					console.error("Error inserting send_state_data:", error);
 				}
 			}
 		});
@@ -121,7 +121,7 @@ export const sendMotoHour = async (
 
 			return response.data;
 		} catch (error) {
-			console.log("Error in stopProgress service:", error);
+			console.log("Error in send_Moto_Hour service:", error);
 			throw error; // Алдаа гарвал component-д дамжуулна
 		}
 	} else {
@@ -137,7 +137,7 @@ export const sendMotoHour = async (
 			]);
 			return responseOff;
 		} catch (error) {
-			console.error("Error inserting send state data:", error);
+			console.error("Error inserting send_Moto_Hour:", error);
 		}
 	}
 };

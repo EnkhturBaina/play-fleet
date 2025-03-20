@@ -70,6 +70,7 @@ export const MainStore = (props) => {
 	const [mapType, setMapType] = useState("satellite");
 	const [isTrack, setIsTrack] = useState(true);
 	const [showLocationInfo, setShowLocationInfo] = useState(false);
+	const [storedItems, setStoredItems] = useState([]);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -176,8 +177,8 @@ export const MainStore = (props) => {
 	const sendEquipmentLocation = async (currentLocation) => {
 		try {
 			if (!currentLocation) return;
-
-			console.log("RUN sendEquipmentLocation", currentLocation);
+			const eventTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
+			console.log("RUN send_Equipment_Location", currentLocation);
 
 			// Token болон Speed-ийг зэрэг авах
 			const [localToken, currentSpeed] = await Promise.all([
@@ -192,13 +193,63 @@ export const MainStore = (props) => {
 				parseFloat(currentLocation?.coords?.longitude) || 0,
 				currentSpeed ?? 0,
 				dayjs().format("YYYY-MM-DD"),
-				dayjs().format("YYYY-MM-DD HH:mm:ss"),
+				eventTime,
 				isConnected
 			);
-
-			console.log("sendEquipmentLocation response", JSON.stringify(response?.Msg));
+			addItemToStorage(eventTime);
+			console.log("send_Equipment_Location response", JSON.stringify(response?.Msg));
 		} catch (error) {
-			console.error("Error in sendEquipmentLocation", error);
+			console.error("Error in send_Equipment_Location", error);
+		}
+	};
+	const loadStoredItems = async () => {
+		try {
+			const storedData = await AsyncStorage.getItem("L_send_location_times");
+			// console.log("storedData", storedData);
+
+			setStoredItems(storedData ? JSON.parse(storedData) : []);
+		} catch (error) {
+			console.error("❌ Өгөгдөл ачаалахад алдаа гарлаа:", error);
+		}
+	};
+
+	// ✅ Шинэ өгөгдлийг хадгалах (FIFO)
+	const addItemToStorage = async (EventTime) => {
+		try {
+			// 📥 `AsyncStorage`-с өмнөх өгөгдлийг унших
+			const storedData = await AsyncStorage.getItem("L_send_location_times");
+			let storedItems = storedData ? JSON.parse(storedData) : [];
+
+			console.log("📂 OLD storedItems:", storedItems);
+
+			// 🆕 Шинэ өгөгдөл нэмэх
+			let updatedItems = [...storedItems, dayjs(EventTime).format("HH:mm")];
+
+			// ⛔ FIFO (5-аас их бол хамгийн эхний өгөгдлийг устгах)
+			if (updatedItems.length > 5) {
+				updatedItems.shift();
+			}
+
+			console.log("✅ NEW updatedItems:", updatedItems);
+
+			// 💾 `AsyncStorage`-д хадгалах
+			await AsyncStorage.setItem("L_send_location_times", JSON.stringify(updatedItems));
+
+			// 🔄 State шинэчлэх
+			setStoredItems(updatedItems);
+		} catch (error) {
+			console.error("❌ Өгөгдөл хадгалах үед алдаа гарлаа:", error);
+		}
+	};
+
+	// ✅ Бүх өгөгдлийг устгах
+	const clearStorage = async () => {
+		try {
+			await AsyncStorage.removeItem("L_send_location_times");
+			setStoredItems([]);
+			console.log("🗑️ Бүх өгөгдөл устгагдлаа!");
+		} catch (error) {
+			console.error("❌ Өгөгдөл устгах үед алдаа гарлаа:", error);
 		}
 	};
 
@@ -543,7 +594,8 @@ export const MainStore = (props) => {
 				isTrack,
 				setIsTrack,
 				showLocationInfo,
-				setShowLocationInfo
+				setShowLocationInfo,
+				storedItems
 			}}
 		>
 			{props.children}

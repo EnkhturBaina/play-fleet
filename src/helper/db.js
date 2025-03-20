@@ -659,3 +659,57 @@ const deleteSendLocationRowById = async (id) => {
 		console.error(`Error deleting SendLocation row with id ${id}:`, error);
 	}
 };
+
+export const fetchEmployeeData = async () => {
+	console.log("RUN fetch Employee Data.");
+
+	try {
+		const data = await db.getAllAsync("SELECT * FROM employee");
+		return data; // Return the combined data
+	} catch (error) {
+		console.error("Error fetching Employee data", error);
+		throw new Error("Failed to fetch Employee data. Please try again later.");
+	}
+};
+
+export const clearEmployeeTable = async () => {
+	console.log("RUN CLEAR Employee Table");
+	try {
+		await db.runAsync("DELETE FROM employee");
+	} catch (error) {
+		console.error(`Error deleting Employee row`, error);
+	}
+};
+
+export const insertEmployeeData = async (employee_data) => {
+	// console.log("employee_data=============>", employee_data);
+
+	try {
+		// employee өгөгдөл оруулах
+		const resultEmployee = await db.runAsync(
+			`INSERT INTO employee (id, PMSCompanyId, PMSRosterId, Code, FirstName, LastName, Profile, Email, IsActive, IsOperator, FullName, status)
+		  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+			[
+				employee_data.id,
+				employee_data.PMSCompanyId,
+				employee_data.PMSRosterId,
+				employee_data.Code,
+				employee_data.FirstName,
+				employee_data.LastName,
+				employee_data.Profile,
+				employee_data.Email,
+				employee_data.IsActive,
+				employee_data.IsOperator,
+				employee_data.FullName,
+				employee_data.status
+			]
+		);
+
+		// Amжилттай нэмсэн мөрийн тоог шалгах
+		if (resultEmployee.rowsAffected === 0) {
+			throw new Error("Employee өгөгдлийг оруулж чадсангүй.");
+		}
+	} catch (error) {
+		console.error(`Error inserting Employee`, error);
+	}
+};

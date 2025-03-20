@@ -44,10 +44,10 @@
 
 # zoom leed togtson zoom deer ni tugjih (Zoom iin toog ni headerUser deer haruulah)
 
-# profile bagshaas asuuj hiih
+# ✔ profile bagshaas asuuj hiih
 
-# Send location SQLite ruu hadgalah
+# ✔ Send location SQLite ruu hadgalah
 
 # Suljete vyd service duudagdaad ymar 1 aldaa garwal SQLite ruu data gaa hadgalah
 
-# Service luu amjilttai shidegdsen eventTime uudiin tsagiig hadgalaad string ee headerUser deer haruulah
+# ✔ Service luu amjilttai shidegdsen eventTime uudiin tsagiig hadgalaad string ee headerUser deer haruulah
