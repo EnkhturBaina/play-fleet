@@ -21,6 +21,7 @@ import "dayjs/locale/es";
 import dayjs from "dayjs";
 import { sendMotoHour } from "../../helper/apiService";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateMotoHourAndFuelScreen = (props) => {
 	const state = useContext(MainContext);
@@ -57,16 +58,21 @@ const CreateMotoHourAndFuelScreen = (props) => {
 		} else {
 			try {
 				setSavingSMU(true);
+
+				const lastLogged = await AsyncStorage.getItem("L_last_logged");
+				console.log("lastLogged", lastLogged);
+
 				const response = await sendMotoHour(
 					state.token,
 					state.selectedEquipment,
 					state.shiftData,
-					dayjs().format("YYYY-MM-DD"),
+					`${lastLogged} ${dayjs().format("HH:mm")}`,
 					parseInt(startSMU?.replaceAll(",", "")),
 					parseInt(finishSMU?.replaceAll(",", "")),
 					parseInt(fuel?.replaceAll(",", "")),
 					0,
-					isConnected
+					isConnected,
+					lastLogged
 				);
 				// console.log("SEND_MOTO_HOUR_RESPONSE=>", response);
 				if (isConnected) {
@@ -79,7 +85,7 @@ const CreateMotoHourAndFuelScreen = (props) => {
 						setDialogBtnText("Хаах");
 					}
 				} else {
-					if (response.changes >= 1) {
+					if (response?.changes >= 1) {
 						setDialogType("success");
 						setDialogText("Түлшний мэдээлэл амжилттай хадгалагдлаа.");
 						setDialogBtnText("Хаах");

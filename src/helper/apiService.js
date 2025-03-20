@@ -93,7 +93,8 @@ export const sendMotoHour = async (
 	FinishSMU,
 	Fuel,
 	ProgressSMU,
-	isConnected
+	isConnected,
+	LastLogged
 ) => {
 	if (isConnected) {
 		try {
@@ -106,7 +107,8 @@ export const sendMotoHour = async (
 					StartSMU,
 					FinishSMU,
 					Fuel,
-					ProgressSMU
+					ProgressSMU,
+					LastLogged
 				},
 				{
 					headers: {
@@ -131,7 +133,8 @@ export const sendMotoHour = async (
 				StartSMU,
 				FinishSMU,
 				Fuel,
-				ProgressSMU
+				ProgressSMU,
+				LastLogged
 			]);
 			return responseOff;
 		} catch (error) {

@@ -19,6 +19,8 @@ import { useNetworkStatus } from "../contexts/NetworkContext";
 import { TextInput } from "react-native-paper";
 import LoginCompanyDialog from "../components/LoginCompanyDialog";
 import axios from "axios";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 const LoginScreen = (props) => {
 	const state = useContext(MainContext);
@@ -85,7 +87,14 @@ const LoginScreen = (props) => {
 				}
 			);
 
+			let lastLogged = "";
 			// console.log("response", JSON.stringify(response.data));
+			console.log("response.data?.Extra?.logged", response.data?.Extra?.logged);
+			if (!response.data?.Extra?.logged) {
+				lastLogged = dayjs().format("YYYY-MM-DD");
+			} else {
+				lastLogged = response.data?.Extra?.logged;
+			}
 
 			if (response.data.Type === 1) {
 				setLoginError(response.data.Msg);
@@ -104,6 +113,8 @@ const LoginScreen = (props) => {
 
 					// Local storage руу access_token хадгалах
 					await AsyncStorage.setItem("L_access_token", accessToken);
+					// Local storage руу logged буюу нэвтэрсэн огноо хадгалах
+					await AsyncStorage.setItem("L_last_logged", lastLogged);
 
 					if (response?.data?.Extra?.employee?.company?.id) {
 						state.getReferencesService(response?.data?.Extra?.employee?.company?.id, accessToken, true);

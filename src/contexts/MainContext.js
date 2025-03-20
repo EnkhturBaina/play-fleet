@@ -118,6 +118,7 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		const runFirst = async () => {
+			// dropTable("moto_hour");
 			setIsLoading(true);
 			await AsyncStorage.getItem("L_last_state_time").then(async (local_last_state_time) => {
 				try {
@@ -428,7 +429,8 @@ export const MainStore = (props) => {
 				// "L_map_type",
 				"L_last_state_time",
 				"L_last_state",
-				"L_current_speed"
+				"L_current_speed",
+				"L_last_logged"
 			];
 
 			await AsyncStorage.multiRemove(keys);

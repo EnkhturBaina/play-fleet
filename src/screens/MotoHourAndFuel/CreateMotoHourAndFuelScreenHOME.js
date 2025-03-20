@@ -23,6 +23,7 @@ import dayjs from "dayjs";
 import { useFocusEffect } from "@react-navigation/native";
 import { sendMotoHour } from "../../helper/apiService";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateMotoHourAndFuelScreenHOME = (props) => {
 	const state = useContext(MainContext);
@@ -73,6 +74,10 @@ const CreateMotoHourAndFuelScreenHOME = (props) => {
 		} else {
 			try {
 				setSavingSMU(true);
+
+				const lastLogged = await AsyncStorage.getItem("L_last_logged");
+				console.log("lastLogged", lastLogged);
+
 				const response = await sendMotoHour(
 					state.token,
 					state.selectedEquipment,
@@ -82,7 +87,8 @@ const CreateMotoHourAndFuelScreenHOME = (props) => {
 					parseInt(finishSMU?.replaceAll(",", "")),
 					parseInt(fuel?.replaceAll(",", "")),
 					0,
-					isConnected
+					isConnected,
+					lastLogged
 				);
 				// console.log("SEND_MOTO_HOUR_RESPONSE=>", response);
 				if (isConnected) {

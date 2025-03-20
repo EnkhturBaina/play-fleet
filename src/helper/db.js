@@ -118,7 +118,8 @@ export const createTable = async () => {
 				StartSMU INTEGER,
 				FinishSMU INTEGER,
 				Fuel INTEGER,
-				ProgressSMU INTEGER
+				ProgressSMU INTEGER,
+				LastLogged TEXT
       );`
 		);
 		await db.execAsync(
@@ -502,8 +503,9 @@ export const insertMotoHourData = async (data) => {
 				StartSMU,
 				FinishSMU,
 				Fuel,
-				ProgressSMU)
-			VALUES (?, ?, ?, ?, ?, ?, ?);`,
+				ProgressSMU,
+				LastLogged)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
 			data
 		);
 		console.log("resultMotoHour", resultMotoHour);
