@@ -190,7 +190,7 @@ const ProfileScreen = (props) => {
 					topPos={Constants.statusBarHeight}
 				/>
 				<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-				<HeaderUser isShowNotif={true} />
+				{/* <HeaderUser isShowNotif={true} /> */}
 				<TouchableOpacity
 					onPress={() => {
 						props.navigation.goBack();

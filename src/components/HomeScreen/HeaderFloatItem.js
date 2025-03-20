@@ -304,7 +304,7 @@ const HeaderFloatItem = (props) => {
 								style={{ marginRight: 5 }}
 							/>
 						)}
-						<Text style={{ color: MAIN_COLOR, fontSize: 18 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
+						<Text style={{ color: MAIN_COLOR, fontSize: 16 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
 					</View>
 					{state.orientation == "PORTRAIT" ? (
 						<TouchableOpacity
@@ -337,7 +337,7 @@ const HeaderFloatItem = (props) => {
 								<Text
 									style={{
 										color: MAIN_COLOR_BLUE,
-										fontSize: 18
+										fontSize: 16
 									}}
 								>
 									{el.name}
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
 		borderColor: "#aeaeae",
 		borderWidth: 0.5,
 		paddingHorizontal: 8,
-		width: 150,
+		width: 200,
 		height: 35,
 		borderRadius: MAIN_BORDER_RADIUS
 	},
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
 		borderColor: "#aeaeae",
 		borderWidth: 0.5,
 		paddingHorizontal: 8,
-		width: 150,
+		width: 200,
 		height: 35,
 		borderRadius: MAIN_BORDER_RADIUS,
 		fontWeight: "600"

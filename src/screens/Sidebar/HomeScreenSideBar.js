@@ -20,16 +20,6 @@ const HomeScreenSideBar = (props) => {
 			}
 		},
 		{
-			img: require("../../../assets/images/Picture4.png"),
-			label: "Бүтээлийн бүртгэл",
-			nav: "NAV_PATH",
-			isMore: true,
-			action: () => {
-				// props.setIsOpen(false);
-				navigation.navigate("WorkRegistrationScreen");
-			}
-		},
-		{
 			img: require("../../../assets/images/Picture14.png"),
 			label: "Төлөв бүртгэл",
 			nav: "NAV_PATH",
@@ -37,6 +27,16 @@ const HomeScreenSideBar = (props) => {
 			action: () => {
 				props.setMenuType("STATUS");
 				props.setSideBarStep(2);
+			}
+		},
+		{
+			img: require("../../../assets/images/Picture4.png"),
+			label: "Бүтээлийн бүртгэл",
+			nav: "NAV_PATH",
+			isMore: true,
+			action: () => {
+				// props.setIsOpen(false);
+				navigation.navigate("WorkRegistrationScreen");
 			}
 		},
 		{
@@ -103,7 +103,7 @@ const HomeScreenSideBar = (props) => {
 				return (
 					<TouchableOpacity key={index} style={styles.eachMenuContainer} onPress={el.action}>
 						<Image source={el.img} style={{ width: 40, height: 40 }} />
-						<Text style={{ flex: 1, marginHorizontal: 10 }}>{el.label}</Text>
+						<Text style={{ flex: 1, marginHorizontal: 10, fontWeight: "600" }}>{el.label}</Text>
 						{el.isMore ? <Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} /> : null}
 					</TouchableOpacity>
 				);
@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
 	eachMenuContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		borderBottomColor: MAIN_COLOR_GRAY,
-		borderBottomWidth: 1,
+		// borderBottomColor: MAIN_COLOR_GRAY,
+		// borderBottomWidth: 1,
 		padding: 10
 	}
 });

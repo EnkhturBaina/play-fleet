@@ -394,11 +394,12 @@ const styles = StyleSheet.create({
 	},
 	selectedStateText: {
 		color: "#6287CA",
-		fontSize: 22,
+		fontSize: 14,
 		flex: 1,
 		marginLeft: 10,
 		textAlign: "center",
-		flexWrap: "wrap"
+		flexWrap: "wrap",
+		fontWeight: "600"
 	},
 	selectedLabel: {
 		backgroundColor: MAIN_COLOR,
