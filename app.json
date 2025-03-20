@@ -3,7 +3,7 @@
 		"name": "Play Fleet",
 		"slug": "PlayFleet",
 		"assetBundlePatterns": ["assets/**/*"],
-		"version": "1.0.28",
+		"version": "1.0.29",
 		"orientation": "default",
 		"icon": "./assets/icon.png",
 		"userInterfaceStyle": "automatic",
@@ -16,7 +16,7 @@
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "com.gamemine.fleet",
-			"buildNumber": "1.0.28",
+			"buildNumber": "1.0.29",
 			"infoPlist": {
 				"NSLocationWhenInUseUsageDescription": "Play Fleet систем нь таны байршлын мэдээллийг төхөөрөмжийн байршил тодорхойлох үйлдэлд ашиглана.",
 				"NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
@@ -29,7 +29,7 @@
 		"android": {
 			"icon": "./assets/icon.png",
 			"package": "com.gamemine.fleet",
-			"versionCode": 28,
+			"versionCode": 29,
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
@@ -96,6 +96,7 @@
 		"updates": {
 			"url": "https://u.expo.dev/7cbb54e3-047b-4551-9e83-834541911205",
 			"fallbackToCacheTimeout": 0,
+			"enabled": true,
 			"requestHeaders": {
 				"expo-runtime-version": "1.0.0",
 				"expo-channel-name": "production"

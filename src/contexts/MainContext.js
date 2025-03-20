@@ -137,8 +137,6 @@ export const MainStore = (props) => {
 					console.log("error", error);
 				}
 				await AsyncStorage.getItem("L_track_count").then(async (totalTrack) => {
-					console.log("totalTrack", totalTrack);
-
 					if (totalTrack) {
 						setTrackCount(parseInt(totalTrack));
 					} else {

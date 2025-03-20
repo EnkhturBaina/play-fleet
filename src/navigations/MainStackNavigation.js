@@ -36,10 +36,6 @@ const MainStackNavigator = (props) => {
 	const navigation = useNavigation();
 
 	useEffect(() => {
-		console.log("isLoggedIn", state.isLoggedIn);
-		console.log("inspectionDone", state.inspectionDone);
-		// console.log("", );
-
 		state.isLoggedIn && state.inspectionDone && state.checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
 
 		const interval = setInterval(
