@@ -540,7 +540,8 @@ export const fetchMotoHourData = async () => {
 								StartSMU: item.StartSMU,
 								FinishSMU: item.FinishSMU,
 								Fuel: item.Fuel,
-								ProgressSMU: item.ProgressSMU // Дараа нь хасах
+								ProgressSMU: item.ProgressSMU, // Дараа нь хасах
+								LastLogged: item.LastLogged
 							},
 							{
 								headers: {
