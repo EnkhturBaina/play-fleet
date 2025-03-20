@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import * as Updates from "expo-updates";
 import { getDistanceFromLatLonInMeters } from "../helper/functions";
+import { sendLocation } from "../helper/apiService";
 
 const MainContext = React.createContext();
 const width = Dimensions.get("screen").width;
@@ -184,26 +185,18 @@ export const MainStore = (props) => {
 				AsyncStorage.getItem("L_current_speed")
 			]);
 
-			// Сервер рүү хүсэлт илгээх
-			const response = await axios.post(
-				`${SERVER_URL}/mobile/progress/track/save`,
-				{
-					PMSEquipmentId: selectedEquipment?.id,
-					Latitude: parseFloat(currentLocation?.coords?.latitude) || 0,
-					Longitude: parseFloat(currentLocation?.coords?.longitude) || 0,
-					Speed: currentSpeed ?? 0,
-					CurrentDate: dayjs().format("YYYY-MM-DD"),
-					EventTime: dayjs().format("YYYY-MM-DD HH:mm:ss")
-				},
-				{
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${localToken}`
-					}
-				}
+			const response = await sendLocation(
+				localToken,
+				selectedEquipment,
+				parseFloat(currentLocation?.coords?.latitude) || 0,
+				parseFloat(currentLocation?.coords?.longitude) || 0,
+				currentSpeed ?? 0,
+				dayjs().format("YYYY-MM-DD"),
+				dayjs().format("YYYY-MM-DD HH:mm:ss"),
+				isConnected
 			);
 
-			console.log("sendEquipmentLocation response", JSON.stringify(response.data?.Msg));
+			console.log("sendEquipmentLocation response", JSON.stringify(response?.Msg));
 		} catch (error) {
 			console.error("Error in sendEquipmentLocation", error);
 		}

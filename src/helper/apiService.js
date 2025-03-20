@@ -1,6 +1,6 @@
 import axios from "axios";
 import { SERVER_URL } from "../constant";
-import { fetchSendStateData, insertMotoHourData, insertSendStateData } from "./db";
+import { fetchSendStateData, insertMotoHourData, insertSendLocationData, insertSendStateData } from "./db";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
@@ -134,6 +134,59 @@ export const sendMotoHour = async (
 				FinishSMU,
 				Fuel,
 				ProgressSMU
+			]);
+			return responseOff;
+		} catch (error) {
+			console.error("Error inserting send state data:", error);
+		}
+	}
+};
+
+export const sendLocation = async (
+	token,
+	selectedEquipment,
+	Latitude,
+	Longitude,
+	Speed,
+	CurrentDate,
+	EventTime,
+	isConnected
+) => {
+	if (isConnected) {
+		try {
+			const response = await axios.post(
+				`${SERVER_URL}/mobile/progress/track/save`,
+				{
+					PMSEquipmentId: selectedEquipment?.id,
+					Latitude,
+					Longitude,
+					Speed,
+					CurrentDate,
+					EventTime
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`
+					}
+				}
+			);
+			// console.log("response", JSON.stringify(response));
+
+			return response.data;
+		} catch (error) {
+			console.log("Error in sendLocation service:", error);
+			throw error; // Алдаа гарвал component-д дамжуулна
+		}
+	} else {
+		try {
+			const responseOff = await insertSendLocationData([
+				selectedEquipment?.id,
+				Latitude,
+				Longitude,
+				Speed,
+				CurrentDate,
+				EventTime
 			]);
 			return responseOff;
 		} catch (error) {

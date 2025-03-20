@@ -14,7 +14,7 @@ import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
 import { Image } from "expo-image";
 import CustomDialog from "../components/CustomDialog";
 import { transformLocations } from "../helper/functions";
-import { fetchMotoHourData, fetchSendStateData } from "../helper/db";
+import { fetchMotoHourData, fetchSendLocationData, fetchSendStateData } from "../helper/db";
 import useEcho from "../helper/useEcho";
 import { ECHO_EVENT_PROGRESS, ZOOM_LEVEL } from "../constant";
 import LottieView from "lottie-react-native";
@@ -203,11 +203,20 @@ const HomeScreen = (props) => {
 	}, [fileContent]);
 
 	useEffect(() => {
-		if (isConnected) {
-			console.log("📶 Интернет холбогдлоо! Өгөгдөл сервер рүү илгээж байна...");
-			fetchMotoHourData();
-			fetchSendStateData(); // Сервер лүү SQLite-с дата илгээх функц
-		}
+		const sendDataToServer = async () => {
+			if (isConnected) {
+				console.log("📶 Интернет холбогдлоо! Өгөгдөл сервер рүү зэрэг илгээж байна...");
+
+				try {
+					await Promise.all([fetchSendStateData(), fetchMotoHourData(), fetchSendLocationData()]);
+					console.log("📡 Бүх өгөгдлийг зэрэг илгээлээ!");
+				} catch (error) {
+					console.error("⚠️ Өгөгдөл зэрэг илгээх явцад алдаа гарлаа:", error);
+				}
+			}
+		};
+
+		sendDataToServer();
 	}, [isConnected]);
 
 	const renderedPolygons = useMemo(() => {

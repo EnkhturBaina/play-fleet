@@ -48,8 +48,8 @@ const MainStackNavigator = (props) => {
 					state.checkLocationWithSpeed();
 				}
 			},
-			// 5000
-			state.projectData?.SyncTime != null ? state.projectData?.SyncTime * 1000 : 5 * 60 * 1000
+			5000
+			// state.projectData?.SyncTime != null ? state.projectData?.SyncTime * 1000 : 5 * 60 * 1000
 		); // Login response -н Project дотор SyncTime -д тохируулсан хугацаагааны давтамжаар Location илгээх
 
 		// Component unmount үед interval-ийг устгах

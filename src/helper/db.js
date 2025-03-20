@@ -121,6 +121,17 @@ export const createTable = async () => {
 				ProgressSMU INTEGER
       );`
 		);
+		await db.execAsync(
+			`CREATE TABLE IF NOT EXISTS send_location (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				PMSEquipmentId INTEGER,
+				Latitude REAL,
+				Longitude REAL,
+				Speed INTEGER,
+				CurrentDate TEXT,
+				EventTime TEXT
+      );`
+		);
 	} catch (error) {
 		console.log("error createTable", error);
 	}
@@ -563,5 +574,88 @@ const deleteMotoHourRowById = async (id) => {
 		console.log(`Row with id ${id} deleted.`);
 	} catch (error) {
 		console.error(`Error deleting motoHour row with id ${id}:`, error);
+	}
+};
+
+export const insertSendLocationData = async (data) => {
+	if (data) {
+		const resultSendLocation = await db.runAsync(
+			`INSERT INTO send_location (
+				PMSEquipmentId,
+				Latitude,
+				Longitude,
+				Speed,
+				CurrentDate,
+				EventTime)
+			VALUES (?, ?, ?, ?, ?, ?);`,
+			data
+		);
+		// console.log("resultSendLocation", resultSendLocation);
+
+		if (resultSendLocation.rowsAffected === 0) {
+			throw new Error("send_location өгөгдлийг оруулж чадсангүй.");
+		}
+		return resultSendLocation;
+	}
+};
+
+export const fetchSendLocationData = async () => {
+	console.log("RUN fetch SendLocation Data.");
+
+	try {
+		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
+			// Parallel database queries using Promise.all
+			const data = await db.getAllAsync("SELECT * FROM send_location");
+			// console.log("data ==========>", data);
+			// console.log("token ==========>", token);
+
+			if (data) {
+				for (const item of data) {
+					// console.log("item =======>", JSON.stringify(item));
+					try {
+						const response = await axios.post(
+							`${SERVER_URL}/mobile/progress/track/save`,
+							{
+								PMSEquipmentId: item.PMSEquipmentId,
+								Latitude: item.Latitude,
+								Longitude: item.Longitude,
+								Speed: item.Speed,
+								CurrentDate: item.CurrentDate,
+								EventTime: item.EventTime
+							},
+							{
+								headers: {
+									"Content-Type": "application/json",
+									Authorization: `Bearer ${localToken}`
+								}
+							}
+						);
+						console.log("response", response.data);
+
+						if (response.data?.Type == 0) {
+							// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
+							await deleteSendLocationRowById(item.id);
+						} else {
+							console.error(`Failed to send SendLocation item ${item.id}:`);
+						}
+					} catch (error) {
+						console.error(`Error sending SendLocation item ${item.id}:`, error);
+					}
+				}
+			}
+			return data; // Return the combined data
+		});
+	} catch (error) {
+		console.error("Error fetching SendLocation data", error);
+		throw new Error("Failed to fetch SendLocation data. Please try again later.");
+	}
+};
+
+const deleteSendLocationRowById = async (id) => {
+	try {
+		await db.runAsync("DELETE FROM send_location WHERE id = ?;", [id]);
+		console.log(`Row with id ${id} deleted.`);
+	} catch (error) {
+		console.error(`Error deleting SendLocation row with id ${id}:`, error);
 	}
 };
