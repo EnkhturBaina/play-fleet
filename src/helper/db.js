@@ -170,7 +170,7 @@ export const insertLoginData = async (data) => {
 		const project = data.project;
 		const shift = data.shift;
 		const equipments = employee.equipments;
-		console.log("LOCAL shift =================>", shift);
+		// console.log("LOCAL shift =================>", shift);
 
 		// employee өгөгдөл оруулах
 		const resultEmployee = await db.runAsync(

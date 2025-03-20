@@ -38,7 +38,7 @@
 
 # Android deer build hiij suulgaad, Android studio deer LOG CAT harah ygaad update install faield bolood baigaag olox
 
-# mapType songosnoor ni bailgah
+# ✔ mapType songosnoor ni bailgah
 
 # reis (trackCount) tooloh
 

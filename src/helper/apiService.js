@@ -1,6 +1,6 @@
 import axios from "axios";
 import { SERVER_URL } from "../constant";
-import { fetchSendStateData, insertMotoHourData, insertSendLocationData, insertSendStateData } from "./db";
+import { insertMotoHourData, insertSendLocationData, insertSendStateData } from "./db";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
@@ -15,8 +15,6 @@ export const sendSelectedState = async (
 	location,
 	isConnected
 ) => {
-	console.log("RUN sendSelectedState ******************************************>");
-
 	var state_id,
 		sub_state_id = null;
 	if (selectedState?.PMSParentId == null) {

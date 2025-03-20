@@ -178,7 +178,6 @@ export const MainStore = (props) => {
 		try {
 			if (!currentLocation) return;
 			const eventTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
-			console.log("RUN send_Equipment_Location", currentLocation);
 
 			// Token болон Speed-ийг зэрэг авах
 			const [localToken, currentSpeed] = await Promise.all([
@@ -216,21 +215,14 @@ export const MainStore = (props) => {
 	// ✅ Шинэ өгөгдлийг хадгалах (FIFO)
 	const addItemToStorage = async (EventTime) => {
 		try {
-			// 📥 `AsyncStorage`-с өмнөх өгөгдлийг унших
 			const storedData = await AsyncStorage.getItem("L_send_location_times");
 			let storedItems = storedData ? JSON.parse(storedData) : [];
 
-			console.log("📂 OLD storedItems:", storedItems);
-
-			// 🆕 Шинэ өгөгдөл нэмэх
 			let updatedItems = [...storedItems, dayjs(EventTime).format("HH:mm")];
 
-			// ⛔ FIFO (5-аас их бол хамгийн эхний өгөгдлийг устгах)
 			if (updatedItems.length > 5) {
 				updatedItems.shift();
 			}
-
-			console.log("✅ NEW updatedItems:", updatedItems);
 
 			// 💾 `AsyncStorage`-д хадгалах
 			await AsyncStorage.setItem("L_send_location_times", JSON.stringify(updatedItems));
@@ -247,7 +239,6 @@ export const MainStore = (props) => {
 		try {
 			await AsyncStorage.removeItem("L_send_location_times");
 			setStoredItems([]);
-			console.log("🗑️ Бүх өгөгдөл устгагдлаа!");
 		} catch (error) {
 			console.error("❌ Өгөгдөл устгах үед алдаа гарлаа:", error);
 		}
@@ -434,7 +425,7 @@ export const MainStore = (props) => {
 				"L_access_token",
 				"L_inspection_id",
 				"L_selected_eq",
-				"L_map_type",
+				// "L_map_type",
 				"L_last_state_time",
 				"L_last_state",
 				"L_current_speed"
