@@ -14,7 +14,14 @@ import Constants from "expo-constants";
 import HeaderUser from "../../components/HeaderUser";
 import { Icon } from "@rneui/base";
 import axios from "axios";
-import { MAIN_COLOR, MAIN_COLOR_BLUE, MAIN_COLOR_GREEN, SERVER_URL, TEXT_COLOR_GRAY } from "../../constant";
+import {
+	MAIN_COLOR,
+	MAIN_COLOR_BLUE,
+	MAIN_COLOR_GRAY,
+	MAIN_COLOR_GREEN,
+	SERVER_URL,
+	TEXT_COLOR_GRAY
+} from "../../constant";
 import MainContext from "../../contexts/MainContext";
 import Empty from "../../components/Empty";
 import "dayjs/locale/es";
@@ -92,21 +99,29 @@ const NotificationScreen = (props) => {
 						width: "100%"
 					}}
 				>
-					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-						<Text style={{ flex: 1, fontWeight: "600", marginBottom: 5 }} numberOfLines={1}>
+					<View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "space-between" }}>
+						<View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+							{item.state?.Code == "unread" ? (
+								<Icon name="circle" type="font-awesome" size={10} color={MAIN_COLOR} />
+							) : null}
+							<Text
+								style={{
+									flex: 1,
+									textTransform: "uppercase",
+									marginLeft: item.state?.Code == "unread" ? 5 : 0,
+									color: "#6b6d75"
+								}}
+							>
+								{item?.type?.Name}
+							</Text>
+						</View>
+						<Text style={{ fontWeight: "600", color: "#191a2b", marginBottom: 5 }} numberOfLines={1}>
 							{item?.notification?.Title}
-							{false}
 						</Text>
 						<Text style={{ fontWeight: "600", marginBottom: 5 }} numberOfLines={1}>
-							<Text style={{ textTransform: "capitalize" }}>{item?.type?.Name}</Text>
+							<Text style={{ textTransform: "capitalize", color: "#575b62" }}>{item?.notification?.Message}</Text>
 						</Text>
-					</View>
-					<Text numberOfLines={1}>{item?.notification?.Message}</Text>
-					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-						<Text>{dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss") ?? "-"}</Text>
-						<Text style={{ color: item.state?.Code == "unread" ? MAIN_COLOR_BLUE : MAIN_COLOR_GREEN }}>
-							{item.state?.Name}
-						</Text>
+						<Text style={{ color: "#b7b8be" }}>{dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss") ?? "-"}</Text>
 					</View>
 				</View>
 			</TouchableOpacity>
@@ -165,12 +180,12 @@ const styles = StyleSheet.create({
 	},
 	itemContainer: {
 		borderBottomWidth: 1,
-		borderBottomColor: TEXT_COLOR_GRAY,
-		paddingHorizontal: 20,
+		borderBottomColor: MAIN_COLOR_GRAY,
+		marginHorizontal: 20,
 		paddingVertical: 15,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		height: 80
+		height: 100
 	}
 });
