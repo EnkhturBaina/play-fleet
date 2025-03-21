@@ -95,30 +95,29 @@ const Tab1 = (props) => {
 				style={{
 					borderWidth: 1,
 					borderRadius: MAIN_BORDER_RADIUS,
-					borderColor: TEXT_COLOR_GRAY,
+					borderColor: "#b7b8be",
 					padding: 10,
 					marginBottom: 10
 				}}
 			>
 				<View style={styles.itemRow}>
-					<Text style={styles.itemLabel}>Рейсийн дундаж хугацаа</Text>
+					<Text style={styles.itemTitle}>Рейсийн хугацаа</Text>
 					<Text style={styles.dividerVertical}>|</Text>
-					<Text style={styles.itemLabel}>{item.TM} мин</Text>
+					<Text style={styles.itemTitle}>{item.TM} мин</Text>
 				</View>
-				<Text style={styles.itemDate}>{item.SavedDate}</Text>
-				<View style={{ flexDirection: "row" }}>
-					<View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-start" }}>
-						<View style={styles.eachRowValueContainer}>
-							<Text style={styles.itemLabel}>Экскаватор:</Text>
-							<Text style={styles.itemValue2}>{item.loader2?.Name ?? "-"}</Text>
-						</View>
+				<View style={styles.itemRow}>
+					<Text style={[styles.itemSubTitle, { marginRight: 5 }]}>{item.SavedDate}</Text>
+					<Text style={styles.itemSubTitle}>{item.loader2?.Name ?? "-"}</Text>
+					<Text style={styles.dividerVertical}>|</Text>
+					<Text style={styles.itemSubTitle}>{item.material2?.Name ?? "-"}</Text>
+				</View>
+				<View style={{ flexDirection: "row", alignItems: "center" }}>
+					{/* <View style={styles.glowingCircle} /> */}
+					<Icon name="circle-slice-8" type="material-community" size={22} color={MAIN_COLOR} />
+					<View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-start", marginLeft: 5 }}>
 						<View style={styles.eachRowValueContainer}>
 							<Text style={styles.itemLabel}>Ачилтын блок:</Text>
 							<Text style={styles.itemValue2}>{`${item.source2?.Name}${item.shot2 ? item.shot2?.ShotName : ""}`}</Text>
-						</View>
-						<View style={styles.eachRowValueContainer}>
-							<Text style={styles.itemLabel}>Материал:</Text>
-							<Text style={styles.itemValue2}>{item.material2?.Name ?? "-"}</Text>
 						</View>
 						<View style={styles.eachRowValueContainer}>
 							<Text style={styles.itemLabel}>Хүргэсэн байршил:</Text>
@@ -211,11 +210,13 @@ const styles = StyleSheet.create({
 	},
 	itemRow: {
 		flexDirection: "row",
-		alignItems: "center"
+		alignItems: "center",
+		marginBottom: 5
 	},
 	dividerVertical: {
 		marginHorizontal: 5,
-		fontSize: 16
+		fontSize: 16,
+		color: "#b7b8be"
 	},
 	itemDate: {
 		fontWeight: "600",
@@ -229,6 +230,14 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		width: "100%",
 		marginTop: 2
+	},
+	itemTitle: {
+		fontSize: 16,
+		color: "#191a2b",
+		fontWeight: 600
+	},
+	itemSubTitle: {
+		color: "#b7b8be"
 	},
 	itemLabel: {
 		fontSize: 16,
@@ -259,5 +268,16 @@ const styles = StyleSheet.create({
 		paddingRight: 5,
 		alignSelf: "flex-start",
 		height: MAIN_BUTTON_HEIGHT
+	},
+	glowingCircle: {
+		width: 18, // Дотоод дугуйны хэмжээ
+		height: 18,
+		borderRadius: 25, // Дугуй болгох
+		backgroundColor: "orange", // Дотор өнгө
+		shadowColor: "orange", // Гэрэл цацрах өнгө
+		shadowOffset: { width: 0, height: 0 }, // Сүүдрийн байрлал
+		shadowOpacity: 0.7, // Гэрлийн тод байдал
+		shadowRadius: 10, // Гэрлийн хэмжээ
+		elevation: 10 // Android-д сүүдэр харуулах
 	}
 });

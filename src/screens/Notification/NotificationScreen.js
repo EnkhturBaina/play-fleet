@@ -14,14 +14,7 @@ import Constants from "expo-constants";
 import HeaderUser from "../../components/HeaderUser";
 import { Icon } from "@rneui/base";
 import axios from "axios";
-import {
-	MAIN_COLOR,
-	MAIN_COLOR_BLUE,
-	MAIN_COLOR_GRAY,
-	MAIN_COLOR_GREEN,
-	SERVER_URL,
-	TEXT_COLOR_GRAY
-} from "../../constant";
+import { MAIN_COLOR, MAIN_COLOR_GRAY, SERVER_URL } from "../../constant";
 import MainContext from "../../contexts/MainContext";
 import Empty from "../../components/Empty";
 import "dayjs/locale/es";
@@ -100,7 +93,7 @@ const NotificationScreen = (props) => {
 					}}
 				>
 					<View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "space-between" }}>
-						<View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+						<View style={{ flexDirection: "row", alignItems: "center", marginBottom: 7 }}>
 							{item.state?.Code == "unread" ? (
 								<Icon name="circle" type="font-awesome" size={10} color={MAIN_COLOR} />
 							) : null}
@@ -115,7 +108,7 @@ const NotificationScreen = (props) => {
 								{item?.type?.Name}
 							</Text>
 						</View>
-						<Text style={{ fontWeight: "600", color: "#191a2b", marginBottom: 5 }} numberOfLines={1}>
+						<Text style={{ fontWeight: "600", color: "#191a2b", marginBottom: 4 }} numberOfLines={1}>
 							{item?.notification?.Title}
 						</Text>
 						<Text style={{ fontWeight: "600", marginBottom: 5 }} numberOfLines={1}>
@@ -182,10 +175,9 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: MAIN_COLOR_GRAY,
 		marginHorizontal: 20,
-		paddingVertical: 15,
+		paddingVertical: 10,
 		flexDirection: "row",
 		alignItems: "center",
-		justifyContent: "space-between",
-		height: 100
+		justifyContent: "space-between"
 	}
 });

@@ -1,9 +1,10 @@
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext } from "react";
 import { Icon } from "@rneui/base";
 import { MAIN_COLOR_GRAY } from "../../constant";
 import { useNavigation } from "@react-navigation/native";
 import MainContext from "../../contexts/MainContext";
+import { Image } from "expo-image";
 
 const HomeScreenSideBar = (props) => {
 	const state = useContext(MainContext);
@@ -102,7 +103,7 @@ const HomeScreenSideBar = (props) => {
 			{MENU_LIST.map((el, index) => {
 				return (
 					<TouchableOpacity key={index} style={styles.eachMenuContainer} onPress={el.action}>
-						<Image source={el.img} style={{ width: 40, height: 40 }} />
+						<Image source={el.img} style={{ width: 38, height: 38 }} contentFit="contain" />
 						<Text style={{ flex: 1, marginHorizontal: 10, fontWeight: "600" }}>{el.label}</Text>
 						{el.isMore ? <Icon name="chevron-right" type="feather" size={25} color={MAIN_COLOR_GRAY} /> : null}
 					</TouchableOpacity>
