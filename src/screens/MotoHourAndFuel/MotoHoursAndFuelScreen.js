@@ -102,12 +102,12 @@ const MotoHoursAndFuelScreen = (props) => {
 					marginBottom: 10
 				}}
 			>
-				<View style={styles.itemRow}>
+				<View style={[styles.itemRow, { marginBottom: 5 }]}>
 					<Text style={styles.itemTitle}>Авсан түлш</Text>
 					<Text style={styles.dividerVertical}>|</Text>
 					<Text style={styles.itemTitle}>{item.Fuel} литр</Text>
 				</View>
-				<View style={styles.itemRow}>
+				<View style={[styles.itemRow, { marginBottom: 5 }]}>
 					<Text style={[styles.itemSubTitle, { marginRight: 5 }]}>{item.SavedDate}</Text>
 					<Text style={styles.itemSubTitle}>Ээлж</Text>
 					<Text style={styles.dividerVertical}>|</Text>
@@ -266,7 +266,8 @@ const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	itemLabel: {
-		width: "70%"
+		width: "70%",
+		color: "#575b62"
 	},
 	dividerVertical: {
 		marginHorizontal: 5,
@@ -283,6 +284,7 @@ const styles = StyleSheet.create({
 	},
 	itemValue2: {
 		flexShrink: 1,
-		marginLeft: 10
+		marginLeft: 10,
+		color: "#575b62"
 	}
 });

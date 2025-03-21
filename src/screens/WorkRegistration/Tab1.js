@@ -189,7 +189,7 @@ const Tab1 = (props) => {
 						refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={MAIN_COLOR} />}
 						ListHeaderComponent={
 							<View style={{ paddingVertical: 10, paddingHorizontal: 5 }}>
-								<Text style={{ fontWeight: "600", color: "#b7b8be" }}>Рейсийн түүх /{cycleData?.length ?? 0}/</Text>
+								<Text style={{ fontWeight: "400", color: "#b7b8be" }}>Рейсийн түүх /{cycleData?.length ?? 0}/</Text>
 							</View>
 						}
 					/>
@@ -240,12 +240,14 @@ const styles = StyleSheet.create({
 		color: "#b7b8be"
 	},
 	itemLabel: {
-		flexShrink: 1
+		flexShrink: 1,
+		color: "#575b62"
 		// fontWeight: 600
 	},
 	itemValue2: {
 		flexShrink: 1,
-		marginLeft: 10
+		marginLeft: 10,
+		color: "#575b62"
 	},
 	headerActions: {
 		flexDirection: "row",
