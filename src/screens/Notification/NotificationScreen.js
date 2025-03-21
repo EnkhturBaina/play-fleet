@@ -85,37 +85,29 @@ const NotificationScreen = (props) => {
 					})
 				}
 			>
-				<View
-					style={{
-						flex: 1,
-						flexDirection: "column",
-						width: "100%"
-					}}
-				>
-					<View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "space-between" }}>
-						<View style={{ flexDirection: "row", alignItems: "center", marginBottom: 7 }}>
-							{item.state?.Code == "unread" ? (
-								<Icon name="circle" type="font-awesome" size={10} color={MAIN_COLOR} />
-							) : null}
-							<Text
-								style={{
-									flex: 1,
-									textTransform: "uppercase",
-									marginLeft: item.state?.Code == "unread" ? 5 : 0,
-									color: "#6b6d75"
-								}}
-							>
-								{item?.type?.Name}
-							</Text>
-						</View>
-						<Text style={{ fontWeight: "600", color: "#191a2b", marginBottom: 4 }} numberOfLines={1}>
-							{item?.notification?.Title}
+				<View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "space-between" }}>
+					<View style={{ flexDirection: "row", alignItems: "center", marginBottom: 7 }}>
+						{item.state?.Code == "unread" ? (
+							<Icon name="circle" type="font-awesome" size={10} color={MAIN_COLOR} />
+						) : null}
+						<Text
+							style={{
+								flex: 1,
+								textTransform: "uppercase",
+								marginLeft: item.state?.Code == "unread" ? 5 : 0,
+								color: "#6b6d75"
+							}}
+						>
+							{item?.type?.Name}
 						</Text>
-						<Text style={{ fontWeight: "600", marginBottom: 5 }} numberOfLines={1}>
-							<Text style={{ textTransform: "capitalize", color: "#575b62" }}>{item?.notification?.Message}</Text>
-						</Text>
-						<Text style={{ color: "#b7b8be" }}>{dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss") ?? "-"}</Text>
 					</View>
+					<Text style={{ fontWeight: "600", color: "#191a2b", marginBottom: 4 }} numberOfLines={1}>
+						{item?.notification?.Title}
+					</Text>
+					<Text style={{ fontWeight: "600", marginBottom: 5 }} numberOfLines={1}>
+						<Text style={{ textTransform: "capitalize", color: "#575b62" }}>{item?.notification?.Message}</Text>
+					</Text>
+					<Text style={{ color: "#b7b8be" }}>{dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss") ?? "-"}</Text>
 				</View>
 			</TouchableOpacity>
 		);
@@ -172,6 +164,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10
 	},
 	itemContainer: {
+		flex: 1,
+		flexDirection: "column",
 		borderBottomWidth: 1,
 		borderBottomColor: MAIN_COLOR_GRAY,
 		marginHorizontal: 20,

@@ -113,7 +113,7 @@ const Tab1 = (props) => {
 				</View>
 				<View style={{ flexDirection: "row", alignItems: "center" }}>
 					{/* <View style={styles.glowingCircle} /> */}
-					<Icon name="circle-slice-8" type="material-community" size={22} color={MAIN_COLOR} />
+					<Icon name="circle-slice-8" type="material-community" size={20} color={MAIN_COLOR} />
 					<View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-start", marginLeft: 5 }}>
 						<View style={styles.eachRowValueContainer}>
 							<Text style={styles.itemLabel}>Ачилтын блок:</Text>
@@ -189,7 +189,7 @@ const Tab1 = (props) => {
 						refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={MAIN_COLOR} />}
 						ListHeaderComponent={
 							<View style={{ paddingVertical: 10, paddingHorizontal: 5 }}>
-								<Text style={{ fontWeight: "600" }}>Рейсийн түүх /{cycleData?.length ?? 0}/</Text>
+								<Text style={{ fontWeight: "600", color: "#b7b8be" }}>Рейсийн түүх /{cycleData?.length ?? 0}/</Text>
 							</View>
 						}
 					/>
@@ -240,12 +240,10 @@ const styles = StyleSheet.create({
 		color: "#b7b8be"
 	},
 	itemLabel: {
-		fontSize: 16,
 		flexShrink: 1
 		// fontWeight: 600
 	},
 	itemValue2: {
-		fontSize: 16,
 		flexShrink: 1,
 		marginLeft: 10
 	},

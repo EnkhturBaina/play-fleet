@@ -97,31 +97,37 @@ const MotoHoursAndFuelScreen = (props) => {
 				style={{
 					borderWidth: 1,
 					borderRadius: MAIN_BORDER_RADIUS,
-					borderColor: TEXT_COLOR_GRAY,
+					borderColor: "#b7b8be",
 					padding: 10,
 					marginBottom: 10
 				}}
 			>
-				<Text style={styles.itemDate}>{item.SavedDate}</Text>
 				<View style={styles.itemRow}>
-					<Text style={styles.itemLabel}>Ээлж</Text>
+					<Text style={styles.itemTitle}>Авсан түлш</Text>
 					<Text style={styles.dividerVertical}>|</Text>
-					<Text style={styles.itemValue}>{item.shift?.Name}</Text>
+					<Text style={styles.itemTitle}>{item.Fuel} литр</Text>
 				</View>
 				<View style={styles.itemRow}>
-					<Text style={styles.itemLabel}>Хуримтлагдсан мото цаг</Text>
+					<Text style={[styles.itemSubTitle, { marginRight: 5 }]}>{item.SavedDate}</Text>
+					<Text style={styles.itemSubTitle}>Ээлж</Text>
 					<Text style={styles.dividerVertical}>|</Text>
-					<Text style={styles.itemValue}>{item.StartSMU} цаг</Text>
+					<Text style={styles.itemSubTitle}>{item.shift?.Name}</Text>
 				</View>
-				<View style={styles.itemRow}>
-					<Text style={styles.itemLabel}>Тухайн ээлжийн мото цаг</Text>
-					<Text style={styles.dividerVertical}>|</Text>
-					<Text style={styles.itemValue}>{item.FinishSMU} цаг</Text>
-				</View>
-				<View style={styles.itemRow}>
-					<Text style={styles.itemLabel}>Авсан түлш</Text>
-					<Text style={styles.dividerVertical}>|</Text>
-					<Text style={styles.itemValue}>{item.Fuel} литр</Text>
+				<View style={{ flexDirection: "row", alignItems: "center" }}>
+					{/* <View style={styles.glowingCircle} /> */}
+					<Icon name="circle-slice-8" type="material-community" size={20} color={MAIN_COLOR} />
+					<View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-start", marginLeft: 5 }}>
+						<View style={styles.itemRow}>
+							<Text style={styles.itemLabel}>Хуримтлагдсан мото цаг</Text>
+							<Text style={styles.dividerVertical}>|</Text>
+							<Text style={styles.itemValue2}>{item.StartSMU} цаг</Text>
+						</View>
+						<View style={styles.itemRow}>
+							<Text style={styles.itemLabel}>Тухайн ээлжийн мото цаг</Text>
+							<Text style={styles.dividerVertical}>|</Text>
+							<Text style={styles.itemValue2}>{item.FinishSMU} цаг</Text>
+						</View>
+					</View>
 				</View>
 			</View>
 		);
@@ -206,7 +212,9 @@ const MotoHoursAndFuelScreen = (props) => {
 						refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={MAIN_COLOR} />}
 						ListHeaderComponent={
 							<View style={{ paddingVertical: 10, paddingHorizontal: 5 }}>
-								<Text style={{ fontWeight: "600" }}>Мото цагийн болон түлшний түүх /{smuData?.length ?? 0}/</Text>
+								<Text style={{ fontWeight: "400", color: "#b7b8be", fontSize: 16 }}>
+									Мото цагийн болон түлшний түүх /{smuData?.length ?? 0}/
+								</Text>
 							</View>
 						}
 					/>
@@ -258,19 +266,23 @@ const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	itemLabel: {
-		width: "70%",
-		fontSize: 16
+		width: "70%"
 	},
 	dividerVertical: {
-		fontWeight: "600",
 		marginHorizontal: 5,
-		fontSize: 16
+		fontSize: 16,
+		color: "#b7b8be"
 	},
-	itemDate: {
-		fontWeight: "600",
-		fontSize: 16
+	itemTitle: {
+		fontSize: 16,
+		color: "#191a2b",
+		fontWeight: 600
 	},
-	itemValue: {
-		fontSize: 16
+	itemSubTitle: {
+		color: "#b7b8be"
+	},
+	itemValue2: {
+		flexShrink: 1,
+		marginLeft: 10
 	}
 });
