@@ -196,7 +196,7 @@ export const sendLocation = async (
 			// return responseOff;
 		} catch (error) {
 			console.error("Error inserting send state data:", error);
-			return error;
+			return "Error inserting send state data:", error;
 		}
 	}
 };

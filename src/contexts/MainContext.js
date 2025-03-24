@@ -184,6 +184,7 @@ export const MainStore = (props) => {
 			]);
 
 			setSendLocationStatus((prevStatus) => [...prevStatus, `2 => running checkLocationWithSpeed: [${eventTime}]`]);
+			setSendLocationStatus((prevStatus) => [...prevStatus, `2 => isConnected: [${isConnected}]`]);
 
 			await addItemToStorage(eventTime);
 
