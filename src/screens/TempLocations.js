@@ -76,7 +76,7 @@ const TempLocations = () => {
 				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Offline locations</Text>
 			</TouchableOpacity>
 			<ScrollView style={{ flex: 1, height: 200 }}>
-				<Text>{isConnected}</Text>
+				<Text>isConnected: {isConnected}</Text>
 				{state.sendLocationStatus && (
 					<View style={{ flex: 1 }}>
 						<Text style={styles.text}>Location Status:</Text>
