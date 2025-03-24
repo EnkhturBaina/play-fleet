@@ -172,9 +172,9 @@ export const sendLocation = async (
 					}
 				}
 			);
-			// console.log("response", JSON.stringify(response));
+			// console.log("response---------->", JSON.stringify(response.data?.Msg));
 
-			// return response.data;
+			return response.data?.Msg;
 		} catch (error) {
 			console.log("Error in sendLocation service:", error);
 			throw error; // Алдаа гарвал component-д дамжуулна
@@ -190,11 +190,13 @@ export const sendLocation = async (
 				EventTime
 			]);
 			if (responseOff?.changes > 0) {
-				console.log("send offline location done");
+				console.log("Send offline location done");
+				return "Send offline location done";
 			}
 			// return responseOff;
 		} catch (error) {
 			console.error("Error inserting send state data:", error);
+			return error;
 		}
 	}
 };

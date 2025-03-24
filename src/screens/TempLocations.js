@@ -1,4 +1,4 @@
-import { FlatList, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import MainContext from "../contexts/MainContext";
@@ -11,9 +11,7 @@ const TempLocations = () => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 
-	useEffect(() => {
-		console.log("locations:", state.tempLocations);
-	}, []);
+	useEffect(() => {}, []);
 
 	const renderItem = ({ item }) => {
 		return (
@@ -75,6 +73,22 @@ const TempLocations = () => {
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
 				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Offline locations</Text>
 			</TouchableOpacity>
+			<ScrollView style={{ flex: 1, height: 200 }}>
+				{state.sendLocationStatus && (
+					<View style={{ flex: 1 }}>
+						<Text style={styles.text}>Location Status:</Text>
+						<View style={{ flexDirection: "column", justifyContent: "flex-start" }}>
+							{state.sendLocationStatus?.map((el, index) => {
+								return (
+									<Text key={index} style={{ fontSize: 12 }}>
+										{el}
+									</Text>
+								);
+							})}
+						</View>
+					</View>
+				)}
+			</ScrollView>
 			{state.tempLocations ? (
 				<FlatList
 					contentContainerStyle={{

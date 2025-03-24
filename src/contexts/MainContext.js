@@ -73,6 +73,7 @@ export const MainStore = (props) => {
 	const [storedItems, setStoredItems] = useState([]);
 	const [trackCount, setTrackCount] = useState(0);
 	const [tempLocations, setTempLocations] = useState([]);
+	const [sendLocationStatus, setSendLocationStatus] = useState([]);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -182,9 +183,11 @@ export const MainStore = (props) => {
 				AsyncStorage.getItem("L_current_speed")
 			]);
 
+			setSendLocationStatus((prevStatus) => [...prevStatus, `2 => running checkLocationWithSpeed: [${eventTime}]`]);
+
 			await addItemToStorage(eventTime);
 
-			await sendLocation(
+			const response = await sendLocation(
 				localToken,
 				selectedEquipment,
 				parseFloat(currentLocation?.coords?.latitude) || 0,
@@ -194,7 +197,13 @@ export const MainStore = (props) => {
 				eventTime,
 				isConnected
 			);
+			// console.log("response", response);
+
+			if (response) {
+				setSendLocationStatus((prevStatus) => [...prevStatus, `3 => running sendLocation response ${response}`]);
+			}
 		} catch (error) {
+			setSendLocationStatus((prevStatus) => [...prevStatus, `2 => ${error}`]);
 			console.error("Error getting or sending location:", error);
 		}
 	};
@@ -591,7 +600,9 @@ export const MainStore = (props) => {
 				trackCount,
 				setTrackCount,
 				tempLocations,
-				setTempLocations
+				setTempLocations,
+				sendLocationStatus,
+				setSendLocationStatus
 			}}
 		>
 			{props.children}
