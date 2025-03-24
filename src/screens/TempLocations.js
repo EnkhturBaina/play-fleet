@@ -6,10 +6,12 @@ import Constants from "expo-constants";
 import { Icon } from "@rneui/base";
 import { MAIN_BORDER_RADIUS } from "../constant";
 import Empty from "../components/Empty";
+import { useNetworkStatus } from "../contexts/NetworkContext";
 
 const TempLocations = () => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
+	const { isConnected } = useNetworkStatus();
 
 	useEffect(() => {}, []);
 
@@ -74,6 +76,7 @@ const TempLocations = () => {
 				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Offline locations</Text>
 			</TouchableOpacity>
 			<ScrollView style={{ flex: 1, height: 200 }}>
+				<Text>{isConnected}</Text>
 				{state.sendLocationStatus && (
 					<View style={{ flex: 1 }}>
 						<Text style={styles.text}>Location Status:</Text>
