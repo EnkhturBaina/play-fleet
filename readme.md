@@ -18,4 +18,4 @@ npm install expo@latest
 
 npx expo-doctor
 
-## npx expo install react-native-modal-datetime-picker @react-native-community/datetimepicker
+## https://chatgpt.com/share/67e11d71-7e10-8013-ac91-271d4c463402
