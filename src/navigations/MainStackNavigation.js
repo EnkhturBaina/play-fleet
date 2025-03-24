@@ -77,7 +77,7 @@ const MainStackNavigator = (props) => {
 				currentSpeed ?? 0,
 				dayjs().format("YYYY-MM-DD"),
 				eventTime,
-				isConnected
+				isConnected ? true : false
 			);
 			// console.log("response", response);
 

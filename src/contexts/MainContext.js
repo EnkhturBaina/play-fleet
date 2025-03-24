@@ -12,7 +12,6 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import * as Updates from "expo-updates";
 import { getDistanceFromLatLonInMeters } from "../helper/functions";
-import { sendLocation } from "../helper/apiService";
 
 const MainContext = React.createContext();
 const width = Dimensions.get("screen").width;
