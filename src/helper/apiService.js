@@ -5,6 +5,35 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 
+// 📌 Нэгтгэсэн SQL хадгалах функц
+const insertToDatabase = async (table, data) => {
+	try {
+		let response;
+		switch (table) {
+			case "send_state":
+				response = await insertSendStateData(data);
+				break;
+			case "moto_hour":
+				response = await insertMotoHourData(data);
+				break;
+			case "send_location":
+				response = await insertSendLocationData(data);
+				break;
+			default:
+				console.error(`Unknown table: ${table}`);
+				return;
+		}
+
+		if (response?.changes > 0) {
+			console.log(`✅ Offline ${table} data inserted successfully.`);
+		}
+		return response;
+	} catch (error) {
+		console.error(`❌ Error inserting ${table} data:`, error);
+	}
+};
+
+// 📌 Төлөв илгээх функц
 export const sendSelectedState = async (
 	token,
 	projectData,
@@ -15,75 +44,78 @@ export const sendSelectedState = async (
 	location,
 	isConnected
 ) => {
-	var state_id,
-		sub_state_id = null;
-	if (selectedState?.PMSParentId == null) {
-		state_id = selectedState?.id;
-		sub_state_id = null;
-	} else {
-		state_id = selectedState?.PMSParentId;
-		sub_state_id = selectedState?.id;
+	const state_id = selectedState?.PMSParentId ?? selectedState?.id;
+	const sub_state_id = selectedState?.PMSParentId ? selectedState?.id : null;
+
+	// ✅ Local storage-д хадгалах
+	await AsyncStorage.setItem("L_last_state_time", dayjs().format("YYYY-DD-MM HH:mm:ss"));
+	await AsyncStorage.setItem("L_last_state", JSON.stringify(selectedState));
+
+	// ✅ Хэрэв оффлайн бол локал руу хадгална
+	if (!isConnected) {
+		return insertToDatabase("send_state", [
+			projectData.id,
+			selectedEquipment.id,
+			state_id,
+			sub_state_id,
+			employeeData.id,
+			headerSelections?.PMSLoaderId,
+			headerSelections?.PMSSrcId,
+			headerSelections?.PMSBlastShotId,
+			headerSelections?.PMSDstId,
+			headerSelections?.PMSMaterialId,
+			location?.coords?.latitude || 0,
+			location?.coords?.longitude || 0
+		]);
 	}
 
-	await AsyncStorage.setItem("L_last_state_time", dayjs().format("YYYY-DD-MM HH:mm:ss")).then(async () => {
-		await AsyncStorage.setItem("L_last_state", JSON.stringify(selectedState)).then(async () => {
-			if (isConnected) {
-				try {
-					const response = await axios.post(
-						`${SERVER_URL}/mobile/progress/send`,
-						{
-							PMSProjectId: projectData?.id,
-							PMSEquipmentId: selectedEquipment?.id,
-							PMSProgressStateId: state_id,
-							PMSProgressSubStateId: sub_state_id,
-							PMSEmployeeId: employeeData?.id,
-							PMSLoaderId: headerSelections?.PMSLoaderId,
-							PMSLocationId: headerSelections?.PMSSrcId,
-							PMSBlastShotId: headerSelections?.PMSBlastShotId,
-							PMSDestination: headerSelections?.PMSDstId,
-							PMSMaterialUnitId: headerSelections?.PMSMaterialId,
-							Latitude: location?.coords?.latitude ? parseFloat(location.coords.latitude) : 0,
-							Longitude: location?.coords?.longitude ? parseFloat(location.coords.longitude) : 0
-						},
-						{
-							headers: {
-								"Content-Type": "application/json",
-								Authorization: `Bearer ${token}`
-							}
-						}
-					);
-					// console.log("response", JSON.stringify(response));
-
-					return response.data;
-				} catch (error) {
-					console.log("Error in send_state_data service:", error);
-					throw error; // Алдаа гарвал component-д дамжуулна
-				}
-			} else {
-				try {
-					const responseOff = await insertSendStateData([
-						projectData?.id,
-						selectedEquipment?.id,
-						state_id,
-						sub_state_id,
-						employeeData?.id,
-						headerSelections?.PMSLoaderId,
-						headerSelections?.PMSSrcId,
-						headerSelections?.PMSBlastShotId,
-						headerSelections?.PMSDstId,
-						headerSelections?.PMSMaterialId,
-						location?.coords?.latitude ? parseFloat(location.coords.latitude) : 0,
-						location?.coords?.longitude ? parseFloat(location.coords.longitude) : 0
-					]);
-					return responseOff;
-				} catch (error) {
-					console.error("Error inserting send_state_data:", error);
+	// ✅ Онлайн үед сервер лүү илгээх
+	try {
+		const response = await axios.post(
+			`${SERVER_URL}/mobile/progress/send`,
+			{
+				PMSProjectId: projectData?.id,
+				PMSEquipmentId: selectedEquipment?.id,
+				PMSProgressStateId: state_id,
+				PMSProgressSubStateId: sub_state_id,
+				PMSEmployeeId: employeeData?.id,
+				PMSLoaderId: headerSelections?.PMSLoaderId,
+				PMSLocationId: headerSelections?.PMSSrcId,
+				PMSBlastShotId: headerSelections?.PMSBlastShotId,
+				PMSDestination: headerSelections?.PMSDstId,
+				PMSMaterialUnitId: headerSelections?.PMSMaterialId,
+				Latitude: location?.coords?.latitude || 0,
+				Longitude: location?.coords?.longitude || 0
+			},
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
 				}
 			}
-		});
-	});
+		);
+		return response.data;
+	} catch (error) {
+		console.log("❌ Error in send_state_data service:", error);
+		const response = insertToDatabase("send_state", [
+			projectData.id,
+			selectedEquipment.id,
+			state_id,
+			sub_state_id,
+			employeeData.id,
+			headerSelections?.PMSLoaderId,
+			headerSelections?.PMSSrcId,
+			headerSelections?.PMSBlastShotId,
+			headerSelections?.PMSDstId,
+			headerSelections?.PMSMaterialId,
+			location?.coords?.latitude || 0,
+			location?.coords?.longitude || 0
+		]);
+		return response;
+	}
 };
 
+// 📌 Moto Hour илгээх функц
 export const sendMotoHour = async (
 	token,
 	selectedEquipment,
@@ -96,53 +128,57 @@ export const sendMotoHour = async (
 	isConnected,
 	LastLogged
 ) => {
-	if (isConnected) {
-		try {
-			const response = await axios.post(
-				`${SERVER_URL}/mobile/truck/fuel/save`,
-				{
-					PMSEquipmentId: selectedEquipment?.id,
-					PMSShiftId: shiftData?.id,
-					SavedDate,
-					StartSMU,
-					FinishSMU,
-					Fuel,
-					ProgressSMU,
-					LastLogged
-				},
-				{
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`
-					}
-				}
-			);
-			// console.log("response", JSON.stringify(response));
+	if (!isConnected) {
+		return insertToDatabase("moto_hour", [
+			selectedEquipment.id,
+			shiftData.id,
+			SavedDate,
+			StartSMU,
+			FinishSMU,
+			Fuel,
+			ProgressSMU,
+			LastLogged
+		]);
+	}
 
-			return response.data;
-		} catch (error) {
-			console.log("Error in send_Moto_Hour service:", error);
-			throw error; // Алдаа гарвал component-д дамжуулна
-		}
-	} else {
-		try {
-			const responseOff = await insertMotoHourData([
-				selectedEquipment?.id,
-				shiftData?.id,
+	try {
+		const response = await axios.post(
+			`${SERVER_URL}/mobile/truck/fuel/save`,
+			{
+				PMSEquipmentId: selectedEquipment?.id,
+				PMSShiftId: shiftData?.id,
 				SavedDate,
 				StartSMU,
 				FinishSMU,
 				Fuel,
 				ProgressSMU,
 				LastLogged
-			]);
-			return responseOff;
-		} catch (error) {
-			console.error("Error inserting send_Moto_Hour:", error);
-		}
+			},
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				}
+			}
+		);
+		return response.data;
+	} catch (error) {
+		console.log("❌ Error in send_Moto_Hour service:", error);
+		const response = insertToDatabase("moto_hour", [
+			selectedEquipment.id,
+			shiftData.id,
+			SavedDate,
+			StartSMU,
+			FinishSMU,
+			Fuel,
+			ProgressSMU,
+			LastLogged
+		]);
+		return response;
 	}
 };
 
+// 📌 Байршил илгээх функц
 export const sendLocation = async (
 	token,
 	selectedEquipment,
@@ -153,55 +189,46 @@ export const sendLocation = async (
 	EventTime,
 	isConnected
 ) => {
-	if (isConnected) {
-		try {
-			const response = await axios.post(
-				`${SERVER_URL}/mobile/progress/track/save`,
-				{
-					PMSEquipmentId: selectedEquipment?.id,
-					Latitude,
-					Longitude,
-					Speed,
-					CurrentDate,
-					EventTime
-				},
-				{
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`
-					}
-				}
-			);
-			// console.log("response---------->", JSON.stringify(response.data?.Msg));
-
-			return response.data?.Msg;
-		} catch (error) {
-			InsertSQLSendLocation(selectedEquipment?.id, Latitude, Longitude, Speed, CurrentDate, EventTime);
-			console.log("Error in sendLocation service:", error);
-			throw error; // Алдаа гарвал component-д дамжуулна
-		}
-	} else {
-		InsertSQLSendLocation(selectedEquipment?.id, Latitude, Longitude, Speed, CurrentDate, EventTime);
-	}
-};
-
-const InsertSQLSendLocation = async (selectedEquipmentId, Latitude, Longitude, Speed, CurrentDate, EventTime) => {
-	try {
-		const responseOff = await insertSendLocationData([
-			selectedEquipmentId,
+	if (!isConnected) {
+		return insertToDatabase("send_location", [
+			selectedEquipment.id,
 			Latitude,
 			Longitude,
 			Speed,
 			CurrentDate,
 			EventTime
 		]);
-		if (responseOff?.changes > 0) {
-			console.log("Send offline location done");
-			return "Send offline location done";
-		}
-		// return responseOff;
+	}
+
+	try {
+		const response = await axios.post(
+			`${SERVER_URL}/mobile/progress/track/save`,
+			{
+				PMSEquipmentId: selectedEquipment?.id,
+				Latitude,
+				Longitude,
+				Speed,
+				CurrentDate,
+				EventTime
+			},
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`
+				}
+			}
+		);
+		return response.data?.Msg;
 	} catch (error) {
-		console.error("Error inserting send state data:", error);
-		return "Error inserting send state data:", error;
+		console.log("❌ Error in sendLocation service:", error);
+		const response = insertToDatabase("send_location", [
+			selectedEquipment.id,
+			Latitude,
+			Longitude,
+			Speed,
+			CurrentDate,
+			EventTime
+		]);
+		return response;
 	}
 };
