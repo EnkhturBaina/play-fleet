@@ -176,27 +176,32 @@ export const sendLocation = async (
 
 			return response.data?.Msg;
 		} catch (error) {
+			InsertSQLSendLocation(selectedEquipment?.id, Latitude, Longitude, Speed, CurrentDate, EventTime);
 			console.log("Error in sendLocation service:", error);
 			throw error; // Алдаа гарвал component-д дамжуулна
 		}
 	} else {
-		try {
-			const responseOff = await insertSendLocationData([
-				selectedEquipment?.id,
-				Latitude,
-				Longitude,
-				Speed,
-				CurrentDate,
-				EventTime
-			]);
-			if (responseOff?.changes > 0) {
-				console.log("Send offline location done");
-				return "Send offline location done";
-			}
-			// return responseOff;
-		} catch (error) {
-			console.error("Error inserting send state data:", error);
-			return "Error inserting send state data:", error;
+		InsertSQLSendLocation(selectedEquipment?.id, Latitude, Longitude, Speed, CurrentDate, EventTime);
+	}
+};
+
+const InsertSQLSendLocation = async (selectedEquipmentId, Latitude, Longitude, Speed, CurrentDate, EventTime) => {
+	try {
+		const responseOff = await insertSendLocationData([
+			selectedEquipmentId,
+			Latitude,
+			Longitude,
+			Speed,
+			CurrentDate,
+			EventTime
+		]);
+		if (responseOff?.changes > 0) {
+			console.log("Send offline location done");
+			return "Send offline location done";
 		}
+		// return responseOff;
+	} catch (error) {
+		console.error("Error inserting send state data:", error);
+		return "Error inserting send state data:", error;
 	}
 };
