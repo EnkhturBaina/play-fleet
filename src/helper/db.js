@@ -427,7 +427,7 @@ export const insertSendStateData = async (data) => {
 };
 
 export const fetchSendStateData = async () => {
-	console.log("RUN fetch Send State Data.");
+	// console.log("RUN fetch Send State Data.");
 
 	try {
 		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
@@ -508,7 +508,7 @@ export const insertMotoHourData = async (data) => {
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
 			data
 		);
-		console.log("resultMotoHour", resultMotoHour);
+		// console.log("resultMotoHour", resultMotoHour);
 
 		if (resultMotoHour.rowsAffected === 0) {
 			throw new Error("moto_hour өгөгдлийг оруулж чадсангүй.");
@@ -518,7 +518,7 @@ export const insertMotoHourData = async (data) => {
 };
 
 export const fetchMotoHourData = async () => {
-	console.log("RUN fetch MotoHour Data.");
+	// console.log("RUN fetch MotoHour Data.");
 
 	try {
 		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
@@ -602,14 +602,28 @@ export const insertSendLocationData = async (data) => {
 	}
 };
 
+export const fetchSendLocationDataTemp = async () => {
+	// console.log("RUN fetch SendLocation Data.");
+
+	try {
+		// Parallel database queries using Promise.all
+		const data = await db.getAllAsync("SELECT * FROM send_location");
+		console.log("data TEMP LOCATIONS==========>", data);
+		// console.log("token ==========>", token);
+		return data; // Return the combined data
+	} catch (error) {
+		console.error("Error fetching SendLocation data Temp", error);
+		throw new Error("Failed to fetch SendLocation data Temp. Please try again later.");
+	}
+};
 export const fetchSendLocationData = async () => {
-	console.log("RUN fetch SendLocation Data.");
+	// console.log("RUN fetch SendLocation Data.");
 
 	try {
 		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
 			// Parallel database queries using Promise.all
 			const data = await db.getAllAsync("SELECT * FROM send_location");
-			// console.log("data ==========>", data);
+			console.log("data ==========>", data);
 			// console.log("token ==========>", token);
 
 			if (data) {
@@ -664,7 +678,7 @@ const deleteSendLocationRowById = async (id) => {
 };
 
 export const fetchEmployeeData = async () => {
-	console.log("RUN fetch Employee Data.");
+	// console.log("RUN fetch Employee Data.");
 
 	try {
 		const data = await db.getAllAsync("SELECT * FROM employee");
@@ -676,7 +690,7 @@ export const fetchEmployeeData = async () => {
 };
 
 export const clearEmployeeTable = async () => {
-	console.log("RUN CLEAR Employee Table");
+	// console.log("RUN CLEAR Employee Table");
 	try {
 		await db.runAsync("DELETE FROM employee");
 	} catch (error) {

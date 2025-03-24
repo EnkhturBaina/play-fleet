@@ -3,7 +3,7 @@
 		"name": "Play Fleet",
 		"slug": "PlayFleet",
 		"assetBundlePatterns": ["assets/**/*"],
-		"version": "1.0.29",
+		"version": "1.0.30",
 		"orientation": "default",
 		"icon": "./assets/icon.png",
 		"userInterfaceStyle": "automatic",
@@ -16,7 +16,7 @@
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "com.gamemine.fleet",
-			"buildNumber": "1.0.29",
+			"buildNumber": "1.0.30",
 			"infoPlist": {
 				"NSLocationWhenInUseUsageDescription": "Play Fleet систем нь таны байршлын мэдээллийг төхөөрөмжийн байршил тодорхойлох үйлдэлд ашиглана.",
 				"NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
@@ -29,7 +29,7 @@
 		"android": {
 			"icon": "./assets/icon.png",
 			"package": "com.gamemine.fleet",
-			"versionCode": 29,
+			"versionCode": 30,
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#ffffff"

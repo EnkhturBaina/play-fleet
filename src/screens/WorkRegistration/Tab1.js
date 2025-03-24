@@ -93,9 +93,9 @@ const Tab1 = (props) => {
 		return (
 			<View
 				style={{
-					borderWidth: 1,
+					borderWidth: 0.5,
 					borderRadius: MAIN_BORDER_RADIUS,
-					borderColor: "#b7b8be",
+					borderColor: "#ebebeb",
 					padding: 10,
 					marginBottom: 10
 				}}
@@ -113,7 +113,7 @@ const Tab1 = (props) => {
 				</View>
 				<View style={{ flexDirection: "row", alignItems: "center" }}>
 					{/* <View style={styles.glowingCircle} /> */}
-					<Icon name="circle-slice-8" type="material-community" size={20} color={MAIN_COLOR} />
+					<Icon name="circle-slice-8" type="material-community" size={14} color={MAIN_COLOR} />
 					<View style={{ flex: 1, flexDirection: "column", justifyContent: "flex-start", marginLeft: 5 }}>
 						<View style={styles.eachRowValueContainer}>
 							<Text style={styles.itemLabel}>Ачилтын блок:</Text>

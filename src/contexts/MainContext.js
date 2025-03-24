@@ -72,6 +72,7 @@ export const MainStore = (props) => {
 	const [showLocationInfo, setShowLocationInfo] = useState(false);
 	const [storedItems, setStoredItems] = useState([]);
 	const [trackCount, setTrackCount] = useState(0);
+	const [tempLocations, setTempLocations] = useState([]);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -194,7 +195,7 @@ export const MainStore = (props) => {
 				AsyncStorage.getItem("L_current_speed")
 			]);
 
-			const response = await sendLocation(
+			await sendLocation(
 				localToken,
 				selectedEquipment,
 				parseFloat(currentLocation?.coords?.latitude) || 0,
@@ -205,7 +206,6 @@ export const MainStore = (props) => {
 				isConnected
 			);
 			addItemToStorage(eventTime);
-			console.log("send_Equipment_Location response", JSON.stringify(response?.Msg));
 		} catch (error) {
 			console.error("Error in send_Equipment_Location", error);
 		}
@@ -600,7 +600,9 @@ export const MainStore = (props) => {
 				setShowLocationInfo,
 				storedItems,
 				trackCount,
-				setTrackCount
+				setTrackCount,
+				tempLocations,
+				setTempLocations
 			}}
 		>
 			{props.children}

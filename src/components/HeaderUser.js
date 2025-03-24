@@ -20,6 +20,10 @@ const HeaderUser = (props) => {
 						props.setIsOpen(!props.isOpen);
 					}
 				}}
+				onLongPress={() => {
+					navigation.navigate("TempLocations");
+				}}
+				delayLongPress={1000}
 			>
 				<Image
 					source={

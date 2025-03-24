@@ -189,6 +189,9 @@ export const sendLocation = async (
 				CurrentDate,
 				EventTime
 			]);
+			if (responseOff?.changes > 0) {
+				console.log("send offline location done");
+			}
 			return responseOff;
 		} catch (error) {
 			console.error("Error inserting send state data:", error);

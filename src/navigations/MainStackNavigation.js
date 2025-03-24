@@ -27,6 +27,7 @@ import CreateMotoHourAndFuelScreenHOME from "../screens/MotoHourAndFuel/CreateMo
 import NotificationScreen from "../screens/Notification/NotificationScreen";
 import NotificationDTLScreen from "../screens/Notification/NotificationDTLScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import TempLocations from "../screens/TempLocations";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -300,6 +301,16 @@ const MainStackNavigator = (props) => {
 				<Stack.Screen
 					name="ProfileScreen"
 					component={ProfileScreen}
+					options={{
+						headerShown: false,
+						title: "",
+						headerTitleStyle: {},
+						headerLeft: () => <></>
+					}}
+				/>
+				<Stack.Screen
+					name="TempLocations"
+					component={TempLocations}
 					options={{
 						headerShown: false,
 						title: "",
