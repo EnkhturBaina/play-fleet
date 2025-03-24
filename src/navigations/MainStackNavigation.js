@@ -4,8 +4,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { Icon } from "@rneui/base";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import "dayjs/locale/es";
-import dayjs from "dayjs";
 
 import MainContext from "../contexts/MainContext";
 
@@ -30,8 +28,6 @@ import NotificationScreen from "../screens/Notification/NotificationScreen";
 import NotificationDTLScreen from "../screens/Notification/NotificationDTLScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import TempLocations from "../screens/TempLocations";
-import { useNetworkStatus } from "../contexts/NetworkContext";
-import { sendLocation } from "../helper/apiService";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -39,90 +35,18 @@ const width = Dimensions.get("screen").width;
 const MainStackNavigator = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
-	const { isConnected } = useNetworkStatus();
-
-	const checkLocationWithSpeed = async () => {
-		const { status } = await Location.requestForegroundPermissionsAsync();
-		if (status !== "granted") {
-			console.log("Permission to access location was denied");
-			return;
-		}
-
-		try {
-			const currentLocation = await Location.getCurrentPositionAsync({
-				accuracy: Location.Accuracy.High
-			});
-
-			if (!currentLocation) return;
-
-			const eventTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
-			const [localToken, currentSpeed] = await Promise.all([
-				AsyncStorage.getItem("L_access_token"),
-				AsyncStorage.getItem("L_current_speed")
-			]);
-
-			state.setSendLocationStatus((prevStatus) => [
-				...prevStatus,
-				`2 => running checkLocationWithSpeed: [${eventTime}]`
-			]);
-			state.setSendLocationStatus((prevStatus) => [...prevStatus, `2 => isConnected: [${isConnected}]`]);
-
-			await addItemToStorage(eventTime);
-
-			const response = await sendLocation(
-				localToken,
-				state.selectedEquipment,
-				parseFloat(currentLocation?.coords?.latitude) || 0,
-				parseFloat(currentLocation?.coords?.longitude) || 0,
-				currentSpeed ?? 0,
-				dayjs().format("YYYY-MM-DD"),
-				eventTime,
-				isConnected ? true : false
-			);
-			// console.log("response", response);
-
-			if (response) {
-				state.setSendLocationStatus((prevStatus) => [...prevStatus, `3 => running sendLocation response ${response}`]);
-			}
-		} catch (error) {
-			state.setSendLocationStatus((prevStatus) => [...prevStatus, `2 => ${error}`]);
-			console.error("Error getting or sending location:", error);
-		}
-	};
-
-	// ✅ Шинэ өгөгдлийг хадгалах (FIFO)
-	const addItemToStorage = async (EventTime) => {
-		try {
-			const storedData = await AsyncStorage.getItem("L_send_location_times");
-			let storedItems = storedData ? JSON.parse(storedData) : [];
-
-			let updatedItems = [...storedItems, dayjs(EventTime).format("HH:mm")];
-
-			if (updatedItems.length > 5) {
-				updatedItems.shift();
-			}
-
-			// 💾 `AsyncStorage`-д хадгалах
-			await AsyncStorage.setItem("L_send_location_times", JSON.stringify(updatedItems));
-
-			// 🔄 State шинэчлэх
-			state.setStoredItems(updatedItems);
-		} catch (error) {
-			console.error("❌ Өгөгдөл хадгалах үед алдаа гарлаа:", error);
-		}
-	};
 
 	useEffect(() => {
 		state.setSendLocationStatus((prevStatus) => [
 			...prevStatus,
 			`1 => isLoggedIn: ${state.isLoggedIn}, inspectionDone: ${state.inspectionDone}`
 		]);
-		state.isLoggedIn && state.inspectionDone && checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
+		state.isLoggedIn && state.inspectionDone && state.checkLocationWithSpeed(); // Нэвтэрсэн үед эхний хүсэлт шууд явуулна
 
 		const interval = setInterval(
 			() => {
 				if (state.isLoggedIn && state.inspectionDone) {
-					checkLocationWithSpeed();
+					state.checkLocationWithSpeed();
 				}
 			},
 			// 5000
