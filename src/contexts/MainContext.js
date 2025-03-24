@@ -163,8 +163,6 @@ export const MainStore = (props) => {
 	}, []); // Empty dependency array for only running once (on mount)
 
 	const checkLocationWithSpeed = async () => {
-		// console.log("RUN check Location With Speed");
-
 		const { status } = await Location.requestForegroundPermissionsAsync();
 		if (status !== "granted") {
 			console.log("Permission to access location was denied");
@@ -175,25 +173,16 @@ export const MainStore = (props) => {
 			const currentLocation = await Location.getCurrentPositionAsync({
 				accuracy: Location.Accuracy.High
 			});
-			// console.log("Location response =>", currentLocation);
 
-			// Байршил болон хурд амжилттай авсны дараа дараагийн функцээ дуудна
-			await sendEquipmentLocation(currentLocation);
-		} catch (error) {
-			console.error("Error getting location:", error);
-		}
-	};
-
-	const sendEquipmentLocation = async (currentLocation) => {
-		try {
 			if (!currentLocation) return;
-			const eventTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
 
-			// Token болон Speed-ийг зэрэг авах
+			const eventTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
 			const [localToken, currentSpeed] = await Promise.all([
 				AsyncStorage.getItem("L_access_token"),
 				AsyncStorage.getItem("L_current_speed")
 			]);
+
+			await addItemToStorage(eventTime);
 
 			await sendLocation(
 				localToken,
@@ -205,11 +194,11 @@ export const MainStore = (props) => {
 				eventTime,
 				isConnected
 			);
-			addItemToStorage(eventTime);
 		} catch (error) {
-			console.error("Error in send_Equipment_Location", error);
+			console.error("Error getting or sending location:", error);
 		}
 	};
+
 	const loadStoredItems = async () => {
 		try {
 			const storedData = await AsyncStorage.getItem("L_send_location_times");

@@ -174,7 +174,7 @@ export const sendLocation = async (
 			);
 			// console.log("response", JSON.stringify(response));
 
-			return response.data;
+			// return response.data;
 		} catch (error) {
 			console.log("Error in sendLocation service:", error);
 			throw error; // Алдаа гарвал component-д дамжуулна
@@ -192,7 +192,7 @@ export const sendLocation = async (
 			if (responseOff?.changes > 0) {
 				console.log("send offline location done");
 			}
-			return responseOff;
+			// return responseOff;
 		} catch (error) {
 			console.error("Error inserting send state data:", error);
 		}
