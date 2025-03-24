@@ -163,52 +163,6 @@ export const MainStore = (props) => {
 		runFirst();
 	}, []); // Empty dependency array for only running once (on mount)
 
-	const checkLocationWithSpeed = async () => {
-		const { status } = await Location.requestForegroundPermissionsAsync();
-		if (status !== "granted") {
-			console.log("Permission to access location was denied");
-			return;
-		}
-
-		try {
-			const currentLocation = await Location.getCurrentPositionAsync({
-				accuracy: Location.Accuracy.High
-			});
-
-			if (!currentLocation) return;
-
-			const eventTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
-			const [localToken, currentSpeed] = await Promise.all([
-				AsyncStorage.getItem("L_access_token"),
-				AsyncStorage.getItem("L_current_speed")
-			]);
-
-			setSendLocationStatus((prevStatus) => [...prevStatus, `2 => running checkLocationWithSpeed: [${eventTime}]`]);
-			setSendLocationStatus((prevStatus) => [...prevStatus, `2 => isConnected: [${isConnected}]`]);
-
-			await addItemToStorage(eventTime);
-
-			const response = await sendLocation(
-				localToken,
-				selectedEquipment,
-				parseFloat(currentLocation?.coords?.latitude) || 0,
-				parseFloat(currentLocation?.coords?.longitude) || 0,
-				currentSpeed ?? 0,
-				dayjs().format("YYYY-MM-DD"),
-				eventTime,
-				isConnected
-			);
-			// console.log("response", response);
-
-			if (response) {
-				setSendLocationStatus((prevStatus) => [...prevStatus, `3 => running sendLocation response ${response}`]);
-			}
-		} catch (error) {
-			setSendLocationStatus((prevStatus) => [...prevStatus, `2 => ${error}`]);
-			console.error("Error getting or sending location:", error);
-		}
-	};
-
 	const loadStoredItems = async () => {
 		try {
 			const storedData = await AsyncStorage.getItem("L_send_location_times");
@@ -590,7 +544,6 @@ export const MainStore = (props) => {
 				checkLocationStatus,
 				locationSource,
 				setLocationSource,
-				checkLocationWithSpeed,
 				mapType,
 				setMapType,
 				isTrack,
@@ -603,7 +556,8 @@ export const MainStore = (props) => {
 				tempLocations,
 				setTempLocations,
 				sendLocationStatus,
-				setSendLocationStatus
+				setSendLocationStatus,
+				setStoredItems
 			}}
 		>
 			{props.children}
