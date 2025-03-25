@@ -115,3 +115,25 @@ export const transformLocations = (refLocations, refLocationTypes) => {
 
 	return locationSource;
 };
+
+//Өгөгдсөн цэгээс distanceKm радиусын 4н цэг олохь Жнь: Төв талбайгаас Баруун, Зүүн, Урд, Хойд гээд
+export const getSurroundingPoints = async (latitude, longitude, distanceKm) => {
+	const oneKmInDegreesLat = 1 / 111.32; // 1 км-ийн өргөргийн градус
+	const oneKmInDegreesLon = 1 / (111.32 * Math.cos(latitude * (Math.PI / 180))); // 1 км-ийн уртрагийн градус
+
+	const distanceInDegreesLat = oneKmInDegreesLat * distanceKm;
+	const distanceInDegreesLon = oneKmInDegreesLon * distanceKm;
+
+	console.log("getSurroundingPoints ====>", {
+		north: { latitude: latitude + distanceInDegreesLat, longitude },
+		south: { latitude: latitude - distanceInDegreesLat, longitude },
+		east: { latitude, longitude: longitude + distanceInDegreesLon },
+		west: { latitude, longitude: longitude - distanceInDegreesLon }
+	});
+	return {
+		north: { latitude: latitude + distanceInDegreesLat, longitude },
+		south: { latitude: latitude - distanceInDegreesLat, longitude },
+		east: { latitude, longitude: longitude + distanceInDegreesLon },
+		west: { latitude, longitude: longitude - distanceInDegreesLon }
+	};
+};

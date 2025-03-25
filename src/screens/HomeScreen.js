@@ -207,7 +207,7 @@ const HomeScreen = (props) => {
 			if (isConnected) {
 				console.log("📶 Интернет холбогдлоо! Өгөгдөл сервер рүү зэрэг илгээж байна...");
 				var tempLocations = await fetchSendLocationDataTemp();
-				console.log("tempLocations", tempLocations);
+				// console.log("tempLocations", tempLocations);
 
 				state.setTempLocations(tempLocations);
 				try {

@@ -88,8 +88,8 @@ const LoginScreen = (props) => {
 			);
 
 			let lastLogged = "";
-			// console.log("response", JSON.stringify(response.data));
-			console.log("response.data?.Extra?.logged", response.data?.Extra?.logged);
+			console.log("response", JSON.stringify(response.data));
+			// console.log("response.data?.Extra?.logged", response.data?.Extra);
 			if (!response.data?.Extra?.logged) {
 				lastLogged = dayjs().format("YYYY-MM-DD");
 			} else {
