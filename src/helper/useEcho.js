@@ -37,12 +37,12 @@ const useEcho = () => {
 							Authorization: `Bearer ${token}`
 						}
 					},
-					enabledTransports: ["ws", "wss"],
-					debug: false,
 					recconnect: {
 						maxAttemtps: 100,
-						delay: (attempt) => Math.min(500 * 5 ** attempt, 30000)
-					}
+						delay: (attempt) => Math.min(500 * 2 ** attempt, 30000)
+					},
+					enabledTransports: ["ws", "wss"],
+					debug: false
 				});
 
 				// ✅ Handle connection errors
