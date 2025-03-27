@@ -39,8 +39,10 @@ const useEcho = () => {
 					},
 					enabledTransports: ["ws", "wss"],
 					debug: false,
-					reconnectAttempts: 5, // ✅ Retry 5 times
-					reconnectDelay: 3000 // ✅ Wait 3 sec before retry
+					recconnect: {
+						maxAttemtps: 100,
+						delay: (attempt) => Math.min(500 * 5 ** attempt, 30000)
+					}
 				});
 
 				// ✅ Handle connection errors
