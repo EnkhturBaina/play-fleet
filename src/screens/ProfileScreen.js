@@ -30,8 +30,11 @@ const ProfileScreen = (props) => {
 	const [loading, setLoading] = useState(false);
 	const [loadingAction, setLoadingAction] = useState(false);
 	const [editableData, setEditableData] = useState({
+		Code: "",
 		FirstName: "",
 		LastName: "",
+		Shift: "",
+		Company: "",
 		PMSRosterId: "",
 		Email: ""
 	});
@@ -52,11 +55,16 @@ const ProfileScreen = (props) => {
 	const onDismissSnackBar = () => setVisibleSnack(false);
 
 	useEffect(() => {
+		console.log("xxx", state.companyData);
+
 		setLoading(true);
 		setEditableData((prevState) => ({
 			...prevState,
+			Code: state.employeeData?.Code,
 			LastName: state.employeeData?.LastName,
 			FirstName: state.employeeData?.FirstName,
+			Shift: state.shiftData?.Name,
+			Company: state.companyData?.Name,
 			PMSRosterId: state.rosterData?.id,
 			Email: state.employeeData?.Email
 		}));
@@ -232,6 +240,7 @@ const ProfileScreen = (props) => {
 									/>
 								</Avatar>
 							</TouchableOpacity>
+							<LoanInput label="Код" value={editableData.Code} disabled />
 							<LoanInput
 								label="Овог"
 								value={editableData.LastName}
@@ -252,17 +261,9 @@ const ProfileScreen = (props) => {
 									}))
 								}
 							/>
-							<LoanInput
-								label="И-мэйл"
-								value={editableData.Email}
-								onChangeText={(e) =>
-									setEditableData((prevState) => ({
-										...prevState,
-										Email: e
-									}))
-								}
-								keyboardType="email-address"
-							/>
+							<LoanInput label="Ээлж" value={editableData.Shift} disabled />
+							<LoanInput label="Компани" value={editableData.Company} disabled />
+							<LoanInput label="И-мэйл" value={editableData.Email} disabled />
 							<Button
 								disabled={loadingAction}
 								containerStyle={{
