@@ -255,8 +255,8 @@ const HeaderFloatItem = (props) => {
 						PMSEquipmentId: state.selectedEquipment?.id,
 						PMSProgressStateId: state.selectedState?.id,
 						CurrentDate: dayjs().format("YYYY-MM-DD"),
-						PMSEmployeeId: state.employeeData?.id,
-						IsTest: 1
+						PMSEmployeeId: state.employeeData?.id
+						// IsTest: 1
 					},
 					{
 						headers: {
