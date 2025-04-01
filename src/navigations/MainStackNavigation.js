@@ -49,7 +49,7 @@ const MainStackNavigator = (props) => {
 					state.checkLocationWithSpeed();
 				}
 			},
-			// 5000
+			// 120000
 			state.projectData?.SyncTime != null ? state.projectData?.SyncTime * 1000 : 5 * 60 * 1000
 		); // Login response -н Project дотор SyncTime -д тохируулсан хугацаагааны давтамжаар Location илгээх
 

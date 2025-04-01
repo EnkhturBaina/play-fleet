@@ -619,7 +619,7 @@ export const fetchSendLocationDataTemp = async () => {
 export const fetchSendLocationData = async (a, b, c, d, e, f) => {
 	// console.log("RUN fetch SendLocation Data.");
 
-	console.log("abcdef", a, b, c, d, e, f);
+	// console.log("abcdef", a, b, c, d, e, f);
 	try {
 		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
 			// Parallel database queries using Promise.all
