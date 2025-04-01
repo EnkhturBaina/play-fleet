@@ -19,6 +19,8 @@ import useEcho from "../helper/useEcho";
 import { ECHO_EVENT_PROGRESS, ZOOM_LEVEL } from "../constant";
 import LottieView from "lottie-react-native";
 import useTileLoader from "../helper/useTileLoader";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -211,8 +213,28 @@ const HomeScreen = (props) => {
 
 				state.setTempLocations(tempLocations);
 				try {
-					await Promise.all([fetchSendStateData(), fetchMotoHourData(), fetchSendLocationData()]);
-					console.log("📡 Бүх өгөгдлийг зэрэг илгээлээ!");
+					const resp = await Promise.all([
+						fetchSendStateData(),
+						fetchMotoHourData(),
+						fetchSendLocationData(
+							state.selectedEquipment?.id,
+							state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+							state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
+							0,
+							dayjs().format("YYYY-MM-DD"),
+							dayjs().format("YYYY-MM-DD HH:mm:ss")
+						)
+					]);
+					console.log("selectedEquipment", state.selectedEquipment?.id);
+					console.log("latitude", state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0);
+					console.log(
+						"longitude",
+						state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
+					);
+					console.log("dayjs", dayjs().format("YYYY-MM-DD"));
+					console.log("dayjs", dayjs().format("YYYY-MM-DD HH:mm:ss"));
+
+					console.log("📡 Бүх өгөгдлийг зэрэг илгээлээ!", JSON.stringify(resp));
 				} catch (error) {
 					console.error("⚠️ Өгөгдөл зэрэг илгээх явцад алдаа гарлаа:", error);
 				}

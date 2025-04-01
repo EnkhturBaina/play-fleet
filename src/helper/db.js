@@ -616,49 +616,81 @@ export const fetchSendLocationDataTemp = async () => {
 		throw new Error("Failed to fetch SendLocation data Temp. Please try again later.");
 	}
 };
-export const fetchSendLocationData = async () => {
+export const fetchSendLocationData = async (a, b, c, d, e, f) => {
 	// console.log("RUN fetch SendLocation Data.");
 
+	console.log("abcdef", a, b, c, d, e, f);
 	try {
 		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
 			// Parallel database queries using Promise.all
 			const data = await db.getAllAsync("SELECT * FROM send_location");
-			// console.log("data ==========>", data);
+			// console.log("send_location data ==========>", JSON.stringify(data));
 			// console.log("token ==========>", token);
 
 			if (data) {
-				for (const item of data) {
-					// console.log("item =======>", JSON.stringify(item));
-					try {
-						const response = await axios.post(
-							`${SERVER_URL}/mobile/progress/track/save`,
-							{
-								PMSEquipmentId: item.PMSEquipmentId,
-								Latitude: item.Latitude,
-								Longitude: item.Longitude,
-								Speed: item.Speed,
-								CurrentDate: item.CurrentDate,
-								EventTime: item.EventTime
-							},
-							{
-								headers: {
-									"Content-Type": "application/json",
-									Authorization: `Bearer ${localToken}`
-								}
+				try {
+					const response = await axios.post(
+						`${SERVER_URL}/mobile/progress/track/save`,
+						{
+							PMSEquipmentId: a,
+							Latitude: b,
+							Longitude: c,
+							Speed: d,
+							CurrentDate: e,
+							EventTime: f,
+							Items: data
+						},
+						{
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${localToken}`
 							}
-						);
-						console.log("response", response.data);
-
-						if (response.data?.Type == 0) {
-							// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
-							await deleteSendLocationRowById(item.id);
-						} else {
-							console.error(`Failed to send SendLocation item ${item.id}:`);
 						}
-					} catch (error) {
-						console.error(`Error sending SendLocation item ${item.id}:`, error);
+					);
+					console.log("response LOCAL TRACK SAVE ==========>", response.data);
+
+					if (response.data?.Type == 0) {
+						// Сервер амжилттай хүлээж авсан бол бүх датаг SQLite-с устгах
+						await deleteSendLocationAll();
+					} else {
+						console.error(`Failed to send SendLocation ALL:`);
 					}
+				} catch (error) {
+					console.error(`Error sending SendLocation ALL:`, error);
 				}
+
+				// for (const item of data) {
+				// 	// console.log("item =======>", JSON.stringify(item));
+				// 	try {
+				// 		const response = await axios.post(
+				// 			`${SERVER_URL}/mobile/progress/track/save`,
+				// 			{
+				// 				PMSEquipmentId: item.PMSEquipmentId,
+				// 				Latitude: item.Latitude,
+				// 				Longitude: item.Longitude,
+				// 				Speed: item.Speed,
+				// 				CurrentDate: item.CurrentDate,
+				// 				EventTime: item.EventTime
+				// 			},
+				// 			{
+				// 				headers: {
+				// 					"Content-Type": "application/json",
+				// 					Authorization: `Bearer ${localToken}`
+				// 				}
+				// 			}
+				// 		);
+				// 		console.log("response", response.data);
+
+				// 		if (response.data?.Type == 0) {
+				// 			// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
+				// 			await deleteSendLocationRowById(item.id);
+				// 		} else {
+				// 			console.error(`Failed to send SendLocation item ${item.id}:`);
+				// 		}
+				// 	} catch (error) {
+				// 		console.error(`Error sending SendLocation item ${item.id}:`, error);
+				// 	}
+				// }
 			}
 			return data; // Return the combined data
 		});
@@ -674,6 +706,14 @@ const deleteSendLocationRowById = async (id) => {
 		console.log(`Row with id ${id} deleted.`);
 	} catch (error) {
 		console.error(`Error deleting SendLocation row with id ${id}:`, error);
+	}
+};
+
+const deleteSendLocationAll = async () => {
+	try {
+		await db.runAsync("DELETE FROM send_location");
+	} catch (error) {
+		console.error(`Error deleting SendLocation ALL`, error);
 	}
 };
 
