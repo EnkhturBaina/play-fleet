@@ -259,7 +259,13 @@ export default function (props) {
 		}
 	};
 	return (
-		<BottomSheet ref={props.bottomSheetRef} snapPoints={[130, 500]}>
+		<BottomSheet
+			ref={props.bottomSheetRef}
+			snapPoints={[130, 500]}
+			enablePanDownToClose={false}
+			enableContentPanningGesture={false}
+			enableDynamicSizing={false}
+		>
 			<BottomSheetView style={styles.contentContainer}>
 				<View style={styles.selectedStateContainer}>
 					<View style={styles.selectedLabel}>
@@ -296,7 +302,7 @@ export default function (props) {
 				<View style={styles.selectLabelTitleStyle}>
 					<Text style={{ color: "#fff", fontSize: 16 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
 				</View>
-				<ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+				<ScrollView contentContainerStyle={{ paddingBottom: 10 }} nestedScrollEnabled>
 					{mainStates &&
 						mainStates?.map((el) => {
 							var disableState = false;

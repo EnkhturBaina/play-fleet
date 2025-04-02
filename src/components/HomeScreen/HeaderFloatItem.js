@@ -41,6 +41,9 @@ const HeaderFloatItem = (props) => {
 	const [confirmText, setConfirmText] = useState("Дуусгах");
 	const [declineText, setDeclineText] = useState("Үгүй");
 
+	// Зөвхөн ээлж дуусахаас 20 мин өмнө сануулж байгаа үед ээлж дуусгах process ажлуулах
+	const [isEndShift, setIsEndShift] = useState(false);
+
 	const startLines = 3;
 	const totalLines = 6;
 
@@ -80,6 +83,7 @@ const HeaderFloatItem = (props) => {
 
 			// 12 цаг нэмээд дуусах цагийг анхааруулах цагийг тооцоолох (20 минут хасах)
 			const endTimeAlert = startTime.add(12, "hour").subtract(20, "minute");
+			// console.log("endTimeAlert", endTimeAlert.format("HH:mm:ss"));
 
 			// Секунд тутамд цагийг шалгах
 			const interval = setInterval(() => {
@@ -92,6 +96,7 @@ const HeaderFloatItem = (props) => {
 
 				// Ээлж дуусах цаг анхааруулах
 				if (now.isSame(endTimeAlert, "second")) {
+					setIsEndShift(true);
 					setDialogText("Та ээлжээ дуусгах уу?");
 					setConfirmText("Дуусгах");
 					setDeclineText("Үгүй");
@@ -120,6 +125,7 @@ const HeaderFloatItem = (props) => {
 
 				// Ээлж солигдсон үед
 				if (state.shiftData?.Name != newShift) {
+					setIsEndShift(false);
 					setShowDialogDecline(false);
 					setDialogText("Ээлж дууссан байна. Та дахин нэвтэрнэ үү");
 					setConfirmText("ОК");
@@ -182,6 +188,7 @@ const HeaderFloatItem = (props) => {
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						if (response.data?.Extra?.ShiftChanged) {
+							setIsEndShift(false);
 							setDialogText("Ээлж дууссан байна. Та дахин нэвтэрнэ үү.");
 							setConfirmText("ОК");
 							setDeclineText("");
@@ -406,7 +413,11 @@ const HeaderFloatItem = (props) => {
 			<CustomDialog
 				visible={visibleDialog}
 				confirmFunction={() => {
-					stopProgress();
+					if (isEndShift) {
+						stopProgress();
+					} else {
+						state.logout();
+					}
 				}}
 				declineFunction={() => {
 					showDialogDecline && setVisibleDialog(false);

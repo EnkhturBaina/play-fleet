@@ -124,12 +124,12 @@ export const getSurroundingPoints = async (latitude, longitude, distanceKm) => {
 	const distanceInDegreesLat = oneKmInDegreesLat * distanceKm;
 	const distanceInDegreesLon = oneKmInDegreesLon * distanceKm;
 
-	console.log("getSurroundingPoints ====>", {
-		north: { latitude: latitude + distanceInDegreesLat, longitude },
-		south: { latitude: latitude - distanceInDegreesLat, longitude },
-		east: { latitude, longitude: longitude + distanceInDegreesLon },
-		west: { latitude, longitude: longitude - distanceInDegreesLon }
-	});
+	// console.log("getSurroundingPoints ====>", {
+	// 	north: { latitude: latitude + distanceInDegreesLat, longitude },
+	// 	south: { latitude: latitude - distanceInDegreesLat, longitude },
+	// 	east: { latitude, longitude: longitude + distanceInDegreesLon },
+	// 	west: { latitude, longitude: longitude - distanceInDegreesLon }
+	// });
 	return {
 		north: { latitude: latitude + distanceInDegreesLat, longitude },
 		south: { latitude: latitude - distanceInDegreesLat, longitude },
