@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View, TextInput, useWindowDimensions } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import {
 	MAIN_BORDER_RADIUS,
@@ -21,12 +21,16 @@ import dayjs from "dayjs";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { OrientationContext } from "../../helper/OrientationContext";
 
 const width = Dimensions.get("screen").width;
 
 const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
+
 	const navigation = useNavigation();
+	// const { width, height } = useWindowDimensions();
 
 	const { connectionQuality } = useNetworkStatus();
 	const isFocused = useIsFocused();
@@ -61,8 +65,8 @@ const HeaderFloatItem = (props) => {
 
 	useEffect(() => {
 		// var tempShift = "DS";
+		setLines();
 		getDefaultAssignedTask();
-		state.detectOrientation();
 
 		if (state.projectData?.ShiftTime && state.shiftData?.Name) {
 			const shiftDateTime = dayjs(state.projectData?.ShiftTime);
@@ -143,13 +147,16 @@ const HeaderFloatItem = (props) => {
 	// }, [isFocused]);
 
 	useEffect(() => {
-		if (state.orientation == "PORTRAIT") {
+		setLines();
+	}, [orientation]);
+
+	const setLines = () => {
+		if (orientation == "PORTRAIT") {
 			setVisibleLines(startLines);
 		} else {
 			setVisibleLines(totalLines);
 		}
-	}, [state.orientation]);
-
+	};
 	// Хэрэглэгч focus хийсэн үед isFocus-г зөвшөөрөх, эсвэл түдгэлзүүлэх
 	const handleFocus = (path) => {
 		setFocusStates((prevState) => ({
@@ -292,8 +299,15 @@ const HeaderFloatItem = (props) => {
 	};
 
 	return (
-		<View style={styles.floatButtons}>
-			<View style={styles.mainContainer}>
+		<View style={[styles.floatButtons, {}]}>
+			<View
+				style={[
+					styles.mainContainer,
+					{
+						// width: width - 10
+					}
+				]}
+			>
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
 						{connectionQuality !== "good" && (
@@ -313,7 +327,7 @@ const HeaderFloatItem = (props) => {
 						)}
 						<Text style={{ color: MAIN_COLOR, fontSize: 16 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
 					</View>
-					{state.orientation == "PORTRAIT" ? (
+					{orientation == "PORTRAIT" ? (
 						<TouchableOpacity
 							onPress={() => {
 								if (visibleLines == totalLines) {
@@ -340,7 +354,7 @@ const HeaderFloatItem = (props) => {
 						const isEmpty = fieldData?.length === 0;
 
 						return (
-							<View style={[styles.stack1, { width: state.orientation == "PORTRAIT" ? "100%" : "48%" }]} key={index}>
+							<View style={[styles.stack1, { width: orientation == "PORTRAIT" ? "100%" : "48%" }]} key={index}>
 								<Text
 									style={{
 										color: MAIN_COLOR_BLUE,
@@ -426,7 +440,7 @@ const HeaderFloatItem = (props) => {
 				confirmBtnText={confirmText}
 				DeclineBtnText={declineText}
 				type={"warning"}
-				screenOrientation={state.orientation}
+				screenOrientation={orientation}
 			/>
 		</View>
 	);
@@ -436,10 +450,12 @@ export default HeaderFloatItem;
 
 const styles = StyleSheet.create({
 	floatButtons: {
+		// backgroundColor: "red",
 		position: "absolute", //use absolute position to show button on top of the map
 		left: 0,
 		top: 5,
-		alignSelf: "flex-end" //for align to right
+		alignSelf: "flex-end",
+		zIndex: 10
 	},
 	dropdown: {
 		borderColor: "#aeaeae",
@@ -489,7 +505,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 		paddingHorizontal: 10,
 		paddingVertical: 5,
-		width: width - 10,
 		marginHorizontal: 5,
 		borderRadius: MAIN_BORDER_RADIUS
 	},

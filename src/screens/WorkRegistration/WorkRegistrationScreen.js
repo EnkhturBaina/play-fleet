@@ -11,11 +11,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import Tab1 from "./Tab1";
 import Tab2 from "./Tab2";
 import MainContext from "../../contexts/MainContext";
+import { OrientationContext } from "../../helper/OrientationContext";
 
 const Tab = createMaterialTopTabNavigator();
 const WorkRegistrationScreen = (props) => {
 	const navigation = useNavigation();
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogType, setDialogType] = useState("success"); //Dialog харуулах төрөл
@@ -133,7 +135,7 @@ const WorkRegistrationScreen = (props) => {
 				confirmBtnText="Тийм"
 				DeclineBtnText="Үгүй"
 				type={dialogType}
-				screenOrientation={state.orientation}
+				screenOrientation={orientation}
 			/>
 		</SafeAreaView>
 	);

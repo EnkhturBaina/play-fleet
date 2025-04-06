@@ -7,9 +7,11 @@ import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR } from "../constant"
 import { Button } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Empty from "../components/Empty";
+import { OrientationContext } from "../helper/OrientationContext";
 
 const SelectEquipmentScreen = () => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 	const [selectedEq, setSelectedEq] = useState(null);
 	const [savingEq, setSavingEq] = useState(false);
 
@@ -81,7 +83,7 @@ const SelectEquipmentScreen = () => {
 				style={{
 					flex: 1,
 					justifyContent: "center",
-					flexDirection: state.orientation == "PORTRAIT" ? "column" : "row",
+					flexDirection: orientation == "PORTRAIT" ? "column" : "row",
 					alignItems: "center"
 				}}
 			>
@@ -127,7 +129,7 @@ const SelectEquipmentScreen = () => {
 			{state.equipmentsData?.length == 0 ? (
 				<Button
 					containerStyle={{
-						width: state.orientation == "PORTRAIT" ? "90%" : "50%",
+						width: orientation == "PORTRAIT" ? "90%" : "50%",
 						marginTop: 10,
 						alignSelf: "center"
 					}}
@@ -158,7 +160,7 @@ const SelectEquipmentScreen = () => {
 				<Button
 					disabled={savingEq || selectedEq == null}
 					containerStyle={{
-						width: state.orientation == "PORTRAIT" ? "90%" : "50%",
+						width: orientation == "PORTRAIT" ? "90%" : "50%",
 						marginTop: 10,
 						alignSelf: "center"
 					}}

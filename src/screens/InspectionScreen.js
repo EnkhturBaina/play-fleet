@@ -17,9 +17,11 @@ import "dayjs/locale/es";
 import dayjs from "dayjs";
 import CustomDialog from "../components/CustomDialog";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { OrientationContext } from "../helper/OrientationContext";
 
 const InspectionScreen = () => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 
 	const [mainData, setMainData] = useState(null);
 	const [inspectionData, setInspectionData] = useState(null);
@@ -264,7 +266,7 @@ const InspectionScreen = () => {
 				confirmBtnText="Үргэлжлүүлэх"
 				DeclineBtnText=""
 				type={dialogType}
-				screenOrientation={state.orientation}
+				screenOrientation={orientation}
 			/>
 		</View>
 	);

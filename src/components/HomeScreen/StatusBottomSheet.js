@@ -1,6 +1,6 @@
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useContext, useEffect, useRef, useState } from "react";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import BottomSheet, { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
 import MainContext from "../../contexts/MainContext";
 import { Image } from "expo-image";
 import { MAIN_BORDER_RADIUS, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR } from "../../constant";
@@ -9,9 +9,12 @@ import CustomDialog from "../CustomDialog";
 import { sendSelectedState } from "../../helper/apiService";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { OrientationContext } from "../../helper/OrientationContext";
 
 export default function (props) {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
+
 	const { isConnected } = useNetworkStatus();
 	const animatedValue = useRef(new Animated.Value(1)).current;
 	const [stateParentId, setStateParentId] = useState(null);
@@ -20,6 +23,8 @@ export default function (props) {
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
 	const [onConfirm, setOnConfirm] = useState(null); // Дialog-ийн баталгаажуулалтын үйлдэл
+
+	const snapPoints = useMemo(() => [130, 500], []);
 
 	const ENABLE_NEXT_STATUS = 10; // SECOND
 
@@ -261,101 +266,103 @@ export default function (props) {
 	return (
 		<BottomSheet
 			ref={props.bottomSheetRef}
-			snapPoints={[130, 500]}
-			enablePanDownToClose={false}
-			enableContentPanningGesture={false}
-			enableDynamicSizing={false}
+			snapPoints={snapPoints}
+			index={0}
+			style={styles.contentContainer}
+			// enablePanDownToClose={false}
+			// enableContentPanningGesture={false}
+			// enableDynamicSizing={false}
 		>
-			<BottomSheetView style={styles.contentContainer}>
-				<View style={styles.selectedStateContainer}>
-					<View style={styles.selectedLabel}>
-						<Text style={styles.selectedStateLabel}>CОНГОГДСОН ТӨЛӨВ</Text>
-					</View>
-					<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 20 }}>{formatTime(state.seconds)}</Text>
+			{/* <BottomSheetView style={styles.contentContainer}> */}
+			<View style={styles.selectedStateContainer}>
+				<View style={styles.selectedLabel}>
+					<Text style={styles.selectedStateLabel}>CОНГОГДСОН ТӨЛӨВ</Text>
 				</View>
-				<View
-					style={[
-						styles.eachBottomList,
-						{
-							marginBottom: 0,
-							marginTop: 10
+				<Text style={{ color: MAIN_COLOR_BLUE, fontSize: 20 }}>{formatTime(state.seconds)}</Text>
+			</View>
+			<View
+				style={[
+					styles.eachBottomList,
+					{
+						marginBottom: 0,
+						marginTop: 10
+					}
+				]}
+			>
+				<Image
+					source={
+						state.selectedState?.ActivityShort &&
+						MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(state.selectedState.ActivityShort)
+							? IMAGE_LIST.find((img) => img.code === state.selectedState.ActivityShort)?.img ||
+							  require("../../../assets/only_icon.png")
+							: [2, 3, 4, 5, 6].some((id) => state.selectedState?.PMSGroupId == id)
+							? IMAGE_LIST.find((img) => img.codeIds?.includes(state.selectedState.PMSGroupId))?.img ||
+							  require("../../../assets/only_icon.png")
+							: require("../../../assets/only_icon.png")
+					}
+					style={{ height: 50, width: 50 }}
+				/>
+				<Text style={styles.selectedStateText}>
+					{state.selectedState ? state.selectedState?.Activity : "Төлөв сонгогдоогүй"}
+				</Text>
+			</View>
+			<View style={styles.selectLabelTitleStyle}>
+				<Text style={{ color: "#fff", fontSize: 16 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
+			</View>
+			<BottomSheetScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+				{mainStates &&
+					mainStates?.map((el) => {
+						var disableState = false;
+						const matchedImage = IMAGE_LIST.find((img) => img.code === el.ActivityShort);
+						const borderColor =
+							state.selectedState?.PMSParentId == stateParentId && state.selectedState?.ViewOrder + 1 === el.ViewOrder
+								? animatedValue.interpolate({
+										inputRange: [0.5, 1],
+										outputRange: [MAIN_COLOR, "#fff"]
+								  })
+								: "transparent";
+
+						if (state.selectedEquipmentCode == 0 && state.selectedState?.ViewOrder === 4) {
+							disableState = el.ViewOrder !== 0; // Truck сонгогдсон төлөв нь сүүлийх үед зөвхөн эхнийх enable, бусад нь disable
+						} else if (state.selectedEquipmentCode == 1 && state.selectedState?.ViewOrder === 4) {
+							disableState = el.ViewOrder !== 1; // Loader сонгогдсон төлөв нь сүүлийх үед зөвхөн эхнийх enable, бусад нь disable
+						} else if (el.ViewOrder <= state.selectedState?.ViewOrder) {
+							disableState = true; // өмнөх бүх утгуудыг disable болгох
 						}
-					]}
-				>
-					<Image
-						source={
-							state.selectedState?.ActivityShort &&
-							MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(state.selectedState.ActivityShort)
-								? IMAGE_LIST.find((img) => img.code === state.selectedState.ActivityShort)?.img ||
-								  require("../../../assets/only_icon.png")
-								: [2, 3, 4, 5, 6].some((id) => state.selectedState?.PMSGroupId == id)
-								? IMAGE_LIST.find((img) => img.codeIds?.includes(state.selectedState.PMSGroupId))?.img ||
-								  require("../../../assets/only_icon.png")
-								: require("../../../assets/only_icon.png")
+
+						const isMainState = MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(
+							state.selectedState?.ActivityShort
+						);
+
+						// Үндсэн W1 -н төлөвүүдээс өөр төлөв сонгогдсон бол disable хийхгүй
+						if (!isMainState) {
+							disableState = false;
 						}
-						style={{ height: 50, width: 50 }}
-					/>
-					<Text style={styles.selectedStateText}>
-						{state.selectedState ? state.selectedState?.Activity : "Төлөв сонгогдоогүй"}
-					</Text>
-				</View>
-				<View style={styles.selectLabelTitleStyle}>
-					<Text style={{ color: "#fff", fontSize: 16 }}>БҮТЭЭЛТЭЙ АЖИЛЛАХ</Text>
-				</View>
-				<ScrollView contentContainerStyle={{ paddingBottom: 10 }} nestedScrollEnabled>
-					{mainStates &&
-						mainStates?.map((el) => {
-							var disableState = false;
-							const matchedImage = IMAGE_LIST.find((img) => img.code === el.ActivityShort);
-							const borderColor =
-								state.selectedState?.PMSParentId == stateParentId && state.selectedState?.ViewOrder + 1 === el.ViewOrder
-									? animatedValue.interpolate({
-											inputRange: [0.5, 1],
-											outputRange: [MAIN_COLOR, "#fff"]
-									  })
-									: "transparent";
 
-							if (state.selectedEquipmentCode == 0 && state.selectedState?.ViewOrder === 4) {
-								disableState = el.ViewOrder !== 0; // Truck сонгогдсон төлөв нь сүүлийх үед зөвхөн эхнийх enable, бусад нь disable
-							} else if (state.selectedEquipmentCode == 1 && state.selectedState?.ViewOrder === 4) {
-								disableState = el.ViewOrder !== 1; // Loader сонгогдсон төлөв нь сүүлийх үед зөвхөн эхнийх enable, бусад нь disable
-							} else if (el.ViewOrder <= state.selectedState?.ViewOrder) {
-								disableState = true; // өмнөх бүх утгуудыг disable болгох
-							}
-
-							const isMainState = MAIN_STATE_CODES[state.selectedEquipment?.TypeName].includes(
-								state.selectedState?.ActivityShort
-							);
-
-							// Үндсэн W1 -н төлөвүүдээс өөр төлөв сонгогдсон бол disable хийхгүй
-							if (!isMainState) {
-								disableState = false;
-							}
-
-							return (
-								<TouchableOpacity
-									style={[
-										styles.eachBottomList,
-										{
-											borderWidth: 3,
-											borderColor,
-											opacity: disableState ? 0.5 : 1
-										}
-									]}
-									key={el.id}
-									onPress={() => selectState(el)}
-									disabled={disableState}
-								>
-									<Image
-										source={matchedImage ? matchedImage?.img : require("../../../assets/only_icon.png")}
-										style={{ height: 50, width: 50, marginRight: 5 }}
-									/>
-									<Text style={styles.eachState}>{el.Activity}</Text>
-								</TouchableOpacity>
-							);
-						})}
-				</ScrollView>
-			</BottomSheetView>
+						return (
+							<TouchableOpacity
+								style={[
+									styles.eachBottomList,
+									{
+										borderWidth: 3,
+										borderColor,
+										opacity: disableState ? 0.5 : 1
+									}
+								]}
+								key={el.id}
+								onPress={() => selectState(el)}
+								disabled={disableState}
+							>
+								<Image
+									source={matchedImage ? matchedImage?.img : require("../../../assets/only_icon.png")}
+									style={{ height: 50, width: 50, marginRight: 5 }}
+								/>
+								<Text style={styles.eachState}>{el.Activity}</Text>
+							</TouchableOpacity>
+						);
+					})}
+			</BottomSheetScrollView>
+			{/* </BottomSheetView> */}
 
 			<CustomDialog
 				visible={visibleDialog}
@@ -370,7 +377,7 @@ export default function (props) {
 				confirmBtnText="Тийм"
 				DeclineBtnText="Үгүй"
 				type={"warning"}
-				screenOrientation={state.orientation}
+				screenOrientation={orientation}
 			/>
 		</BottomSheet>
 	);
@@ -378,7 +385,7 @@ export default function (props) {
 const styles = StyleSheet.create({
 	contentContainer: {
 		flex: 1,
-		marginHorizontal: 20
+		paddingHorizontal: 20
 	},
 	eachBottomList: {
 		flexDirection: "row",

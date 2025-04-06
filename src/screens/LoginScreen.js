@@ -21,9 +21,11 @@ import LoginCompanyDialog from "../components/LoginCompanyDialog";
 import axios from "axios";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
+import { OrientationContext } from "../helper/OrientationContext";
 
 const LoginScreen = (props) => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 	const { isConnected } = useNetworkStatus();
 	const inputRef = useRef(null);
 
@@ -36,7 +38,6 @@ const LoginScreen = (props) => {
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 
 	useEffect(() => {
-		state.detectOrientation();
 		if (!isConnected) {
 			setLoginError("Интернэт холболт шалгана уу?");
 			// state.logout();
@@ -159,7 +160,7 @@ const LoginScreen = (props) => {
 					style={[
 						styles.generalInput,
 						{
-							width: state.orientation == "PORTRAIT" ? "80%" : "40%",
+							width: orientation == "PORTRAIT" ? "80%" : "40%",
 							fontSize: state.dispId ? 40 : null
 						}
 					]}
@@ -181,7 +182,7 @@ const LoginScreen = (props) => {
 				<Button
 					disabled={loadingLoginAction}
 					containerStyle={{
-						width: state.orientation == "PORTRAIT" ? "80%" : "40%",
+						width: orientation == "PORTRAIT" ? "80%" : "40%",
 						marginTop: 10,
 						alignSelf: "center"
 					}}

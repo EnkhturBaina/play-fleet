@@ -167,8 +167,7 @@ const InspectionReportScreen = (props) => {
 			style={{
 				flex: 1,
 				paddingTop: Constants.statusBarHeight,
-				backgroundColor: "#fff",
-				paddingBottom: 20
+				backgroundColor: "#fff"
 			}}
 		>
 			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />

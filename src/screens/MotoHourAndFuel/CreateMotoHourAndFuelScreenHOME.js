@@ -24,9 +24,11 @@ import { useFocusEffect } from "@react-navigation/native";
 import { sendMotoHour } from "../../helper/apiService";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { OrientationContext } from "../../helper/OrientationContext";
 
 const CreateMotoHourAndFuelScreenHOME = (props) => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 	const { isConnected } = useNetworkStatus();
 
 	const [visibleSnack, setVisibleSnack] = useState(false);
@@ -204,7 +206,7 @@ const CreateMotoHourAndFuelScreenHOME = (props) => {
 					confirmBtnText={dialogBtnText}
 					DeclineBtnText=""
 					type={dialogType}
-					screenOrientation={state.orientation}
+					screenOrientation={orientation}
 				/>
 			</KeyboardAvoidingView>
 		</TouchableWithoutFeedback>

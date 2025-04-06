@@ -6,7 +6,6 @@ import * as Location from "expo-location";
 import { createTable, fetchLoginData } from "../helper/db";
 import { createReferenceTables, dropTable, fetchReferencesData, saveReferencesWithClear } from "../helper/reference_db";
 import { useNetworkStatus } from "./NetworkContext";
-import { Dimensions } from "react-native";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -15,8 +14,6 @@ import { getDistanceFromLatLonInMeters } from "../helper/functions";
 import { sendLocation } from "../helper/apiService";
 
 const MainContext = React.createContext();
-const width = Dimensions.get("screen").width;
-const height = Dimensions.get("screen").height;
 dayjs.extend(customParseFormat);
 
 export const MainStore = (props) => {
@@ -46,7 +43,6 @@ export const MainStore = (props) => {
 		totalReis: null,
 		assignedTask: null
 	});
-	const [orientation, setOrientation] = useState("PORTRAIT"); //LANDSCAPE, PORTRAIT
 	const [selectedEquipment, setSelectedEquipment] = useState(null); //Сонгогдсон Төхөөрөмж
 	const [selectedEquipmentCode, setSelectedEquipmentCode] = useState(null); //Сонгогдсон Төхөөрөмжийн КОД {0 - Truck},{1 - Loader},{? - Other}
 	const [savedInspectionId, setSavedInspectionId] = useState(null);
@@ -452,10 +448,6 @@ export const MainStore = (props) => {
 		}
 	};
 
-	const detectOrientation = () => {
-		setOrientation(width > height ? "LANDSCAPE" : "PORTRAIT");
-	};
-
 	const checkIfInsideCircle = async (radius) => {
 		console.log("radius", radius);
 
@@ -563,8 +555,6 @@ export const MainStore = (props) => {
 				setHeaderSelections,
 				mainCompanyId,
 				setMainCompanyId,
-				detectOrientation,
-				orientation,
 				projectId,
 				setProjectId,
 				shiftData,

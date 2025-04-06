@@ -5,9 +5,11 @@ import { TextInput } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainContext from "../contexts/MainContext";
 import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_INPUT_HEIGHT } from "../constant";
+import { OrientationContext } from "../helper/OrientationContext";
 
 export default function (props) {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 	const [errorMsg, setErrorMsg] = useState(null);
 
 	const setCompanyIdToLocal = async () => {
@@ -39,7 +41,7 @@ export default function (props) {
 				<View
 					style={{
 						...styles.modalContainer,
-						width: state.orientation === "PORTRAIT" ? "80%" : "40%",
+						width: orientation === "PORTRAIT" ? "80%" : "40%",
 						top: "30%" // Adjusted to make the modal appear more centered
 					}}
 				>

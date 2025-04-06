@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { NetworkProvider } from "./src/contexts/NetworkContext";
 import { SQLiteProvider } from "expo-sqlite";
 import * as Updates from "expo-updates";
+import { OrientationProvider } from "./src/helper/OrientationContext";
 
 export default function App() {
 	async function onFetchUpdateAsync() {
@@ -31,13 +32,13 @@ export default function App() {
 	return (
 		<SafeAreaProvider>
 			<NetworkProvider>
-				{/* <SQLiteProvider databaseName="offline_data"> */}
-				<NavigationContainer>
-					<MainStore>
-						<MainStackNavigator />
-					</MainStore>
-				</NavigationContainer>
-				{/* </SQLiteProvider> */}
+				<OrientationProvider>
+					<NavigationContainer>
+						<MainStore>
+							<MainStackNavigator />
+						</MainStore>
+					</NavigationContainer>
+				</OrientationProvider>
 			</NetworkProvider>
 		</SafeAreaProvider>
 	);

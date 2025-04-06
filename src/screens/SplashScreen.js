@@ -4,6 +4,7 @@ import LottieView from "lottie-react-native";
 import Constants from "expo-constants";
 import { Image } from "expo-image";
 import MainContext from "../contexts/MainContext";
+import { OrientationContext } from "../helper/OrientationContext";
 
 if (__DEV__) {
 	const ignoreWarns = [
@@ -31,6 +32,7 @@ if (__DEV__) {
 }
 const SplashScreen = () => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 	const animation = useRef(null);
 
 	return (
@@ -43,7 +45,7 @@ const SplashScreen = () => {
 			}}
 		>
 			<Image
-				style={{ width: state.orientation === "PORTRAIT" ? 300 : 400, height: 150 }}
+				style={{ width: orientation === "PORTRAIT" ? 300 : 400, height: 150 }}
 				// source={talent_logo}
 				source={require("../../assets/mainLogo.png")}
 				contentFit="contain"

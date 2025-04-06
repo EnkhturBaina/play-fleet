@@ -21,6 +21,7 @@ import LottieView from "lottie-react-native";
 import useTileLoader from "../helper/useTileLoader";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
+import { OrientationContext } from "../helper/OrientationContext";
 
 const width = Dimensions.get("screen").width;
 const height = Dimensions.get("screen").height;
@@ -28,6 +29,7 @@ const height = Dimensions.get("screen").height;
 
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 	const echo = useEcho();
 
 	const { isConnected } = useNetworkStatus();
@@ -136,7 +138,6 @@ const HomeScreen = (props) => {
 		const equipmentType = state.selectedEquipment?.TypeName;
 
 		setEquipmentImage(equipmentImages[equipmentType] || require("../../assets/icon.png"));
-		state.detectOrientation();
 		// Байршил шалгах
 		checkIfFileExistsAndLoad();
 
@@ -411,7 +412,7 @@ const HomeScreen = (props) => {
 								position: "absolute",
 								bottom: 0,
 								right: 0,
-								width: state.orientation == "PORTRAIT" ? "100%" : "50%",
+								width: orientation == "PORTRAIT" ? "100%" : "50%",
 								height: "100%"
 							}}
 						>
@@ -427,7 +428,7 @@ const HomeScreen = (props) => {
 						confirmBtnText={dialogConfirmText}
 						DeclineBtnText=""
 						type={"warning"}
-						screenOrientation={state.orientation}
+						screenOrientation={orientation}
 					/>
 				</SafeAreaView>
 			) : (

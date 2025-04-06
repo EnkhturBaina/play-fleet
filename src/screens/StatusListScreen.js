@@ -8,10 +8,12 @@ import CustomDialog from "../components/CustomDialog";
 import MainContext from "../contexts/MainContext";
 import { sendSelectedState } from "../helper/apiService";
 import { useNetworkStatus } from "../contexts/NetworkContext";
+import { OrientationContext } from "../helper/OrientationContext";
 
 const StatusListScreen = (props) => {
 	const state = useContext(MainContext);
 	const { isConnected } = useNetworkStatus();
+	const orientation = useContext(OrientationContext);
 
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 	const [dialogType, setDialogType] = useState("warning"); //Dialog харуулах төрөл
@@ -121,7 +123,7 @@ const StatusListScreen = (props) => {
 				confirmBtnText="Тийм"
 				DeclineBtnText="Үгүй"
 				type={dialogType}
-				screenOrientation={state.orientation}
+				screenOrientation={orientation}
 			/>
 		</SafeAreaView>
 	);
