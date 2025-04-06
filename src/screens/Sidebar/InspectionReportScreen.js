@@ -158,7 +158,7 @@ const InspectionReportScreen = (props) => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 20,
 				backgroundColor: "#fff"
 			}}
 		>

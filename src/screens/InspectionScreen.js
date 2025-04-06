@@ -77,10 +77,14 @@ const InspectionScreen = () => {
 					}
 				)
 				.then(function (response) {
-					// console.log("get Inspections response", JSON.stringify(response.data));
+					console.log("get Inspections response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setMainData(response.data?.Extra);
 						setInspectionData(response.data?.Extra?.inspections);
+					} else {
+						setDialogText(response.data?.Msg);
+						setDialogType("warning");
+						setVisibleDialog(true);
 					}
 				})
 				.catch(function (error) {
@@ -141,11 +145,13 @@ const InspectionScreen = () => {
 					}
 				)
 				.then(function (response) {
-					// console.log("save Inspections response", JSON.stringify(response.data));
+					console.log("save Inspections response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setDialogType("success");
 					} else {
+						setDialogText(response.data?.Msg);
 						setDialogType("warning");
+						setVisibleDialog(true);
 					}
 					setDialogText(response.data?.Msg);
 				})
@@ -167,7 +173,7 @@ const InspectionScreen = () => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 20,
 				backgroundColor: "#fff",
 				paddingBottom: 20
 			}}
