@@ -247,7 +247,7 @@ const HomeScreen = (props) => {
 
 	return (
 		<>
-			{tilesReady && tileUri !== null ? (
+			{tilesReady && tileUri !== null && state.mapType && state.location ? (
 				<View
 					style={{
 						flex: 1,
@@ -257,10 +257,13 @@ const HomeScreen = (props) => {
 					}}
 				>
 					<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} hidden={false} />
-					<HeaderUser isSideBar={true} isShowNotif={true} />
-					<HeaderFloatItem mapRef={animateRef} />
+					<View style={{ backgroundColor: "red" }}>
+						<HeaderUser isSideBar={true} isShowNotif={true} />
+						<HeaderFloatItem mapRef={animateRef} />
+					</View>
 					<MapView
 						// provider={PROVIDER_GOOGLE}
+						// provider="google"
 						ref={mapRef}
 						style={[styles.map, { width: width, height: height }]}
 						initialRegion={{
@@ -273,13 +276,11 @@ const HomeScreen = (props) => {
 						zoomEnabled={!state.isTrack} // Томруулах боломжгүй болгох
 						rotateEnabled={!state.isTrack} // Эргүүлэх боломжгүй болгох
 						pitchEnabled={!state.isTrack} // 3D харагдац боломжгүй болгох
-						mapType="standard"
+						mapType={state.mapType}
+						// mapType="satellite"
+						showsUserLocation
 					>
-						<UrlTile
-							urlTemplate={tileUri} // Урл замыг хэрэглэнэ
-							maximumZ={ZOOM_LEVEL}
-							tileSize={256}
-						/>
+						<UrlTile urlTemplate={tileUri} maximumZ={ZOOM_LEVEL} tileSize={256} />
 						<View>
 							<Circle
 								center={{

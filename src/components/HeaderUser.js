@@ -39,7 +39,7 @@ const HeaderUser = (props) => {
 					<Text style={styles.userName} numberOfLines={1}>
 						{`${state.employeeData?.LastName ?? " "} ${state.employeeData?.FirstName ?? "User"}`}
 					</Text>
-					{state.showLocationInfo && state.location && (
+					{/* {state.showLocationInfo && state.location && (
 						<View>
 							<Text style={styles.text}>shift: {state.shiftData?.Name}</Text>
 							<Text>EventTime: </Text>
@@ -54,7 +54,7 @@ const HeaderUser = (props) => {
 								})}
 							</View>
 						</View>
-					)}
+					)} */}
 				</View>
 			</TouchableOpacity>
 			{props.isShowNotif ? (
@@ -74,10 +74,9 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		paddingHorizontal: 20,
-		paddingTop: 5,
-		paddingBottom: 10,
 		zIndex: 999,
-		backgroundColor: "#fff"
+		backgroundColor: "#fff",
+		height: 60
 	},
 	headerFirstSection: {
 		flexDirection: "row",

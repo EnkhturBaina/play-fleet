@@ -22,6 +22,7 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OrientationContext } from "../../helper/OrientationContext";
+import Constants from "expo-constants";
 
 const width = Dimensions.get("screen").width;
 
@@ -298,7 +299,14 @@ const HeaderFloatItem = (props) => {
 	};
 
 	return (
-		<View style={[styles.floatButtons, {}]}>
+		<View
+			style={[
+				styles.floatButtons,
+				{
+					// top: 70 + Constants.statusBarHeight
+				}
+			]}
+		>
 			<View
 				style={[
 					styles.mainContainer,
@@ -445,9 +453,9 @@ export default HeaderFloatItem;
 const styles = StyleSheet.create({
 	floatButtons: {
 		// backgroundColor: "red",
-		position: "absolute", //use absolute position to show button on top of the map
+		position: "absolute",
 		left: 0,
-		top: 5,
+		top: 65, // HeaderUser -н өндөр
 		alignSelf: "flex-end",
 		zIndex: 10
 	},

@@ -84,6 +84,14 @@
 				{
 					"username": "etr"
 				}
+			],
+			[
+				"expo-splash-screen",
+				{
+					"backgroundColor": "#fff",
+					"image": "./assets/icon.png",
+					"imageWidth": 200
+				}
 			]
 		],
 		"extra": {

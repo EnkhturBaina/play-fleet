@@ -361,24 +361,23 @@ export default function (props) {
 							</TouchableOpacity>
 						);
 					})}
+				<CustomDialog
+					visible={visibleDialog}
+					confirmFunction={() => {
+						onConfirm();
+						setVisibleDialog(false);
+					}}
+					declineFunction={() => {
+						setVisibleDialog(false);
+					}}
+					text={dialogText}
+					confirmBtnText="Тийм"
+					DeclineBtnText="Үгүй"
+					type={"warning"}
+					screenOrientation={orientation}
+				/>
 			</BottomSheetScrollView>
 			{/* </BottomSheetView> */}
-
-			<CustomDialog
-				visible={visibleDialog}
-				confirmFunction={() => {
-					onConfirm();
-					setVisibleDialog(false);
-				}}
-				declineFunction={() => {
-					setVisibleDialog(false);
-				}}
-				text={dialogText}
-				confirmBtnText="Тийм"
-				DeclineBtnText="Үгүй"
-				type={"warning"}
-				screenOrientation={orientation}
-			/>
 		</BottomSheet>
 	);
 }

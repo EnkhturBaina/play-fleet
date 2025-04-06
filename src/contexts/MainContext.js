@@ -141,7 +141,7 @@ export const MainStore = (props) => {
 						setTrackCount(0);
 					}
 					await AsyncStorage.getItem("L_map_type").then(async (map_type) => {
-						console.log("map_type", map_type);
+						// console.log("map_type", map_type);
 						if (map_type) {
 							setMapType(map_type);
 						} else {
