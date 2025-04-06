@@ -1,14 +1,4 @@
-import {
-	StyleSheet,
-	Text,
-	View,
-	StatusBar,
-	Platform,
-	ActivityIndicator,
-	TouchableOpacity,
-	FlatList,
-	RefreshControl
-} from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, TouchableOpacity, FlatList, RefreshControl } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import Constants from "expo-constants";
 import { Button, Icon } from "@rneui/base";
@@ -28,9 +18,11 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 import Empty from "../../components/Empty";
+import { OrientationContext } from "../../helper/OrientationContext";
 
 const InspectionReportScreen = (props) => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 
 	const [mainData, setMainData] = useState(null);
 	const [inspectionData, setInspectionData] = useState(null);
@@ -166,11 +158,10 @@ const InspectionReportScreen = (props) => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: Constants.statusBarHeight,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
 				backgroundColor: "#fff"
 			}}
 		>
-			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<HeaderUser isShowNotif={true} />
 			<TouchableOpacity
 				onPress={() => {

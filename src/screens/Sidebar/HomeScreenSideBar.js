@@ -91,6 +91,7 @@ const HomeScreenSideBar = (props) => {
 					{
 						text: "Тийм",
 						onPress: () => {
+							props.navigation.closeDrawer();
 							state.logout();
 						}
 					}

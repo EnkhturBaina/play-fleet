@@ -1,4 +1,4 @@
-import { ActivityIndicator, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import MainContext from "../contexts/MainContext";
 import Constants from "expo-constants";
@@ -72,12 +72,11 @@ const SelectEquipmentScreen = () => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: Constants.statusBarHeight,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
 				backgroundColor: "#fff",
 				paddingBottom: 20
 			}}
 		>
-			<StatusBar translucent hidden={false} barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<Text style={{ textAlign: "center", fontSize: 24, fontWeight: "600", marginTop: 20 }}>Төхөөрөмж сонгоно уу.</Text>
 			<View
 				style={{

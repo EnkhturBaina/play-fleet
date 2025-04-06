@@ -1,14 +1,4 @@
-import {
-	ActivityIndicator,
-	FlatList,
-	Platform,
-	RefreshControl,
-	StatusBar,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View
-} from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import Constants from "expo-constants";
 import HeaderUser from "../../components/HeaderUser";
@@ -20,9 +10,11 @@ import Empty from "../../components/Empty";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 import { useIsFocused } from "@react-navigation/native";
+import { OrientationContext } from "../../helper/OrientationContext";
 
 const NotificationScreen = (props) => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 	const isFocused = useIsFocused();
 
 	const [notificationData, setNotificationData] = useState(null);
@@ -117,12 +109,11 @@ const NotificationScreen = (props) => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: Constants.statusBarHeight,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
 				backgroundColor: "#fff",
 				paddingBottom: 20
 			}}
 		>
-			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<HeaderUser isShowNotif={true} />
 			<TouchableOpacity
 				onPress={() => {

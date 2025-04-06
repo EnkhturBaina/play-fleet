@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, StatusBar, Platform, TouchableOpacity, ScrollView } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import HeaderUser from "../components/HeaderUser";
 import Constants from "expo-constants";
@@ -62,11 +62,10 @@ const StatusListScreen = (props) => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: Constants.statusBarHeight,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
 				backgroundColor: "#fff"
 			}}
 		>
-			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<HeaderUser isShowNotif={true} />
 			<TouchableOpacity
 				onPress={() => {

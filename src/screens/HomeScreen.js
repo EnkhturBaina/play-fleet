@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Platform, StatusBar, SafeAreaView, useWindowDimensions } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, useWindowDimensions } from "react-native";
 import React, { useContext, useEffect, useState, useRef, useCallback, useMemo } from "react";
 import HeaderUser from "../components/HeaderUser";
 import MainContext from "../contexts/MainContext";
@@ -256,7 +256,6 @@ const HomeScreen = (props) => {
 						paddingTop: insets.top
 					}}
 				>
-					<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} hidden={false} />
 					<View style={{ backgroundColor: "red" }}>
 						<HeaderUser isSideBar={true} isShowNotif={true} />
 						<HeaderFloatItem mapRef={animateRef} />

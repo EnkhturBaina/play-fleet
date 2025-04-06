@@ -26,6 +26,7 @@ export const DrawerNavigation = () => {
 				<SafeAreaView>
 					{sideBarStep == 1 ? (
 						<HomeScreenSideBar
+							{...props}
 							sideBarStep={1}
 							setSideBarStep={setSideBarStep}
 							menuType={menuType}
@@ -34,6 +35,7 @@ export const DrawerNavigation = () => {
 					) : null}
 					{sideBarStep == 2 ? (
 						<HomeScreenSideBarSUB
+							{...props}
 							sideBarStep={1}
 							setSideBarStep={setSideBarStep}
 							menuType={menuType}
@@ -51,7 +53,8 @@ export const DrawerNavigation = () => {
 			drawerContent={(props) => <CustomDrawerContent {...props} />}
 			screenOptions={{
 				headerShown: false,
-				drawerType: "front"
+				drawerType: "front",
+				swipeEnabled: false
 			}}
 		>
 			<Drawer.Screen name="Main" component={MainStackNavigator} />

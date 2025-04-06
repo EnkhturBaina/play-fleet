@@ -1,4 +1,4 @@
-import { FlatList, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import MainContext from "../contexts/MainContext";
@@ -63,7 +63,6 @@ const TempLocations = () => {
 				paddingBottom: 20
 			}}
 		>
-			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			{/* <HeaderUser isShowNotif={true} /> */}
 			<TouchableOpacity
 				onPress={() => {

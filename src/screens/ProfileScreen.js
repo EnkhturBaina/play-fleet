@@ -3,7 +3,6 @@ import {
 	KeyboardAvoidingView,
 	Platform,
 	ScrollView,
-	StatusBar,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
@@ -198,7 +197,6 @@ const ProfileScreen = (props) => {
 					text={snackBarMsg}
 					topPos={Constants.statusBarHeight}
 				/>
-				<StatusBar translucent={false} barStyle={Platform.OS == "ios" ? "dark-content" : "default"} hidden={false} />
 				{/* <HeaderUser isShowNotif={true} /> */}
 				<TouchableOpacity
 					onPress={() => {

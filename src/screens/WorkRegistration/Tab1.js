@@ -1,27 +1,19 @@
-import {
-	ActivityIndicator,
-	FlatList,
-	RefreshControl,
-	SafeAreaView,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View
-} from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Icon } from "@rneui/base";
+import { Icon } from "@rneui/base";
 import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, SERVER_URL, TEXT_COLOR_GRAY } from "../../constant";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import YearPicker from "../../components/YearPicker";
 import MainContext from "../../contexts/MainContext";
 import { generateLast3Years } from "../../helper/functions";
 import Empty from "../../components/Empty";
 import Constants from "expo-constants";
 import axios from "axios";
+import { OrientationContext } from "../../helper/OrientationContext";
 
 const Tab1 = (props) => {
 	const state = useContext(MainContext);
-	const navigation = useNavigation();
+	const orientation = useContext(OrientationContext);
 	const isFocused = useIsFocused();
 	const [last3Years, setLast3Years] = useState(generateLast3Years()); //*****Сүүлийн 3 жил-Сар (Хүсэлтэд ашиглах)
 	const [selectedDate, setSelectedDate] = useState(generateLast3Years()[0]);
@@ -137,7 +129,6 @@ const Tab1 = (props) => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: Constants.statusBarHeight,
 				backgroundColor: "#fff"
 			}}
 		>
@@ -151,15 +142,6 @@ const Tab1 = (props) => {
 					<Text style={{ fontWeight: "600", fontSize: 16 }}>{selectedDate.name}</Text>
 					<Icon name="keyboard-arrow-down" type="material-icons" size={30} />
 				</TouchableOpacity>
-				{/* <Button
-					buttonStyle={styles.addBtnStyle}
-					title="Бүртгэл нэмэх"
-					titleStyle={{
-						fontSize: 16,
-						fontWeight: "bold"
-					}}
-					onPress={() => navigation.navigate("CreateReisScreen")}
-				/> */}
 			</View>
 			<View
 				style={{

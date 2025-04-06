@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import Constants from "expo-constants";
 import HeaderUser from "../../components/HeaderUser";
@@ -8,9 +8,11 @@ import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, SERVER_URL } from "
 import MainContext from "../../contexts/MainContext";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
+import { OrientationContext } from "../../helper/OrientationContext";
 
 const NotificationDTLScreen = (props) => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 	const [notifData, setNotifData] = useState(null);
 	const [loadingData, setLoadingData] = useState(true);
 
@@ -92,12 +94,11 @@ const NotificationDTLScreen = (props) => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: Constants.statusBarHeight,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
 				backgroundColor: "#fff",
 				paddingBottom: 20
 			}}
 		>
-			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<HeaderUser isShowNotif={true} />
 			<TouchableOpacity
 				onPress={() => {

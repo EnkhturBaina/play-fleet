@@ -10,6 +10,8 @@ import { SQLiteProvider } from "expo-sqlite";
 import * as Updates from "expo-updates";
 import { OrientationProvider } from "./src/helper/OrientationContext";
 import { DrawerNavigation } from "./src/navigations/DrawerNavigation";
+import { StatusBar } from "expo-status-bar";
+import { Platform } from "react-native";
 
 export default function App() {
 	async function onFetchUpdateAsync() {
@@ -31,17 +33,20 @@ export default function App() {
 	}, []);
 
 	return (
-		<SafeAreaProvider>
-			<NetworkProvider>
-				<OrientationProvider>
-					<NavigationContainer>
-						<MainStore>
-							<DrawerNavigation />
-						</MainStore>
-					</NavigationContainer>
-				</OrientationProvider>
-			</NetworkProvider>
-		</SafeAreaProvider>
+		<>
+			<StatusBar style={Platform.OS == "ios" ? "dark-content" : "default"} hidden={false} />
+			<SafeAreaProvider>
+				<NetworkProvider>
+					<OrientationProvider>
+						<NavigationContainer>
+							<MainStore>
+								<DrawerNavigation />
+							</MainStore>
+						</NavigationContainer>
+					</OrientationProvider>
+				</NetworkProvider>
+			</SafeAreaProvider>
+		</>
 	);
 }
 //4158421d-2088-43c6-81e6-b0a85beafc07

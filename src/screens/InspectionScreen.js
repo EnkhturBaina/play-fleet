@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, StatusBar, Platform, ScrollView, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, ScrollView, ActivityIndicator } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import HeaderUser from "../components/HeaderUser";
 import Constants from "expo-constants";
@@ -167,12 +167,11 @@ const InspectionScreen = () => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: Constants.statusBarHeight,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
 				backgroundColor: "#fff",
 				paddingBottom: 20
 			}}
 		>
-			<StatusBar translucent hidden={false} barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<HeaderUser isShowNotif={false} />
 			<ScrollView
 				contentContainerStyle={{

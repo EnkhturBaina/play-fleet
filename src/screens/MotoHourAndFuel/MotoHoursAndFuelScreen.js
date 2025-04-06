@@ -1,29 +1,20 @@
-import {
-	StyleSheet,
-	Text,
-	View,
-	SafeAreaView,
-	StatusBar,
-	Platform,
-	TouchableOpacity,
-	FlatList,
-	RefreshControl,
-	ActivityIndicator
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, RefreshControl, ActivityIndicator } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import HeaderUser from "../../components/HeaderUser";
 import Constants from "expo-constants";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Button, Icon } from "@rneui/base";
-import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, SERVER_URL, TEXT_COLOR_GRAY } from "../../constant";
+import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR, SERVER_URL } from "../../constant";
 import Empty from "../../components/Empty";
 import axios from "axios";
 import MainContext from "../../contexts/MainContext";
 import { generateLast3Years } from "../../helper/functions";
 import YearPicker from "../../components/YearPicker";
+import { OrientationContext } from "../../helper/OrientationContext";
 
 const MotoHoursAndFuelScreen = (props) => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 	const navigation = useNavigation();
 	const isFocused = useIsFocused();
 	const [last3Years, setLast3Years] = useState(generateLast3Years()); //*****Сүүлийн 3 жил-Сар (Хүсэлтэд ашиглах)
@@ -142,11 +133,10 @@ const MotoHoursAndFuelScreen = (props) => {
 		<View
 			style={{
 				flex: 1,
-				paddingTop: Constants.statusBarHeight,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
 				backgroundColor: "#fff"
 			}}
 		>
-			<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
 			<HeaderUser isShowNotif={true} />
 			<TouchableOpacity
 				onPress={() => {
