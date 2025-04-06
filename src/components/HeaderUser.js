@@ -17,13 +17,14 @@ const HeaderUser = (props) => {
 				style={styles.headerFirstSection}
 				onPress={() => {
 					if (props.isSideBar) {
-						props.setIsOpen(!props.isOpen);
+						navigation.openDrawer();
 					}
 				}}
 				onLongPress={() => {
 					navigation.navigate("TempLocations");
 				}}
 				delayLongPress={1000}
+				disabled={!props.isSideBar}
 			>
 				<Image
 					source={

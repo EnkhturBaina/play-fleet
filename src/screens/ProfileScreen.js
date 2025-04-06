@@ -22,9 +22,11 @@ import CustomDialog from "../components/CustomDialog";
 import Loader from "../components/Loader";
 import { clearEmployeeTable, fetchEmployeeData, insertEmployeeData } from "../helper/db";
 import CustomSnackbar from "../components/CustomSnackbar";
+import { OrientationContext } from "../helper/OrientationContext";
 
 const ProfileScreen = (props) => {
 	const state = useContext(MainContext);
+	const orientation = useContext(OrientationContext);
 
 	const [image, setImage] = useState(null);
 	const [loading, setLoading] = useState(false);
@@ -186,7 +188,6 @@ const ProfileScreen = (props) => {
 			<View
 				style={{
 					flex: 1,
-					paddingTop: Constants.statusBarHeight,
 					backgroundColor: "#fff",
 					paddingBottom: 20
 				}}
@@ -197,7 +198,7 @@ const ProfileScreen = (props) => {
 					text={snackBarMsg}
 					topPos={Constants.statusBarHeight}
 				/>
-				<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
+				<StatusBar translucent={false} barStyle={Platform.OS == "ios" ? "dark-content" : "default"} hidden={false} />
 				{/* <HeaderUser isShowNotif={true} /> */}
 				<TouchableOpacity
 					onPress={() => {

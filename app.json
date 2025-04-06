@@ -18,6 +18,7 @@
 			"bundleIdentifier": "com.gamemine.fleet",
 			"buildNumber": "1.0.36",
 			"infoPlist": {
+				"UIViewControllerBasedStatusBarAppearance": false,
 				"NSLocationWhenInUseUsageDescription": "Play Fleet систем нь таны байршлын мэдээллийг төхөөрөмжийн байршил тодорхойлох үйлдэлд ашиглана.",
 				"NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
 				"ITSAppUsesNonExemptEncryption": false

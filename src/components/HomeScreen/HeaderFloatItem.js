@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View, TextInput, useWindowDimensions } from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import {
 	MAIN_BORDER_RADIUS,
@@ -30,7 +30,6 @@ const HeaderFloatItem = (props) => {
 	const orientation = useContext(OrientationContext);
 
 	const navigation = useNavigation();
-	// const { width, height } = useWindowDimensions();
 
 	const { connectionQuality } = useNetworkStatus();
 	const isFocused = useIsFocused();
@@ -354,7 +353,7 @@ const HeaderFloatItem = (props) => {
 						const isEmpty = fieldData?.length === 0;
 
 						return (
-							<View style={[styles.stack1, { width: orientation == "PORTRAIT" ? "100%" : "48%" }]} key={index}>
+							<View style={[styles.stack1, { width: orientation == "PORTRAIT" ? "100%" : "48%" }]} key={el.path}>
 								<Text
 									style={{
 										color: MAIN_COLOR_BLUE,
@@ -368,7 +367,6 @@ const HeaderFloatItem = (props) => {
 								) : null}
 								{el.path != "reis" ? (
 									<Dropdown
-										key={index}
 										style={[styles.dropdown, focusStates[el.path] && { borderColor: "blue" }]}
 										placeholderStyle={[styles.placeholderStyle, { color: isEmpty ? TEXT_COLOR_GRAY : "#000" }]}
 										selectedTextStyle={styles.selectedTextStyle}
@@ -408,11 +406,7 @@ const HeaderFloatItem = (props) => {
 				>
 					<Icon name="location-sharp" type="ionicon" size={35} color={MAIN_COLOR} />
 				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() => props.setIsOpen(!props.isOpen)}
-					style={styles.eachFloatButton}
-					activeOpacity={0.8}
-				>
+				<TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.eachFloatButton} activeOpacity={0.8}>
 					<Image
 						source={require("../../../assets/images/Picture3.png")}
 						style={{

@@ -9,6 +9,7 @@ import { NetworkProvider } from "./src/contexts/NetworkContext";
 import { SQLiteProvider } from "expo-sqlite";
 import * as Updates from "expo-updates";
 import { OrientationProvider } from "./src/helper/OrientationContext";
+import { DrawerNavigation } from "./src/navigations/DrawerNavigation";
 
 export default function App() {
 	async function onFetchUpdateAsync() {
@@ -35,7 +36,7 @@ export default function App() {
 				<OrientationProvider>
 					<NavigationContainer>
 						<MainStore>
-							<MainStackNavigator />
+							<DrawerNavigation />
 						</MainStore>
 					</NavigationContainer>
 				</OrientationProvider>

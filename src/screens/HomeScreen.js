@@ -1,11 +1,8 @@
-import { StyleSheet, Text, View, Platform, StatusBar, SafeAreaView, Dimensions } from "react-native";
+import { StyleSheet, Text, View, Platform, StatusBar, SafeAreaView, useWindowDimensions } from "react-native";
 import React, { useContext, useEffect, useState, useRef, useCallback, useMemo } from "react";
 import HeaderUser from "../components/HeaderUser";
 import MainContext from "../contexts/MainContext";
-import Constants from "expo-constants";
 import MapView, { Circle, Marker, Polyline, UrlTile } from "react-native-maps";
-import SideMenu from "react-native-side-menu-updated";
-import MainSideBar from "./Sidebar/MainSideBar";
 import HeaderFloatItem from "../components/HomeScreen/HeaderFloatItem";
 import StatusBottomSheet from "../components/HomeScreen/StatusBottomSheet";
 import { useNetworkStatus } from "../contexts/NetworkContext";
@@ -22,15 +19,15 @@ import useTileLoader from "../helper/useTileLoader";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 import { OrientationContext } from "../helper/OrientationContext";
-
-const width = Dimensions.get("screen").width;
-const height = Dimensions.get("screen").height;
-// Zoom-ний түвшин
+import Constants from "expo-constants";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
 	const orientation = useContext(OrientationContext);
 	const echo = useEcho();
+	const insets = useSafeAreaInsets();
+	const { width, height } = useWindowDimensions();
 
 	const { isConnected } = useNetworkStatus();
 	const { tileUri, tilesReady, progress } = useTileLoader(false);
@@ -43,10 +40,6 @@ const HomeScreen = (props) => {
 	const [kmlStatus, setKmlStatus] = useState(null);
 	const [fileContent, setFileContent] = useState(null);
 	const [polygons, setPolygons] = useState(null);
-
-	const [isOpen, setIsOpen] = useState(false);
-	const [sideBarStep, setSideBarStep] = useState(1);
-	const [menuType, setMenuType] = useState(null);
 
 	const [equipmentImage, setEquipmentImage] = useState(null);
 
@@ -255,170 +248,117 @@ const HomeScreen = (props) => {
 	return (
 		<>
 			{tilesReady && tileUri !== null ? (
-				<SafeAreaView
+				<View
 					style={{
-						...StyleSheet.absoluteFillObject,
 						flex: 1,
 						paddingTop: Constants.statusBarHeight,
 						backgroundColor: "#fff",
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0
+						paddingTop: insets.top
 					}}
 				>
-					<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} />
-					<HeaderUser isSideBar={true} isOpen={isOpen} setIsOpen={setIsOpen} isShowNotif={true} />
-					<SideMenu
-						menu={
-							<MainSideBar
-								sideBarStep={sideBarStep}
-								setSideBarStep={setSideBarStep}
-								setIsOpen={setIsOpen}
-								menuType={menuType}
-								setMenuType={setMenuType}
-							/>
-						}
-						isOpen={isOpen}
-						onChange={(isOpen) => setIsOpen(isOpen)}
-						openMenuOffset={250}
+					<StatusBar translucent barStyle={Platform.OS == "ios" ? "dark-content" : "default"} hidden={false} />
+					<HeaderUser isSideBar={true} isShowNotif={true} />
+					<HeaderFloatItem mapRef={animateRef} />
+					<MapView
+						// provider={PROVIDER_GOOGLE}
+						ref={mapRef}
+						style={[styles.map, { width: width, height: height }]}
+						initialRegion={{
+							latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+							longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
+							latitudeDelta: 0.01,
+							longitudeDelta: 0.01
+						}}
+						scrollEnabled={!state.isTrack} // Гулсах боломжгүй болгох
+						zoomEnabled={!state.isTrack} // Томруулах боломжгүй болгох
+						rotateEnabled={!state.isTrack} // Эргүүлэх боломжгүй болгох
+						pitchEnabled={!state.isTrack} // 3D харагдац боломжгүй болгох
+						mapType={state.mapType}
 					>
-						<MapView
-							// provider={PROVIDER_GOOGLE}
-							ref={mapRef}
-							style={[styles.map, { width: width, height: height }]}
-							initialRegion={{
-								latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
-								longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
-								latitudeDelta: 0.01,
-								longitudeDelta: 0.01
-							}}
-							scrollEnabled={!state.isTrack} // Гулсах боломжгүй болгох
-							zoomEnabled={!state.isTrack} // Томруулах боломжгүй болгох
-							rotateEnabled={!state.isTrack} // Эргүүлэх боломжгүй болгох
-							pitchEnabled={!state.isTrack} // 3D харагдац боломжгүй болгох
-							mapType={state.mapType}
-						>
-							<UrlTile
-								urlTemplate={tileUri} // Урл замыг хэрэглэнэ
-								maximumZ={ZOOM_LEVEL}
-								tileSize={256}
+						<UrlTile
+							urlTemplate={tileUri} // Урл замыг хэрэглэнэ
+							maximumZ={ZOOM_LEVEL}
+							tileSize={256}
+						/>
+						<View>
+							<Circle
+								center={{
+									latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+									longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
+								}}
+								radius={state.selectedEquipmentCode == 1 ? 400 : 200}
+								strokeWidth={1}
+								strokeColor="#fff"
+								fillColor={state.selectedState?.Color ? `${state.selectedState?.Color}80` : "#ffffff80"}
 							/>
-							<View>
-								<Circle
-									center={{
-										latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
-										longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
-									}}
-									radius={state.selectedEquipmentCode == 1 ? 400 : 200}
-									strokeWidth={1}
-									strokeColor="#fff"
-									fillColor={state.selectedState?.Color ? `${state.selectedState?.Color}80` : "#ffffff80"}
-								/>
-								<Marker
-									title="Таны одоогийн байршил"
-									coordinate={{
-										latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
-										longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
-									}}
-								>
-									<View style={styles.customMarker}>
-										<Image
-											source={equipmentImage}
-											style={{
-												width: 30,
-												height: 30
-											}}
-											contentFit="contain"
-										/>
-									</View>
-									<View style={styles.radiusLabel}>
-										<Text style={styles.radiusText}>{state.selectedEquipment?.Name}</Text>
-									</View>
-								</Marker>
-							</View>
-							{/* <Circle
-						center={{
-							latitude: 47.912620040145065,
-							longitude: 106.93352509456994
-						}}
-						radius={500}
-						strokeWidth={1}
-						strokeColor={"red"}
-						fillColor={"#4F9CC380"}
-					/> */}
-							{/* TEST CIRCLE */}
-							{/* <Circle
-						center={{
-							latitude: parseFloat(47.91248048),
-							longitude: parseFloat(106.933822)
-						}}
-						radius={300}
-						strokeWidth={2}
-						strokeColor={MAIN_COLOR}
-						fillColor={MAIN_COLOR + "80"}
-					/> */}
-							{state.refLocations?.map((el, index) => {
-								const location = state.refLocationTypes?.find((item) => item.id === el.PMSLocationTypeId);
-
-								// STK, PIT => SRC
-								// DMP, STK, MILL => DST
-
-								const locationImg = locationImages[location?.Name] || null;
-								const latitude = el.Latitude ? parseFloat(el.Latitude) : 0;
-								const longitude = el.Longitude ? parseFloat(el.Longitude) : 0;
-
-								return (
-									<View key={index}>
-										<Circle
-											center={{ latitude, longitude }}
-											radius={el.Radius}
-											strokeWidth={1}
-											strokeColor="#fff"
-											fillColor={`${el.Color}80`}
-										/>
-										<Marker coordinate={{ latitude, longitude }} anchor={{ x: 0.5, y: 0.5 }}>
-											<View style={styles.customMarker}>
-												{locationImg && (
-													<Image source={locationImg} style={{ width: 30, height: 30 }} contentFit="contain" />
-												)}
-											</View>
-											<View style={styles.radiusLabel}>
-												{/* <Text style={styles.radiusText}>{location?.Name}</Text> */}
-												<Text style={styles.radiusText}>{el.Name}</Text>
-											</View>
-										</Marker>
-									</View>
-								);
-							})}
-							{renderedPolygons}
-							{/* {!loadingKML &&
-						polygons?.length > 0 &&
-						polygons?.map((el, index) => {
-							return (
-								<Polyline
-									key={index}
-									coordinates={el.coords}
-									strokeColor={el.strokeColor}
-									// strokeWidth={el.strokeWidth}
-								/>
-							);
-						})} */}
-						</MapView>
-						<HeaderFloatItem isOpen={isOpen} setIsOpen={setIsOpen} mapRef={animateRef} />
-						<View
-							style={{
-								position: "absolute",
-								bottom: 0,
-								right: 0,
-								width: orientation == "PORTRAIT" ? "100%" : "50%",
-								height: "100%"
-							}}
-						>
-							<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
+							<Marker
+								title="Таны одоогийн байршил"
+								coordinate={{
+									latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+									longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
+								}}
+							>
+								<View style={styles.customMarker}>
+									<Image
+										source={equipmentImage}
+										style={{
+											width: 30,
+											height: 30
+										}}
+										contentFit="contain"
+									/>
+								</View>
+								<View style={styles.radiusLabel}>
+									<Text style={styles.radiusText}>{state.selectedEquipment?.Name}</Text>
+								</View>
+							</Marker>
 						</View>
-					</SideMenu>
+						{state.refLocations?.map((el, index) => {
+							const location = state.refLocationTypes?.find((item) => item.id === el.PMSLocationTypeId);
+
+							// STK, PIT => SRC
+							// DMP, STK, MILL => DST
+
+							const locationImg = locationImages[location?.Name] || null;
+							const latitude = el.Latitude ? parseFloat(el.Latitude) : 0;
+							const longitude = el.Longitude ? parseFloat(el.Longitude) : 0;
+
+							return (
+								<View key={index}>
+									<Circle
+										center={{ latitude, longitude }}
+										radius={el.Radius}
+										strokeWidth={1}
+										strokeColor="#fff"
+										fillColor={`${el.Color}80`}
+									/>
+									<Marker coordinate={{ latitude, longitude }} anchor={{ x: 0.5, y: 0.5 }}>
+										<View style={styles.customMarker}>
+											{locationImg && (
+												<Image source={locationImg} style={{ width: 30, height: 30 }} contentFit="contain" />
+											)}
+										</View>
+										<View style={styles.radiusLabel}>
+											{/* <Text style={styles.radiusText}>{location?.Name}</Text> */}
+											<Text style={styles.radiusText}>{el.Name}</Text>
+										</View>
+									</Marker>
+								</View>
+							);
+						})}
+						{renderedPolygons}
+					</MapView>
+					<View
+						style={{
+							position: "absolute",
+							bottom: 0,
+							right: 0,
+							width: orientation == "PORTRAIT" ? "100%" : "50%",
+							height: "100%"
+						}}
+					>
+						<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
+					</View>
 
 					<CustomDialog
 						visible={visibleDialog}
@@ -430,7 +370,7 @@ const HomeScreen = (props) => {
 						type={"warning"}
 						screenOrientation={orientation}
 					/>
-				</SafeAreaView>
+				</View>
 			) : (
 				<SafeAreaView
 					style={{
