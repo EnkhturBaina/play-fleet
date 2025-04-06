@@ -17,7 +17,7 @@ const MAPS_API_KEY = Platform.OS == "ios" ? IOS_MAP_API : Platform.OS == "androi
 
 var Buffer = require("buffer/").Buffer;
 
-const useTileLoader = (isRemove, mapType) => {
+const useTileLoader = (isRemove) => {
 	const state = useContext(MainContext);
 	const [tileUri, setTileUri] = useState(null);
 	const [tilesReady, setTilesReady] = useState(false);

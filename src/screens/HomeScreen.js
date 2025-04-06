@@ -273,7 +273,7 @@ const HomeScreen = (props) => {
 						zoomEnabled={!state.isTrack} // Томруулах боломжгүй болгох
 						rotateEnabled={!state.isTrack} // Эргүүлэх боломжгүй болгох
 						pitchEnabled={!state.isTrack} // 3D харагдац боломжгүй болгох
-						mapType={state.mapType}
+						mapType="standard"
 					>
 						<UrlTile
 							urlTemplate={tileUri} // Урл замыг хэрэглэнэ

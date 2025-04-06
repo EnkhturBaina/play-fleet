@@ -15,10 +15,7 @@ import CreateReisScreen from "../screens/WorkRegistration/Reis/CreateReisScreen"
 import { useNavigation } from "@react-navigation/native";
 import MotoHoursAndFuelScreen from "../screens/MotoHourAndFuel/MotoHoursAndFuelScreen";
 import CreateMotoHourAndFuelScreen from "../screens/MotoHourAndFuel/CreateMotoHourAndFuelScreen";
-import TestSQL from "../screens/TestSQL";
 // import * as SplashScreen from "expo-splash-screen";
-import TestRenderUurhai from "../screens/TestRenderUurhai";
-import TestTilesScreen from "../screens/TestTilesScreen";
 import SplashScreen from "../screens/SplashScreen";
 import SelectEquipmentScreen from "../screens/SelectEquipmentScreen";
 import InspectionScreen from "../screens/InspectionScreen";
@@ -218,36 +215,6 @@ const MainStackNavigator = (props) => {
 								<Text style={styles.headerLeftText}>Мото цагийн болон түлшний бүртгэл</Text>
 							</TouchableOpacity>
 						)
-					}}
-				/>
-				<Stack.Screen
-					name="TestSQL"
-					component={TestSQL}
-					options={{
-						headerShown: false,
-						title: "",
-						headerTitleStyle: {},
-						headerLeft: () => <></>
-					}}
-				/>
-				<Stack.Screen
-					name="TestRenderUurhai"
-					component={TestRenderUurhai}
-					options={{
-						headerShown: false,
-						title: "",
-						headerTitleStyle: {},
-						headerLeft: () => <></>
-					}}
-				/>
-				<Stack.Screen
-					name="TestTilesScreen"
-					component={TestTilesScreen}
-					options={{
-						headerShown: false,
-						title: "",
-						headerTitleStyle: {},
-						headerLeft: () => <></>
 					}}
 				/>
 				<Stack.Screen
