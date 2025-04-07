@@ -332,7 +332,7 @@ const HeaderFloatItem = (props) => {
 								style={{ marginRight: 5 }}
 							/>
 						)}
-						<Text style={{ color: MAIN_COLOR, fontSize: 16 }}>{VEHICLE_TYPE[state.vehicleType]?.title}.</Text>
+						<Text style={{ color: MAIN_COLOR, fontSize: 16 }}>{VEHICLE_TYPE[state.vehicleType]?.title}..</Text>
 					</View>
 					{orientation == "PORTRAIT" ? (
 						<TouchableOpacity

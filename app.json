@@ -53,6 +53,12 @@
 		},
 		"plugins": [
 			[
+				"expo-updates",
+				{
+					"username": "etr"
+				}
+			],
+			[
 				"expo-location",
 				{
 					"locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
@@ -79,12 +85,6 @@
 				}
 			],
 			[
-				"expo-updates",
-				{
-					"username": "etr"
-				}
-			],
-			[
 				"expo-splash-screen",
 				{
 					"backgroundColor": "#ffffff",
@@ -102,9 +102,10 @@
 			"policy": "appVersion"
 		},
 		"updates": {
-			"url": "https://u.expo.dev/7cbb54e3-047b-4551-9e83-834541911205",
+			"enabled": true,
+			"checkAutomatically": "ON_LOAD",
 			"fallbackToCacheTimeout": 0,
-			"enabled": true
+			"url": "https://u.expo.dev/7cbb54e3-047b-4551-9e83-834541911205"
 		},
 		"owner": "gamemine"
 	}
