@@ -354,7 +354,7 @@ const HomeScreen = (props) => {
 							bottom: 0,
 							right: 0,
 							width: orientation == "PORTRAIT" ? "100%" : "50%",
-							height: "100%"
+							height: "87%"
 						}}
 					>
 						<StatusBottomSheet bottomSheetRef={bottomSheetRef} />

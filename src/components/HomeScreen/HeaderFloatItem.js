@@ -147,7 +147,7 @@ const HeaderFloatItem = (props) => {
 	// }, [isFocused]);
 
 	useEffect(() => {
-		setLines();
+		// setLines();
 	}, [orientation]);
 
 	const setLines = () => {
@@ -299,7 +299,7 @@ const HeaderFloatItem = (props) => {
 	};
 
 	return (
-		<View style={styles.floatButtons}>
+		<View style={[styles.floatButtons, { width: orientation == "PORTRAIT" ? "100%" : "50%" }]}>
 			<View style={styles.mainContainer}>
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -320,7 +320,7 @@ const HeaderFloatItem = (props) => {
 						)}
 						<Text style={{ color: MAIN_COLOR, fontSize: 16 }}>{VEHICLE_TYPE[state.vehicleType]?.title}</Text>
 					</View>
-					{orientation == "PORTRAIT" ? (
+					{orientation == orientation ? (
 						<TouchableOpacity
 							onPress={() => {
 								if (visibleLines == totalLines) {
@@ -347,7 +347,7 @@ const HeaderFloatItem = (props) => {
 						const isEmpty = fieldData?.length === 0;
 
 						return (
-							<View style={[styles.stack1, { width: orientation == "PORTRAIT" ? "100%" : "48%" }]} key={el.path}>
+							<View style={[styles.stack1, { width: orientation == orientation ? "100%" : "48%" }]} key={el.path}>
 								<Text
 									style={{
 										color: MAIN_COLOR_BLUE,
