@@ -2,35 +2,45 @@ import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { MainStore } from "./src/contexts/MainContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { MainStackNavigator } from "./src/navigations/MainStackNavigation";
 import "./reanimatedConfig";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { NetworkProvider } from "./src/contexts/NetworkContext";
-import { SQLiteProvider } from "expo-sqlite";
 import * as Updates from "expo-updates";
 import { OrientationProvider } from "./src/helper/OrientationContext";
 import { DrawerNavigation } from "./src/navigations/DrawerNavigation";
 import { StatusBar } from "expo-status-bar";
-import { Platform } from "react-native";
+import { Platform, View, StyleSheet } from "react-native"; // Added View and StyleSheet
 
 export default function App() {
+	// Шинэ state нэмэгдэж байна
+	const [isAppReady, setIsAppReady] = useState(false);
+
 	async function onFetchUpdateAsync() {
 		try {
 			const update = await Updates.checkForUpdateAsync();
-
 			if (update.isAvailable) {
 				await Updates.fetchUpdateAsync();
 				await Updates.reloadAsync();
 			}
 		} catch (error) {
-			// You can also add an alert() to see the error message in case of an error when fetching updates.
-			// alert(`Error fetching latest Expo update: ${error}`);
+			// Error handling
 		}
 	}
 
 	useEffect(() => {
 		onFetchUpdateAsync();
+		// App бүрэн бэлэн болмогц гарч ирнэ
+		const timer = setTimeout(() => {
+			setIsAppReady(true);
+		}, 500); // 3 секундийн дараа
+
+		return () => clearTimeout(timer); // Хэрвээ аль нэгэн цагт App нь хаагдсан бол таймерыг цэвэрлэх
 	}, []);
+
+	if (!isAppReady) {
+		// Цулгуй цагаан фон
+		return <View style={styles.splashContainer}></View>;
+	}
 
 	return (
 		<>
@@ -49,4 +59,13 @@ export default function App() {
 		</>
 	);
 }
-//4158421d-2088-43c6-81e6-b0a85beafc07
+
+// Стиль
+const styles = StyleSheet.create({
+	splashContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "white" // Цагаан фон
+	}
+});
