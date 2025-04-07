@@ -155,7 +155,7 @@ const LoginScreen = (props) => {
 				</TouchableOpacity>
 				{loginError != null ? <Text style={styles.loginErrorText}>{loginError}</Text> : null}
 				<TextInput
-					label="Операторын код."
+					label="Операторын код"
 					mode="outlined"
 					style={[
 						styles.generalInput,
