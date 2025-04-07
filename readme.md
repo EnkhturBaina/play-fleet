@@ -6,6 +6,7 @@
 
 ## app.json (version, ios->buildNumber, android->versionCode) UPDATE хийх
 
+0. eas build -p android --profile production --skip-submission
 1. eas build --platform android //ANDROID BUILD
 2. eas submit -p android --latest //ANDROID SUBMIT TO PLAY STORE
 3. eas build --platform ios //IOS BUILD
