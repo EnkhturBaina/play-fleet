@@ -276,8 +276,8 @@ const HomeScreen = (props) => {
 						rotateEnabled={!state.isTrack} // Эргүүлэх боломжгүй болгох
 						pitchEnabled={!state.isTrack} // 3D харагдац боломжгүй болгох
 						mapType={state.mapType}
-						// mapType="satellite"
-						showsUserLocation
+						// mapType="standard"
+						// showsUserLocation
 					>
 						<UrlTile urlTemplate={tileUri} maximumZ={ZOOM_LEVEL} tileSize={256} />
 						<View>

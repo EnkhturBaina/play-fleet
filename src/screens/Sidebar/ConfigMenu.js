@@ -85,10 +85,10 @@ const ConfigMenu = (props) => {
 								text: "Тийм",
 								onPress: async () => {
 									var mapType = "";
-									if (state.mapType == "standart") {
+									if (state.mapType == "standard") {
 										mapType = "satellite";
 									} else {
-										mapType = "standart";
+										mapType = "standard";
 									}
 									await AsyncStorage.setItem("L_map_type", mapType).then(() => {
 										state.setMapType(mapType);
