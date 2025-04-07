@@ -181,6 +181,7 @@ const ProfileScreen = (props) => {
 			behavior={Platform.OS == "ios" ? "padding" : ""}
 			style={{
 				flex: 1,
+				paddingTop: orientation == "PORTRAIT" ? Constants.statusBarHeight : 0,
 				flexDirection: "column"
 			}}
 		>
