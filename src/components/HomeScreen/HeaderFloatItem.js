@@ -299,22 +299,8 @@ const HeaderFloatItem = (props) => {
 	};
 
 	return (
-		<View
-			style={[
-				styles.floatButtons,
-				{
-					// top: 70 + Constants.statusBarHeight
-				}
-			]}
-		>
-			<View
-				style={[
-					styles.mainContainer,
-					{
-						// width: width - 10
-					}
-				]}
-			>
+		<View style={styles.floatButtons}>
+			<View style={styles.mainContainer}>
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
 						{connectionQuality !== "good" && (

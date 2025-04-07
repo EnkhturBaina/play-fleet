@@ -256,7 +256,7 @@ const HomeScreen = (props) => {
 						paddingTop: insets.top
 					}}
 				>
-					<View style={{ backgroundColor: "red" }}>
+					<View style={{}}>
 						<HeaderUser isSideBar={true} isShowNotif={true} />
 						<HeaderFloatItem mapRef={animateRef} />
 					</View>
