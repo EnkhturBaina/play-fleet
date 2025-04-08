@@ -191,7 +191,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					// console.log("get DefaultAssignedTask response ", JSON.stringify(response.data));
+					console.log("get DefaultAssignedTask response ", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						if (response.data?.Extra?.ShiftChanged) {
@@ -210,30 +210,29 @@ const HeaderFloatItem = (props) => {
 								PMSMaterialId: response.data?.Extra?.PMSMaterialId
 							}));
 
-							if (
-								response.data?.Extra?.PMSProgressStateId != null &&
-								response.data?.Extra?.PMSSubProgressStateId != null
-							) {
-								// Зөвхөн W1 Буюу SUB STATE тэй үед
-								const filteredDefaultState = state.refStates?.filter(
-									(item) => item.id === response.data?.Extra?.PMSSubProgressStateId
-								);
-								// console.log("default assign from header", filteredDefaultState);
+							const mainState = state.refStates?.filter((item) => item.id === response.data?.Extra?.PMSProgressStateId);
 
-								// Default assign -с тухайн төхөөрөмжиййн төлөв авах
-								state.setSelectedState(filteredDefaultState[0]);
-							} else if (
-								response.data?.Extra?.PMSProgressStateId != null &&
-								response.data?.Extra?.PMSSubProgressStateId == null
-							) {
-								// W1 -с бусад үед буюу SUB_STATE тэй үед
-								const filteredDefaultState = state.refStates?.filter(
-									(item) => item.id === response.data?.Extra?.PMSProgressStateId
-								);
-								// console.log("default assign from header", filteredDefaultState);
+							// console.log("mainState", mainState);
+							if (mainState && mainState?.length > 0) {
+								if (mainState[0].ActivityShort == "W1") {
+									const filteredDefaultState = state.refStates?.filter(
+										(item) => item.id === response.data?.Extra?.PMSSubProgressStateId
+									);
+									// console.log("default assign from header PMSSubProgressStateId != null", filteredDefaultState);
 
-								// Default assign -с тухайн төхөөрөмжиййн төлөв авах
-								state.setSelectedState(filteredDefaultState[0]);
+									// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+									state.setSelectedState(filteredDefaultState[0]);
+								} else {
+									const filteredDefaultState = state.refStates?.filter(
+										(item) => item.id === response.data?.Extra?.PMSProgressStateId
+									);
+									// console.log("default assign from header PMSSubProgressStateId == null", filteredDefaultState);
+
+									// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+									state.setSelectedState(filteredDefaultState[0]);
+								}
+							} else {
+								getLocalLastState();
 							}
 						}
 					}
@@ -252,7 +251,7 @@ const HeaderFloatItem = (props) => {
 		// Assign service -д ямар 1 асуудал гарвал local -д хадгалсан хамгийн сүүлд сонгогдсон төлөв харуулах
 
 		const jsonValue = await AsyncStorage.getItem("L_last_state");
-		// console.log("jsonValue", JSON.parse(jsonValue));
+		console.log("jsonValue", JSON.parse(jsonValue));
 		if (jsonValue && JSON.parse(jsonValue)?.id) {
 			const filteredDefaultState = state.refStates?.filter((item) => item.id === JSON.parse(jsonValue)?.id);
 			state.setSelectedState(filteredDefaultState[0]);
@@ -390,7 +389,15 @@ const HeaderFloatItem = (props) => {
 					})}
 				</View>
 			</View>
-			<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginTop: 10 }}>
+			<View
+				style={{
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: orientation == "PORTRAIT" ? "flex-end" : "flex-start",
+					marginTop: 10,
+					marginLeft: 10
+				}}
+			>
 				<TouchableOpacity
 					onPress={() => {
 						props.mapRef();
@@ -411,25 +418,6 @@ const HeaderFloatItem = (props) => {
 					/>
 				</TouchableOpacity>
 			</View>
-
-			<CustomDialog
-				visible={visibleDialog}
-				confirmFunction={() => {
-					if (isEndShift) {
-						stopProgress();
-					} else {
-						state.logout();
-					}
-				}}
-				declineFunction={() => {
-					showDialogDecline && setVisibleDialog(false);
-				}}
-				text={dialogText}
-				confirmBtnText={confirmText}
-				DeclineBtnText={declineText}
-				type={"warning"}
-				screenOrientation={orientation}
-			/>
 		</View>
 	);
 };

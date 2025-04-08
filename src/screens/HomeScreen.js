@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, useWindowDimensions } from "react-native";
+import { Platform, StyleSheet, Text, View, SafeAreaView, useWindowDimensions } from "react-native";
 import React, { useContext, useEffect, useState, useRef, useCallback, useMemo } from "react";
 import HeaderUser from "../components/HeaderUser";
 import MainContext from "../contexts/MainContext";
@@ -21,6 +21,7 @@ import dayjs from "dayjs";
 import { OrientationContext } from "../helper/OrientationContext";
 import Constants from "expo-constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
@@ -74,15 +75,26 @@ const HomeScreen = (props) => {
 
 		const handleProgressUpdate = (event) => {
 			if (event) {
-				let selectedState = null;
-				// Сонгогдсон төлөв шинэчлэх
-				if (event.extra?.state?.ActivityShort == "W1") {
-					selectedState = state.refStates?.find((item) => item.id === event.extra?.sub_state?.id);
-				} else {
-					selectedState = state.refStates?.find((item) => item.id === event.extra?.PMSProgressStateId);
-				}
+				// console.log("event.extra", event.extra);
+				const mainState = state.refStates?.filter((item) => item.id === event.extra?.PMSProgressStateId);
 
-				state.setSelectedState(selectedState);
+				if (mainState && mainState?.length > 0) {
+					if (mainState[0].ActivityShort == "W1") {
+						const filteredDefaultState = state.refStates?.filter((item) => item.id === event.extra?.sub_state?.id);
+						// console.log("default assign from header PMSSubProgressStateId != null", filteredDefaultState);
+
+						// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+						state.setSelectedState(filteredDefaultState[0]);
+					} else {
+						const filteredDefaultState = state.refStates?.filter((item) => item.id === event.extra?.PMSProgressStateId);
+						// console.log("default assign from header PMSSubProgressStateId == null", filteredDefaultState);
+
+						// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+						state.setSelectedState(filteredDefaultState[0]);
+					}
+				} else {
+					getLocalLastState();
+				}
 
 				// Header мэдээлэл шинэчлэх
 				state.setHeaderSelections((prev) => ({
@@ -108,6 +120,17 @@ const HomeScreen = (props) => {
 			channel.stopListening(ECHO_EVENT_PROGRESS);
 		};
 	}, [echo]);
+
+	const getLocalLastState = async () => {
+		// Assign service -д ямар 1 асуудал гарвал local -д хадгалсан хамгийн сүүлд сонгогдсон төлөв харуулах
+
+		const jsonValue = await AsyncStorage.getItem("L_last_state");
+		console.log("jsonValue", JSON.parse(jsonValue));
+		if (jsonValue && JSON.parse(jsonValue)?.id) {
+			const filteredDefaultState = state.refStates?.filter((item) => item.id === JSON.parse(jsonValue)?.id);
+			state.setSelectedState(filteredDefaultState[0]);
+		}
+	};
 
 	const equipmentImages = useMemo(
 		() => ({
@@ -354,7 +377,7 @@ const HomeScreen = (props) => {
 							bottom: 0,
 							right: 0,
 							width: orientation == "PORTRAIT" ? "100%" : "50%",
-							height: "87%"
+							height: Platform.OS == "ios" ? height - 65 : height - 65 - Constants.statusBarHeight
 						}}
 					>
 						<StatusBottomSheet bottomSheetRef={bottomSheetRef} />
@@ -408,11 +431,11 @@ const styles = StyleSheet.create({
 		alignSelf: "center"
 	},
 	radiusLabel: {
-		padding: 2,
 		flexDirection: "column",
 		alignItems: "center"
 	},
 	radiusText: {
+		padding: 2,
 		color: "#fff",
 		fontWeight: "600",
 		textShadowColor: "black",
