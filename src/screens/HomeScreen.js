@@ -287,7 +287,7 @@ const HomeScreen = (props) => {
 						// provider={PROVIDER_GOOGLE}
 						// provider="google"
 						ref={mapRef}
-						style={[styles.map, { width: width, height: height }]}
+						style={{ width: width, height: height }}
 						initialRegion={{
 							latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
 							longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
@@ -330,8 +330,6 @@ const HomeScreen = (props) => {
 										}}
 										contentFit="contain"
 									/>
-								</View>
-								<View style={styles.radiusLabel}>
 									<Text style={styles.radiusText}>{state.selectedEquipment?.Name}</Text>
 								</View>
 							</Marker>
@@ -360,9 +358,6 @@ const HomeScreen = (props) => {
 											{locationImg && (
 												<Image source={locationImg} style={{ width: 30, height: 30 }} contentFit="contain" />
 											)}
-										</View>
-										<View style={styles.radiusLabel}>
-											{/* <Text style={styles.radiusText}>{location?.Name}</Text> */}
 											<Text style={styles.radiusText}>{el.Name}</Text>
 										</View>
 									</Marker>
@@ -428,10 +423,8 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
 	customMarker: {
-		alignSelf: "center"
-	},
-	radiusLabel: {
 		flexDirection: "column",
+		alignSelf: "center",
 		alignItems: "center"
 	},
 	radiusText: {
