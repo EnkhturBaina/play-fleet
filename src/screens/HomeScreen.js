@@ -326,12 +326,12 @@ const HomeScreen = (props) => {
 									<Image
 										source={equipmentImage}
 										style={{
-											width: 30,
-											height: 30
+											width: 50,
+											height: 50
 										}}
 										contentFit="contain"
 									/>
-									<Text style={styles.radiusText}>{state.selectedEquipment?.Name}</Text>
+									{/* <Text style={styles.radiusText}>{state.selectedEquipment?.Name}</Text> */}
 								</View>
 							</Marker>
 						</View>
@@ -357,9 +357,9 @@ const HomeScreen = (props) => {
 									<Marker coordinate={{ latitude, longitude }} anchor={{ x: 0.5, y: 0.5 }} title={el.Name}>
 										<View style={styles.customMarker}>
 											{locationImg && (
-												<Image source={locationImg} style={{ width: 30, height: 30 }} contentFit="contain" />
+												<Image source={locationImg} style={{ width: 50, height: 50 }} contentFit="contain" />
 											)}
-											<Text style={styles.radiusText}>{el.Name}</Text>
+											{/* <Text style={styles.radiusText}>{el.Name}</Text> */}
 										</View>
 									</Marker>
 								</View>
@@ -426,7 +426,8 @@ const styles = StyleSheet.create({
 	customMarker: {
 		flexDirection: "column",
 		alignSelf: "center",
-		alignItems: "center"
+		alignItems: "center",
+		justifyContent: "center"
 	},
 	radiusText: {
 		padding: 2,
