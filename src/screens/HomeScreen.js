@@ -33,12 +33,15 @@ const HomeScreen = (props) => {
 	const { width, height } = useWindowDimensions();
 	const scheme = useColorScheme();
 
+	const ownTruckId = 99999999;
+
 	const { isConnected } = useNetworkStatus();
 	const { tileUri, tilesReady, progress } = useTileLoader(false);
 
 	const mapRef = useRef();
 	const bottomSheetRef = useRef(null);
 	const downloading = useRef(null);
+	const markerRefs = useRef({});
 
 	const [loadingKML, setLoadingKML] = useState(false);
 	const [kmlStatus, setKmlStatus] = useState(null);
@@ -245,14 +248,6 @@ const HomeScreen = (props) => {
 							dayjs().format("YYYY-MM-DD HH:mm:ss")
 						)
 					]);
-					console.log("selectedEquipment", state.selectedEquipment?.id);
-					console.log("latitude", state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0);
-					console.log(
-						"longitude",
-						state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
-					);
-					console.log("dayjs", dayjs().format("YYYY-MM-DD"));
-					console.log("dayjs", dayjs().format("YYYY-MM-DD HH:mm:ss"));
 
 					console.log("📡 Бүх өгөгдлийг зэрэг илгээлээ!", JSON.stringify(resp));
 				} catch (error) {
@@ -270,6 +265,30 @@ const HomeScreen = (props) => {
 		}
 		return null;
 	}, [loadingKML, polygons]);
+
+	useEffect(() => {
+		markerRefs.current[state.headerSelections?.PMSDstId]?.showCallout();
+	}, [state.headerSelections?.PMSDstId]);
+
+	useEffect(() => {
+		// Сонгогдсон Байршил болон Төхөөрөмж 2н хооронд Marker ToolTip анивчих
+		let toggle = true;
+
+		const interval = setInterval(() => {
+			const dstId = state.headerSelections?.PMSDstId;
+			const truckId = ownTruckId;
+
+			if (toggle && dstId && markerRefs.current[dstId]) {
+				markerRefs.current[dstId].showCallout();
+			} else if (!toggle && truckId && markerRefs.current[truckId]) {
+				markerRefs.current[truckId].showCallout();
+			}
+
+			toggle = !toggle;
+		}, 3000);
+
+		return () => clearInterval(interval);
+	}, [state.headerSelections?.PMSDstId]);
 
 	return (
 		<>
@@ -297,12 +316,12 @@ const HomeScreen = (props) => {
 							latitudeDelta: 0.01,
 							longitudeDelta: 0.01
 						}}
-						scrollEnabled={!state.isTrack} // Гулсах боломжгүй болгох
-						zoomEnabled={!state.isTrack} // Томруулах боломжгүй болгох
-						rotateEnabled={!state.isTrack} // Эргүүлэх боломжгүй болгох
-						pitchEnabled={!state.isTrack} // 3D харагдац боломжгүй болгох
+						scrollEnabled={!state.isTrack}
+						zoomEnabled={!state.isTrack}
+						rotateEnabled={!state.isTrack}
+						pitchEnabled={!state.isTrack}
 						mapType={state.mapType}
-						customMapStyle={scheme === "dark" ? darkMapStyle : lightMapStyle}
+						// customMapStyle={scheme === "dark" ? darkMapStyle : lightMapStyle}
 						// mapType="standard"
 						// showsUserLocation
 					>
@@ -321,9 +340,13 @@ const HomeScreen = (props) => {
 							<Marker
 								anchor={{ x: 0.5, y: 0.5 }}
 								title={state.selectedEquipment?.Name}
+								description={state.selectedEquipment?.TypeName}
 								coordinate={{
 									latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
 									longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
+								}}
+								ref={(ref) => {
+									if (ref) markerRefs.current[ownTruckId] = ref;
 								}}
 							>
 								<View style={styles.customMarker}>
@@ -335,7 +358,7 @@ const HomeScreen = (props) => {
 										}}
 										contentFit="contain"
 									/>
-									{/* <Text style={styles.radiusText}>{state.selectedEquipment?.Name}</Text> */}
+									{Platform.OS == "ios" && <Text style={styles.radiusText}>{state.selectedEquipment?.Name}</Text>}
 								</View>
 							</Marker>
 						</View>
@@ -358,12 +381,20 @@ const HomeScreen = (props) => {
 										strokeColor="#fff"
 										fillColor={`${el.Color}80`}
 									/>
-									<Marker coordinate={{ latitude, longitude }} anchor={{ x: 0.5, y: 0.5 }} title={el.Name}>
+									<Marker
+										coordinate={{ latitude, longitude }}
+										anchor={{ x: 0.5, y: 0.5 }}
+										title={`Төрөл: ${location.Name}`}
+										description={`Хүргэх байршил: ${el.Name}`}
+										ref={(ref) => {
+											if (ref) markerRefs.current[el.id] = ref;
+										}}
+									>
 										<View style={styles.customMarker}>
 											{locationImg && (
 												<Image source={locationImg} style={{ width: 50, height: 50 }} contentFit="contain" />
 											)}
-											{/* <Text style={styles.radiusText}>{el.Name}</Text> */}
+											{Platform.OS == "ios" && <Text style={styles.radiusText}>{el.Name}</Text>}
 										</View>
 									</Marker>
 								</View>

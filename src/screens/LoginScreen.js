@@ -155,7 +155,8 @@ const LoginScreen = (props) => {
 				style={[
 					styles.container,
 					{
-						backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_BG
+						// backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_BG
+						backgroundColor: "#fff"
 					}
 				]}
 				showsVerticalScrollIndicator={false}
@@ -174,7 +175,8 @@ const LoginScreen = (props) => {
 					<Image
 						style={styles.loginImg}
 						source={
-							scheme == "light" ? require("../../assets/mainLogo.png") : require("../../assets/mainLogoWhite.png")
+							require("../../assets/mainLogo.png")
+							// scheme == "light" ? require("../../assets/mainLogo.png") : require("../../assets/mainLogoWhite.png")
 						}
 						contentFit="contain"
 					/>
@@ -188,7 +190,8 @@ const LoginScreen = (props) => {
 						{
 							width: orientation == "PORTRAIT" ? "80%" : "40%",
 							fontSize: state.dispId ? 40 : null,
-							backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_INPUT_BG
+							// backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_INPUT_BG
+							backgroundColor: "#fff"
 						}
 					]}
 					dense={true}

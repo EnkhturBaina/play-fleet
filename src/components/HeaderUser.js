@@ -35,7 +35,7 @@ const HeaderUser = (props) => {
 				/>
 
 				<View style={styles.titleContainer}>
-					<Text style={styles.topText}>Сайн байна уу?</Text>
+					<Text style={styles.topText}>{state.selectedEquipment?.Name}</Text>
 					<Text style={styles.userName} numberOfLines={1}>
 						{`${state.employeeData?.LastName ?? " "} ${state.employeeData?.FirstName ?? "User"}`}
 					</Text>

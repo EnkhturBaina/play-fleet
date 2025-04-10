@@ -60,7 +60,8 @@ export default function (props) {
 						...styles.modalContainer,
 						width: orientation === "PORTRAIT" ? "80%" : "40%",
 						top: "30%",
-						backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_BG
+						// backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_BG
+						backgroundColor: "#fff"
 					}}
 				>
 					<TextInput
@@ -71,7 +72,8 @@ export default function (props) {
 							styles.generalInput,
 							{
 								fontSize: state.mainCompanyId ? 40 : null,
-								backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_INPUT_BG
+								// backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_INPUT_BG
+								backgroundColor: "#fff"
 							}
 						]}
 						dense={true}
@@ -110,7 +112,11 @@ export default function (props) {
 								height: MAIN_BUTTON_HEIGHT
 							}}
 							title="Хаах"
-							titleStyle={{ fontWeight: "bold", color: scheme == "light" ? "#000" : "#fff" }}
+							titleStyle={{
+								fontWeight: "bold",
+								// color: scheme == "light" ? "#000" : "#fff"
+								color: "#000"
+							}}
 							onPress={() => props.setVisibleDialog(false)}
 							radius={MAIN_BORDER_RADIUS}
 						/>
