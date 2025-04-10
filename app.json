@@ -89,7 +89,7 @@
 				{
 					"backgroundColor": "#ffffff",
 					"image": "./assets/adaptive-icon.png",
-					"imageWidth": 200,
+					"imageWidth": 150,
 					"resizeMode": "contain"
 				}
 			]
