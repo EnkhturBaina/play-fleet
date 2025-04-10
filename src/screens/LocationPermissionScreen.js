@@ -5,10 +5,12 @@ import { Button } from "@rneui/base";
 import * as Location from "expo-location"; // Байршлын зөвшөөрөл авах
 import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR } from "../constant";
 import MainContext from "../contexts/MainContext";
+import { useIsFocused } from "@react-navigation/native";
 
 const LocationPermissionScreen = () => {
 	const [permissionStatus, setPermissionStatus] = useState(null);
 	const state = useContext(MainContext);
+	const isFocused = useIsFocused();
 
 	useEffect(() => {
 		const checkPermission = async () => {
@@ -18,7 +20,7 @@ const LocationPermissionScreen = () => {
 		};
 
 		checkPermission();
-	}, []);
+	}, [isFocused]);
 
 	const openSettings = () => {
 		if (Platform.OS === "ios") {
