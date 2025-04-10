@@ -38,6 +38,7 @@ const LoginScreen = (props) => {
 	const [visibleDialog, setVisibleDialog] = useState(false); //Dialog харуулах
 
 	useEffect(() => {
+		console.log("locationStatus", state.locationStatus);
 		if (!isConnected) {
 			setLoginError("Интернэт холболт шалгана уу?");
 			// state.logout();
@@ -207,6 +208,7 @@ const LoginScreen = (props) => {
 					}}
 					onPress={() => login()}
 				/>
+
 				<LoginCompanyDialog setVisibleDialog={setVisibleDialog} visibleDialog={visibleDialog} inputRef={inputRef} />
 			</View>
 		</KeyboardAvoidingView>

@@ -51,3 +51,8 @@
 # Suljete vyd service duudagdaad ymar 1 aldaa garwal SQLite ruu data gaa hadgalah
 
 # ✔ Service luu amjilttai shidegdsen eventTime uudiin tsagiig hadgalaad string ee headerUser deer haruulah
+
+1. Вэбээс төлөв солигдвол одоо байгаа цагаас эхлүүлээд цаг тоолж эхлэж болох эсэх, цаг ер нь үргэлжилж тоолох нь болж байгааг шалгаад өгөөч
+2. 20 минутын өмнө сануулаад гаргадаг цонх нь байгаа эсэх
+3. Байршил зөвшөөрөөгүй үед talent app дээрх шиг байршил оруулаагүй гэдгийг асууж шилжих.
+4. Шинээр update орох үед автомтаар татагддаг болгож болох уу

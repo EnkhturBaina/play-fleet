@@ -162,6 +162,7 @@ export const MainStore = (props) => {
 
 	const checkLocationWithSpeed = async () => {
 		const { status } = await Location.requestForegroundPermissionsAsync();
+		setLocationStatus(status);
 		if (status !== "granted") {
 			console.log("Permission to access location was denied");
 			return;
@@ -454,6 +455,7 @@ export const MainStore = (props) => {
 
 		// Байршлын permission авах
 		let { status } = await Location.requestForegroundPermissionsAsync();
+		setLocationStatus(status);
 		if (status !== "granted") {
 			console.log("Permission not granted");
 			return false;

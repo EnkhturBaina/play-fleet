@@ -25,6 +25,7 @@ import NotificationScreen from "../screens/Notification/NotificationScreen";
 import NotificationDTLScreen from "../screens/Notification/NotificationDTLScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import TempLocations from "../screens/TempLocations";
+import LocationPermissionScreen from "../screens/LocationPermissionScreen";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -61,6 +62,7 @@ const MainStackNavigator = (props) => {
 			try {
 				// Байршил авах эрхийг шалгах
 				const { status } = await Location.requestForegroundPermissionsAsync();
+				state.setLocationStatus(status);
 				if (status !== "granted") {
 					console.warn("📍 Байршил авах эрх олгогдоогүй байна!");
 					return;
@@ -105,6 +107,9 @@ const MainStackNavigator = (props) => {
 
 	// SplashScreen.preventAutoHideAsync();
 
+	if (state.locationStatus !== "granted") {
+		return <LocationPermissionScreen />;
+	}
 	if (state.isLoading) {
 		// Апп ачааллах бүрт SplashScreen харуулах
 		return <SplashScreen />;

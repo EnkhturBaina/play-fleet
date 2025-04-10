@@ -315,7 +315,8 @@ const HomeScreen = (props) => {
 								fillColor={state.selectedState?.Color ? `${state.selectedState?.Color}80` : "#ffffff80"}
 							/>
 							<Marker
-								title="Таны одоогийн байршил"
+								anchor={{ x: 0.5, y: 0.5 }}
+								title={state.selectedEquipment?.Name}
 								coordinate={{
 									latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
 									longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
@@ -353,7 +354,7 @@ const HomeScreen = (props) => {
 										strokeColor="#fff"
 										fillColor={`${el.Color}80`}
 									/>
-									<Marker coordinate={{ latitude, longitude }} anchor={{ x: 0.5, y: 0.5 }}>
+									<Marker coordinate={{ latitude, longitude }} anchor={{ x: 0.5, y: 0.5 }} title={el.Name}>
 										<View style={styles.customMarker}>
 											{locationImg && (
 												<Image source={locationImg} style={{ width: 30, height: 30 }} contentFit="contain" />
