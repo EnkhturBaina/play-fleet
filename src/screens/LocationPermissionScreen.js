@@ -1,10 +1,44 @@
+import { useContext, useEffect, useState } from "react";
 import { Linking, Platform, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React from "react";
 import { Image } from "expo-image";
 import { Button } from "@rneui/base";
+import * as Location from "expo-location"; // Байршлын зөвшөөрөл авах
 import { MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_COLOR } from "../constant";
+import MainContext from "../contexts/MainContext";
 
 const LocationPermissionScreen = () => {
+	const [permissionStatus, setPermissionStatus] = useState(null);
+	const state = useContext(MainContext);
+
+	useEffect(() => {
+		const checkPermission = async () => {
+			const { status } = await Location.getForegroundPermissionsAsync();
+			setPermissionStatus(status);
+			state.setLocationStatus(status);
+		};
+
+		checkPermission();
+	}, []);
+
+	const openSettings = () => {
+		if (Platform.OS === "ios") {
+			Linking.openURL("app-settings:");
+		} else {
+			Linking.openSettings();
+		}
+	};
+
+	const requestPermission = async () => {
+		const { status } = await Location.requestForegroundPermissionsAsync();
+		setPermissionStatus(status);
+		if (status === "granted") {
+			// Байршил зөвшөөрөл олгогдсон бол `locationStatus`-г шинэчлэх
+			console.log("📍 Байршил зөвшөөрөгдсөн!");
+		} else {
+			console.warn("📍 Байршил зөвшөөрөгдөөгүй байна!");
+		}
+	};
+
 	return (
 		<SafeAreaView
 			style={{
@@ -26,6 +60,14 @@ const LocationPermissionScreen = () => {
 			<Text style={{ fontSize: 14, textAlign: "center", marginBottom: 10, color: "#667085" }}>
 				Байршлын тохиргоо зөвшөөрснөөр та өөрийн болон уурхайн байршлыг харах боломжтой болно.
 			</Text>
+
+			{/* Байршлын зөвшөөрөл олгосон эсэхийг шалгах */}
+			{permissionStatus === "granted" ? (
+				<Text style={{ color: "#32CD32", fontWeight: "bold" }}>Байршлын зөвшөөрөл олгогдсон!</Text>
+			) : (
+				<Text style={{ color: "#FF6347", fontWeight: "bold" }}>Байршлын зөвшөөрөл олгоогүй байна!</Text>
+			)}
+
 			<Button
 				containerStyle={{
 					marginTop: 10,
@@ -33,16 +75,19 @@ const LocationPermissionScreen = () => {
 					width: "80%"
 				}}
 				buttonStyle={styles.loginBtnStyle}
-				title="Үргэлжлүүлэх"
+				title={permissionStatus === "granted" ? "Үргэлжлүүлэх" : "Зөвшөөрлийг олгох"}
 				titleStyle={{
 					fontSize: 16,
 					fontWeight: "bold"
 				}}
 				onPress={() => {
-					if (Platform.OS === "ios") {
-						Linking.openURL("app-settings:");
+					if (permissionStatus === "granted") {
+						// Байршлын зөвшөөрөл олгогдсон бол, үйл ажиллагааг үргэлжлүүлэх
+						console.log("Зөвшөөрөл олгогдсон, үргэлжлүүлж болно.");
+						requestPermission();
 					} else {
-						Linking.openSettings();
+						// Байршлын зөвшөөрөл асуух
+						openSettings();
 					}
 				}}
 			/>
