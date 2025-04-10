@@ -171,7 +171,13 @@ const LoginScreen = (props) => {
 					delayLongPress={500}
 					activeOpacity={1}
 				>
-					<Image style={styles.loginImg} source={require("../../assets/mainLogo.png")} contentFit="contain" />
+					<Image
+						style={styles.loginImg}
+						source={
+							scheme == "light" ? require("../../assets/mainLogo.png") : require("../../assets/mainLogoWhite.png")
+						}
+						contentFit="contain"
+					/>
 				</TouchableOpacity>
 				{loginError != null ? <Text style={styles.loginErrorText}>{loginError}</Text> : null}
 				<TextInput

@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, View, SafeAreaView, useWindowDimensions } from "react-native";
+import { Platform, StyleSheet, Text, View, SafeAreaView, useWindowDimensions, useColorScheme } from "react-native";
 import React, { useContext, useEffect, useState, useRef, useCallback, useMemo } from "react";
 import HeaderUser from "../components/HeaderUser";
 import MainContext from "../contexts/MainContext";
@@ -22,6 +22,8 @@ import { OrientationContext } from "../helper/OrientationContext";
 import Constants from "expo-constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import darkMapStyle from "../helper/darkMapStyle.json";
+import lightMapStyle from "../helper/lightMapStyle.json";
 
 const HomeScreen = (props) => {
 	const state = useContext(MainContext);
@@ -29,6 +31,7 @@ const HomeScreen = (props) => {
 	const echo = useEcho();
 	const insets = useSafeAreaInsets();
 	const { width, height } = useWindowDimensions();
+	const scheme = useColorScheme();
 
 	const { isConnected } = useNetworkStatus();
 	const { tileUri, tilesReady, progress } = useTileLoader(false);
@@ -299,6 +302,7 @@ const HomeScreen = (props) => {
 						rotateEnabled={!state.isTrack} // Эргүүлэх боломжгүй болгох
 						pitchEnabled={!state.isTrack} // 3D харагдац боломжгүй болгох
 						mapType={state.mapType}
+						customMapStyle={scheme === "dark" ? darkMapStyle : lightMapStyle}
 						// mapType="standard"
 						// showsUserLocation
 					>
