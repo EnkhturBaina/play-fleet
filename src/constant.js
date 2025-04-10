@@ -7,6 +7,9 @@ export const MAIN_COLOR_PURPLE = "#443099";
 export const MAIN_COLOR_BLUE = "#00B0F0";
 export const TEXT_COLOR_GRAY = "#b3b3b3";
 
+export const DARK_MODE_BG = "#1E1E1E";
+export const DARK_MODE_INPUT_BG = "#2C2C2C";
+
 export const MAIN_BORDER_RADIUS = 8;
 export const MAIN_INPUT_HEIGHT = 60;
 export const MAIN_BUTTON_HEIGHT = 50;

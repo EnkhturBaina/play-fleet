@@ -5,13 +5,22 @@ import {
 	TouchableOpacity,
 	KeyboardAvoidingView,
 	Platform,
-	ActivityIndicator
+	ActivityIndicator,
+	useColorScheme
 } from "react-native";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Button } from "@rneui/themed";
 import MainContext from "../contexts/MainContext";
 import CustomSnackbar from "../components/CustomSnackbar";
-import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_INPUT_HEIGHT, MAIN_BUTTON_HEIGHT, SERVER_URL } from "../constant";
+import {
+	MAIN_COLOR,
+	MAIN_BORDER_RADIUS,
+	MAIN_INPUT_HEIGHT,
+	MAIN_BUTTON_HEIGHT,
+	SERVER_URL,
+	DARK_MODE_BG,
+	DARK_MODE_INPUT_BG
+} from "../constant";
 import { Image } from "expo-image";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchLoginData, saveLoginDataWithClear } from "../helper/db";
@@ -24,6 +33,7 @@ import dayjs from "dayjs";
 import { OrientationContext } from "../helper/OrientationContext";
 
 const LoginScreen = (props) => {
+	const scheme = useColorScheme();
 	const state = useContext(MainContext);
 	const orientation = useContext(OrientationContext);
 	const { isConnected } = useNetworkStatus();
@@ -141,7 +151,16 @@ const LoginScreen = (props) => {
 				flexDirection: "column"
 			}}
 		>
-			<View style={styles.container} showsVerticalScrollIndicator={false} nestedScrollEnabled>
+			<View
+				style={[
+					styles.container,
+					{
+						backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_BG
+					}
+				]}
+				showsVerticalScrollIndicator={false}
+				nestedScrollEnabled
+			>
 				<CustomSnackbar visible={visibleSnack} dismiss={onDismissSnackBar} text={snackBarMsg} topPos={30} />
 				<TouchableOpacity
 					style={styles.loginImageContainer}
@@ -162,7 +181,8 @@ const LoginScreen = (props) => {
 						styles.generalInput,
 						{
 							width: orientation == "PORTRAIT" ? "80%" : "40%",
-							fontSize: state.dispId ? 40 : null
+							fontSize: state.dispId ? 40 : null,
+							backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_INPUT_BG
 						}
 					]}
 					dense={true}
@@ -220,7 +240,6 @@ export default LoginScreen;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#fff",
 		justifyContent: "center"
 	},
 	loginImageContainer: {
@@ -235,8 +254,7 @@ const styles = StyleSheet.create({
 		height: MAIN_INPUT_HEIGHT,
 		fontWeight: "600",
 		textAlign: "center",
-		alignSelf: "center",
-		backgroundColor: "#fff"
+		alignSelf: "center"
 	},
 	loginErrorText: {
 		width: "100%",

@@ -1,15 +1,32 @@
 import React, { useContext, useState } from "react";
-import { Modal, View, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, Text } from "react-native";
+import {
+	Modal,
+	View,
+	StyleSheet,
+	KeyboardAvoidingView,
+	Platform,
+	TouchableOpacity,
+	Text,
+	useColorScheme
+} from "react-native";
 import { Button } from "@rneui/themed";
 import { TextInput } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainContext from "../contexts/MainContext";
-import { MAIN_COLOR, MAIN_BORDER_RADIUS, MAIN_BUTTON_HEIGHT, MAIN_INPUT_HEIGHT } from "../constant";
+import {
+	MAIN_COLOR,
+	MAIN_BORDER_RADIUS,
+	MAIN_BUTTON_HEIGHT,
+	MAIN_INPUT_HEIGHT,
+	DARK_MODE_BG,
+	DARK_MODE_INPUT_BG
+} from "../constant";
 import { OrientationContext } from "../helper/OrientationContext";
 
 export default function (props) {
 	const state = useContext(MainContext);
 	const orientation = useContext(OrientationContext);
+	const scheme = useColorScheme();
 	const [errorMsg, setErrorMsg] = useState(null);
 
 	const setCompanyIdToLocal = async () => {
@@ -42,14 +59,21 @@ export default function (props) {
 					style={{
 						...styles.modalContainer,
 						width: orientation === "PORTRAIT" ? "80%" : "40%",
-						top: "30%" // Adjusted to make the modal appear more centered
+						top: "30%",
+						backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_BG
 					}}
 				>
 					<TextInput
 						ref={props.inputRef}
 						label="Компаний код"
 						mode="outlined"
-						style={[styles.generalInput, state.mainCompanyId ? { fontSize: 40 } : null]}
+						style={[
+							styles.generalInput,
+							{
+								fontSize: state.mainCompanyId ? 40 : null,
+								backgroundColor: scheme == "light" ? "#fff" : DARK_MODE_INPUT_BG
+							}
+						]}
 						dense={true}
 						value={state.mainCompanyId}
 						keyboardType="number-pad"
@@ -86,7 +110,7 @@ export default function (props) {
 								height: MAIN_BUTTON_HEIGHT
 							}}
 							title="Хаах"
-							titleStyle={{ fontWeight: "bold", color: "#000" }}
+							titleStyle={{ fontWeight: "bold", color: scheme == "light" ? "#000" : "#fff" }}
 							onPress={() => props.setVisibleDialog(false)}
 							radius={MAIN_BORDER_RADIUS}
 						/>
@@ -104,7 +128,6 @@ const styles = StyleSheet.create({
 	},
 	modalContainer: {
 		paddingVertical: 20,
-		backgroundColor: "#fff",
 		borderRadius: 10,
 		alignSelf: "center",
 		alignItems: "center"
