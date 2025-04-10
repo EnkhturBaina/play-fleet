@@ -107,7 +107,7 @@ const MainStackNavigator = (props) => {
 
 	// SplashScreen.preventAutoHideAsync();
 
-	if (state.locationStatus == "granted") {
+	if (state.locationStatus !== "granted") {
 		return <LocationPermissionScreen />;
 	}
 	if (state.isLoading) {
