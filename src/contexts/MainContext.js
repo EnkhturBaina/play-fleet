@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { SERVER_URL } from "../constant";
@@ -88,6 +88,7 @@ export const MainStore = (props) => {
 	const [token, setToken] = useState(null); //*****Хэрэглэгчийн TOKEN
 	const [userData, setUserData] = useState(null); //*****Хэрэглэгчийн мэдээлэл
 	const [projectId, setProjectId] = useState(null);
+	const updateKMLRef = useRef(null);
 	/* LOGIN STATEs END */
 
 	/* REFERENCE STATEs START */
@@ -599,7 +600,8 @@ export const MainStore = (props) => {
 				sendLocationStatus,
 				setSendLocationStatus,
 				projectLocationChanged,
-				setProjectLocationChanged
+				setProjectLocationChanged,
+				updateKMLRef
 			}}
 		>
 			{props.children}

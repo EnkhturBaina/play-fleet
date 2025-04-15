@@ -82,7 +82,7 @@ const HeaderFloatItem = (props) => {
 			const nextShiftEnd = endTime.add(12, "hour");
 
 			// 12 цаг нэмээд дуусах цагийг анхааруулах цагийг тооцоолох (20 минут хасах)
-			const endTimeAlert = startTime.add(12, "hour").subtract(20, "minute");
+			const endTimeAlert = startTime.add(12, "hour").subtract(10, "minute");
 			// console.log("endTimeAlert", endTimeAlert.format("HH:mm:ss"));
 
 			// Секунд тутамд цагийг шалгах
@@ -185,7 +185,7 @@ const HeaderFloatItem = (props) => {
 					}
 				)
 				.then(function (response) {
-					console.log("get DefaultAssignedTask response ", JSON.stringify(response.data));
+					// console.log("get DefaultAssignedTask response ", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setAssignedData(response.data?.Extra);
 						if (response.data?.Extra?.ShiftChanged) {

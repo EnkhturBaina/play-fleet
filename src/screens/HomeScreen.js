@@ -131,7 +131,7 @@ const HomeScreen = (props) => {
 		// Assign service -д ямар 1 асуудал гарвал local -д хадгалсан хамгийн сүүлд сонгогдсон төлөв харуулах
 
 		const jsonValue = await AsyncStorage.getItem("L_last_state");
-		console.log("jsonValue", JSON.parse(jsonValue));
+		// console.log("jsonValue", JSON.parse(jsonValue));
 		if (jsonValue && JSON.parse(jsonValue)?.id) {
 			const filteredDefaultState = state.refStates?.filter((item) => item.id === JSON.parse(jsonValue)?.id);
 			state.setSelectedState(filteredDefaultState[0]);
@@ -156,8 +156,6 @@ const HomeScreen = (props) => {
 		[]
 	);
 	useEffect(() => {
-		console.log("scheme", scheme);
-
 		if (state.projectLocationChanged) {
 			callFnc();
 			state.setProjectLocationChanged(false);
@@ -167,7 +165,7 @@ const HomeScreen = (props) => {
 
 		setEquipmentImage(equipmentImages[equipmentType] || require("../../assets/icon.png"));
 		// Байршил шалгах
-		checkIfFileExistsAndLoad();
+		checkIfFileExistsAndLoad(false);
 
 		// console.log("selectedEquipment", state.selectedEquipment);
 		// console.log("employeeData", state.employeeData);
@@ -191,30 +189,57 @@ const HomeScreen = (props) => {
 		return () => clearInterval(interval);
 	}, [state.isActiveTimer]);
 
+	useEffect(() => {
+		state.updateKMLRef.current = checkIfFileExistsAndLoad;
+		return () => {
+			state.updateKMLRef.current = null;
+		};
+	}, []);
+
 	// Файлыг шалгах болон лоад хийх
-	const checkIfFileExistsAndLoad = async () => {
+	const checkIfFileExistsAndLoad = async (isRemove) => {
 		setLoadingKML(true);
+
 		const fileUri = FileSystem.documentDirectory + "project_kml4.txt";
+		// console.log("fileUri", fileUri);
 
-		const exists = await checkIfFileExists(fileUri);
+		try {
+			if (isRemove) {
+				const fileInfo = await FileSystem.getInfoAsync(fileUri);
+				if (fileInfo.exists) {
+					setFileContent(null);
+					await FileSystem.deleteAsync(fileUri, { idempotent: true });
+					console.log("Old KML file deleted.");
 
-		if (exists) {
-			setKmlStatus("File found from storage. DONE !");
-			const fileData = await FileSystem.readAsStringAsync(fileUri);
-			setFileContent(fileData);
-		} else {
-			if (isConnected) {
-				try {
-					const fileContent = await loadKML(state.projectData?.KMLFile, fileUri);
-					setKmlStatus("File loaded from server. DONE !");
-					setFileContent(fileContent);
-				} catch (error) {
-					setKmlStatus("Error loading KML file");
+					setKmlStatus("Хуучин KML Файл устгагдлаа");
 				}
-			} else {
-				setKmlStatus("File not found from storage and no internet connection");
-				setLoadingKML(false);
 			}
+
+			const exists = await checkIfFileExists(fileUri);
+			// console.log("exists", exists);
+
+			if (exists) {
+				setKmlStatus("KML файл олдлоо.");
+				const fileData = await FileSystem.readAsStringAsync(fileUri);
+				setFileContent(fileData);
+			} else {
+				if (isConnected) {
+					// console.log("KMLFile", state.projectData?.KMLFile);
+					try {
+						const fileContent = await loadKML(state.projectData?.KMLFile, fileUri);
+						setKmlStatus("KML файл татаж байна");
+						setFileContent(fileContent);
+					} catch (error) {
+						console.log("Error loading from server", error);
+						setKmlStatus("KML татахад алдаа гарлаа");
+					}
+				} else {
+					setKmlStatus("KML Файл татаж чадсангүй!. Интернэт холболтоо шалгана уу.");
+				}
+			}
+		} catch (error) {
+			console.error("Error in check If File Exists And Load:", error);
+			setKmlStatus("Unexpected error occurred");
 		}
 	};
 
@@ -222,16 +247,24 @@ const HomeScreen = (props) => {
 		if (fileContent !== null) {
 			processKML(fileContent)
 				.then((polygons) => {
-					setKmlStatus("File loaded from storage. DONE !");
+					setKmlStatus("Файлаас KML уншсан");
 					setPolygons(polygons);
-					setLoadingKML(false);
 				})
 				.catch((error) => {
 					setKmlStatus("Error processing KML");
+				})
+				.finally(() => {
 					setLoadingKML(false);
 				});
 		}
 	}, [fileContent]);
+
+	const renderedPolygons = useMemo(() => {
+		if (!loadingKML && polygons?.length > 0) {
+			return polygons.map((el, index) => <Polyline key={index} coordinates={el.coords} strokeColor={el.strokeColor} />);
+		}
+		return null;
+	}, [loadingKML, polygons]);
 
 	useEffect(() => {
 		const sendDataToServer = async () => {
@@ -265,13 +298,6 @@ const HomeScreen = (props) => {
 		sendDataToServer();
 	}, [isConnected]);
 
-	const renderedPolygons = useMemo(() => {
-		if (!loadingKML && polygons?.length > 0) {
-			return polygons.map((el, index) => <Polyline key={index} coordinates={el.coords} strokeColor={el.strokeColor} />);
-		}
-		return null;
-	}, [loadingKML, polygons]);
-
 	useEffect(() => {
 		markerRefs.current[state.headerSelections?.PMSDstId]?.showCallout();
 	}, [state.headerSelections?.PMSDstId]);
@@ -298,7 +324,7 @@ const HomeScreen = (props) => {
 
 	return (
 		<>
-			{tilesReady && tileUri !== null && state.mapType && state.location ? (
+			{!loadingKML && tilesReady && tileUri !== null && state.mapType && state.location ? (
 				<View
 					style={{
 						flex: 1,
@@ -455,7 +481,7 @@ const HomeScreen = (props) => {
 					<Text style={{ fontWeight: "600", fontSize: 22, textAlign: "center", marginBottom: 10 }}>
 						Газрын зургийг бэлдэж байна.
 					</Text>
-					<Text>{progress}</Text>
+					{loadingKML ? <Text>{kmlStatus}</Text> : <Text>{progress}</Text>}
 				</SafeAreaView>
 			)}
 		</>

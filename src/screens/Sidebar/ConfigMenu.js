@@ -29,8 +29,21 @@ const ConfigMenu = (props) => {
 			<TouchableOpacity
 				style={styles.eachItemContainer}
 				onPress={() => {
-					Alert.alert("Амжилттай", "KML амжилттай шинэчлэгдлээ", [
-						{ text: "Хаах", onPress: () => console.log("OK Pressed") }
+					Alert.alert("KML шинэчлэх үү?", "", [
+						{ text: "Үгүй", onPress: () => console.log("Хаах Pressed") },
+						{
+							text: "Тийм",
+							onPress: () => {
+								if (typeof state.updateKMLRef.current === "function") {
+									props.navigation.closeDrawer();
+									state.updateKMLRef.current(true);
+								} else {
+									console.warn("updateKMLRef нь function биш байна!");
+									console.log("updateKMLRef:", state.updateKMLRef.current);
+								}
+								console.log("Тийм Pressed");
+							}
+						}
 					]);
 				}}
 			>

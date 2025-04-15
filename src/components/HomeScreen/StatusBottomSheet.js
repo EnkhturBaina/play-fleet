@@ -227,11 +227,6 @@ export default function (props) {
 
 	const bottomSheetSendSelectedState = async (newState) => {
 		try {
-			const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
-			// console.log("now", now);
-			const stateTime = await AsyncStorage.getItem("L_state_time");
-			// console.log("stateTime", stateTime);
-
 			const response = await sendSelectedState(
 				state.token,
 				state.projectData,
@@ -242,12 +237,10 @@ export default function (props) {
 				state.location,
 				isConnected,
 				dayjs().format("YYYY-MM-DD"),
-				stateTime || now,
-				now,
+				dayjs().format("YYYY-MM-DD HH:mm:ss"),
+				null,
 				state.shiftData
 			);
-
-			await AsyncStorage.setItem("L_state_time", now);
 
 			// console.log("bottomSheet_Send_Selected_State_Response=>", response);
 
