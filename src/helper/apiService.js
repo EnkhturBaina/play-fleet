@@ -42,7 +42,11 @@ export const sendSelectedState = async (
 	employeeData,
 	headerSelections,
 	location,
-	isConnected
+	isConnected,
+	currentDate,
+	startTime,
+	endTime,
+	shiftData
 ) => {
 	const state_id = selectedState?.PMSParentId ?? selectedState?.id;
 	const sub_state_id = selectedState?.PMSParentId ? selectedState?.id : null;
@@ -65,7 +69,11 @@ export const sendSelectedState = async (
 			headerSelections?.PMSDstId,
 			headerSelections?.PMSMaterialId,
 			location?.coords?.latitude || 0,
-			location?.coords?.longitude || 0
+			location?.coords?.longitude || 0,
+			currentDate,
+			startTime,
+			endTime,
+			shiftData?.id
 		]);
 	}
 
@@ -85,7 +93,11 @@ export const sendSelectedState = async (
 				PMSDestination: headerSelections?.PMSDstId,
 				PMSMaterialUnitId: headerSelections?.PMSMaterialId,
 				Latitude: location?.coords?.latitude || 0,
-				Longitude: location?.coords?.longitude || 0
+				Longitude: location?.coords?.longitude || 0,
+				CurrentData: currentDate,
+				StartTime: startTime,
+				EndTime: endTime,
+				PMSShiftId: shiftData?.id
 			},
 			{
 				headers: {

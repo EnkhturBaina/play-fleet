@@ -10,6 +10,8 @@ import { sendSelectedState } from "../../helper/apiService";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OrientationContext } from "../../helper/OrientationContext";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 export default function (props) {
 	const state = useContext(MainContext);
@@ -225,6 +227,11 @@ export default function (props) {
 
 	const bottomSheetSendSelectedState = async (newState) => {
 		try {
+			const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
+			// console.log("now", now);
+			const stateTime = await AsyncStorage.getItem("L_state_time");
+			// console.log("stateTime", stateTime);
+
 			const response = await sendSelectedState(
 				state.token,
 				state.projectData,
@@ -233,8 +240,15 @@ export default function (props) {
 				state.employeeData,
 				state.headerSelections,
 				state.location,
-				isConnected
+				isConnected,
+				dayjs().format("YYYY-MM-DD"),
+				stateTime || now,
+				now,
+				state.shiftData
 			);
+
+			await AsyncStorage.setItem("L_state_time", now);
+
 			// console.log("bottomSheet_Send_Selected_State_Response=>", response);
 
 			if (response?.Type === 0) {

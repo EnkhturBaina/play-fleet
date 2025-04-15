@@ -441,7 +441,7 @@ export const fetchSendStateData = async () => {
 		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
 			// Parallel database queries using Promise.all
 			const data = await db.getAllAsync("SELECT * FROM send_state");
-			// console.log("data ==========>", data);
+			console.log("data ==========>", data);
 			// console.log("token ==========>", token);
 
 			if (data) {

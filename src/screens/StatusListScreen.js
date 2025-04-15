@@ -9,6 +9,9 @@ import MainContext from "../contexts/MainContext";
 import { sendSelectedState } from "../helper/apiService";
 import { useNetworkStatus } from "../contexts/NetworkContext";
 import { OrientationContext } from "../helper/OrientationContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 const StatusListScreen = (props) => {
 	const state = useContext(MainContext);
@@ -33,6 +36,11 @@ const StatusListScreen = (props) => {
 
 	const statusListScreenSendSelectedState = async () => {
 		try {
+			const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
+			// console.log("now", now);
+			const stateTime = await AsyncStorage.getItem("L_state_time");
+			// console.log("stateTime", stateTime);
+
 			const response = await sendSelectedState(
 				state.token,
 				state.projectData,
@@ -41,8 +49,14 @@ const StatusListScreen = (props) => {
 				state.employeeData,
 				state.headerSelections,
 				state.location,
-				isConnected
+				isConnected,
+				dayjs().format("YYYY-MM-DD"),
+				stateTime || now,
+				now,
+				state.shiftData
 			);
+
+			await AsyncStorage.setItem("L_state_time", now);
 			// console.log("statusListScreen Send Selected State response=>", response);
 			if (response?.Type === 0) {
 			} else {
