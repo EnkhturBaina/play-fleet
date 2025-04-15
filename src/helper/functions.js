@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export const addCommas = (num) => {
 	return num?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
@@ -136,4 +138,40 @@ export const getSurroundingPoints = async (latitude, longitude, distanceKm) => {
 		east: { latitude, longitude: longitude + distanceInDegreesLon },
 		west: { latitude, longitude: longitude - distanceInDegreesLon }
 	};
+};
+
+export const saveProjectCoordinates = async (latitude, longitude) => {
+	// Project -н location хадгалах
+	try {
+		await AsyncStorage.setItem("project_latitude", latitude);
+		await AsyncStorage.setItem("project_longitude", longitude);
+	} catch (error) {
+		console.error("Координат хадгалах үед алдаа гарлаа:", error);
+	}
+};
+
+export const checkIfCoordinatesChanged = async (newLat, newLng) => {
+	// Project -н location өөрчлөгдсөн эсэхийг шалгах
+	try {
+		const oldLat = await AsyncStorage.getItem("project_latitude");
+		const oldLng = await AsyncStorage.getItem("project_longitude");
+
+		let changed = false;
+
+		if (!oldLat || !oldLng) {
+			// Анхны хадгалалт
+			changed = false;
+		} else if (oldLat !== newLat || oldLng !== newLng) {
+			// Хуучин координатаас ялгаатай байвал өөрчлөгдсөн гэх
+			changed = true;
+		}
+
+		// Ямар ч тохиолдолд шинэ координатыг хадгална
+		await saveProjectCoordinates(newLat, newLng);
+
+		return changed;
+	} catch (error) {
+		console.error("Координат шалгах үед алдаа гарлаа:", error);
+		return false;
+	}
 };

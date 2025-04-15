@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import {
 	MAIN_BORDER_RADIUS,
@@ -18,13 +18,10 @@ import VEHICLE_TYPE from "../../helper/vehicleType.json";
 import CustomDialog from "../CustomDialog";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useNetworkStatus } from "../../contexts/NetworkContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OrientationContext } from "../../helper/OrientationContext";
-import Constants from "expo-constants";
-
-const width = Dimensions.get("screen").width;
 
 const HeaderFloatItem = (props) => {
 	const state = useContext(MainContext);
@@ -33,7 +30,6 @@ const HeaderFloatItem = (props) => {
 	const navigation = useNavigation();
 
 	const { connectionQuality } = useNetworkStatus();
-	const isFocused = useIsFocused();
 
 	const [focusStates, setFocusStates] = useState({});
 	const [visibleLines, setVisibleLines] = useState(null);
@@ -143,8 +139,6 @@ const HeaderFloatItem = (props) => {
 			return () => clearInterval(interval);
 		}
 	}, []); // Зөвхөн эхний удаа ажиллана
-
-	// }, [isFocused]);
 
 	useEffect(() => {
 		// setLines();
@@ -418,6 +412,24 @@ const HeaderFloatItem = (props) => {
 					/>
 				</TouchableOpacity>
 			</View>
+			<CustomDialog
+				visible={visibleDialog}
+				confirmFunction={() => {
+					if (isEndShift) {
+						stopProgress();
+					} else {
+						state.logout();
+					}
+				}}
+				declineFunction={() => {
+					showDialogDecline && setVisibleDialog(false);
+				}}
+				text={dialogText}
+				confirmBtnText={confirmText}
+				DeclineBtnText={declineText}
+				type={"warning"}
+				screenOrientation={orientation}
+			/>
 		</View>
 	);
 };

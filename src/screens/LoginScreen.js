@@ -31,6 +31,7 @@ import axios from "axios";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 import { OrientationContext } from "../helper/OrientationContext";
+import { checkIfCoordinatesChanged } from "../helper/functions";
 
 const LoginScreen = (props) => {
 	const scheme = useColorScheme();
@@ -108,6 +109,21 @@ const LoginScreen = (props) => {
 				lastLogged = response.data?.Extra?.logged;
 			}
 
+			// project -н байршил өөрчлөгдсөн эсэх
+			if (
+				response.data?.Extra?.project &&
+				response.data?.Extra?.project?.Latitude &&
+				response.data?.Extra?.project?.Longitude
+			) {
+				const changed = await checkIfCoordinatesChanged(
+					response.data?.Extra?.project?.Latitude,
+					response.data?.Extra?.project?.Longitude
+				);
+				if (changed) {
+					state.setProjectLocationChanged(changed);
+				}
+			}
+
 			if (response.data.Type === 1) {
 				setLoginError(response.data.Msg);
 				return;
@@ -118,7 +134,7 @@ const LoginScreen = (props) => {
 				state.setToken(accessToken);
 				// login response -г SQLite руу хадгалах
 				const saveResult = await saveLoginDataWithClear(response.data.Extra, true);
-				// console.log("insert Login Data =>", saveResult);
+				// console.log("insert Login Data =>",  saveResult);
 
 				if (saveResult === "DONE") {
 					console.log("LOGIN SUCCESS");

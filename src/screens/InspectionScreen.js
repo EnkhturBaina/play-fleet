@@ -77,7 +77,7 @@ const InspectionScreen = () => {
 					}
 				)
 				.then(function (response) {
-					console.log("get Inspections response", JSON.stringify(response.data));
+					// console.log("get Inspections response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setMainData(response.data?.Extra);
 						setInspectionData(response.data?.Extra?.inspections);
@@ -145,7 +145,7 @@ const InspectionScreen = () => {
 					}
 				)
 				.then(function (response) {
-					console.log("save Inspections response", JSON.stringify(response.data));
+					// console.log("save Inspections response", JSON.stringify(response.data));
 					if (response.data?.Type == 0) {
 						setDialogType("success");
 					} else {

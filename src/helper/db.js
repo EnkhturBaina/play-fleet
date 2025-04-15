@@ -106,7 +106,9 @@ export const createTable = async () => {
 				PMSDestination INTEGER,
 				PMSMaterialUnitId INTEGER,
 				Latitude REAL,
-				Longitude REAL
+				Longitude REAL,
+				StartTime TEXT,
+				EndTime TEXT
       );`
 		);
 		await db.execAsync(
@@ -413,8 +415,10 @@ export const insertSendStateData = async (data) => {
 				PMSDestination,
 				PMSMaterialUnitId,
 				Latitude,
-				Longitude)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+				Longitude,
+				StartTime,
+				EndTime)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 			data
 		);
 		console.log("resultSendState", resultSendState);
@@ -454,7 +458,9 @@ export const fetchSendStateData = async () => {
 								PMSDestination: item?.PMSDestination,
 								PMSMaterialUnitId: item?.PMSMaterialUnitId,
 								Latitude: item?.Latitude ? parseFloat(item?.Latitude) : 0,
-								Longitude: item?.Longitude ? parseFloat(item?.Longitude) : 0
+								Longitude: item?.Longitude ? parseFloat(item?.Longitude) : 0,
+								StartTime: item?.StartTime,
+								EndTime: item?.EndTime
 							},
 							{
 								headers: {

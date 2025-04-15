@@ -2,7 +2,7 @@ import { Platform, StyleSheet, Text, View, SafeAreaView, useWindowDimensions, us
 import React, { useContext, useEffect, useState, useRef, useCallback, useMemo } from "react";
 import HeaderUser from "../components/HeaderUser";
 import MainContext from "../contexts/MainContext";
-import MapView, { Circle, Marker, Polyline, UrlTile } from "react-native-maps";
+import MapView, { Circle, Marker, Polyline, PROVIDER_GOOGLE, UrlTile } from "react-native-maps";
 import HeaderFloatItem from "../components/HomeScreen/HeaderFloatItem";
 import StatusBottomSheet from "../components/HomeScreen/StatusBottomSheet";
 import { useNetworkStatus } from "../contexts/NetworkContext";
@@ -36,7 +36,7 @@ const HomeScreen = (props) => {
 	const ownTruckId = 99999999;
 
 	const { isConnected } = useNetworkStatus();
-	const { tileUri, tilesReady, progress } = useTileLoader(false);
+	const { tileUri, tilesReady, progress, callFnc } = useTileLoader(false);
 
 	const mapRef = useRef();
 	const bottomSheetRef = useRef(null);
@@ -156,6 +156,12 @@ const HomeScreen = (props) => {
 		[]
 	);
 	useEffect(() => {
+		console.log("scheme", scheme);
+
+		if (state.projectLocationChanged) {
+			callFnc();
+			state.setProjectLocationChanged(false);
+		}
 		// Төхөөрөмжийн төрлийг тодорхойлох
 		const equipmentType = state.selectedEquipment?.TypeName;
 
@@ -309,7 +315,7 @@ const HomeScreen = (props) => {
 						// provider={PROVIDER_GOOGLE}
 						// provider="google"
 						ref={mapRef}
-						style={{ width: width, height: height }}
+						style={{ flex: 1, width: width, height: height }}
 						initialRegion={{
 							latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
 							longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
@@ -322,6 +328,7 @@ const HomeScreen = (props) => {
 						pitchEnabled={!state.isTrack}
 						mapType={state.mapType}
 						// customMapStyle={scheme === "dark" ? darkMapStyle : lightMapStyle}
+						customMapStyle={scheme === "dark" ? darkMapStyle : []}
 						// mapType="standard"
 						// showsUserLocation
 					>

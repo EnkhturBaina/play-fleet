@@ -70,6 +70,7 @@ export const MainStore = (props) => {
 	const [trackCount, setTrackCount] = useState(0);
 	const [tempLocations, setTempLocations] = useState([]);
 	const [sendLocationStatus, setSendLocationStatus] = useState([]);
+	const [projectLocationChanged, setProjectLocationChanged] = useState(false);
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -117,7 +118,7 @@ export const MainStore = (props) => {
 
 	useEffect(() => {
 		const runFirst = async () => {
-			// dropTable("moto_hour");
+			// dropTable("send_state");
 			setIsLoading(true);
 			await AsyncStorage.getItem("L_last_state_time").then(async (local_last_state_time) => {
 				try {
@@ -596,7 +597,9 @@ export const MainStore = (props) => {
 				tempLocations,
 				setTempLocations,
 				sendLocationStatus,
-				setSendLocationStatus
+				setSendLocationStatus,
+				projectLocationChanged,
+				setProjectLocationChanged
 			}}
 		>
 			{props.children}

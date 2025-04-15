@@ -1,6 +1,6 @@
-import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import BottomSheet, { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import MainContext from "../../contexts/MainContext";
 import { Image } from "expo-image";
 import { MAIN_BORDER_RADIUS, MAIN_COLOR_BLUE, MAIN_COLOR_GRAY, MAIN_COLOR_GREEN, MAIN_COLOR } from "../../constant";
@@ -264,16 +264,7 @@ export default function (props) {
 		}
 	};
 	return (
-		<BottomSheet
-			ref={props.bottomSheetRef}
-			snapPoints={snapPoints}
-			index={0}
-			style={styles.contentContainer}
-			// enablePanDownToClose={false}
-			// enableContentPanningGesture={false}
-			// enableDynamicSizing={false}
-		>
-			{/* <BottomSheetView style={styles.contentContainer}> */}
+		<BottomSheet ref={props.bottomSheetRef} snapPoints={snapPoints} index={0} style={styles.contentContainer}>
 			<View style={styles.selectedStateContainer}>
 				<View style={styles.selectedLabel}>
 					<Text style={styles.selectedStateLabel}>CОНГОГДСОН ТӨЛӨВ</Text>
@@ -377,7 +368,6 @@ export default function (props) {
 					screenOrientation={orientation}
 				/>
 			</BottomSheetScrollView>
-			{/* </BottomSheetView> */}
 		</BottomSheet>
 	);
 }

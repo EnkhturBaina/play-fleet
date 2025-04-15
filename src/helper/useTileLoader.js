@@ -6,13 +6,6 @@ import { ANDROID_MAP_API, IOS_MAP_API, ZOOM_LEVEL } from "../constant";
 import MainContext from "../contexts/MainContext";
 import { getSurroundingPoints } from "./functions";
 
-// Улаанбаатар хотын төв координатууд
-const UB_CENTER_LAT = 47.92123;
-const UB_CENTER_LON = 106.918556;
-const LAT_START = 47.89; // Улаанбаатарын өмнөд хэсэг
-const LAT_END = 47.95; // Улаанбаатарын хойд хэсэг
-const LON_START = 106.85; // Баруун
-const LON_END = 106.99; // Зүүн
 const MAPS_API_KEY = Platform.OS == "ios" ? IOS_MAP_API : Platform.OS == "android" ? ANDROID_MAP_API : ""; // Зүүн
 
 var Buffer = require("buffer/").Buffer;
