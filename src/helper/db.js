@@ -107,8 +107,10 @@ export const createTable = async () => {
 				PMSMaterialUnitId INTEGER,
 				Latitude REAL,
 				Longitude REAL,
+				CurrentDate TEXT,
 				StartTime TEXT,
-				EndTime TEXT
+				EndTime TEXT,
+				PMSShiftId INTEGER
       );`
 		);
 		await db.execAsync(
@@ -416,9 +418,11 @@ export const insertSendStateData = async (data) => {
 				PMSMaterialUnitId,
 				Latitude,
 				Longitude,
+				CurrentDate,
 				StartTime,
-				EndTime)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+				EndTime,
+				PMSShiftId)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 			data
 		);
 		console.log("resultSendState", resultSendState);
