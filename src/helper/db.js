@@ -463,8 +463,10 @@ export const fetchSendStateData = async () => {
 								PMSMaterialUnitId: item?.PMSMaterialUnitId,
 								Latitude: item?.Latitude ? parseFloat(item?.Latitude) : 0,
 								Longitude: item?.Longitude ? parseFloat(item?.Longitude) : 0,
+								CurrentDate: null,
 								StartTime: item?.StartTime,
-								EndTime: item?.EndTime
+								EndTime: item?.EndTime,
+								PMSShiftId: null
 							},
 							{
 								headers: {
