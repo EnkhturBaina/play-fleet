@@ -7,10 +7,30 @@ import dayjs from "dayjs";
 
 export const db = SQLite.openDatabaseSync("offline_data2");
 
+const AddColumnsTABLES = async () => {
+	const tableInfo = await db.getAllAsync(`PRAGMA table_info(send_state);`);
+	const columnNames = tableInfo.map((col) => col.name);
+
+	const columnsToAdd = [
+		{ name: "CurrentDate", type: "TEXT" },
+		{ name: "StartTime", type: "TEXT" },
+		{ name: "EndTime", type: "TEXT" },
+		{ name: "PMSShiftId", type: "INTEGER" }
+	];
+
+	for (const col of columnsToAdd) {
+		if (!columnNames.includes(col.name)) {
+			console.log(`⚙️ Adding column: ${col.name}`);
+			await db.runAsync(`ALTER TABLE send_state ADD COLUMN ${col.name} ${col.type};`);
+		}
+	}
+};
+
 // 1.DONE SQLite хүснэгт үүсгэх
 export const createTable = async () => {
 	// console.log("RUN CREATE Table");
 	try {
+		await AddColumnsTABLES();
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS employee (
         id INTEGER PRIMARY KEY,
@@ -452,7 +472,7 @@ export const insertSendStateData = async (data) => {
 	console.log("resultSendState", resultSendState);
 
 	if (resultSendState.rowsAffected === 0) {
-		throw new Error("send_state өгөгдлийг оруулж чадсангүй.");
+		throw new Error("send-state өгөгдлийг оруулж чадсангүй.");
 	}
 
 	return resultSendState;
@@ -487,16 +507,16 @@ export const fetchSendStateDataALL = async () => {
 					}
 				});
 
-				console.log("response fetch ALL send_state DATA========>", response.data);
+				console.log("response fetch ALL send-state DATA========>", response.data);
 
 				if (response.data?.Type == 0) {
 					// Амжилттай үед устгана
 					await deleteSendStateAllRow();
 				} else {
-					console.error(`Failed to send_state ALL`);
+					console.error(`Failed to send-state ALL`);
 				}
 			} catch (error) {
-				console.error(` Error during send_state ALL:`, error?.response?.data || error.message);
+				console.error(` Error during send-state ALL:`, error?.response?.data || error.message);
 			}
 		}
 		return data;
