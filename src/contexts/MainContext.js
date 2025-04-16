@@ -69,6 +69,7 @@ export const MainStore = (props) => {
 	const [storedItems, setStoredItems] = useState([]);
 	const [trackCount, setTrackCount] = useState(0);
 	const [tempLocations, setTempLocations] = useState([]);
+	const [tempSendState, setTempSendState] = useState([]);
 	const [sendLocationStatus, setSendLocationStatus] = useState([]);
 	const [projectLocationChanged, setProjectLocationChanged] = useState(false);
 	/* GENERAL STATEs END */
@@ -601,7 +602,9 @@ export const MainStore = (props) => {
 				setSendLocationStatus,
 				projectLocationChanged,
 				setProjectLocationChanged,
-				updateKMLRef
+				updateKMLRef,
+				tempSendState,
+				setTempSendState
 			}}
 		>
 			{props.children}

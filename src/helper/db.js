@@ -578,6 +578,30 @@ export const fetchSendStateDataOneByOne = async () => {
 	}
 };
 
+export const fetchSendStateDataTemp = async () => {
+	// console.log("RUN fetch SendLocation Data.");
+
+	try {
+		// 1. EndTime === null мөрийг шинэчлэх
+		const lastRow = await db.getFirstAsync(`
+			SELECT id FROM send_state WHERE EndTime IS NULL ORDER BY id DESC LIMIT 1
+		`);
+
+		if (lastRow) {
+			await db.runAsync(`UPDATE send_state SET EndTime = ? WHERE id = ?`, [
+				dayjs().format("YYYY-MM-DD HH:mm:ss"),
+				lastRow.id
+			]);
+		}
+		// Parallel database queries using Promise.all
+		const data = await db.getAllAsync("SELECT * FROM send_state");
+		// console.log("data TEMP LOCATIONS==========>", data);
+		return data; // Return the combined data
+	} catch (error) {
+		console.error("Error fetching SendState data Temp", error);
+		throw new Error("Failed to fetch SendState data Temp. Please try again later.");
+	}
+};
 export const deleteSendStateAllRow = async () => {
 	try {
 		await db.runAsync("DELETE FROM send_state;");

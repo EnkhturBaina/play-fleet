@@ -1,17 +1,19 @@
 import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import MainContext from "../contexts/MainContext";
 import Constants from "expo-constants";
 import { Icon } from "@rneui/base";
-import { MAIN_BORDER_RADIUS } from "../constant";
+import { MAIN_BORDER_RADIUS, MAIN_COLOR } from "../constant";
 import Empty from "../components/Empty";
 import { useNetworkStatus } from "../contexts/NetworkContext";
+import TempSendState from "./TempSendState";
 
 const TempLocations = () => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const { isConnected } = useNetworkStatus();
+	const [selectedMenu, setSelectedMenu] = useState("send_state"); //send_state, send_location
 
 	useEffect(() => {}, []);
 
@@ -74,37 +76,54 @@ const TempLocations = () => {
 				<Icon name="chevron-left" type="feather" size={25} color="#fff" />
 				<Text style={{ color: "#fff", fontSize: 18, marginLeft: 10 }}>Offline locations</Text>
 			</TouchableOpacity>
-			<ScrollView style={{ flex: 1, height: 200 }}>
-				<Text>isConnected: {isConnected ? "true" : "false"}</Text>
-				{state.sendLocationStatus && (
-					<View style={{ flex: 1 }}>
-						<Text style={styles.text}>Location Status:</Text>
-						<View style={{ flexDirection: "column", justifyContent: "flex-start" }}>
-							{state.sendLocationStatus?.map((el, index) => {
-								return (
-									<Text key={index} style={{ fontSize: 12 }}>
-										{el}
-									</Text>
-								);
-							})}
-						</View>
-					</View>
-				)}
-			</ScrollView>
-			{state.tempLocations ? (
-				<FlatList
-					contentContainerStyle={{
-						flexGrow: 1,
-						paddingHorizontal: 20
-					}}
-					showsVerticalScrollIndicator={false}
-					data={state.tempLocations}
-					renderItem={renderItem}
-					keyExtractor={(item, index) => index.toString()}
-					ListEmptyComponent={<Empty text="Мэдээлэл олдсонгүй." />}
-				/>
+			<View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center", marginVertical: 10 }}>
+				<TouchableOpacity
+					style={{ padding: 5, borderWidth: 1, backgroundColor: selectedMenu == "send_state" ? MAIN_COLOR : "#fff" }}
+					onPress={() => setSelectedMenu("send_state")}
+				>
+					<Text style={{ fontSize: 18 }}>SEND_STATE</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{ padding: 5, borderWidth: 1, backgroundColor: selectedMenu == "send_location" ? MAIN_COLOR : "#fff" }}
+					onPress={() => setSelectedMenu("send_location")}
+				>
+					<Text style={{ fontSize: 18 }}>SEND_LOCATION</Text>
+				</TouchableOpacity>
+			</View>
+			{selectedMenu == "send_location" ? (
+				<>
+					<ScrollView style={{ flex: 1, height: 200 }}>
+						<Text>isConnected: {isConnected ? "true" : "false"}</Text>
+						{state.sendLocationStatus && (
+							<View style={{ flex: 1 }}>
+								<Text style={styles.text}>Location Status:</Text>
+								<View style={{ flexDirection: "column", justifyContent: "flex-start" }}>
+									{state.sendLocationStatus?.map((el, index) => {
+										return (
+											<Text key={index} style={{ fontSize: 12 }}>
+												{el}
+											</Text>
+										);
+									})}
+								</View>
+							</View>
+						)}
+					</ScrollView>
+
+					<FlatList
+						contentContainerStyle={{
+							flexGrow: 1,
+							paddingHorizontal: 20
+						}}
+						showsVerticalScrollIndicator={false}
+						data={state.tempLocations}
+						renderItem={renderItem}
+						keyExtractor={(item, index) => index.toString()}
+						ListEmptyComponent={<Empty text="Мэдээлэл олдсонгүй." />}
+					/>
+				</>
 			) : (
-				<Text>Хоосон</Text>
+				<TempSendState />
 			)}
 		</View>
 	);

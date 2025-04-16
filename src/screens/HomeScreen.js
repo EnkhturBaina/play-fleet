@@ -16,7 +16,8 @@ import {
 	fetchSendLocationData,
 	fetchSendLocationDataTemp,
 	fetchSendStateDataALL,
-	fetchSendStateDataOneByOne
+	fetchSendStateDataOneByOne,
+	fetchSendStateDataTemp
 } from "../helper/db";
 import useEcho from "../helper/useEcho";
 import { ECHO_EVENT_PROGRESS, ZOOM_LEVEL } from "../constant";
@@ -280,6 +281,10 @@ const HomeScreen = (props) => {
 				// console.log("tempLocations", tempLocations);
 
 				state.setTempLocations(tempLocations);
+				var tempSendState = await fetchSendStateDataTemp();
+				console.log("tempSendState", tempSendState);
+
+				state.setTempSendState(tempSendState);
 				try {
 					const resp = await Promise.all([
 						fetchSendStateDataALL(),
@@ -295,7 +300,7 @@ const HomeScreen = (props) => {
 						)
 					]);
 
-					console.log("📡 Бүх өгөгдлийг зэрэг илгээлээ!", JSON.stringify(resp));
+					// console.log("📡 Бүх өгөгдлийг зэрэг илгээлээ!", JSON.stringify(resp));
 				} catch (error) {
 					console.error("⚠️ Өгөгдөл зэрэг илгээх явцад алдаа гарлаа:", error);
 				}
