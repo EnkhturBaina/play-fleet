@@ -2,6 +2,8 @@ import * as SQLite from "expo-sqlite";
 import { SERVER_URL } from "../constant";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 export const db = SQLite.openDatabaseSync("offline_data2");
 
@@ -403,96 +405,185 @@ export const updateData = async (id) => {
 };
 
 export const insertSendStateData = async (data) => {
-	if (data) {
-		const resultSendState = await db.runAsync(
-			`INSERT INTO send_state (
-				PMSProjectId,
-				PMSEquipmentId,
-				PMSProgressStateId,
-				PMSProgressSubStateId,
-				PMSEmployeeId,
-				PMSLoaderId,
-				PMSLocationId,
-				PMSBlastShotId,
-				PMSDestination,
-				PMSMaterialUnitId,
-				Latitude,
-				Longitude,
-				CurrentDate,
-				StartTime,
-				EndTime,
-				PMSShiftId)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-			data
-		);
-		console.log("resultSendState", resultSendState);
+	if (!data) return;
 
-		if (resultSendState.rowsAffected === 0) {
-			throw new Error("send_state өгөгдлийг оруулж чадсангүй.");
-		}
-		return resultSendState;
+	// 1. Өмнөх хамгийн сүүлийн мөрийг авчирч шалгана (EndTime == null)
+	const prevRow = await db.getFirstAsync(
+		`SELECT * FROM send_state 
+		 WHERE EndTime IS NULL 
+		 ORDER BY id DESC 
+		 LIMIT 1`
+	);
+
+	if (prevRow) {
+		// 2. Хэрвээ өмнөх мөр байгаа бол EndTime-ийг одоогийн StartTime болгож шинэчилнэ
+		const result = await db.runAsync(
+			`UPDATE send_state 
+			 SET EndTime = ? 
+			 WHERE id = ?`,
+			[data[13], prevRow.id] // data[14] = StartTime
+		);
+		// console.log("result--------------------------------->", result);
 	}
+
+	// 3. Insert хийх
+	const resultSendState = await db.runAsync(
+		`INSERT INTO send_state (
+			PMSProjectId,
+			PMSEquipmentId,
+			PMSProgressStateId,
+			PMSProgressSubStateId,
+			PMSEmployeeId,
+			PMSLoaderId,
+			PMSLocationId,
+			PMSBlastShotId,
+			PMSDestination,
+			PMSMaterialUnitId,
+			Latitude,
+			Longitude,
+			CurrentDate,
+			StartTime,
+			EndTime,
+			PMSShiftId
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		data
+	);
+
+	console.log("resultSendState", resultSendState);
+
+	if (resultSendState.rowsAffected === 0) {
+		throw new Error("send_state өгөгдлийг оруулж чадсангүй.");
+	}
+
+	return resultSendState;
 };
 
-export const fetchSendStateData = async () => {
-	// console.log("RUN fetch Send State Data.");
-
+export const fetchSendStateDataALL = async () => {
 	try {
-		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
-			// Parallel database queries using Promise.all
-			const data = await db.getAllAsync("SELECT * FROM send_state");
-			console.log("data ==========>", data);
-			// console.log("token ==========>", token);
+		const localToken = await AsyncStorage.getItem("L_access_token");
 
-			if (data) {
-				for (const item of data) {
-					// console.log("item =======>", JSON.stringify(item));
-					try {
-						const response = await axios.post(
-							`${SERVER_URL}/mobile/progress/send`,
-							{
-								PMSProjectId: item?.PMSProjectId,
-								PMSEquipmentId: item?.PMSEquipmentId,
-								PMSProgressStateId: item?.PMSProgressStateId,
-								PMSProgressSubStateId: item?.PMSProgressSubStateId,
-								PMSEmployeeId: item?.PMSEmployeeId,
-								PMSLoaderId: item?.PMSLoaderId,
-								PMSLocationId: item?.PMSLocationId,
-								PMSBlastShotId: item?.PMSBlastShotId,
-								PMSDestination: item?.PMSDestination,
-								PMSMaterialUnitId: item?.PMSMaterialUnitId,
-								Latitude: item?.Latitude ? parseFloat(item?.Latitude) : 0,
-								Longitude: item?.Longitude ? parseFloat(item?.Longitude) : 0,
-								CurrentDate: null,
-								StartTime: item?.StartTime,
-								EndTime: item?.EndTime,
-								PMSShiftId: null
-							},
-							{
-								headers: {
-									"Content-Type": "application/json",
-									Authorization: `Bearer ${localToken}`
-								}
-							}
-						);
-						console.log("response", response.data);
+		// 1. EndTime === null мөрийг шинэчлэх
+		const lastRow = await db.getFirstAsync(`
+			SELECT id FROM send_state WHERE EndTime IS NULL ORDER BY id DESC LIMIT 1
+		`);
 
-						if (response.data?.Type == 0) {
-							// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
-							await deleteSendStateRowById(item.id);
-						} else {
-							console.error(`Failed to send item ${item.id}:`);
-						}
-					} catch (error) {
-						console.error(`Error sending item ${item.id}:`, error);
+		if (lastRow) {
+			await db.runAsync(`UPDATE send_state SET EndTime = ? WHERE id = ?`, [
+				dayjs().format("YYYY-MM-DD HH:mm:ss"),
+				lastRow.id
+			]);
+		}
+
+		// 2. Бүх өгөгдлийг авах
+		const data = await db.getAllAsync("SELECT * FROM send_state");
+		console.log("data ==========>", data);
+
+		if (data && data.length > 0) {
+			try {
+				const response = await axios.post(`${SERVER_URL}/mobile/progress/batch`, data, {
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${localToken}`
 					}
+				});
+
+				console.log("response fetch ALL send_state DATA========>", response.data);
+
+				if (response.data?.Type == 0) {
+					// Амжилттай үед устгана
+					await deleteSendStateAllRow();
+				} else {
+					console.error(`Failed to send_state ALL`);
 				}
+			} catch (error) {
+				console.error(` Error during send_state ALL:`, error?.response?.data || error.message);
 			}
-			return data; // Return the combined data
-		});
+		}
+		return data;
 	} catch (error) {
 		console.error("Error fetching sendState data", error);
 		throw new Error("Failed to fetch sendState data. Please try again later.");
+	}
+};
+export const fetchSendStateDataOneByOne = async () => {
+	// console.log("RUN fetch Send State Data.");
+
+	try {
+		const localToken = await AsyncStorage.getItem("L_access_token");
+
+		// 1. EndTime === null мөрийг шинэчлэх
+		const lastRow = await db.getFirstAsync(`
+			SELECT id FROM send_state WHERE EndTime IS NULL ORDER BY id DESC LIMIT 1
+		`);
+
+		if (lastRow) {
+			await db.runAsync(`UPDATE send_state SET EndTime = ? WHERE id = ?`, [
+				dayjs().format("YYYY-MM-DD HH:mm:ss"),
+				lastRow.id
+			]);
+		}
+
+		// 2. Бүх өгөгдлийг авах
+		const data = await db.getAllAsync("SELECT * FROM send_state");
+		console.log("data =========>", data);
+
+		if (data) {
+			for (const item of data) {
+				// console.log("item =======>", JSON.stringify(item));
+				try {
+					const response = await axios.post(
+						`${SERVER_URL}/mobile/progress/send`,
+						{
+							PMSProjectId: item?.PMSProjectId,
+							PMSEquipmentId: item?.PMSEquipmentId,
+							PMSProgressStateId: item?.PMSProgressStateId,
+							PMSProgressSubStateId: item?.PMSProgressSubStateId,
+							PMSEmployeeId: item?.PMSEmployeeId,
+							PMSLoaderId: item?.PMSLoaderId,
+							PMSLocationId: item?.PMSLocationId,
+							PMSBlastShotId: item?.PMSBlastShotId,
+							PMSDestination: item?.PMSDestination,
+							PMSMaterialUnitId: item?.PMSMaterialUnitId,
+							Latitude: item?.Latitude ? parseFloat(item?.Latitude) : 0,
+							Longitude: item?.Longitude ? parseFloat(item?.Longitude) : 0,
+							CurrentDate: null,
+							StartTime: item?.StartTime,
+							EndTime: item?.EndTime,
+							PMSShiftId: null
+						},
+						{
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${localToken}`
+							}
+						}
+					);
+					console.log("response", response.data);
+
+					if (response.data?.Type == 0) {
+						// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
+						await deleteSendStateRowById(item.id);
+					} else {
+						console.error(`Failed to send item ${item.id}:`);
+					}
+				} catch (error) {
+					console.error(`Error sending item ${item.id}:`, error);
+				}
+			}
+		}
+		return data; // Return the combined data
+	} catch (error) {
+		console.error("Error fetching sendState data", error);
+		throw new Error("Failed to fetch sendState data. Please try again later.");
+	}
+};
+
+export const deleteSendStateAllRow = async () => {
+	try {
+		await db.runAsync("DELETE FROM send_state;");
+		console.log(`send_state ALL Row with deleted.`);
+	} catch (error) {
+		console.error(`Error deleting sendState`, error);
 	}
 };
 
@@ -621,7 +712,6 @@ export const fetchSendLocationDataTemp = async () => {
 		// Parallel database queries using Promise.all
 		const data = await db.getAllAsync("SELECT * FROM send_location");
 		// console.log("data TEMP LOCATIONS==========>", data);
-		// console.log("token ==========>", token);
 		return data; // Return the combined data
 	} catch (error) {
 		console.error("Error fetching SendLocation data Temp", error);
@@ -629,15 +719,11 @@ export const fetchSendLocationDataTemp = async () => {
 	}
 };
 export const fetchSendLocationData = async (a, b, c, d, e, f) => {
-	// console.log("RUN fetch SendLocation Data.");
-
-	// console.log("abcdef", a, b, c, d, e, f);
 	try {
 		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
 			// Parallel database queries using Promise.all
 			const data = await db.getAllAsync("SELECT * FROM send_location");
 			// console.log("send_location data ==========>", JSON.stringify(data));
-			// console.log("token ==========>", token);
 
 			if (data) {
 				try {

@@ -36,9 +36,7 @@ const StatusListScreen = (props) => {
 
 	const statusListScreenSendSelectedState = async () => {
 		try {
-			const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
 			// console.log("now", now);
-			const stateTime = await AsyncStorage.getItem("L_state_time");
 			// console.log("stateTime", stateTime);
 
 			const response = await sendSelectedState(
@@ -51,12 +49,11 @@ const StatusListScreen = (props) => {
 				state.location,
 				isConnected,
 				dayjs().format("YYYY-MM-DD"),
-				stateTime || now,
-				now,
+				dayjs().format("YYYY-MM-DD HH:mm:ss"),
+				null,
 				state.shiftData
 			);
 
-			await AsyncStorage.setItem("L_state_time", now);
 			// console.log("statusListScreen Send Selected State response=>", response);
 			if (response?.Type === 0) {
 			} else {

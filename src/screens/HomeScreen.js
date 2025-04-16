@@ -11,7 +11,13 @@ import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
 import { Image } from "expo-image";
 import CustomDialog from "../components/CustomDialog";
 import { transformLocations } from "../helper/functions";
-import { fetchMotoHourData, fetchSendLocationData, fetchSendLocationDataTemp, fetchSendStateData } from "../helper/db";
+import {
+	fetchMotoHourData,
+	fetchSendLocationData,
+	fetchSendLocationDataTemp,
+	fetchSendStateDataALL,
+	fetchSendStateDataOneByOne
+} from "../helper/db";
 import useEcho from "../helper/useEcho";
 import { ECHO_EVENT_PROGRESS, ZOOM_LEVEL } from "../constant";
 import LottieView from "lottie-react-native";
@@ -276,7 +282,8 @@ const HomeScreen = (props) => {
 				state.setTempLocations(tempLocations);
 				try {
 					const resp = await Promise.all([
-						fetchSendStateData(),
+						fetchSendStateDataALL(),
+						// fetchSendStateDataOneByOne(),
 						fetchMotoHourData(),
 						fetchSendLocationData(
 							state.selectedEquipment?.id,
