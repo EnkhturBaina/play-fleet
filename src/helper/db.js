@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
 
-export const db = SQLite.openDatabaseSync("offline_data2");
+export const db = SQLite.openDatabaseSync("offline_data");
 
 const AddColumnsTABLES = async () => {
 	const tableInfo = await db.getAllAsync(`PRAGMA table_info(send_state);`);
