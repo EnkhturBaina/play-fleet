@@ -30,7 +30,7 @@ const AddColumnsTABLES = async () => {
 export const createTable = async () => {
 	// console.log("RUN CREATE Table");
 	try {
-		await AddColumnsTABLES();
+		// await AddColumnsTABLES();
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS employee (
         id INTEGER PRIMARY KEY,
@@ -114,6 +114,9 @@ export const createTable = async () => {
 				status TEXT
       );`
 		);
+		await db.execAsync(`
+			DROP TABLE IF EXISTS send_state;
+		`);
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS send_state (
 				id INTEGER PRIMARY KEY AUTOINCREMENT,
