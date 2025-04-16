@@ -26,6 +26,16 @@ import NotificationDTLScreen from "../screens/Notification/NotificationDTLScreen
 import ProfileScreen from "../screens/ProfileScreen";
 import TempLocations from "../screens/TempLocations";
 import LocationPermissionScreen from "../screens/LocationPermissionScreen";
+import { useNetworkStatus } from "../contexts/NetworkContext";
+import {
+	fetchMotoHourData,
+	fetchSendLocationData,
+	fetchSendLocationDataTemp,
+	fetchSendStateDataALL,
+	fetchSendStateDataTemp
+} from "../helper/db";
+import "dayjs/locale/es";
+import dayjs from "dayjs";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -33,6 +43,7 @@ const width = Dimensions.get("screen").width;
 const MainStackNavigator = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
+	const { isConnected } = useNetworkStatus();
 
 	useEffect(() => {
 		state.setSendLocationStatus((prevStatus) => [
@@ -105,6 +116,43 @@ const MainStackNavigator = (props) => {
 		};
 	}, []);
 
+	useEffect(() => {
+		const sendDataToServer = async () => {
+			if (isConnected) {
+				console.log("📶 Интернет холбогдлоо! Өгөгдөл сервер рүү зэрэг илгээж байна...");
+				var tempLocations = await fetchSendLocationDataTemp();
+				// console.log("tempLocations", tempLocations);
+
+				state.setTempLocations(tempLocations);
+				var tempSendState = await fetchSendStateDataTemp();
+				console.log("tempSendState", tempSendState);
+
+				state.setTempSendState(tempSendState);
+				try {
+					const resp = await Promise.all([
+						fetchSendStateDataALL(),
+						// fetchSendStateDataOneByOne(),
+						fetchMotoHourData(),
+						fetchSendLocationData(
+							state.selectedEquipment?.id,
+							state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
+							state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
+							0,
+							dayjs().format("YYYY-MM-DD"),
+							dayjs().format("YYYY-MM-DD HH:mm:ss")
+						)
+					]);
+
+					console.log("📡 Бүх өгөгдлийг зэрэг илгээлээ!");
+					// console.log("📡 Бүх өгөгдлийг зэрэг илгээлээ!", JSON.stringify(resp));
+				} catch (error) {
+					console.error("⚠️ Өгөгдөл зэрэг илгээх явцад алдаа гарлаа:", error);
+				}
+			}
+		};
+
+		sendDataToServer();
+	}, [isConnected]);
 	// SplashScreen.preventAutoHideAsync();
 
 	if (state.locationStatus !== "granted") {

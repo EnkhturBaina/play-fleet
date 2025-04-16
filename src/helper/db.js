@@ -790,7 +790,7 @@ export const fetchSendLocationData = async (a, b, c, d, e, f) => {
 							}
 						}
 					);
-					console.log("response LOCAL TRACK SAVE ==========>", response.data);
+					// console.log("response LOCAL TRACK SAVE ==========>", response.data);
 
 					if (response.data?.Type == 0) {
 						// Сервер амжилттай хүлээж авсан бол бүх датаг SQLite-с устгах

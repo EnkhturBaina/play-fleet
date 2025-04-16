@@ -274,43 +274,6 @@ const HomeScreen = (props) => {
 	}, [loadingKML, polygons]);
 
 	useEffect(() => {
-		const sendDataToServer = async () => {
-			if (isConnected) {
-				console.log("📶 Интернет холбогдлоо! Өгөгдөл сервер рүү зэрэг илгээж байна...");
-				var tempLocations = await fetchSendLocationDataTemp();
-				// console.log("tempLocations", tempLocations);
-
-				state.setTempLocations(tempLocations);
-				var tempSendState = await fetchSendStateDataTemp();
-				console.log("tempSendState", tempSendState);
-
-				state.setTempSendState(tempSendState);
-				try {
-					const resp = await Promise.all([
-						fetchSendStateDataALL(),
-						// fetchSendStateDataOneByOne(),
-						fetchMotoHourData(),
-						fetchSendLocationData(
-							state.selectedEquipment?.id,
-							state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
-							state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0,
-							0,
-							dayjs().format("YYYY-MM-DD"),
-							dayjs().format("YYYY-MM-DD HH:mm:ss")
-						)
-					]);
-
-					// console.log("📡 Бүх өгөгдлийг зэрэг илгээлээ!", JSON.stringify(resp));
-				} catch (error) {
-					console.error("⚠️ Өгөгдөл зэрэг илгээх явцад алдаа гарлаа:", error);
-				}
-			}
-		};
-
-		sendDataToServer();
-	}, [isConnected]);
-
-	useEffect(() => {
 		markerRefs.current[state.headerSelections?.PMSDstId]?.showCallout();
 	}, [state.headerSelections?.PMSDstId]);
 
