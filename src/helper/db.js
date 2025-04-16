@@ -425,6 +425,7 @@ export const updateData = async (id) => {
 };
 
 export const insertSendStateData = async (data) => {
+	console.log("---------------insertSendStateData---------------", data);
 	if (!data) return;
 
 	// 1. Өмнөх хамгийн сүүлийн мөрийг авчирч шалгана (EndTime == null)
