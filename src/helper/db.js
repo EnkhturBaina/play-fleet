@@ -447,7 +447,7 @@ export const insertSendStateData = async (data) => {
 			 WHERE id = ?`,
 			[data[13], prevRow.id] // data[14] = StartTime
 		);
-		// console.log("result--------------------------------->", result);
+		// console.log("result-->", result);
 	}
 
 	// 3. Insert хийх

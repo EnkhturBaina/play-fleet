@@ -121,7 +121,11 @@ export const sendSelectedState = async (
 			headerSelections?.PMSDstId,
 			headerSelections?.PMSMaterialId,
 			location?.coords?.latitude || 0,
-			location?.coords?.longitude || 0
+			location?.coords?.longitude || 0,
+			currentDate,
+			startTime,
+			endTime,
+			shiftData?.id
 		]);
 		return response;
 	}
