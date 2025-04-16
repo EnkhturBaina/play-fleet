@@ -29,7 +29,7 @@ export const NetworkProvider = ({ children }) => {
 		};
 	}, []);
 
-	return <NetworkContext.Provider value={{ isConnected: true, connectionQuality }}>{children}</NetworkContext.Provider>;
+	return <NetworkContext.Provider value={{ isConnected, connectionQuality }}>{children}</NetworkContext.Provider>;
 };
 
 // Интернет төлөвийг ашиглах туслах функц
