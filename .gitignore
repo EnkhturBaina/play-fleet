@@ -9,6 +9,8 @@ fleet_management_service_key.json
 dist/
 web-build/
 
+play_fleet_google_key.json
+
 # Native
 *.orig.*
 *.jks
