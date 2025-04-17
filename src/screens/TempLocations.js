@@ -90,6 +90,12 @@ const TempLocations = () => {
 					<Text style={{ fontSize: 18 }}>SEND_LOCATION</Text>
 				</TouchableOpacity>
 			</View>
+			<View style={{ padding: 20 }}>
+				<Text>Platform: {state.monitorData.Platform}</Text>
+				<Text>ModelName: {state.monitorData.ModelName}</Text>
+				<Text>RunLocationFunctionName: {state.monitorData.RunLocationFunctionName}</Text>
+				<Text>Shift: {state.monitorData.Shift}</Text>
+			</View>
 			{selectedMenu == "send_location" ? (
 				<>
 					<ScrollView style={{ flex: 1, height: 200 }}>

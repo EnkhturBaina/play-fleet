@@ -2,7 +2,7 @@ import { Platform, StyleSheet, Text, View, SafeAreaView, useWindowDimensions, us
 import React, { useContext, useEffect, useState, useRef, useCallback, useMemo } from "react";
 import HeaderUser from "../components/HeaderUser";
 import MainContext from "../contexts/MainContext";
-import MapView, { Circle, Marker, Polyline, PROVIDER_GOOGLE, UrlTile } from "react-native-maps";
+import MapView, { Circle, Marker, Polyline, UrlTile, AnimatedRegion, MarkerAnimated } from "react-native-maps";
 import HeaderFloatItem from "../components/HomeScreen/HeaderFloatItem";
 import StatusBottomSheet from "../components/HomeScreen/StatusBottomSheet";
 import { useNetworkStatus } from "../contexts/NetworkContext";
@@ -11,20 +11,10 @@ import { checkIfFileExists, loadKML, processKML } from "../helper/kmlUtils";
 import { Image } from "expo-image";
 import CustomDialog from "../components/CustomDialog";
 import { transformLocations } from "../helper/functions";
-import {
-	fetchMotoHourData,
-	fetchSendLocationData,
-	fetchSendLocationDataTemp,
-	fetchSendStateDataALL,
-	fetchSendStateDataOneByOne,
-	fetchSendStateDataTemp
-} from "../helper/db";
 import useEcho from "../helper/useEcho";
 import { ECHO_EVENT_PROGRESS, ZOOM_LEVEL } from "../constant";
 import LottieView from "lottie-react-native";
 import useTileLoader from "../helper/useTileLoader";
-import "dayjs/locale/es";
-import dayjs from "dayjs";
 import { OrientationContext } from "../helper/OrientationContext";
 import Constants from "expo-constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -61,6 +51,15 @@ const HomeScreen = (props) => {
 	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
 	const [dialogConfirmText, setDialogConfirmText] = useState(null); //Dialog confirm button text
 
+	const [coordinate] = useState(
+		new AnimatedRegion({
+			latitude: state.location?.coords?.latitude || 0,
+			longitude: state.location?.coords?.longitude || 0,
+			latitudeDelta: 0.01,
+			longitudeDelta: 0.01
+		})
+	);
+
 	const focusLocation = () => {
 		mapRef.current.animateToRegion({
 			latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
@@ -70,14 +69,23 @@ const HomeScreen = (props) => {
 		});
 	};
 	const animateRef = useCallback(() => {
-		if (mapRef.current && state.location) {
-			focusLocation();
-		}
-	}, [state.location]);
-
-	useEffect(() => {
 		if (mapRef.current && state.location && state.isTrack) {
 			focusLocation();
+		}
+
+		if (state.location) {
+			const newCoordinate = {
+				latitude: parseFloat(state.location.coords.latitude),
+				longitude: parseFloat(state.location.coords.longitude)
+			};
+
+			coordinate
+				.timing({
+					...newCoordinate,
+					duration: 1000, // milliseconds
+					useNativeDriver: false
+				})
+				.start();
 		}
 	}, [state.location]);
 
@@ -345,14 +353,11 @@ const HomeScreen = (props) => {
 								strokeColor="#fff"
 								fillColor={state.selectedState?.Color ? `${state.selectedState?.Color}80` : "#ffffff80"}
 							/>
-							<Marker
+							<MarkerAnimated
 								anchor={{ x: 0.5, y: 0.5 }}
 								title={state.selectedEquipment?.Name}
 								description={state.selectedEquipment?.TypeName}
-								coordinate={{
-									latitude: state.location?.coords?.latitude ? parseFloat(state.location?.coords?.latitude) : 0,
-									longitude: state.location?.coords?.longitude ? parseFloat(state.location?.coords?.longitude) : 0
-								}}
+								coordinate={coordinate}
 								ref={(ref) => {
 									if (ref) markerRefs.current[ownTruckId] = ref;
 								}}
@@ -368,7 +373,7 @@ const HomeScreen = (props) => {
 									/>
 									{Platform.OS == "ios" && <Text style={styles.radiusText}>{state.selectedEquipment?.Name}</Text>}
 								</View>
-							</Marker>
+							</MarkerAnimated>
 						</View>
 						{state.refLocations?.map((el, index) => {
 							const location = state.refLocationTypes?.find((item) => item.id === el.PMSLocationTypeId);

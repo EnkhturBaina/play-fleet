@@ -7,30 +7,10 @@ import dayjs from "dayjs";
 
 export const db = SQLite.openDatabaseSync("offline_data");
 
-const AddColumnsTABLES = async () => {
-	const tableInfo = await db.getAllAsync(`PRAGMA table_info(send_state);`);
-	const columnNames = tableInfo.map((col) => col.name);
-
-	const columnsToAdd = [
-		{ name: "CurrentDate", type: "TEXT" },
-		{ name: "StartTime", type: "TEXT" },
-		{ name: "EndTime", type: "TEXT" },
-		{ name: "PMSShiftId", type: "INTEGER" }
-	];
-
-	for (const col of columnsToAdd) {
-		if (!columnNames.includes(col.name)) {
-			console.log(`⚙️ Adding column: ${col.name}`);
-			await db.runAsync(`ALTER TABLE send_state ADD COLUMN ${col.name} ${col.type};`);
-		}
-	}
-};
-
 // 1.DONE SQLite хүснэгт үүсгэх
 export const createTable = async () => {
 	// console.log("RUN CREATE Table");
 	try {
-		// await AddColumnsTABLES();
 		await db.execAsync(
 			`CREATE TABLE IF NOT EXISTS employee (
         id INTEGER PRIMARY KEY,
@@ -486,6 +466,16 @@ export const fetchSendStateDataALL = async () => {
 	try {
 		const localToken = await AsyncStorage.getItem("L_access_token");
 
+		// 0. send_state хүснэгт байгаа эсэхийг шалгах
+		const tableCheck = await db.getFirstAsync(`
+			SELECT name FROM sqlite_master WHERE type='table' AND name='send_state'
+		`);
+
+		if (!tableCheck) {
+			console.warn("send_state хүснэгт олдсонгүй.");
+			return [];
+		}
+
 		// 1. EndTime === null мөрийг шинэчлэх
 		const lastRow = await db.getFirstAsync(`
 			SELECT id FROM send_state WHERE EndTime IS NULL ORDER BY id DESC LIMIT 1
@@ -499,7 +489,7 @@ export const fetchSendStateDataALL = async () => {
 		}
 
 		// 2. Бүх өгөгдлийг авах
-		const data = await db.getAllAsync("SELECT * FROM send_state");
+		const data = await db.getAllAsync(`SELECT * FROM send_state`);
 		console.log("data ==========>", data);
 
 		if (data && data.length > 0) {
@@ -517,18 +507,22 @@ export const fetchSendStateDataALL = async () => {
 					// Амжилттай үед устгана
 					await deleteSendStateAllRow();
 				} else {
-					console.error(`Failed to send-state ALL`);
+					console.error("Failed to send-state ALL");
 				}
 			} catch (error) {
-				console.error(` Error during send-state ALL:`, error?.response?.data || error.message);
+				console.error("Error during send-state ALL:", error?.response?.data || error.message);
 			}
+		} else {
+			console.log("send_state хүснэгтэд өгөгдөл алга.");
 		}
-		return data;
+
+		return data || [];
 	} catch (error) {
 		console.error("Error fetching sendState data", error);
 		throw new Error("Failed to fetch sendState data. Please try again later.");
 	}
 };
+
 export const fetchSendStateDataOneByOne = async () => {
 	// console.log("RUN fetch Send State Data.");
 
@@ -603,9 +597,17 @@ export const fetchSendStateDataOneByOne = async () => {
 };
 
 export const fetchSendStateDataTemp = async () => {
-	// console.log("RUN fetch SendLocation Data.");
-
 	try {
+		// 0. send_state хүснэгт байгаа эсэхийг шалгах
+		const tableCheck = await db.getFirstAsync(`
+			SELECT name FROM sqlite_master WHERE type='table' AND name='send_state'
+		`);
+
+		if (!tableCheck) {
+			console.warn("send_state хүснэгт олдсонгүй.");
+			return [];
+		}
+
 		// 1. EndTime === null мөрийг шинэчлэх
 		const lastRow = await db.getFirstAsync(`
 			SELECT id FROM send_state WHERE EndTime IS NULL ORDER BY id DESC LIMIT 1
@@ -616,16 +618,25 @@ export const fetchSendStateDataTemp = async () => {
 				dayjs().format("YYYY-MM-DD HH:mm:ss"),
 				lastRow.id
 			]);
+			console.log(`EndTime шинэчлэгдсэн мөрийн ID: ${lastRow.id}`);
 		}
-		// Parallel database queries using Promise.all
+
+		// 2. Бүх өгөгдлийг авах
 		const data = await db.getAllAsync("SELECT * FROM send_state");
-		// console.log("data TEMP LOCATIONS==========>", data);
-		return data; // Return the combined data
+
+		if (!data || data.length === 0) {
+			console.log("send_state хүснэгтэд өгөгдөл алга.");
+			return [];
+		}
+
+		// console.log("data TEMP LOCATIONS ==========>", data);
+		return data;
 	} catch (error) {
-		console.error("Error fetching SendState data Temp", error);
+		console.error("Error fetching SendState data Temp:", error);
 		throw new Error("Failed to fetch SendState data Temp. Please try again later.");
 	}
 };
+
 export const deleteSendStateAllRow = async () => {
 	try {
 		await db.runAsync("DELETE FROM send_state;");
@@ -669,55 +680,65 @@ export const insertMotoHourData = async (data) => {
 };
 
 export const fetchMotoHourData = async () => {
-	// console.log("RUN fetch MotoHour Data.");
-
 	try {
-		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
-			// Parallel database queries using Promise.all
-			const data = await db.getAllAsync("SELECT * FROM moto_hour");
-			// console.log("data ==========>", data);
-			// console.log("token ==========>", token);
+		const localToken = await AsyncStorage.getItem("L_access_token");
 
-			if (data) {
-				for (const item of data) {
-					// console.log("item =======>", JSON.stringify(item));
-					try {
-						const response = await axios.post(
-							`${SERVER_URL}/mobile/truck/fuel/save`,
-							{
-								PMSEquipmentId: item.PMSEquipmentId,
-								PMSShiftId: item.PMSShiftId,
-								SavedDate: item.SavedDate,
-								StartSMU: item.StartSMU,
-								FinishSMU: item.FinishSMU,
-								Fuel: item.Fuel,
-								ProgressSMU: item.ProgressSMU, // Дараа нь хасах
-								LastLogged: item.LastLogged
-							},
-							{
-								headers: {
-									"Content-Type": "application/json",
-									Authorization: `Bearer ${localToken}`
-								}
-							}
-						);
-						console.log("response", response.data);
+		// 0. moto_hour хүснэгт байгаа эсэхийг шалгах
+		const tableCheck = await db.getFirstAsync(`
+			SELECT name FROM sqlite_master WHERE type='table' AND name='moto_hour'
+		`);
 
-						if (response.data?.Type == 0) {
-							// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
-							await deleteMotoHourRowById(item.id);
-						} else {
-							console.error(`Failed to send motoHour item ${item.id}:`);
+		if (!tableCheck) {
+			console.warn("moto_hour хүснэгт олдсонгүй.");
+			return [];
+		}
+
+		// 1. Бүх өгөгдлийг авах
+		const data = await db.getAllAsync("SELECT * FROM moto_hour");
+
+		if (!data || data.length === 0) {
+			console.log("moto_hour хүснэгтэд өгөгдөл алга.");
+			return [];
+		}
+
+		// 2. Хэрвээ өгөгдөл байгаа бол нэг бүрчлэн илгээх
+		for (const item of data) {
+			try {
+				const response = await axios.post(
+					`${SERVER_URL}/mobile/truck/fuel/save`,
+					{
+						PMSEquipmentId: item.PMSEquipmentId,
+						PMSShiftId: item.PMSShiftId,
+						SavedDate: item.SavedDate,
+						StartSMU: item.StartSMU,
+						FinishSMU: item.FinishSMU,
+						Fuel: item.Fuel,
+						ProgressSMU: item.ProgressSMU,
+						LastLogged: item.LastLogged
+					},
+					{
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${localToken}`
 						}
-					} catch (error) {
-						console.error(`Error sending motoHour item ${item.id}:`, error);
 					}
+				);
+
+				console.log("response", response.data);
+
+				if (response.data?.Type === 0) {
+					await deleteMotoHourRowById(item.id);
+				} else {
+					console.error(`Failed to send motoHour item ${item.id}`);
 				}
+			} catch (error) {
+				console.error(`Error sending motoHour item ${item.id}:`, error?.response?.data || error.message);
 			}
-			return data; // Return the combined data
-		});
+		}
+
+		return data;
 	} catch (error) {
-		console.error("Error fetching motoHour data", error);
+		console.error("Error fetching motoHour data:", error);
 		throw new Error("Failed to fetch motoHour data. Please try again later.");
 	}
 };
@@ -768,80 +789,62 @@ export const fetchSendLocationDataTemp = async () => {
 };
 export const fetchSendLocationData = async (a, b, c, d, e, f) => {
 	try {
-		await AsyncStorage.getItem("L_access_token").then(async (localToken) => {
-			// Parallel database queries using Promise.all
-			const data = await db.getAllAsync("SELECT * FROM send_location");
-			// console.log("send_location data ==========>", JSON.stringify(data));
+		const localToken = await AsyncStorage.getItem("L_access_token");
 
-			if (data) {
-				try {
-					const response = await axios.post(
-						`${SERVER_URL}/mobile/progress/track/save`,
-						{
-							PMSEquipmentId: a,
-							Latitude: b,
-							Longitude: c,
-							Speed: d,
-							CurrentDate: e,
-							EventTime: f,
-							Items: data
-						},
-						{
-							headers: {
-								"Content-Type": "application/json",
-								Authorization: `Bearer ${localToken}`
-							}
-						}
-					);
-					// console.log("response LOCAL TRACK SAVE ==========>", response.data);
+		// 0. send_location хүснэгт байгаа эсэхийг шалгах
+		const tableCheck = await db.getFirstAsync(`
+			SELECT name FROM sqlite_master WHERE type='table' AND name='send_location'
+		`);
 
-					if (response.data?.Type == 0) {
-						// Сервер амжилттай хүлээж авсан бол бүх датаг SQLite-с устгах
-						await deleteSendLocationAll();
-					} else {
-						console.error(`Failed to send SendLocation ALL:`);
+		if (!tableCheck) {
+			console.warn("send_location хүснэгт олдсонгүй.");
+			return [];
+		}
+
+		// 1. Бүх өгөгдлийг авах
+		const data = await db.getAllAsync("SELECT * FROM send_location");
+
+		if (!data || data.length === 0) {
+			console.log("send_location хүснэгтэд өгөгдөл алга.");
+			return [];
+		}
+
+		// 2. Сервер рүү илгээх
+		try {
+			const response = await axios.post(
+				`${SERVER_URL}/mobile/progress/track/save`,
+				{
+					PMSEquipmentId: a,
+					Latitude: b,
+					Longitude: c,
+					Speed: d,
+					CurrentDate: e,
+					EventTime: f,
+					Items: data
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${localToken}`
 					}
-				} catch (error) {
-					console.error(`Error sending SendLocation ALL:`, error);
 				}
+			);
 
-				// for (const item of data) {
-				// 	// console.log("item =======>", JSON.stringify(item));
-				// 	try {
-				// 		const response = await axios.post(
-				// 			`${SERVER_URL}/mobile/progress/track/save`,
-				// 			{
-				// 				PMSEquipmentId: item.PMSEquipmentId,
-				// 				Latitude: item.Latitude,
-				// 				Longitude: item.Longitude,
-				// 				Speed: item.Speed,
-				// 				CurrentDate: item.CurrentDate,
-				// 				EventTime: item.EventTime
-				// 			},
-				// 			{
-				// 				headers: {
-				// 					"Content-Type": "application/json",
-				// 					Authorization: `Bearer ${localToken}`
-				// 				}
-				// 			}
-				// 		);
-				// 		console.log("response", response.data);
+			console.log("LOCAL TRACK SAVE response ==========>", response.data);
 
-				// 		if (response.data?.Type == 0) {
-				// 			// Сервер амжилттай хүлээж авсан бол тухайн мөрийг SQLite-с устгах
-				// 			await deleteSendLocationRowById(item.id);
-				// 		} else {
-				// 			console.error(`Failed to send SendLocation item ${item.id}:`);
-				// 		}
-				// 	} catch (error) {
-				// 		console.error(`Error sending SendLocation item ${item.id}:`, error);
-				// 	}
-				// }
+			if (response.data?.Type === 0) {
+				await deleteSendLocationAll();
+				console.log("send_location өгөгдлүүд амжилттай илгээгдэж устгагдлаа.");
+			} else {
+				console.error("Failed to send SendLocation ALL:", response.data?.Message || "Unknown error");
 			}
-			return data; // Return the combined data
-		});
+		} catch (error) {
+			console.error("Error sending SendLocation ALL:", error?.response?.data || error.message);
+		}
+
+		return data;
 	} catch (error) {
-		console.error("Error fetching SendLocation data", error);
+		console.error("Error fetching SendLocation data:", error);
 		throw new Error("Failed to fetch SendLocation data. Please try again later.");
 	}
 };

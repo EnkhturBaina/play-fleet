@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from "react";
-import { StyleSheet, TouchableOpacity, Text, Dimensions, View } from "react-native";
+import React, { useContext, useEffect, useRef } from "react";
+import { StyleSheet, TouchableOpacity, Text, Dimensions, View, Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Icon } from "@rneui/base";
 import * as Location from "expo-location";
@@ -36,6 +36,7 @@ import {
 } from "../helper/db";
 import "dayjs/locale/es";
 import dayjs from "dayjs";
+import * as Device from "expo-device";
 
 const Stack = createStackNavigator();
 const width = Dimensions.get("screen").width;
@@ -44,6 +45,8 @@ const MainStackNavigator = (props) => {
 	const state = useContext(MainContext);
 	const navigation = useNavigation();
 	const { isConnected } = useNetworkStatus();
+	const intervalRef = useRef(null);
+	const locationSubscription = useRef(null);
 
 	useEffect(() => {
 		state.setSendLocationStatus((prevStatus) => [
@@ -67,9 +70,11 @@ const MainStackNavigator = (props) => {
 	}, [state.isLoggedIn, state.inspectionDone]);
 
 	useEffect(() => {
-		let locationSubscription = null;
+		let isMounted = true;
 
 		const startTracking = async () => {
+			console.log("startTracking");
+
 			try {
 				// Байршил авах эрхийг шалгах
 				const { status } = await Location.requestForegroundPermissionsAsync();
@@ -80,7 +85,7 @@ const MainStackNavigator = (props) => {
 				}
 
 				// Машины бодит цагийн tracking (25м өөрчлөгдвөл update хийнэ)
-				locationSubscription = await Location.watchPositionAsync(
+				locationSubscription.current = await Location.watchPositionAsync(
 					{
 						accuracy: Location.Accuracy.High,
 						distanceInterval: 25, // 25 метрээс дээш хөдөлгөөнд update хийнэ
@@ -108,11 +113,68 @@ const MainStackNavigator = (props) => {
 			}
 		};
 
-		startTracking();
+		const startPolling = async () => {
+			console.log("📡 Polling горим эхэллээ...");
+			const getLocation = async () => {
+				try {
+					const location = await Location.getCurrentPositionAsync({
+						accuracy: Location.Accuracy.Balanced
+					});
+					if (isMounted) {
+						console.log("📍 Байршил (Polling):", location);
+						state.setLocation(location);
 
+						const speedKmh = (location?.coords?.speed ?? 0) * 3.6;
+						if (speedKmh > 0) {
+							await AsyncStorage.setItem("L_current_speed", speedKmh.toFixed(2));
+						}
+					}
+				} catch (err) {
+					console.error("❌ Polling байршил алдаа:", err);
+				}
+			};
+
+			getLocation(); // шууд нэг удаа дуудаад
+			intervalRef.current = setInterval(getLocation, 10000); // 10 секунд тутамд
+		};
+
+		const initTracking = async () => {
+			const { status } = await Location.requestForegroundPermissionsAsync();
+			if (status !== "granted") {
+				console.warn("📍 Байршил авах эрх олгогдоогүй байна!");
+				return;
+			}
+
+			// Device info-г шалгаж GPS байгаа эсэхийг тодорхойлох
+			const modelName = Device.modelName || "";
+
+			const isWiFiOnlyiPad = Platform.OS === "ios" && modelName?.includes("iPad");
+
+			// GPS байгаа эсэхийг өөрийн таамаглалаар (Wi-Fi only iPad → polling)
+			if (isWiFiOnlyiPad) {
+				state.setMonitorData((prevState) => ({
+					...prevState,
+					Platform: Platform.OS,
+					ModelName: modelName,
+					RunLocationFunctionName: "getCurrentPositionAsync GPS-"
+				}));
+				await startPolling();
+			} else {
+				state.setMonitorData((prevState) => ({
+					...prevState,
+					Platform: Platform.OS,
+					ModelName: modelName,
+					RunLocationFunctionName: "watchPositionAsync GPS+"
+				}));
+				await startTracking();
+			}
+		};
+		initTracking();
 		// Unmount хийх үед байршлын tracking-ийг зогсооно
 		return () => {
-			if (locationSubscription) locationSubscription.remove();
+			isMounted = false;
+			if (intervalRef.current) clearInterval(intervalRef.current);
+			if (locationSubscription.current) locationSubscription.current.remove();
 		};
 	}, []);
 

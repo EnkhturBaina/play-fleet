@@ -72,6 +72,12 @@ export const MainStore = (props) => {
 	const [tempSendState, setTempSendState] = useState([]);
 	const [sendLocationStatus, setSendLocationStatus] = useState([]);
 	const [projectLocationChanged, setProjectLocationChanged] = useState(false);
+	const [monitorData, setMonitorData] = useState({
+		Platform: "",
+		ModelName: "",
+		RunLocationFunctionName: "",
+		Shift: ""
+	});
 	/* GENERAL STATEs END */
 
 	/* LOGIN STATEs START */
@@ -276,16 +282,15 @@ export const MainStore = (props) => {
 		console.log("create SQL Tables STATE");
 
 		try {
-			await createTable().then(async (e) => {
-				await createReferenceTables().then(async (e) => {
-					if (isConnected) {
-						await checkUserData();
-					} else {
-						const data = await fetchReferencesData();
-						setRefsToState(data, true);
-					}
-				});
-			});
+			await createTable();
+			await createReferenceTables();
+
+			if (isConnected) {
+				await checkUserData();
+			} else {
+				const data = await fetchReferencesData();
+				setRefsToState(data, true);
+			}
 		} catch (error) {
 			console.log("error create SQL Tables", error);
 		}
@@ -397,6 +402,11 @@ export const MainStore = (props) => {
 			setEquipmentsData(responseOfflineLoginData.equipments);
 			setProjectData(responseOfflineLoginData.project[0]);
 			setShiftData(responseOfflineLoginData.shift[0]);
+
+			setMonitorData((prevState) => ({
+				...prevState,
+				Shift: responseOfflineLoginData.shift[0]?.Name
+			}));
 
 			if (isRunLocal) {
 				setIsLoggedIn(true);
@@ -604,7 +614,9 @@ export const MainStore = (props) => {
 				setProjectLocationChanged,
 				updateKMLRef,
 				tempSendState,
-				setTempSendState
+				setTempSendState,
+				monitorData,
+				setMonitorData
 			}}
 		>
 			{props.children}
