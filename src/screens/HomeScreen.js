@@ -51,14 +51,14 @@ const HomeScreen = (props) => {
 	const [dialogText, setDialogText] = useState(null); //Dialog харуулах text
 	const [dialogConfirmText, setDialogConfirmText] = useState(null); //Dialog confirm button text
 
-	const [coordinate] = useState(
+	const animatedCoordinate = useRef(
 		new AnimatedRegion({
 			latitude: state.location?.coords?.latitude || 0,
 			longitude: state.location?.coords?.longitude || 0,
-			latitudeDelta: 0.01,
-			longitudeDelta: 0.01
+			latitudeDelta: 0,
+			longitudeDelta: 0
 		})
-	);
+	).current;
 
 	const focusLocation = () => {
 		mapRef.current.animateToRegion({
@@ -74,73 +74,16 @@ const HomeScreen = (props) => {
 		}
 
 		if (state.location) {
-			const newCoordinate = {
-				latitude: parseFloat(state.location.coords.latitude),
-				longitude: parseFloat(state.location.coords.longitude)
-			};
-
-			coordinate
+			animatedCoordinate
 				.timing({
-					...newCoordinate,
+					latitude: parseFloat(state.location?.coords?.latitude),
+					longitude: parseFloat(state.location?.coords?.longitude),
 					duration: 1000, // milliseconds
 					useNativeDriver: false
 				})
 				.start();
 		}
 	}, [state.location]);
-
-	useEffect(() => {
-		if (!echo || !state.employeeData?.PMSCompanyId) return;
-
-		const channel = echo.private(`user.${state.employeeData?.id}`);
-
-		const handleProgressUpdate = (event) => {
-			if (event) {
-				// console.log("event.extra", event.extra);
-				const mainState = state.refStates?.filter((item) => item.id === event.extra?.PMSProgressStateId);
-
-				if (mainState && mainState?.length > 0) {
-					if (mainState[0].ActivityShort == "W1") {
-						const filteredDefaultState = state.refStates?.filter((item) => item.id === event.extra?.sub_state?.id);
-						// console.log("default assign from header PMSSubProgressStateId != null", filteredDefaultState);
-
-						// Default assign -с тухайн төхөөрөмжиййн төлөв авах
-						state.setSelectedState(filteredDefaultState[0]);
-					} else {
-						const filteredDefaultState = state.refStates?.filter((item) => item.id === event.extra?.PMSProgressStateId);
-						// console.log("default assign from header PMSSubProgressStateId == null", filteredDefaultState);
-
-						// Default assign -с тухайн төхөөрөмжиййн төлөв авах
-						state.setSelectedState(filteredDefaultState[0]);
-					}
-				} else {
-					getLocalLastState();
-				}
-
-				// Header мэдээлэл шинэчлэх
-				state.setHeaderSelections((prev) => ({
-					...prev,
-					PMSSrcId: event.extra?.PMSLocationId,
-					PMSBlastShotId: event.extra?.PMSBlastShotId,
-					PMSDstId: event.extra?.PMSDestinationId,
-					PMSLoaderId: event.extra?.PMSLoaderId,
-					PMSMaterialId: event.extra?.PMSMaterialUnitId
-				}));
-
-				// Dialog гаргах
-				setDialogText(event.message);
-				setDialogConfirmText("Ок");
-				setVisibleDialog(true);
-			}
-		};
-
-		channel.listen(ECHO_EVENT_PROGRESS, handleProgressUpdate);
-
-		return () => {
-			console.log("🛑 Stopping Echo Listener");
-			channel.stopListening(ECHO_EVENT_PROGRESS);
-		};
-	}, [echo]);
 
 	const getLocalLastState = async () => {
 		// Assign service -д ямар 1 асуудал гарвал local -д хадгалсан хамгийн сүүлд сонгогдсон төлөв харуулах
@@ -211,6 +154,58 @@ const HomeScreen = (props) => {
 		};
 	}, []);
 
+	useEffect(() => {
+		if (!echo || !state.employeeData?.PMSCompanyId) return;
+
+		const channel = echo.private(`user.${state.employeeData?.id}`);
+
+		const handleProgressUpdate = (event) => {
+			if (event) {
+				// console.log("event.extra", event.extra);
+				const mainState = state.refStates?.filter((item) => item.id === event.extra?.PMSProgressStateId);
+
+				if (mainState && mainState?.length > 0) {
+					if (mainState[0].ActivityShort == "W1") {
+						const filteredDefaultState = state.refStates?.filter((item) => item.id === event.extra?.sub_state?.id);
+						// console.log("default assign from header PMSSubProgressStateId != null", filteredDefaultState);
+
+						// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+						state.setSelectedState(filteredDefaultState[0]);
+					} else {
+						const filteredDefaultState = state.refStates?.filter((item) => item.id === event.extra?.PMSProgressStateId);
+						// console.log("default assign from header PMSSubProgressStateId == null", filteredDefaultState);
+
+						// Default assign -с тухайн төхөөрөмжиййн төлөв авах
+						state.setSelectedState(filteredDefaultState[0]);
+					}
+				} else {
+					getLocalLastState();
+				}
+
+				// Header мэдээлэл шинэчлэх
+				state.setHeaderSelections((prev) => ({
+					...prev,
+					PMSSrcId: event.extra?.PMSLocationId,
+					PMSBlastShotId: event.extra?.PMSBlastShotId,
+					PMSDstId: event.extra?.PMSDestinationId,
+					PMSLoaderId: event.extra?.PMSLoaderId,
+					PMSMaterialId: event.extra?.PMSMaterialUnitId
+				}));
+
+				// Dialog гаргах
+				setDialogText(event.message);
+				setDialogConfirmText("Ок");
+				setVisibleDialog(true);
+			}
+		};
+
+		channel.listen(ECHO_EVENT_PROGRESS, handleProgressUpdate);
+
+		return () => {
+			console.log("🛑 Stopping Echo Listener");
+			channel.stopListening(ECHO_EVENT_PROGRESS);
+		};
+	}, [echo]);
 	// Файлыг шалгах болон лоад хийх
 	const checkIfFileExistsAndLoad = async (isRemove) => {
 		setLoadingKML(true);
@@ -274,13 +269,6 @@ const HomeScreen = (props) => {
 		}
 	}, [fileContent]);
 
-	const renderedPolygons = useMemo(() => {
-		if (!loadingKML && polygons?.length > 0) {
-			return polygons.map((el, index) => <Polyline key={index} coordinates={el.coords} strokeColor={el.strokeColor} />);
-		}
-		return null;
-	}, [loadingKML, polygons]);
-
 	useEffect(() => {
 		markerRefs.current[state.headerSelections?.PMSDstId]?.showCallout();
 	}, [state.headerSelections?.PMSDstId]);
@@ -304,6 +292,13 @@ const HomeScreen = (props) => {
 
 		return () => clearInterval(interval);
 	}, [state.headerSelections?.PMSDstId]);
+
+	const renderedPolygons = useMemo(() => {
+		if (!loadingKML && polygons?.length > 0) {
+			return polygons.map((el, index) => <Polyline key={index} coordinates={el.coords} strokeColor={el.strokeColor} />);
+		}
+		return null;
+	}, [loadingKML, polygons]);
 
 	return (
 		<>
@@ -357,7 +352,7 @@ const HomeScreen = (props) => {
 								anchor={{ x: 0.5, y: 0.5 }}
 								title={state.selectedEquipment?.Name}
 								description={state.selectedEquipment?.TypeName}
-								coordinate={coordinate}
+								coordinate={animatedCoordinate}
 								ref={(ref) => {
 									if (ref) markerRefs.current[ownTruckId] = ref;
 								}}
